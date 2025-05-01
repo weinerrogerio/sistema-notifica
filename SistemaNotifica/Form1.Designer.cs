@@ -28,37 +28,31 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             panel1 = new Panel();
-            btnResponsiveMenu = new PictureBox();
+            btnHam = new PictureBox();
             nightControlBox1 = new ReaLTaiizor.Controls.NightControlBox();
             imgLogo = new PictureBox();
-            panelResponsiveMenu = new FlowLayoutPanel();
-            panel2 = new Panel();
-            btnImportarDoc = new Button();
-            panel3 = new Panel();
-            button2 = new Button();
-            panel4 = new Panel();
-            button3 = new Button();
+            sidebarMenu = new FlowLayoutPanel();
             panel5 = new Panel();
-            button4 = new Button();
-            panel6 = new Panel();
-            button5 = new Button();
+            panelImportar = new Panel();
+            btnImportarDoc = new Button();
+            panel7 = new Panel();
+            btnDados = new Button();
+            sidebarTransition = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)btnResponsiveMenu).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)btnHam).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
-            panelResponsiveMenu.SuspendLayout();
-            panel2.SuspendLayout();
-            panel3.SuspendLayout();
-            panel4.SuspendLayout();
-            panel5.SuspendLayout();
-            panel6.SuspendLayout();
+            sidebarMenu.SuspendLayout();
+            panelImportar.SuspendLayout();
+            panel7.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
             panel1.BackColor = Color.White;
-            panel1.Controls.Add(btnResponsiveMenu);
+            panel1.Controls.Add(btnHam);
             panel1.Controls.Add(nightControlBox1);
             panel1.Controls.Add(imgLogo);
             panel1.Dock = DockStyle.Top;
@@ -67,15 +61,16 @@
             panel1.Size = new Size(927, 33);
             panel1.TabIndex = 0;
             // 
-            // btnResponsiveMenu
+            // btnHam
             // 
-            btnResponsiveMenu.Image = (Image)resources.GetObject("btnResponsiveMenu.Image");
-            btnResponsiveMenu.Location = new Point(7, 0);
-            btnResponsiveMenu.Name = "btnResponsiveMenu";
-            btnResponsiveMenu.Size = new Size(38, 32);
-            btnResponsiveMenu.SizeMode = PictureBoxSizeMode.CenterImage;
-            btnResponsiveMenu.TabIndex = 3;
-            btnResponsiveMenu.TabStop = false;
+            btnHam.Image = (Image)resources.GetObject("btnHam.Image");
+            btnHam.Location = new Point(7, 0);
+            btnHam.Name = "btnHam";
+            btnHam.Size = new Size(38, 32);
+            btnHam.SizeMode = PictureBoxSizeMode.CenterImage;
+            btnHam.TabIndex = 3;
+            btnHam.TabStop = false;
+            btnHam.Click += btnHam_Click;
             // 
             // nightControlBox1
             // 
@@ -111,158 +106,109 @@
             imgLogo.TabIndex = 2;
             imgLogo.TabStop = false;
             // 
-            // panelResponsiveMenu
+            // sidebarMenu
             // 
-            panelResponsiveMenu.BackColor = Color.Black;
-            panelResponsiveMenu.Controls.Add(panel2);
-            panelResponsiveMenu.Dock = DockStyle.Left;
-            panelResponsiveMenu.Location = new Point(0, 33);
-            panelResponsiveMenu.Name = "panelResponsiveMenu";
-            panelResponsiveMenu.Size = new Size(200, 440);
-            panelResponsiveMenu.TabIndex = 1;
-            // 
-            // panel2
-            // 
-            panel2.Controls.Add(btnImportarDoc);
-            panel2.Location = new Point(3, 3);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(193, 44);
-            panel2.TabIndex = 3;
-            // 
-            // btnImportarDoc
-            // 
-            btnImportarDoc.Image = (Image)resources.GetObject("btnImportarDoc.Image");
-            btnImportarDoc.ImageAlign = ContentAlignment.MiddleLeft;
-            btnImportarDoc.Location = new Point(0, 1);
-            btnImportarDoc.Name = "btnImportarDoc";
-            btnImportarDoc.Padding = new Padding(15, 0, 0, 0);
-            btnImportarDoc.Size = new Size(193, 45);
-            btnImportarDoc.TabIndex = 2;
-            btnImportarDoc.Text = "   Importar";
-            btnImportarDoc.UseVisualStyleBackColor = true;
-            // 
-            // panel3
-            // 
-            panel3.Controls.Add(button2);
-            panel3.Location = new Point(722, 81);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(193, 44);
-            panel3.TabIndex = 4;
-            // 
-            // button2
-            // 
-            button2.Image = (Image)resources.GetObject("button2.Image");
-            button2.ImageAlign = ContentAlignment.MiddleLeft;
-            button2.Location = new Point(0, 1);
-            button2.Name = "button2";
-            button2.Padding = new Padding(15, 0, 0, 0);
-            button2.Size = new Size(216, 45);
-            button2.TabIndex = 2;
-            button2.Text = "Importar";
-            button2.UseVisualStyleBackColor = true;
-            // 
-            // panel4
-            // 
-            panel4.Controls.Add(button3);
-            panel4.Location = new Point(722, 152);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(193, 44);
-            panel4.TabIndex = 5;
-            // 
-            // button3
-            // 
-            button3.Image = (Image)resources.GetObject("button3.Image");
-            button3.ImageAlign = ContentAlignment.MiddleLeft;
-            button3.Location = new Point(0, 1);
-            button3.Name = "button3";
-            button3.Padding = new Padding(15, 0, 0, 0);
-            button3.Size = new Size(216, 45);
-            button3.TabIndex = 2;
-            button3.Text = "Importar";
-            button3.UseVisualStyleBackColor = true;
+            sidebarMenu.BackColor = Color.Black;
+            sidebarMenu.Controls.Add(panel5);
+            sidebarMenu.Controls.Add(panelImportar);
+            sidebarMenu.Controls.Add(panel7);
+            sidebarMenu.Dock = DockStyle.Left;
+            sidebarMenu.Location = new Point(0, 33);
+            sidebarMenu.Name = "sidebarMenu";
+            sidebarMenu.Size = new Size(190, 440);
+            sidebarMenu.TabIndex = 1;
             // 
             // panel5
             // 
-            panel5.Controls.Add(button4);
-            panel5.Location = new Point(722, 215);
+            panel5.Location = new Point(3, 3);
             panel5.Name = "panel5";
-            panel5.Size = new Size(193, 44);
-            panel5.TabIndex = 5;
+            panel5.Size = new Size(200, 23);
+            panel5.TabIndex = 4;
             // 
-            // button4
+            // panelImportar
             // 
-            button4.Image = (Image)resources.GetObject("button4.Image");
-            button4.ImageAlign = ContentAlignment.MiddleLeft;
-            button4.Location = new Point(0, 1);
-            button4.Name = "button4";
-            button4.Padding = new Padding(15, 0, 0, 0);
-            button4.Size = new Size(216, 45);
-            button4.TabIndex = 2;
-            button4.Text = "Importar";
-            button4.UseVisualStyleBackColor = true;
+            panelImportar.Controls.Add(btnImportarDoc);
+            panelImportar.Location = new Point(3, 32);
+            panelImportar.Name = "panelImportar";
+            panelImportar.Size = new Size(193, 44);
+            panelImportar.TabIndex = 3;
             // 
-            // panel6
+            // btnImportarDoc
             // 
-            panel6.Controls.Add(button5);
-            panel6.Location = new Point(722, 280);
-            panel6.Name = "panel6";
-            panel6.Size = new Size(193, 44);
-            panel6.TabIndex = 5;
+            btnImportarDoc.BackColor = Color.Black;
+            btnImportarDoc.FlatStyle = FlatStyle.Flat;
+            btnImportarDoc.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnImportarDoc.ForeColor = Color.White;
+            btnImportarDoc.Image = (Image)resources.GetObject("btnImportarDoc.Image");
+            btnImportarDoc.ImageAlign = ContentAlignment.MiddleLeft;
+            btnImportarDoc.Location = new Point(-11, -11);
+            btnImportarDoc.Name = "btnImportarDoc";
+            btnImportarDoc.Padding = new Padding(15, 0, 0, 0);
+            btnImportarDoc.Size = new Size(209, 61);
+            btnImportarDoc.TabIndex = 2;
+            btnImportarDoc.Text = "   Importar";
+            btnImportarDoc.UseVisualStyleBackColor = false;
             // 
-            // button5
+            // panel7
             // 
-            button5.Image = (Image)resources.GetObject("button5.Image");
-            button5.ImageAlign = ContentAlignment.MiddleLeft;
-            button5.Location = new Point(0, 1);
-            button5.Name = "button5";
-            button5.Padding = new Padding(15, 0, 0, 0);
-            button5.Size = new Size(216, 45);
-            button5.TabIndex = 2;
-            button5.Text = "Importar";
-            button5.UseVisualStyleBackColor = true;
+            panel7.Controls.Add(btnDados);
+            panel7.Location = new Point(3, 82);
+            panel7.Name = "panel7";
+            panel7.Size = new Size(193, 44);
+            panel7.TabIndex = 4;
+            // 
+            // btnDados
+            // 
+            btnDados.BackColor = Color.Black;
+            btnDados.FlatStyle = FlatStyle.Flat;
+            btnDados.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnDados.ForeColor = Color.White;
+            btnDados.Image = (Image)resources.GetObject("btnDados.Image");
+            btnDados.ImageAlign = ContentAlignment.MiddleLeft;
+            btnDados.Location = new Point(-11, -5);
+            btnDados.Name = "btnDados";
+            btnDados.Padding = new Padding(15, 0, 0, 0);
+            btnDados.Size = new Size(214, 56);
+            btnDados.TabIndex = 2;
+            btnDados.Text = "Dados";
+            btnDados.UseVisualStyleBackColor = false;
+            // 
+            // sidebarTransition
+            // 
+            sidebarTransition.Interval = 5;
+            sidebarTransition.Tick += sidebarTransition_Tick;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(927, 473);
-            Controls.Add(panel6);
-            Controls.Add(panel5);
-            Controls.Add(panel4);
-            Controls.Add(panel3);
-            Controls.Add(panelResponsiveMenu);
+            Controls.Add(sidebarMenu);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
             Name = "Form1";
             Text = "Form1";
             panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)btnResponsiveMenu).EndInit();
+            ((System.ComponentModel.ISupportInitialize)btnHam).EndInit();
             ((System.ComponentModel.ISupportInitialize)imgLogo).EndInit();
-            panelResponsiveMenu.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            panel3.ResumeLayout(false);
-            panel4.ResumeLayout(false);
-            panel5.ResumeLayout(false);
-            panel6.ResumeLayout(false);
+            sidebarMenu.ResumeLayout(false);
+            panelImportar.ResumeLayout(false);
+            panel7.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
         private Panel panel1;
-        private FlowLayoutPanel panelResponsiveMenu;
+        private FlowLayoutPanel sidebarMenu;
         private PictureBox imgLogo;
         private ReaLTaiizor.Controls.NightControlBox nightControlBox1;
         private Button btnImportarDoc;
-        private Panel panel2;
-        private Panel panel3;
-        private Button button2;
-        private Panel panel4;
-        private Button button3;
+        private Panel panelImportar;
+        private PictureBox btnHam;
+        private Panel panel7;
+        private Button btnDados;
+        private System.Windows.Forms.Timer sidebarTransition;
         private Panel panel5;
-        private Button button4;
-        private Panel panel6;
-        private Button button5;
-        private PictureBox btnResponsiveMenu;
     }
 }
