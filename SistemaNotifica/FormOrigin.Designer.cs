@@ -1,6 +1,6 @@
 ﻿namespace SistemaNotifica
 {
-    partial class Form1
+    partial class FormOrigin
     {
         /// <summary>
         ///  Required designer variable.
@@ -29,24 +29,36 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOrigin));
             panel1 = new Panel();
             btnHam = new PictureBox();
             nightControlBox1 = new ReaLTaiizor.Controls.NightControlBox();
             imgLogo = new PictureBox();
             sidebarMenu = new FlowLayoutPanel();
             panel5 = new Panel();
+            panelHome = new Panel();
+            btnHome = new Button();
             panelImportar = new Panel();
             btnImportarDoc = new Button();
-            panel7 = new Panel();
+            panelData = new Panel();
             btnDados = new Button();
+            panelUser = new Panel();
+            btnUser = new Button();
+            panelSettings = new Panel();
+            btnSettings = new Button();
+            panelLogOut = new Panel();
+            btnLogOut = new Button();
             sidebarTransition = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnHam).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
             sidebarMenu.SuspendLayout();
+            panelHome.SuspendLayout();
             panelImportar.SuspendLayout();
-            panel7.SuspendLayout();
+            panelData.SuspendLayout();
+            panelUser.SuspendLayout();
+            panelSettings.SuspendLayout();
+            panelLogOut.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -110,12 +122,17 @@
             // 
             sidebarMenu.BackColor = Color.Black;
             sidebarMenu.Controls.Add(panel5);
+            sidebarMenu.Controls.Add(panelHome);
             sidebarMenu.Controls.Add(panelImportar);
-            sidebarMenu.Controls.Add(panel7);
+            sidebarMenu.Controls.Add(panelData);
+            sidebarMenu.Controls.Add(panelUser);
+            sidebarMenu.Controls.Add(panelSettings);
+            sidebarMenu.Controls.Add(panelLogOut);
             sidebarMenu.Dock = DockStyle.Left;
+            sidebarMenu.FlowDirection = FlowDirection.TopDown;
             sidebarMenu.Location = new Point(0, 33);
             sidebarMenu.Name = "sidebarMenu";
-            sidebarMenu.Size = new Size(190, 440);
+            sidebarMenu.Size = new Size(50, 440);
             sidebarMenu.TabIndex = 1;
             // 
             // panel5
@@ -125,12 +142,36 @@
             panel5.Size = new Size(200, 23);
             panel5.TabIndex = 4;
             // 
+            // panelHome
+            // 
+            panelHome.Controls.Add(btnHome);
+            panelHome.Location = new Point(3, 32);
+            panelHome.Name = "panelHome";
+            panelHome.Size = new Size(187, 44);
+            panelHome.TabIndex = 5;
+            // 
+            // btnHome
+            // 
+            btnHome.BackColor = Color.Black;
+            btnHome.FlatStyle = FlatStyle.Flat;
+            btnHome.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnHome.ForeColor = Color.White;
+            btnHome.Image = (Image)resources.GetObject("btnHome.Image");
+            btnHome.ImageAlign = ContentAlignment.MiddleLeft;
+            btnHome.Location = new Point(-12, -5);
+            btnHome.Name = "btnHome";
+            btnHome.Padding = new Padding(15, 0, 0, 0);
+            btnHome.Size = new Size(214, 56);
+            btnHome.TabIndex = 2;
+            btnHome.Text = "Home";
+            btnHome.UseVisualStyleBackColor = false;
+            // 
             // panelImportar
             // 
             panelImportar.Controls.Add(btnImportarDoc);
-            panelImportar.Location = new Point(3, 32);
+            panelImportar.Location = new Point(3, 82);
             panelImportar.Name = "panelImportar";
-            panelImportar.Size = new Size(193, 44);
+            panelImportar.Size = new Size(187, 44);
             panelImportar.TabIndex = 3;
             // 
             // btnImportarDoc
@@ -146,16 +187,16 @@
             btnImportarDoc.Padding = new Padding(15, 0, 0, 0);
             btnImportarDoc.Size = new Size(209, 61);
             btnImportarDoc.TabIndex = 2;
-            btnImportarDoc.Text = "   Importar";
+            btnImportarDoc.Text = "     Importar";
             btnImportarDoc.UseVisualStyleBackColor = false;
             // 
-            // panel7
+            // panelData
             // 
-            panel7.Controls.Add(btnDados);
-            panel7.Location = new Point(3, 82);
-            panel7.Name = "panel7";
-            panel7.Size = new Size(193, 44);
-            panel7.TabIndex = 4;
+            panelData.Controls.Add(btnDados);
+            panelData.Location = new Point(3, 132);
+            panelData.Name = "panelData";
+            panelData.Size = new Size(187, 44);
+            panelData.TabIndex = 4;
             // 
             // btnDados
             // 
@@ -170,15 +211,87 @@
             btnDados.Padding = new Padding(15, 0, 0, 0);
             btnDados.Size = new Size(214, 56);
             btnDados.TabIndex = 2;
-            btnDados.Text = "Dados";
+            btnDados.Text = " Dados";
             btnDados.UseVisualStyleBackColor = false;
+            // 
+            // panelUser
+            // 
+            panelUser.Controls.Add(btnUser);
+            panelUser.Location = new Point(3, 182);
+            panelUser.Name = "panelUser";
+            panelUser.Size = new Size(187, 44);
+            panelUser.TabIndex = 5;
+            // 
+            // btnUser
+            // 
+            btnUser.BackColor = Color.Black;
+            btnUser.FlatStyle = FlatStyle.Flat;
+            btnUser.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnUser.ForeColor = Color.White;
+            btnUser.Image = (Image)resources.GetObject("btnUser.Image");
+            btnUser.ImageAlign = ContentAlignment.MiddleLeft;
+            btnUser.Location = new Point(-12, -5);
+            btnUser.Name = "btnUser";
+            btnUser.Padding = new Padding(15, 0, 0, 0);
+            btnUser.Size = new Size(214, 56);
+            btnUser.TabIndex = 2;
+            btnUser.Text = "Ususário";
+            btnUser.UseVisualStyleBackColor = false;
+            // 
+            // panelSettings
+            // 
+            panelSettings.Controls.Add(btnSettings);
+            panelSettings.Location = new Point(3, 232);
+            panelSettings.Name = "panelSettings";
+            panelSettings.Size = new Size(187, 44);
+            panelSettings.TabIndex = 6;
+            // 
+            // btnSettings
+            // 
+            btnSettings.BackColor = Color.Black;
+            btnSettings.FlatStyle = FlatStyle.Flat;
+            btnSettings.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnSettings.ForeColor = Color.White;
+            btnSettings.Image = (Image)resources.GetObject("btnSettings.Image");
+            btnSettings.ImageAlign = ContentAlignment.MiddleLeft;
+            btnSettings.Location = new Point(-11, -5);
+            btnSettings.Name = "btnSettings";
+            btnSettings.Padding = new Padding(15, 0, 0, 0);
+            btnSettings.Size = new Size(214, 56);
+            btnSettings.TabIndex = 2;
+            btnSettings.Text = "Configurações";
+            btnSettings.UseVisualStyleBackColor = false;
+            // 
+            // panelLogOut
+            // 
+            panelLogOut.Controls.Add(btnLogOut);
+            panelLogOut.Location = new Point(3, 282);
+            panelLogOut.Name = "panelLogOut";
+            panelLogOut.Size = new Size(187, 44);
+            panelLogOut.TabIndex = 7;
+            // 
+            // btnLogOut
+            // 
+            btnLogOut.BackColor = Color.Black;
+            btnLogOut.FlatStyle = FlatStyle.Flat;
+            btnLogOut.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnLogOut.ForeColor = Color.White;
+            btnLogOut.Image = (Image)resources.GetObject("btnLogOut.Image");
+            btnLogOut.ImageAlign = ContentAlignment.MiddleLeft;
+            btnLogOut.Location = new Point(-9, -5);
+            btnLogOut.Name = "btnLogOut";
+            btnLogOut.Padding = new Padding(15, 0, 0, 0);
+            btnLogOut.Size = new Size(214, 56);
+            btnLogOut.TabIndex = 2;
+            btnLogOut.Text = "Sair";
+            btnLogOut.UseVisualStyleBackColor = false;
             // 
             // sidebarTransition
             // 
             sidebarTransition.Interval = 5;
             sidebarTransition.Tick += sidebarTransition_Tick;
             // 
-            // Form1
+            // FormOrigin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -186,14 +299,19 @@
             Controls.Add(sidebarMenu);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
-            Name = "Form1";
+            IsMdiContainer = true;
+            Name = "FormOrigin";
             Text = "Form1";
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)btnHam).EndInit();
             ((System.ComponentModel.ISupportInitialize)imgLogo).EndInit();
             sidebarMenu.ResumeLayout(false);
+            panelHome.ResumeLayout(false);
             panelImportar.ResumeLayout(false);
-            panel7.ResumeLayout(false);
+            panelData.ResumeLayout(false);
+            panelUser.ResumeLayout(false);
+            panelSettings.ResumeLayout(false);
+            panelLogOut.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -206,9 +324,17 @@
         private Button btnImportarDoc;
         private Panel panelImportar;
         private PictureBox btnHam;
-        private Panel panel7;
+        private Panel panelData;
         private Button btnDados;
         private System.Windows.Forms.Timer sidebarTransition;
         private Panel panel5;
+        private Panel panelHome;
+        private Button btnHome;
+        private Panel panelUser;
+        private Button btnUser;
+        private Panel panelSettings;
+        private Button btnSettings;
+        private Panel panelLogOut;
+        private Button btnLogOut;
     }
 }
