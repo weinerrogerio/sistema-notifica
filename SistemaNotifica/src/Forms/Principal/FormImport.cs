@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SistemaNotifica
+namespace SistemaNotifica.src.Forms.Principal
 {
-    public partial class FormLogin : Form
+    public partial class FormImport : Form
     {
-        public FormLogin()
+        public FormImport()
         {
             InitializeComponent();
         }

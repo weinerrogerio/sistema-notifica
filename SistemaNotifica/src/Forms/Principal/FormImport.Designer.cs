@@ -1,6 +1,6 @@
-﻿namespace SistemaNotifica
+﻿namespace SistemaNotifica.src.Forms.Principal
 {
-    partial class FormLogin
+    partial class FormImport
     {
         /// <summary>
         /// Required designer variable.
@@ -28,33 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
             SuspendLayout();
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(322, 186);
-            label1.Name = "label1";
-            label1.Size = new Size(74, 15);
-            label1.TabIndex = 0;
-            label1.Text = "TESTE TESTE";
-            // 
-            // FormLogin
+            // FormImport
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(label1);
+            ClientSize = new Size(860, 528);
             FormBorderStyle = FormBorderStyle.None;
-            Name = "FormLogin";
-            Text = "Form2";
+            Name = "FormImport";
+            Text = "FormImport";
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Label label1;
     }
 }

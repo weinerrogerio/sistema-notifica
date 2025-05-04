@@ -1,4 +1,5 @@
-﻿namespace SistemaNotifica
+﻿
+namespace SistemaNotifica
 {
     partial class FormOrigin
     {
@@ -46,9 +47,12 @@
             btnUser = new Button();
             panelSettings = new Panel();
             btnSettings = new Button();
+            panelSobre = new Panel();
+            btnSobre = new Button();
             panelLogOut = new Panel();
             btnLogOut = new Button();
             sidebarTransition = new System.Windows.Forms.Timer(components);
+            pnlMain = new Panel();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnHam).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
@@ -58,12 +62,13 @@
             panelData.SuspendLayout();
             panelUser.SuspendLayout();
             panelSettings.SuspendLayout();
+            panelSobre.SuspendLayout();
             panelLogOut.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.BackColor = Color.White;
+            panel1.BackColor = Color.Silver;
             panel1.Controls.Add(btnHam);
             panel1.Controls.Add(nightControlBox1);
             panel1.Controls.Add(imgLogo);
@@ -72,6 +77,7 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(927, 33);
             panel1.TabIndex = 0;
+            panel1.Paint += panel1_Paint;
             // 
             // btnHam
             // 
@@ -127,6 +133,7 @@
             sidebarMenu.Controls.Add(panelData);
             sidebarMenu.Controls.Add(panelUser);
             sidebarMenu.Controls.Add(panelSettings);
+            sidebarMenu.Controls.Add(panelSobre);
             sidebarMenu.Controls.Add(panelLogOut);
             sidebarMenu.Dock = DockStyle.Left;
             sidebarMenu.FlowDirection = FlowDirection.TopDown;
@@ -165,6 +172,7 @@
             btnHome.TabIndex = 2;
             btnHome.Text = "Home";
             btnHome.UseVisualStyleBackColor = false;
+            btnHome.Click += btnHome_Click;
             // 
             // panelImportar
             // 
@@ -189,6 +197,7 @@
             btnImportarDoc.TabIndex = 2;
             btnImportarDoc.Text = "     Importar";
             btnImportarDoc.UseVisualStyleBackColor = false;
+            btnImportarDoc.Click += btnImportarDoc_Click;
             // 
             // panelData
             // 
@@ -262,10 +271,34 @@
             btnSettings.Text = "Configurações";
             btnSettings.UseVisualStyleBackColor = false;
             // 
+            // panelSobre
+            // 
+            panelSobre.Controls.Add(btnSobre);
+            panelSobre.Location = new Point(3, 282);
+            panelSobre.Name = "panelSobre";
+            panelSobre.Size = new Size(187, 44);
+            panelSobre.TabIndex = 8;
+            // 
+            // btnSobre
+            // 
+            btnSobre.BackColor = Color.Black;
+            btnSobre.FlatStyle = FlatStyle.Flat;
+            btnSobre.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnSobre.ForeColor = Color.White;
+            btnSobre.Image = (Image)resources.GetObject("btnSobre.Image");
+            btnSobre.ImageAlign = ContentAlignment.MiddleLeft;
+            btnSobre.Location = new Point(-9, -5);
+            btnSobre.Name = "btnSobre";
+            btnSobre.Padding = new Padding(15, 0, 0, 0);
+            btnSobre.Size = new Size(214, 56);
+            btnSobre.TabIndex = 2;
+            btnSobre.Text = "Sobre";
+            btnSobre.UseVisualStyleBackColor = false;
+            // 
             // panelLogOut
             // 
             panelLogOut.Controls.Add(btnLogOut);
-            panelLogOut.Location = new Point(3, 282);
+            panelLogOut.Location = new Point(3, 332);
             panelLogOut.Name = "panelLogOut";
             panelLogOut.Size = new Size(187, 44);
             panelLogOut.TabIndex = 7;
@@ -291,11 +324,22 @@
             sidebarTransition.Interval = 5;
             sidebarTransition.Tick += sidebarTransition_Tick;
             // 
+            // pnlMain
+            // 
+            pnlMain.BackColor = Color.WhiteSmoke;
+            pnlMain.Dock = DockStyle.Fill;
+            pnlMain.Location = new Point(50, 33);
+            pnlMain.Name = "pnlMain";
+            pnlMain.Size = new Size(877, 440);
+            pnlMain.TabIndex = 3;
+            pnlMain.Paint += pnlMain_Paint;
+            // 
             // FormOrigin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(927, 473);
+            Controls.Add(pnlMain);
             Controls.Add(sidebarMenu);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
@@ -311,8 +355,14 @@
             panelData.ResumeLayout(false);
             panelUser.ResumeLayout(false);
             panelSettings.ResumeLayout(false);
+            panelSobre.ResumeLayout(false);
             panelLogOut.ResumeLayout(false);
             ResumeLayout(false);
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            
         }
 
         #endregion
@@ -336,5 +386,8 @@
         private Button btnSettings;
         private Panel panelLogOut;
         private Button btnLogOut;
+        private Panel pnlMain;
+        private Panel panelSobre;
+        private Button btnSobre;
     }
 }
