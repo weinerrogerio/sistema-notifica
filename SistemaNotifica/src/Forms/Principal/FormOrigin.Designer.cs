@@ -64,6 +64,7 @@ namespace SistemaNotifica
             panelSettings.SuspendLayout();
             panelSobre.SuspendLayout();
             panelLogOut.SuspendLayout();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -128,19 +129,20 @@ namespace SistemaNotifica
             // 
             sidebarMenu.BackColor = Color.Black;
             sidebarMenu.Controls.Add(panel5);
-            sidebarMenu.Controls.Add(panelHome);
-            sidebarMenu.Controls.Add(panelImportar);
-            sidebarMenu.Controls.Add(panelData);
-            sidebarMenu.Controls.Add(panelUser);
             sidebarMenu.Controls.Add(panelSettings);
             sidebarMenu.Controls.Add(panelSobre);
             sidebarMenu.Controls.Add(panelLogOut);
+            sidebarMenu.Controls.Add(panelUser);
+            sidebarMenu.Controls.Add(panelData);
+            sidebarMenu.Controls.Add(panelImportar);
+            sidebarMenu.Controls.Add(panelHome);
             sidebarMenu.Dock = DockStyle.Left;
             sidebarMenu.FlowDirection = FlowDirection.TopDown;
-            sidebarMenu.Location = new Point(0, 33);
+            sidebarMenu.Location = new Point(0, 0);
             sidebarMenu.Name = "sidebarMenu";
-            sidebarMenu.Size = new Size(50, 440);
+            sidebarMenu.Size = new Size(190, 440);
             sidebarMenu.TabIndex = 1;
+            ///sidebarMenu.Paint += this.sidebarMenu_Paint;
             // 
             // panel5
             // 
@@ -148,11 +150,12 @@ namespace SistemaNotifica
             panel5.Name = "panel5";
             panel5.Size = new Size(200, 23);
             panel5.TabIndex = 4;
+            panel5.Paint += panel5_Paint;
             // 
             // panelHome
             // 
             panelHome.Controls.Add(btnHome);
-            panelHome.Location = new Point(3, 32);
+            panelHome.Location = new Point(3, 282);
             panelHome.Name = "panelHome";
             panelHome.Size = new Size(187, 44);
             panelHome.TabIndex = 5;
@@ -165,7 +168,7 @@ namespace SistemaNotifica
             btnHome.ForeColor = Color.White;
             btnHome.Image = (Image)resources.GetObject("btnHome.Image");
             btnHome.ImageAlign = ContentAlignment.MiddleLeft;
-            btnHome.Location = new Point(-12, -5);
+            btnHome.Location = new Point(-11, -5);
             btnHome.Name = "btnHome";
             btnHome.Padding = new Padding(15, 0, 0, 0);
             btnHome.Size = new Size(214, 56);
@@ -177,7 +180,7 @@ namespace SistemaNotifica
             // panelImportar
             // 
             panelImportar.Controls.Add(btnImportarDoc);
-            panelImportar.Location = new Point(3, 82);
+            panelImportar.Location = new Point(3, 232);
             panelImportar.Name = "panelImportar";
             panelImportar.Size = new Size(187, 44);
             panelImportar.TabIndex = 3;
@@ -202,7 +205,7 @@ namespace SistemaNotifica
             // panelData
             // 
             panelData.Controls.Add(btnDados);
-            panelData.Location = new Point(3, 132);
+            panelData.Location = new Point(3, 182);
             panelData.Name = "panelData";
             panelData.Size = new Size(187, 44);
             panelData.TabIndex = 4;
@@ -215,7 +218,7 @@ namespace SistemaNotifica
             btnDados.ForeColor = Color.White;
             btnDados.Image = (Image)resources.GetObject("btnDados.Image");
             btnDados.ImageAlign = ContentAlignment.MiddleLeft;
-            btnDados.Location = new Point(-11, -5);
+            btnDados.Location = new Point(-12, -5);
             btnDados.Name = "btnDados";
             btnDados.Padding = new Padding(15, 0, 0, 0);
             btnDados.Size = new Size(214, 56);
@@ -226,7 +229,7 @@ namespace SistemaNotifica
             // panelUser
             // 
             panelUser.Controls.Add(btnUser);
-            panelUser.Location = new Point(3, 182);
+            panelUser.Location = new Point(3, 132);
             panelUser.Name = "panelUser";
             panelUser.Size = new Size(187, 44);
             panelUser.TabIndex = 5;
@@ -250,7 +253,7 @@ namespace SistemaNotifica
             // panelSettings
             // 
             panelSettings.Controls.Add(btnSettings);
-            panelSettings.Location = new Point(3, 232);
+            panelSettings.Location = new Point(3, 32);
             panelSettings.Name = "panelSettings";
             panelSettings.Size = new Size(187, 44);
             panelSettings.TabIndex = 6;
@@ -344,6 +347,7 @@ namespace SistemaNotifica
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
             IsMdiContainer = true;
+            MdiChildrenMinimizedAnchorBottom = false;
             Name = "FormOrigin";
             Text = "Form1";
             panel1.ResumeLayout(false);
@@ -357,6 +361,8 @@ namespace SistemaNotifica
             panelSettings.ResumeLayout(false);
             panelSobre.ResumeLayout(false);
             panelLogOut.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             ResumeLayout(false);
         }
 
