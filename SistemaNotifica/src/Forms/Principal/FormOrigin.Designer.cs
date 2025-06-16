@@ -1,4 +1,5 @@
-﻿namespace SistemaNotifica
+﻿
+namespace SistemaNotifica
 {
     partial class FormOrigin
     {
@@ -46,11 +47,12 @@
             btnUser = new Button();
             panelSettings = new Panel();
             btnSettings = new Button();
+            panelSobre = new Panel();
+            btnSobre = new Button();
             panelLogOut = new Panel();
             btnLogOut = new Button();
             sidebarTransition = new System.Windows.Forms.Timer(components);
-            panel2 = new Panel();
-            label1asdasd = new Label();
+            pnlMain = new Panel();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnHam).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
@@ -60,13 +62,13 @@
             panelData.SuspendLayout();
             panelUser.SuspendLayout();
             panelSettings.SuspendLayout();
+            panelSobre.SuspendLayout();
             panelLogOut.SuspendLayout();
-            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.BackColor = Color.White;
+            panel1.BackColor = Color.Silver;
             panel1.Controls.Add(btnHam);
             panel1.Controls.Add(nightControlBox1);
             panel1.Controls.Add(imgLogo);
@@ -75,6 +77,7 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(927, 33);
             panel1.TabIndex = 0;
+            panel1.Paint += panel1_Paint;
             // 
             // btnHam
             // 
@@ -125,19 +128,19 @@
             // 
             sidebarMenu.BackColor = Color.Black;
             sidebarMenu.Controls.Add(panel5);
-            sidebarMenu.Controls.Add(panelSettings);
-            sidebarMenu.Controls.Add(panelLogOut);
-            sidebarMenu.Controls.Add(panelUser);
-            sidebarMenu.Controls.Add(panelData);
-            sidebarMenu.Controls.Add(panelImportar);
             sidebarMenu.Controls.Add(panelHome);
+            sidebarMenu.Controls.Add(panelImportar);
+            sidebarMenu.Controls.Add(panelData);
+            sidebarMenu.Controls.Add(panelUser);
+            sidebarMenu.Controls.Add(panelSettings);
+            sidebarMenu.Controls.Add(panelSobre);
+            sidebarMenu.Controls.Add(panelLogOut);
             sidebarMenu.Dock = DockStyle.Left;
             sidebarMenu.FlowDirection = FlowDirection.TopDown;
-            sidebarMenu.Location = new Point(0, 0);
+            sidebarMenu.Location = new Point(0, 33);
             sidebarMenu.Name = "sidebarMenu";
-            sidebarMenu.Size = new Size(190, 440);
+            sidebarMenu.Size = new Size(50, 440);
             sidebarMenu.TabIndex = 1;
-            ///sidebarMenu.Paint += this.sidebarMenu_Paint;
             // 
             // panel5
             // 
@@ -145,12 +148,11 @@
             panel5.Name = "panel5";
             panel5.Size = new Size(200, 23);
             panel5.TabIndex = 4;
-            panel5.Paint += panel5_Paint;
             // 
             // panelHome
             // 
             panelHome.Controls.Add(btnHome);
-            panelHome.Location = new Point(3, 282);
+            panelHome.Location = new Point(3, 32);
             panelHome.Name = "panelHome";
             panelHome.Size = new Size(187, 44);
             panelHome.TabIndex = 5;
@@ -163,18 +165,19 @@
             btnHome.ForeColor = Color.White;
             btnHome.Image = (Image)resources.GetObject("btnHome.Image");
             btnHome.ImageAlign = ContentAlignment.MiddleLeft;
-            btnHome.Location = new Point(-11, -5);
+            btnHome.Location = new Point(-12, -5);
             btnHome.Name = "btnHome";
             btnHome.Padding = new Padding(15, 0, 0, 0);
             btnHome.Size = new Size(214, 56);
             btnHome.TabIndex = 2;
             btnHome.Text = "Home";
             btnHome.UseVisualStyleBackColor = false;
+            btnHome.Click += btnHome_Click;
             // 
             // panelImportar
             // 
             panelImportar.Controls.Add(btnImportarDoc);
-            panelImportar.Location = new Point(3, 232);
+            panelImportar.Location = new Point(3, 82);
             panelImportar.Name = "panelImportar";
             panelImportar.Size = new Size(187, 44);
             panelImportar.TabIndex = 3;
@@ -194,11 +197,12 @@
             btnImportarDoc.TabIndex = 2;
             btnImportarDoc.Text = "     Importar";
             btnImportarDoc.UseVisualStyleBackColor = false;
+            btnImportarDoc.Click += btnImportarDoc_Click;
             // 
             // panelData
             // 
             panelData.Controls.Add(btnDados);
-            panelData.Location = new Point(3, 182);
+            panelData.Location = new Point(3, 132);
             panelData.Name = "panelData";
             panelData.Size = new Size(187, 44);
             panelData.TabIndex = 4;
@@ -211,7 +215,7 @@
             btnDados.ForeColor = Color.White;
             btnDados.Image = (Image)resources.GetObject("btnDados.Image");
             btnDados.ImageAlign = ContentAlignment.MiddleLeft;
-            btnDados.Location = new Point(-12, -5);
+            btnDados.Location = new Point(-11, -5);
             btnDados.Name = "btnDados";
             btnDados.Padding = new Padding(15, 0, 0, 0);
             btnDados.Size = new Size(214, 56);
@@ -222,7 +226,7 @@
             // panelUser
             // 
             panelUser.Controls.Add(btnUser);
-            panelUser.Location = new Point(3, 132);
+            panelUser.Location = new Point(3, 182);
             panelUser.Name = "panelUser";
             panelUser.Size = new Size(187, 44);
             panelUser.TabIndex = 5;
@@ -246,7 +250,7 @@
             // panelSettings
             // 
             panelSettings.Controls.Add(btnSettings);
-            panelSettings.Location = new Point(3, 32);
+            panelSettings.Location = new Point(3, 232);
             panelSettings.Name = "panelSettings";
             panelSettings.Size = new Size(187, 44);
             panelSettings.TabIndex = 6;
@@ -267,10 +271,34 @@
             btnSettings.Text = "Configurações";
             btnSettings.UseVisualStyleBackColor = false;
             // 
+            // panelSobre
+            // 
+            panelSobre.Controls.Add(btnSobre);
+            panelSobre.Location = new Point(3, 282);
+            panelSobre.Name = "panelSobre";
+            panelSobre.Size = new Size(187, 44);
+            panelSobre.TabIndex = 8;
+            // 
+            // btnSobre
+            // 
+            btnSobre.BackColor = Color.Black;
+            btnSobre.FlatStyle = FlatStyle.Flat;
+            btnSobre.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnSobre.ForeColor = Color.White;
+            btnSobre.Image = (Image)resources.GetObject("btnSobre.Image");
+            btnSobre.ImageAlign = ContentAlignment.MiddleLeft;
+            btnSobre.Location = new Point(-9, -5);
+            btnSobre.Name = "btnSobre";
+            btnSobre.Padding = new Padding(15, 0, 0, 0);
+            btnSobre.Size = new Size(214, 56);
+            btnSobre.TabIndex = 2;
+            btnSobre.Text = "Sobre";
+            btnSobre.UseVisualStyleBackColor = false;
+            // 
             // panelLogOut
             // 
             panelLogOut.Controls.Add(btnLogOut);
-            panelLogOut.Location = new Point(3, 82);
+            panelLogOut.Location = new Point(3, 332);
             panelLogOut.Name = "panelLogOut";
             panelLogOut.Size = new Size(187, 44);
             panelLogOut.TabIndex = 7;
@@ -296,37 +324,26 @@
             sidebarTransition.Interval = 5;
             sidebarTransition.Tick += sidebarTransition_Tick;
             // 
-            // panel2
+            // pnlMain
             // 
-            panel2.Controls.Add(label1asdasd);
-            panel2.Controls.Add(sidebarMenu);
-            panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(0, 33);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(927, 440);
-            panel2.TabIndex = 3;
-            // 
-            // label1asdasd
-            // 
-            label1asdasd.AccessibleRole = AccessibleRole.None;
-            label1asdasd.AutoSize = true;
-            label1asdasd.Location = new Point(196, 77);
-            label1asdasd.Name = "label1asdasd";
-            label1asdasd.Size = new Size(224, 15);
-            label1asdasd.TabIndex = 2;
-            label1asdasd.Text = "label1label1label1label1label1label1label1";
-            label1asdasd.Click += label1_Click;
+            pnlMain.BackColor = Color.WhiteSmoke;
+            pnlMain.Dock = DockStyle.Fill;
+            pnlMain.Location = new Point(50, 33);
+            pnlMain.Name = "pnlMain";
+            pnlMain.Size = new Size(877, 440);
+            pnlMain.TabIndex = 3;
+            pnlMain.Paint += pnlMain_Paint;
             // 
             // FormOrigin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(927, 473);
-            Controls.Add(panel2);
+            Controls.Add(pnlMain);
+            Controls.Add(sidebarMenu);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
             IsMdiContainer = true;
-            MdiChildrenMinimizedAnchorBottom = false;
             Name = "FormOrigin";
             Text = "Form1";
             panel1.ResumeLayout(false);
@@ -338,10 +355,14 @@
             panelData.ResumeLayout(false);
             panelUser.ResumeLayout(false);
             panelSettings.ResumeLayout(false);
+            panelSobre.ResumeLayout(false);
             panelLogOut.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
             ResumeLayout(false);
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            
         }
 
         #endregion
@@ -365,7 +386,8 @@
         private Button btnSettings;
         private Panel panelLogOut;
         private Button btnLogOut;
-        private Panel panel2;
-        private Label label1asdasd;
+        private Panel pnlMain;
+        private Panel panelSobre;
+        private Button btnSobre;
     }
 }
