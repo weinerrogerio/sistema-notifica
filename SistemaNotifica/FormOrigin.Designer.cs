@@ -49,6 +49,8 @@
             panelLogOut = new Panel();
             btnLogOut = new Button();
             sidebarTransition = new System.Windows.Forms.Timer(components);
+            panel2 = new Panel();
+            label1asdasd = new Label();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnHam).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
@@ -59,6 +61,7 @@
             panelUser.SuspendLayout();
             panelSettings.SuspendLayout();
             panelLogOut.SuspendLayout();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -122,18 +125,19 @@
             // 
             sidebarMenu.BackColor = Color.Black;
             sidebarMenu.Controls.Add(panel5);
-            sidebarMenu.Controls.Add(panelHome);
-            sidebarMenu.Controls.Add(panelImportar);
-            sidebarMenu.Controls.Add(panelData);
-            sidebarMenu.Controls.Add(panelUser);
             sidebarMenu.Controls.Add(panelSettings);
             sidebarMenu.Controls.Add(panelLogOut);
+            sidebarMenu.Controls.Add(panelUser);
+            sidebarMenu.Controls.Add(panelData);
+            sidebarMenu.Controls.Add(panelImportar);
+            sidebarMenu.Controls.Add(panelHome);
             sidebarMenu.Dock = DockStyle.Left;
             sidebarMenu.FlowDirection = FlowDirection.TopDown;
-            sidebarMenu.Location = new Point(0, 33);
+            sidebarMenu.Location = new Point(0, 0);
             sidebarMenu.Name = "sidebarMenu";
-            sidebarMenu.Size = new Size(50, 440);
+            sidebarMenu.Size = new Size(190, 440);
             sidebarMenu.TabIndex = 1;
+            ///sidebarMenu.Paint += this.sidebarMenu_Paint;
             // 
             // panel5
             // 
@@ -141,11 +145,12 @@
             panel5.Name = "panel5";
             panel5.Size = new Size(200, 23);
             panel5.TabIndex = 4;
+            panel5.Paint += panel5_Paint;
             // 
             // panelHome
             // 
             panelHome.Controls.Add(btnHome);
-            panelHome.Location = new Point(3, 32);
+            panelHome.Location = new Point(3, 282);
             panelHome.Name = "panelHome";
             panelHome.Size = new Size(187, 44);
             panelHome.TabIndex = 5;
@@ -158,7 +163,7 @@
             btnHome.ForeColor = Color.White;
             btnHome.Image = (Image)resources.GetObject("btnHome.Image");
             btnHome.ImageAlign = ContentAlignment.MiddleLeft;
-            btnHome.Location = new Point(-12, -5);
+            btnHome.Location = new Point(-11, -5);
             btnHome.Name = "btnHome";
             btnHome.Padding = new Padding(15, 0, 0, 0);
             btnHome.Size = new Size(214, 56);
@@ -169,7 +174,7 @@
             // panelImportar
             // 
             panelImportar.Controls.Add(btnImportarDoc);
-            panelImportar.Location = new Point(3, 82);
+            panelImportar.Location = new Point(3, 232);
             panelImportar.Name = "panelImportar";
             panelImportar.Size = new Size(187, 44);
             panelImportar.TabIndex = 3;
@@ -193,7 +198,7 @@
             // panelData
             // 
             panelData.Controls.Add(btnDados);
-            panelData.Location = new Point(3, 132);
+            panelData.Location = new Point(3, 182);
             panelData.Name = "panelData";
             panelData.Size = new Size(187, 44);
             panelData.TabIndex = 4;
@@ -206,7 +211,7 @@
             btnDados.ForeColor = Color.White;
             btnDados.Image = (Image)resources.GetObject("btnDados.Image");
             btnDados.ImageAlign = ContentAlignment.MiddleLeft;
-            btnDados.Location = new Point(-11, -5);
+            btnDados.Location = new Point(-12, -5);
             btnDados.Name = "btnDados";
             btnDados.Padding = new Padding(15, 0, 0, 0);
             btnDados.Size = new Size(214, 56);
@@ -217,7 +222,7 @@
             // panelUser
             // 
             panelUser.Controls.Add(btnUser);
-            panelUser.Location = new Point(3, 182);
+            panelUser.Location = new Point(3, 132);
             panelUser.Name = "panelUser";
             panelUser.Size = new Size(187, 44);
             panelUser.TabIndex = 5;
@@ -241,7 +246,7 @@
             // panelSettings
             // 
             panelSettings.Controls.Add(btnSettings);
-            panelSettings.Location = new Point(3, 232);
+            panelSettings.Location = new Point(3, 32);
             panelSettings.Name = "panelSettings";
             panelSettings.Size = new Size(187, 44);
             panelSettings.TabIndex = 6;
@@ -265,7 +270,7 @@
             // panelLogOut
             // 
             panelLogOut.Controls.Add(btnLogOut);
-            panelLogOut.Location = new Point(3, 282);
+            panelLogOut.Location = new Point(3, 82);
             panelLogOut.Name = "panelLogOut";
             panelLogOut.Size = new Size(187, 44);
             panelLogOut.TabIndex = 7;
@@ -291,15 +296,37 @@
             sidebarTransition.Interval = 5;
             sidebarTransition.Tick += sidebarTransition_Tick;
             // 
+            // panel2
+            // 
+            panel2.Controls.Add(label1asdasd);
+            panel2.Controls.Add(sidebarMenu);
+            panel2.Dock = DockStyle.Fill;
+            panel2.Location = new Point(0, 33);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(927, 440);
+            panel2.TabIndex = 3;
+            // 
+            // label1asdasd
+            // 
+            label1asdasd.AccessibleRole = AccessibleRole.None;
+            label1asdasd.AutoSize = true;
+            label1asdasd.Location = new Point(196, 77);
+            label1asdasd.Name = "label1asdasd";
+            label1asdasd.Size = new Size(224, 15);
+            label1asdasd.TabIndex = 2;
+            label1asdasd.Text = "label1label1label1label1label1label1label1";
+            label1asdasd.Click += label1_Click;
+            // 
             // FormOrigin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(927, 473);
-            Controls.Add(sidebarMenu);
+            Controls.Add(panel2);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
             IsMdiContainer = true;
+            MdiChildrenMinimizedAnchorBottom = false;
             Name = "FormOrigin";
             Text = "Form1";
             panel1.ResumeLayout(false);
@@ -312,6 +339,8 @@
             panelUser.ResumeLayout(false);
             panelSettings.ResumeLayout(false);
             panelLogOut.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -336,5 +365,7 @@
         private Button btnSettings;
         private Panel panelLogOut;
         private Button btnLogOut;
+        private Panel panel2;
+        private Label label1asdasd;
     }
 }

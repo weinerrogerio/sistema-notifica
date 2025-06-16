@@ -13,7 +13,7 @@ namespace SistemaNotifica
 
         }
 
-        Boolean sidebarExpand = false;   
+        Boolean sidebarExpand = false;
 
         private void sidebarTransition_Tick(object sender, EventArgs e)
         {
@@ -25,7 +25,7 @@ namespace SistemaNotifica
                     sidebarExpand = false;
                     sidebarTransition.Stop();
                     // ajusta o tamanho dos containers dos botões dentro do width do menu
-                    adjustWidth(sidebarMenu.Width);                    
+                    adjustWidth(sidebarMenu.Width);
                 }
 
             }
@@ -36,7 +36,7 @@ namespace SistemaNotifica
                 {
                     sidebarExpand = true;
                     sidebarTransition.Stop();
-                    
+
                     // ajusta o tamanho dos containers dos botões dentro do width do menu
                     adjustWidth(sidebarMenu.Width);
 
@@ -56,6 +56,17 @@ namespace SistemaNotifica
         private void btnHam_Click(object sender, EventArgs e)
         {
             sidebarTransition.Start();
+
+        }
+
+        private void panel5_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

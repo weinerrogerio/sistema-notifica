@@ -1,3 +1,6 @@
+using SistemaNotifica.src.Forms;
+using SistemaNotifica.src.Forms.Template;
+
 namespace SistemaNotifica
 {
     internal static class Program
@@ -9,9 +12,9 @@ namespace SistemaNotifica
         static void Main()
         {
             // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+            // see https://aka.ms/applicationconfiguration.            
             ApplicationConfiguration.Initialize();
-            Application.Run(new FormOrigin());
+            Application.Run(new TemplateManagerForm());
         }
     }
 }
