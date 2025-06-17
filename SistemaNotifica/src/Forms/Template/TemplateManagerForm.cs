@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using SistemaNotifica.src.Models;
 using SistemaNotifica.src.Services;
-
+using SistemaNotifica.src.Styles;
+using SistemaNotifica.src.Controls;
+//ATUALIZAR ESSE MODULO - ADICIONAR TRATAMENTOS DE ERROS E AVISOS - ADICIONAR TIMERS PARA TIMEOUTS
 namespace SistemaNotifica.src.Forms.Template
 {
     public partial class TemplateManagerForm : Form
@@ -25,14 +27,53 @@ namespace SistemaNotifica.src.Forms.Template
             _apiService = new ApiService();
             _templates = new List<EmailTemplate>();
             InitializeAsync();
+            ConfigurarBotoes();
         }
 
-        
 
         private async void InitializeAsync()
         {
             await CarregarTemplates();
         }
+        private void ConfigurarBotoes()
+        {
+            // Criar botões programaticamente
+            var btnDefault = new RoundedButton();
+            var btnPrimary = new RoundedButton();
+            var btnSuccess = new RoundedButton();
+            var btnDanger = new RoundedButton();
+            var btnCustom = new RoundedButton();
+
+            // Aplicar estilos
+            ButtonStyles.ApplyDefaultStyle(btnDefault);
+            btnDefault.ButtonText = "Default";
+            btnDefault.Location = new Point(10, 10);
+            btnDefault.Click += (s, e) => MessageBox.Show("Default clicked!");
+
+            ButtonStyles.ApplyPrimaryStyle(btnPrimary);
+            btnPrimary.ButtonText = "Primary";
+            btnPrimary.Location = new Point(120, 10);
+
+            ButtonStyles.ApplySuccessStyle(btnSuccess);
+            btnSuccess.ButtonText = "Success";
+            btnSuccess.Location = new Point(230, 10);
+
+            ButtonStyles.ApplyDangerStyle(btnDanger);
+            btnDanger.ButtonText = "Danger";
+            btnDanger.Location = new Point(340, 10);
+
+            // Estilo totalmente personalizado
+            ButtonStyles.ApplyCustomStyle(btnCustom,
+                Color.Purple, Color.White, 12);
+            btnCustom.ButtonText = "Custom";
+            btnCustom.Location = new Point(450, 10);
+
+            // Adicionar ao form
+            Controls.AddRange(new Control[] {
+            btnDefault, btnPrimary, btnSuccess, btnDanger, btnCustom
+        });
+        }
+
 
         private async Task CarregarTemplates()
         {

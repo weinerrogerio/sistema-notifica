@@ -28,190 +28,214 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-
-            // Configurações básicas do form
-            this.SuspendLayout();
-
-            this.Text = "Gerenciador de Templates";
-            this.Size = new System.Drawing.Size(1200, 800);
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-
-            // Status Strip
-            this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.lblStatus.Text = "Carregando...";
-            this.statusStrip.Items.Add(this.lblStatus);
-
-            // Main Split Container
-            this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.splitContainer.SplitterDistance = 400;
-            this.splitContainer.BeginInit();
-            this.splitContainer.SuspendLayout();
-
-            // Toolbar Panel
-            this.toolbarPanel = new System.Windows.Forms.Panel();
-            this.toolbarPanel.Height = 50;
-            this.toolbarPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.toolbarPanel.BackColor = System.Drawing.Color.FromArgb(240, 240, 240);
-
-            // Upload Button
-            this.btnUpload = new System.Windows.Forms.Button();
-            this.btnUpload.Text = "📁 Upload Template";
-            this.btnUpload.Location = new System.Drawing.Point(10, 12);
-            this.btnUpload.Size = new System.Drawing.Size(130, 30);
-            this.btnUpload.BackColor = System.Drawing.Color.FromArgb(76, 175, 80);
-            this.btnUpload.ForeColor = System.Drawing.Color.White;
-            this.btnUpload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUpload.UseVisualStyleBackColor = false;
-            this.btnUpload.Click += new System.EventHandler(this.BtnUpload_Click);
-
-            // Delete Button
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.btnDelete.Text = "🗑️ Excluir";
-            this.btnDelete.Location = new System.Drawing.Point(150, 12);
-            this.btnDelete.Size = new System.Drawing.Size(80, 30);
-            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(244, 67, 54);
-            this.btnDelete.ForeColor = System.Drawing.Color.White;
-            this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelete.UseVisualStyleBackColor = false;
-            this.btnDelete.Enabled = false;
-            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
-
-            // Set Default Button
-            this.btnSetPadrao = new System.Windows.Forms.Button();
-            this.btnSetPadrao.Text = "⭐ Definir como Padrão";
-            this.btnSetPadrao.Location = new System.Drawing.Point(240, 12);
-            this.btnSetPadrao.Size = new System.Drawing.Size(140, 30);
-            this.btnSetPadrao.BackColor = System.Drawing.Color.FromArgb(255, 193, 7);
-            this.btnSetPadrao.ForeColor = System.Drawing.Color.Black;
-            this.btnSetPadrao.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSetPadrao.UseVisualStyleBackColor = false;
-            this.btnSetPadrao.Enabled = false;
-            this.btnSetPadrao.Click += new System.EventHandler(this.BtnSetPadrao_Click);
-
-            // Preview Button
-            this.btnPreview = new System.Windows.Forms.Button();
-            this.btnPreview.Text = "👁️ Visualizar";
-            this.btnPreview.Location = new System.Drawing.Point(390, 12);
-            this.btnPreview.Size = new System.Drawing.Size(100, 30);
-            this.btnPreview.BackColor = System.Drawing.Color.FromArgb(33, 150, 243);
-            this.btnPreview.ForeColor = System.Drawing.Color.White;
-            this.btnPreview.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPreview.UseVisualStyleBackColor = false;
-            this.btnPreview.Enabled = false;
-            this.btnPreview.Click += new System.EventHandler(this.BtnPreview_Click);
-
-            // Refresh Button
-            this.btnRefresh = new System.Windows.Forms.Button();
-            this.btnRefresh.Text = "🔄 Atualizar";
-            this.btnRefresh.Location = new System.Drawing.Point(500, 12);
-            this.btnRefresh.Size = new System.Drawing.Size(90, 30);
-            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(96, 125, 139);
-            this.btnRefresh.ForeColor = System.Drawing.Color.White;
-            this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRefresh.UseVisualStyleBackColor = false;
-            this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
-
-            // Add buttons to toolbar
-            this.toolbarPanel.Controls.Add(this.btnUpload);
-            this.toolbarPanel.Controls.Add(this.btnDelete);
-            this.toolbarPanel.Controls.Add(this.btnSetPadrao);
-            this.toolbarPanel.Controls.Add(this.btnPreview);
-            this.toolbarPanel.Controls.Add(this.btnRefresh);
-
-            // DataGridView
-            this.dgvTemplates = new System.Windows.Forms.DataGridView();
-            this.dgvTemplates.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvTemplates.AutoGenerateColumns = false;
-            this.dgvTemplates.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvTemplates.MultiSelect = false;
-            this.dgvTemplates.ReadOnly = true;
-            this.dgvTemplates.AllowUserToAddRows = false;
-            this.dgvTemplates.AllowUserToDeleteRows = false;
-            this.dgvTemplates.BackgroundColor = System.Drawing.Color.White;
-            this.dgvTemplates.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dgvTemplates.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-
-            // Create and add columns
-            this.colId = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colId.Name = "Id";
-            this.colId.HeaderText = "ID";
-            this.colId.DataPropertyName = "Id";
-            this.colId.Width = 60;
-            this.dgvTemplates.Columns.Add(this.colId);
-
-            this.colNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colNome.Name = "Nome";
-            this.colNome.HeaderText = "Nome";
-            this.colNome.DataPropertyName = "Nome";
-            this.colNome.Width = 200;
-            this.dgvTemplates.Columns.Add(this.colNome);
-
-            this.colDescricao = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colDescricao.Name = "Descricao";
-            this.colDescricao.HeaderText = "Descrição";
-            this.colDescricao.DataPropertyName = "Descricao";
-            this.colDescricao.Width = 300;
-            this.dgvTemplates.Columns.Add(this.colDescricao);
-
-            this.colEhPadrao = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.colEhPadrao.Name = "EhPadrao";
-            this.colEhPadrao.HeaderText = "Padrão";
-            this.colEhPadrao.DataPropertyName = "EhPadrao";
-            this.colEhPadrao.Width = 70;
-            this.dgvTemplates.Columns.Add(this.colEhPadrao);
-
-            this.colNomeArquivo = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colNomeArquivo.Name = "NomeArquivo";
-            this.colNomeArquivo.HeaderText = "Arquivo";
-            this.colNomeArquivo.DataPropertyName = "NomeArquivo";
-            this.colNomeArquivo.Width = 150;
-            this.dgvTemplates.Columns.Add(this.colNomeArquivo);
-
-            this.colCriadoEm = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colCriadoEm.Name = "CriadoEm";
-            this.colCriadoEm.HeaderText = "Criado em";
-            this.colCriadoEm.DataPropertyName = "CriadoEm";
-            this.colCriadoEm.Width = 120;
-            this.colCriadoEm.DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
-            this.dgvTemplates.Columns.Add(this.colCriadoEm);
-
-            this.dgvTemplates.SelectionChanged += new System.EventHandler(this.DgvTemplates_SelectionChanged);
-
-            // Add controls to top panel
-            this.splitContainer.Panel1.Controls.Add(this.dgvTemplates);
-            this.splitContainer.Panel1.Controls.Add(this.toolbarPanel);
-
-            // Preview Label
-            this.previewLabel = new System.Windows.Forms.Label();
-            this.previewLabel.Text = "Preview do Template";
-            this.previewLabel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.previewLabel.Height = 30;
-            this.previewLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.previewLabel.BackColor = System.Drawing.Color.FromArgb(245, 245, 245);
-            this.previewLabel.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-            this.previewLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-
-            // WebBrowser
-            this.webPreview = new System.Windows.Forms.WebBrowser();
-            this.webPreview.Dock = System.Windows.Forms.DockStyle.Fill;
-
-            // Add controls to bottom panel
-            this.splitContainer.Panel2.Controls.Add(this.webPreview);
-            this.splitContainer.Panel2.Controls.Add(this.previewLabel);
-
-            // Add main controls to form
-            this.Controls.Add(this.splitContainer);
-            this.Controls.Add(this.statusStrip);
-
-            // Complete initialization
-            this.splitContainer.EndInit();
-            this.splitContainer.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            statusStrip = new StatusStrip();
+            lblStatus = new ToolStripStatusLabel();
+            splitContainer = new SplitContainer();
+            roundedButton1 = new SistemaNotifica.src.Controls.RoundedButton();
+            dgvTemplates = new DataGridView();
+            toolbarPanel = new Panel();
+            btnUpload = new Button();
+            btnDelete = new Button();
+            btnSetPadrao = new Button();
+            btnPreview = new Button();
+            btnRefresh = new Button();
+            webPreview = new WebBrowser();
+            previewLabel = new Label();
+            statusStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
+            splitContainer.Panel1.SuspendLayout();
+            splitContainer.Panel2.SuspendLayout();
+            splitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvTemplates).BeginInit();
+            toolbarPanel.SuspendLayout();
+            SuspendLayout();
+            // 
+            // statusStrip
+            // 
+            statusStrip.Items.AddRange(new ToolStripItem[] { lblStatus });
+            statusStrip.Location = new Point(0, 727);
+            statusStrip.Name = "statusStrip";
+            statusStrip.Size = new Size(1184, 22);
+            statusStrip.TabIndex = 1;
+            // 
+            // lblStatus
+            // 
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(78, 17);
+            lblStatus.Text = "Carregando...";
+            // 
+            // splitContainer
+            // 
+            splitContainer.Dock = DockStyle.Fill;
+            splitContainer.Location = new Point(0, 0);
+            splitContainer.Name = "splitContainer";
+            splitContainer.Orientation = Orientation.Horizontal;
+            // 
+            // splitContainer.Panel1
+            // 
+            splitContainer.Panel1.Controls.Add(roundedButton1);
+            splitContainer.Panel1.Controls.Add(dgvTemplates);
+            splitContainer.Panel1.Controls.Add(toolbarPanel);
+            // 
+            // splitContainer.Panel2
+            // 
+            splitContainer.Panel2.Controls.Add(webPreview);
+            splitContainer.Panel2.Controls.Add(previewLabel);
+            splitContainer.Size = new Size(1184, 727);
+            splitContainer.SplitterDistance = 516;
+            splitContainer.TabIndex = 0;
+            // 
+            // roundedButton1
+            // 
+            roundedButton1.BackColor = Color.Transparent;
+            roundedButton1.Font = new Font("Segoe UI", 9F);
+            roundedButton1.Location = new Point(22, 68);
+            roundedButton1.Name = "roundedButton1";
+            roundedButton1.Size = new Size(100, 35);
+            roundedButton1.TabIndex = 2;
+            // 
+            // dgvTemplates
+            // 
+            dgvTemplates.AllowUserToAddRows = false;
+            dgvTemplates.AllowUserToDeleteRows = false;
+            dgvTemplates.BackgroundColor = Color.White;
+            dgvTemplates.BorderStyle = BorderStyle.None;
+            dgvTemplates.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvTemplates.Dock = DockStyle.Fill;
+            dgvTemplates.Location = new Point(0, 50);
+            dgvTemplates.MultiSelect = false;
+            dgvTemplates.Name = "dgvTemplates";
+            dgvTemplates.ReadOnly = true;
+            dgvTemplates.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvTemplates.Size = new Size(1184, 466);
+            dgvTemplates.TabIndex = 0;
+            dgvTemplates.SelectionChanged += DgvTemplates_SelectionChanged;
+            // 
+            // toolbarPanel
+            // 
+            toolbarPanel.BackColor = Color.FromArgb(240, 240, 240);
+            toolbarPanel.Controls.Add(btnUpload);
+            toolbarPanel.Controls.Add(btnDelete);
+            toolbarPanel.Controls.Add(btnSetPadrao);
+            toolbarPanel.Controls.Add(btnPreview);
+            toolbarPanel.Controls.Add(btnRefresh);
+            toolbarPanel.Dock = DockStyle.Top;
+            toolbarPanel.Location = new Point(0, 0);
+            toolbarPanel.Name = "toolbarPanel";
+            toolbarPanel.Size = new Size(1184, 50);
+            toolbarPanel.TabIndex = 1;
+            // 
+            // btnUpload
+            // 
+            btnUpload.BackColor = Color.FromArgb(76, 175, 80);
+            btnUpload.FlatAppearance.BorderColor = Color.FromArgb(0, 255, 255, 255);
+            btnUpload.FlatAppearance.BorderSize = 0;
+            btnUpload.FlatAppearance.MouseDownBackColor = Color.FromArgb(40, 50, 60);
+            btnUpload.FlatAppearance.MouseOverBackColor = Color.FromArgb(70, 80, 90);
+            btnUpload.FlatStyle = FlatStyle.Flat;
+            btnUpload.ForeColor = Color.White;
+            btnUpload.Location = new Point(10, 12);
+            btnUpload.Name = "btnUpload";
+            btnUpload.Size = new Size(130, 30);
+            btnUpload.TabIndex = 0;
+            btnUpload.Text = "📁 Upload Template";
+            btnUpload.UseVisualStyleBackColor = false;
+            btnUpload.Click += BtnUpload_Click;
+            // 
+            // btnDelete
+            // 
+            btnDelete.BackColor = Color.FromArgb(244, 67, 54);
+            btnDelete.Enabled = false;
+            btnDelete.FlatStyle = FlatStyle.Flat;
+            btnDelete.ForeColor = Color.White;
+            btnDelete.Location = new Point(150, 12);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(80, 30);
+            btnDelete.TabIndex = 1;
+            btnDelete.Text = "🗑️ Excluir";
+            btnDelete.UseVisualStyleBackColor = false;
+            btnDelete.Click += BtnDelete_Click;
+            // 
+            // btnSetPadrao
+            // 
+            btnSetPadrao.BackColor = Color.FromArgb(255, 193, 7);
+            btnSetPadrao.Enabled = false;
+            btnSetPadrao.FlatStyle = FlatStyle.Flat;
+            btnSetPadrao.ForeColor = Color.Black;
+            btnSetPadrao.Location = new Point(240, 12);
+            btnSetPadrao.Name = "btnSetPadrao";
+            btnSetPadrao.Size = new Size(140, 30);
+            btnSetPadrao.TabIndex = 2;
+            btnSetPadrao.Text = "⭐ Definir como Padrão";
+            btnSetPadrao.UseVisualStyleBackColor = false;
+            btnSetPadrao.Click += BtnSetPadrao_Click;
+            // 
+            // btnPreview
+            // 
+            btnPreview.BackColor = Color.FromArgb(33, 150, 243);
+            btnPreview.Enabled = false;
+            btnPreview.FlatStyle = FlatStyle.Flat;
+            btnPreview.ForeColor = Color.White;
+            btnPreview.Location = new Point(390, 12);
+            btnPreview.Name = "btnPreview";
+            btnPreview.Size = new Size(100, 30);
+            btnPreview.TabIndex = 3;
+            btnPreview.Text = "👁️ Visualizar";
+            btnPreview.UseVisualStyleBackColor = false;
+            btnPreview.Click += BtnPreview_Click;
+            // 
+            // btnRefresh
+            // 
+            btnRefresh.BackColor = Color.FromArgb(96, 125, 139);
+            btnRefresh.FlatStyle = FlatStyle.Flat;
+            btnRefresh.ForeColor = Color.White;
+            btnRefresh.Location = new Point(500, 12);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(90, 30);
+            btnRefresh.TabIndex = 4;
+            btnRefresh.Text = "🔄 Atualizar";
+            btnRefresh.UseVisualStyleBackColor = false;
+            btnRefresh.Click += BtnRefresh_Click;
+            // 
+            // webPreview
+            // 
+            webPreview.Dock = DockStyle.Fill;
+            webPreview.Location = new Point(0, 30);
+            webPreview.Name = "webPreview";
+            webPreview.Size = new Size(1184, 177);
+            webPreview.TabIndex = 0;
+            // 
+            // previewLabel
+            // 
+            previewLabel.BackColor = Color.FromArgb(245, 245, 245);
+            previewLabel.Dock = DockStyle.Top;
+            previewLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            previewLabel.Location = new Point(0, 0);
+            previewLabel.Name = "previewLabel";
+            previewLabel.Padding = new Padding(10, 0, 0, 0);
+            previewLabel.Size = new Size(1184, 30);
+            previewLabel.TabIndex = 1;
+            previewLabel.Text = "Preview do Template";
+            previewLabel.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // TemplateManagerForm
+            // 
+            ClientSize = new Size(1184, 749);
+            Controls.Add(splitContainer);
+            Controls.Add(statusStrip);
+            Name = "TemplateManagerForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Gerenciador de Templates";
+            statusStrip.ResumeLayout(false);
+            statusStrip.PerformLayout();
+            splitContainer.Panel1.ResumeLayout(false);
+            splitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer).EndInit();
+            splitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvTemplates).EndInit();
+            toolbarPanel.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -237,5 +261,6 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn colEhPadrao;
         private System.Windows.Forms.DataGridViewTextBoxColumn colNomeArquivo;
         private System.Windows.Forms.DataGridViewTextBoxColumn colCriadoEm;
+        private Controls.RoundedButton roundedButton1;
     }
 }

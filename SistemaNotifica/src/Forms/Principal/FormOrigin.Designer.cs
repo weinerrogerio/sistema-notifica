@@ -64,7 +64,7 @@ namespace SistemaNotifica
             panelSettings.SuspendLayout();
             panelSobre.SuspendLayout();
             panelLogOut.SuspendLayout();
-            panel2.SuspendLayout();
+            //panel2.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -361,8 +361,8 @@ namespace SistemaNotifica
             panelSettings.ResumeLayout(false);
             panelSobre.ResumeLayout(false);
             panelLogOut.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
+            //panel2.ResumeLayout(false);
+            //panel2.PerformLayout();
             ResumeLayout(false);
         }
 
