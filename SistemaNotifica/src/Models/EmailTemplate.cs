@@ -1,34 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace SistemaNotifica.src.Models
 {
     public class EmailTemplate
     {
+        [JsonProperty("id")]
         public int Id { get; set; }
-        public required string NomeArquivo { get; set; }
-        public string? Descricao { get; set; }
-        public string? ConteudoHtml { get; set; }
-        public bool EhPadrao { get; set; } = false;
-        public bool Ativo { get; set; } = true;
-        public DateTime CriadoEm { get; set; }
-        public DateTime AtualizadoEm { get; set; }        
+
+        [JsonProperty("nomeArquivo")]
+        public string NomeArquivo { get; set; }
+
+        [JsonProperty("descricao")]
+        public string Descricao { get; set; }
+
+        [JsonProperty("conteudoHtml")]
+        public string ConteudoHtml { get; set; }
+
+        [JsonProperty("tamanhoArquivo")]
         public long TamanhoArquivo { get; set; }
+
+        [JsonProperty("tipoMime")]
+        public string TipoMime { get; set; }
+
+        [JsonProperty("hashConteudo")]
+        public string HashConteudo { get; set; }
+
+        [JsonProperty("ehPadrao")]
+        public bool EhPadrao { get; set; } = false;
+
+        [JsonProperty("ativo")]
+        public bool Ativo { get; set; } = true;
+
+        [JsonProperty("criadoEm")]
+        public DateTime CriadoEm { get; set; }
+
+        [JsonProperty("atualizadoEm")]
+        public DateTime AtualizadoEm { get; set; }
     }
 
     public class UploadTemplateRequest
     {
-        public required string NomeArquivo { get; set; }
-        public string? Descricao { get; set; }
-        public required string ConteudoHtml { get; set; }
+        public string NomeArquivo { get; set; }
+        public string Descricao { get; set; }
+        public string ConteudoHtml { get; set; }
     }
 
     public class PreviewRequest
     {
-        public required string ConteudoHtml { get; set; }
-        public Dictionary<string, object>? DadosTeste { get; set; }
+        public string ConteudoHtml { get; set; }
+        public Dictionary<string, object> DadosTeste { get; set; }
+    }
+
+    public class PreviewResponse
+    {
+        [JsonProperty("htmlProcessado")]
+        public string HtmlProcessado { get; set; }
     }
 }

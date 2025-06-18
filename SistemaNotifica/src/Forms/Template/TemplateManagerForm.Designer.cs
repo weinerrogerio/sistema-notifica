@@ -154,9 +154,8 @@
             dgvTemplates.Name = "dgvTemplates";
             dgvTemplates.ReadOnly = true;
             dgvTemplates.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTemplates.Size = new Size(198, 473);
+            dgvTemplates.Size = new Size(197, 473);
             dgvTemplates.TabIndex = 0;
-            dgvTemplates.SelectionChanged += DgvTemplates_SelectionChanged;
             // 
             // label1
             // 
@@ -167,7 +166,7 @@
             label1.Location = new Point(0, 0);
             label1.Name = "label1";
             label1.Padding = new Padding(10, 0, 0, 0);
-            label1.Size = new Size(698, 30);
+            label1.Size = new Size(699, 30);
             label1.TabIndex = 2;
             label1.Text = "Preview do Template";
             label1.TextAlign = ContentAlignment.MiddleLeft;
@@ -177,7 +176,7 @@
             webPreview.Dock = DockStyle.Fill;
             webPreview.Location = new Point(0, 0);
             webPreview.Name = "webPreview";
-            webPreview.Size = new Size(698, 475);
+            webPreview.Size = new Size(699, 475);
             webPreview.TabIndex = 0;
             // 
             // toolbarPanel
@@ -210,9 +209,9 @@
             pnlPreviewTemplateMain.Controls.Add(pnlPreviewTemplate);
             pnlPreviewTemplateMain.Controls.Add(label1);
             pnlPreviewTemplateMain.Dock = DockStyle.Fill;
-            pnlPreviewTemplateMain.Location = new Point(200, 34);
+            pnlPreviewTemplateMain.Location = new Point(199, 34);
             pnlPreviewTemplateMain.Name = "pnlPreviewTemplateMain";
-            pnlPreviewTemplateMain.Size = new Size(698, 505);
+            pnlPreviewTemplateMain.Size = new Size(699, 505);
             pnlPreviewTemplateMain.TabIndex = 5;
             // 
             // pnlPreviewTemplate
@@ -221,7 +220,7 @@
             pnlPreviewTemplate.Dock = DockStyle.Fill;
             pnlPreviewTemplate.Location = new Point(0, 30);
             pnlPreviewTemplate.Name = "pnlPreviewTemplate";
-            pnlPreviewTemplate.Size = new Size(698, 475);
+            pnlPreviewTemplate.Size = new Size(699, 475);
             pnlPreviewTemplate.TabIndex = 3;
             // 
             // panelTemplatesMain
@@ -233,7 +232,7 @@
             panelTemplatesMain.Dock = DockStyle.Left;
             panelTemplatesMain.Location = new Point(0, 34);
             panelTemplatesMain.Name = "panelTemplatesMain";
-            panelTemplatesMain.Size = new Size(200, 505);
+            panelTemplatesMain.Size = new Size(199, 505);
             panelTemplatesMain.TabIndex = 4;
             // 
             // panelTableTamplates
@@ -242,7 +241,7 @@
             panelTableTamplates.Dock = DockStyle.Fill;
             panelTableTamplates.Location = new Point(0, 30);
             panelTableTamplates.Name = "panelTableTamplates";
-            panelTableTamplates.Size = new Size(198, 473);
+            panelTableTamplates.Size = new Size(197, 473);
             panelTableTamplates.TabIndex = 5;
             // 
             // label3
@@ -254,7 +253,7 @@
             label3.Location = new Point(0, 0);
             label3.Name = "label3";
             label3.Padding = new Padding(10, 0, 0, 0);
-            label3.Size = new Size(198, 30);
+            label3.Size = new Size(197, 30);
             label3.TabIndex = 6;
             label3.Text = "Templates Disponíveis";
             label3.TextAlign = ContentAlignment.MiddleLeft;

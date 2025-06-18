@@ -12,86 +12,343 @@ using SistemaNotifica.src.Models;
 using SistemaNotifica.src.Services;
 using SistemaNotifica.src.Styles;
 using SistemaNotifica.src.Controls;
-//ATUALIZAR ESSE MODULO - ADICIONAR TRATAMENTOS DE ERROS E AVISOS - ADICIONAR TIMERS PARA TIMEOUTS
+using SistemaNotifica.src.Forms.Template.Controls;
+
 namespace SistemaNotifica.src.Forms.Template
 {
     public partial class TemplateManagerForm : Form
     {
         private ApiService _apiService;
         private List<EmailTemplate> _templates;
+        private FlowLayoutPanel _flowLayoutTemplates;
+        private EmailTemplate _selectedTemplate;
+        private List<TemplateCard> _templateCards;
 
-        
         public TemplateManagerForm()
         {
             InitializeComponent();
             _apiService = new ApiService();
             _templates = new List<EmailTemplate>();
+            _templateCards = new List<TemplateCard>();
+            SetupTemplatePanel();
             InitializeAsync();
-            ConfigurarBotoes();
         }
 
+        private void SetupTemplatePanel()
+        {
+            // Remove o DataGridView e substitui por FlowLayoutPanel
+            panelTableTamplates.Controls.Clear();
+
+            _flowLayoutTemplates = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false,
+                AutoScroll = true,
+                BackColor = Color.FromArgb(248, 249, 250),
+                Padding = new Padding(8)
+            };
+
+            panelTableTamplates.Controls.Add(_flowLayoutTemplates);
+        }
 
         private async void InitializeAsync()
         {
             await CarregarTemplates();
         }
-        private void ConfigurarBotoes()
-        {
-            // Criar botões programaticamente
-            var btnDefault = new RoundedButton();
-            var btnPrimary = new RoundedButton();
-            var btnSuccess = new RoundedButton();
-            var btnDanger = new RoundedButton();
-            var btnCustom = new RoundedButton();
-
-            // Aplicar estilos
-            ButtonStyles.ApplyDefaultStyle(btnDefault);
-            btnDefault.ButtonText = "Default";
-            btnDefault.Location = new Point(10, 10);
-            btnDefault.Click += (s, e) => MessageBox.Show("Default clicked!");
-
-            ButtonStyles.ApplyPrimaryStyle(btnPrimary);
-            btnPrimary.ButtonText = "Primary";
-            btnPrimary.Location = new Point(120, 10);
-
-            ButtonStyles.ApplySuccessStyle(btnSuccess);
-            btnSuccess.ButtonText = "Success";
-            btnSuccess.Location = new Point(230, 10);
-
-            ButtonStyles.ApplyDangerStyle(btnDanger);
-            btnDanger.ButtonText = "Danger";
-            btnDanger.Location = new Point(340, 10);
-
-            // Estilo totalmente personalizado
-            ButtonStyles.ApplyCustomStyle(btnCustom,
-                Color.Purple, Color.White, 12);
-            btnCustom.ButtonText = "Custom";
-            btnCustom.Location = new Point(450, 10);
-
-            // Adicionar ao form
-            Controls.AddRange(new Control[] {
-            btnDefault, btnPrimary, btnSuccess, btnDanger, btnCustom
-        });
-        }
-
 
         private async Task CarregarTemplates()
         {
             try
             {
                 SetStatus("Carregando templates...");
+
+                // Busca todos os templates
                 _templates = await _apiService.GetTemplatesAsync();
-                dgvTemplates.DataSource = _templates;
+                Debug.WriteLine($"Templates carregados: {_templates.Count}");
+
+                // Limpa cards existentes
+                _flowLayoutTemplates.Controls.Clear();
+                _templateCards.Clear();
+
+                // Se não há templates, exibe mensagem
+                if (_templates.Count == 0)
+                {
+                    webPreview.DocumentText = "<html><body style='display:flex;align-items:center;justify-content:center;height:100vh;font-family:Segoe UI;color:#6c757d;'><div>Nenhum template disponível</div></body></html>";
+                    SetStatus("Nenhum template encontrado");
+                    return;
+                }
+
+                // Cria cards para cada template
+                TemplateCard templatePadraoCard = null;
+
+                foreach (var template in _templates)
+                {
+                    Debug.WriteLine($"Criando card para template: {template.Id} - {template.NomeArquivo} - Padrão: {template.EhPadrao}");
+
+                    var card = new TemplateCard
+                    {
+                        Template = template
+                    };
+
+                    card.CardClicked += Card_CardClicked;
+                    card.PadraoChanged += Card_PadraoChanged;
+
+                    _templateCards.Add(card);
+                    _flowLayoutTemplates.Controls.Add(card);
+
+                    // Guarda referência do template padrão
+                    if (template.EhPadrao)
+                    {
+                        templatePadraoCard = card;
+                    }
+                }
+
+                // Força o refresh do layout
+                _flowLayoutTemplates.Refresh();
+                _flowLayoutTemplates.PerformLayout();
+
                 SetStatus($"{_templates.Count} template(s) carregado(s)");
+
+                // Seleciona automaticamente o template padrão, ou o primeiro
+                var cardParaSelecionar = templatePadraoCard ?? _templateCards[0];
+
+                if (cardParaSelecionar != null)
+                {
+                    SelectTemplate(cardParaSelecionar);
+                    await ExibirPreview(cardParaSelecionar.Template);
+                }
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"Erro ao carregar templates: {ex}");
                 MessageBox.Show($"Erro ao carregar templates: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 SetStatus("Erro ao carregar templates");
             }
         }
 
+
+        private async void Card_CardClicked(object sender, EmailTemplate template)
+        {
+            var clickedCard = sender as TemplateCard;
+            SelectTemplate(clickedCard);
+            await ExibirPreview(template); // Chamará o método ExibirPreview
+        }
+
+        private async void Card_PadraoChanged(object sender, EmailTemplate template)
+        {
+            try
+            {
+                SetStatus("Definindo template padrão...");
+                await _apiService.SetTemplatePadraoAsync(template.Id);
+
+                // Atualiza os dados locais
+                foreach (var t in _templates)
+                {
+                    t.EhPadrao = t.Id == template.Id;
+                }
+
+                // Atualiza a exibição dos cards
+                foreach (var card in _templateCards)
+                {
+                    card.Template = card.Template; // Força refresh
+                }
+
+                SetStatus("Template padrão definido com sucesso");
+
+                MessageBox.Show($"Template '{template.NomeArquivo}' definido como padrão!", "Sucesso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao definir template padrão: {ex.Message}", "Erro",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                // Reverte o checkbox em caso de erro
+                var card = sender as TemplateCard;
+                if (card != null)
+                {
+                    card.Template = card.Template; // Força refresh para reverter
+                }
+            }
+        }
+
+        private void SelectTemplate(TemplateCard selectedCard)
+        {
+            // Desmarca todos os cards
+            foreach (var card in _templateCards)
+            {
+                card.IsSelected = false;
+            }
+
+            // Marca o card selecionado
+            if (selectedCard != null)
+            {
+                selectedCard.IsSelected = true;
+                _selectedTemplate = selectedCard.Template;
+            }
+
+            // Atualiza botões
+            UpdateButtonStates();
+        }
+
+        private void UpdateButtonStates()
+        {
+            bool hasSelection = _selectedTemplate != null;
+
+            btnDelete.Enabled = hasSelection && !_selectedTemplate.EhPadrao;
+            btnSetPadrao.Enabled = hasSelection && !_selectedTemplate.EhPadrao;
+            btnPreview.Enabled = hasSelection;
+        }
+
+        private async Task ExibirPreview(EmailTemplate template)
+        {
+            try
+            {
+                SetStatus("Carregando preview do template...");
+                Debug.WriteLine($"Exibindo preview do template {template.Id}");
+
+                // Busca o template completo se não tiver conteúdo
+                string conteudoHtml = template.ConteudoHtml;
+
+                if (string.IsNullOrEmpty(conteudoHtml))
+                {
+                    Debug.WriteLine("Conteúdo HTML vazio, buscando template completo...");
+                    var templateCompleto = await _apiService.GetTemplateAsync(template.Id);
+                    conteudoHtml = templateCompleto.ConteudoHtml;
+                }
+
+                if (string.IsNullOrEmpty(conteudoHtml))
+                {
+                    throw new Exception("Template não possui conteúdo HTML");
+                }
+
+                Debug.WriteLine($"Conteúdo HTML obtido: {conteudoHtml.Length} caracteres");
+
+                // Processa o template localmente com dados de teste
+                var dadosTeste = GetDadosTeste();
+                var htmlProcessado = _apiService.ProcessarTemplate(conteudoHtml, dadosTeste);
+
+                Debug.WriteLine($"HTML processado: {htmlProcessado.Length} caracteres");
+
+                // Exibe no WebBrowser
+                webPreview.DocumentText = htmlProcessado;
+                SetStatus("Preview carregado com sucesso");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro ao exibir preview: {ex}");
+
+                var errorHtml = $@"
+                <html>
+                <head>
+                    <style>
+                        body {{
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 100vh;
+                            margin: 0;
+                            background-color: #f8f9fa;
+                            color: #dc3545;
+                        }}
+                        .error-container {{
+                            text-align: center;
+                            padding: 20px;
+                            border: 1px solid #f5c6cb;
+                            background-color: #f8d7da;
+                            border-radius: 8px;
+                            max-width: 500px;
+                        }}
+                        .error-title {{ font-size: 18px; font-weight: bold; margin-bottom: 10px; }}
+                        .error-message {{ font-size: 14px; word-break: break-word; }}
+                    </style>
+                </head>
+                <body>
+                    <div class='error-container'>
+                        <div class='error-title'>Erro ao gerar preview</div>
+                        <div class='error-message'>{ex.Message}</div>
+                        <div style='margin-top: 10px; font-size: 12px; color: #6c757d;'>
+                            Verifique os logs para mais detalhes
+                        </div>
+                    </div>
+                </body>
+                </html>";
+
+                webPreview.DocumentText = errorHtml;
+                SetStatus($"Erro ao gerar preview: {ex.Message}");
+            }
+        }
+
+        
+
+        // Métodos de botões atualizados
+        private async void BtnDelete_Click(object sender, EventArgs e)
+        {
+            if (_selectedTemplate == null) return;
+
+            if (_selectedTemplate.EhPadrao)
+            {
+                MessageBox.Show("Não é possível excluir o template padrão!", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var result = MessageBox.Show($"Tem certeza que deseja excluir o template '{_selectedTemplate.NomeArquivo}'?",
+                "Confirmar Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    SetStatus("Excluindo template...");
+                    await _apiService.DeleteTemplateAsync(_selectedTemplate.Id);
+                    await CarregarTemplates();
+                    SetStatus("Template excluído");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao excluir template: {ex.Message}", "Erro",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private async void BtnSetPadrao_Click(object sender, EventArgs e)
+        {
+            if (_selectedTemplate == null) return;
+
+            try
+            {
+                SetStatus("Definindo template padrão...");
+                await _apiService.SetTemplatePadraoAsync(_selectedTemplate.Id);
+                await CarregarTemplates();
+                MessageBox.Show($"Template '{_selectedTemplate.NomeArquivo}' definido como padrão!", "Sucesso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao definir template padrão: {ex.Message}", "Erro",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void BtnPreview_Click(object sender, EventArgs e)
+        {
+            if (_selectedTemplate != null)
+            {
+                await ExibirPreview(_selectedTemplate);
+            }
+        }
+
+        private async void BtnRefresh_Click(object sender, EventArgs e)
+        {
+            await CarregarTemplates();
+        }
+
+        // Upload permanece igual ao código original
         private async void BtnUpload_Click(object sender, EventArgs e)
         {
             using (var openFileDialog = new OpenFileDialog())
@@ -108,8 +365,6 @@ namespace SistemaNotifica.src.Forms.Template
 
                     try
                     {
-                        // 1. Validar se o arquivo existe e pode ser lido (primeira checagem)
-                        // FileInfo.Exists é rápido e não tenta abrir o arquivo.
                         var fileInfo = new FileInfo(caminhoArquivoSelecionado);
 
                         if (!fileInfo.Exists)
@@ -120,7 +375,6 @@ namespace SistemaNotifica.src.Forms.Template
                             return;
                         }
 
-                        // 2. Tentar ler o arquivo para verificar acessibilidade e tamanho real
                         byte[] fileBytes;
                         try
                         {
@@ -134,7 +388,7 @@ namespace SistemaNotifica.src.Forms.Template
                             Debug.WriteLine($"ERRO: Sem permissão para ler o arquivo: {caminhoArquivoSelecionado}");
                             return;
                         }
-                        catch (IOException ex) when ((ex.HResult & 0xFFFF) == 32) // Error code for "The process cannot access the file because it is being used by another process."
+                        catch (IOException ex) when ((ex.HResult & 0xFFFF) == 32)
                         {
                             MessageBox.Show($"O arquivo está sendo usado por outro processo. Por favor, feche-o e tente novamente.\n\nDetalhes: {ex.Message}", "Arquivo em Uso",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -149,8 +403,6 @@ namespace SistemaNotifica.src.Forms.Template
                             return;
                         }
 
-                        // 3. Verificar se o arquivo está vazio APÓS a leitura bem-sucedida
-                        // Usamos fileBytes.Length que é o tamanho real lido
                         if (fileBytes.Length == 0)
                         {
                             MessageBox.Show("O arquivo selecionado está vazio ou não pôde ser lido em sua totalidade. Por favor, selecione um arquivo com conteúdo.", "Arquivo Vazio",
@@ -159,7 +411,6 @@ namespace SistemaNotifica.src.Forms.Template
                             return;
                         }
 
-                        // 4. Verificar tamanho máximo (20MB conforme backend)
                         const long tamanhoMaximo = 20 * 1024 * 1024; // 20MB
                         if (fileBytes.Length > tamanhoMaximo)
                         {
@@ -169,9 +420,8 @@ namespace SistemaNotifica.src.Forms.Template
                             return;
                         }
 
-                        // Mostrar confirmação com informações do arquivo
                         var nomeArquivo = Path.GetFileName(caminhoArquivoSelecionado);
-                        var tamanhoMB = Math.Round(fileBytes.Length / (1024.0 * 1024.0), 2); // Usa o tamanho real lido
+                        var tamanhoMB = Math.Round(fileBytes.Length / (1024.0 * 1024.0), 2);
 
                         var confirmacao = MessageBox.Show(
                             $"Deseja fazer upload do template?\n\n" +
@@ -187,7 +437,6 @@ namespace SistemaNotifica.src.Forms.Template
                         {
                             SetStatus("Preparando para enviar o template...");
 
-                            // Desabilitar botão durante upload
                             var btnUpload = sender as Button;
                             if (btnUpload != null)
                             {
@@ -196,7 +445,6 @@ namespace SistemaNotifica.src.Forms.Template
 
                             try
                             {
-                                // Passa os bytes e o nome do arquivo para o serviço, evitando reler o arquivo
                                 var template = await _apiService.UploadTemplateAsync(fileBytes, nomeArquivo);
 
                                 MessageBox.Show(
@@ -207,18 +455,17 @@ namespace SistemaNotifica.src.Forms.Template
                                 );
 
                                 SetStatus("Upload concluído com sucesso.");
-                                await CarregarTemplates(); // Atualiza a lista ou UI
+                                await CarregarTemplates();
                             }
                             catch (Exception ex)
                             {
                                 MessageBox.Show($"Erro ao fazer upload do template: {ex.Message}", "Erro no Upload",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                Debug.WriteLine($"ERRO CRÍTICO NO UPLOAD: {ex}"); // Log completo da exceção
+                                Debug.WriteLine($"ERRO CRÍTICO NO UPLOAD: {ex}");
                                 SetStatus("Erro no upload.");
                             }
                             finally
                             {
-                                // Reabilitar botão
                                 if (btnUpload != null)
                                 {
                                     btnUpload.Enabled = true;
@@ -226,7 +473,7 @@ namespace SistemaNotifica.src.Forms.Template
                             }
                         }
                     }
-                    catch (Exception ex) // Captura qualquer exceção não tratada acima
+                    catch (Exception ex)
                     {
                         MessageBox.Show($"Ocorreu um erro inesperado: {ex.Message}", "Erro Inesperado",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -234,101 +481,6 @@ namespace SistemaNotifica.src.Forms.Template
                         SetStatus("Erro inesperado.");
                     }
                 }
-            }
-        }
-
-        private async void BtnDelete_Click(object sender, EventArgs e)
-        {
-            if (dgvTemplates.SelectedRows.Count == 0) return;
-
-            var template = (EmailTemplate)dgvTemplates.SelectedRows[0].DataBoundItem;
-
-            if (template.EhPadrao)
-            {
-                MessageBox.Show("Não é possível excluir o template padrão!", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            var result = MessageBox.Show($"Tem certeza que deseja excluir o template '{template.NomeArquivo}'?",
-                "Confirmar Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (result == DialogResult.Yes)
-            {
-                try
-                {
-                    SetStatus("Excluindo template...");
-                    await _apiService.DeleteTemplateAsync(template.Id);
-                    await CarregarTemplates();
-                    SetStatus("Template excluído");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Erro ao excluir template: {ex.Message}", "Erro",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private async void BtnSetPadrao_Click(object sender, EventArgs e)
-        {
-            if (dgvTemplates.SelectedRows.Count == 0) return;
-
-            var template = (EmailTemplate)dgvTemplates.SelectedRows[0].DataBoundItem;
-
-            try
-            {
-                SetStatus("Definindo template padrão...");
-                await _apiService.SetTemplatePadraoAsync(template.Id);
-                await CarregarTemplates();
-                MessageBox.Show($"Template '{template.NomeArquivo}' definido como padrão!", "Sucesso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Erro ao definir template padrão: {ex.Message}", "Erro",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private async void BtnPreview_Click(object sender, EventArgs e)
-        {
-            if (dgvTemplates.SelectedRows.Count == 0) return;
-
-            var template = (EmailTemplate)dgvTemplates.SelectedRows[0].DataBoundItem;
-
-            try
-            {
-                SetStatus("Gerando preview...");
-                var dadosTeste = GetDadosTeste();
-                var htmlPreview = await _apiService.GetPreviewAsync(template.ConteudoHtml, dadosTeste);
-                webPreview.DocumentText = htmlPreview;
-                SetStatus("Preview gerado");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Erro ao gerar preview: {ex.Message}", "Erro",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private async void BtnRefresh_Click(object sender, EventArgs e)
-        {
-            await CarregarTemplates();
-        }
-
-        private void DgvTemplates_SelectionChanged(object sender, EventArgs e)
-        {
-            bool hasSelection = dgvTemplates.SelectedRows.Count > 0;
-            btnDelete.Enabled = hasSelection;
-            btnSetPadrao.Enabled = hasSelection;
-            btnPreview.Enabled = hasSelection;
-
-            if (hasSelection)
-            {
-                var template = (EmailTemplate)dgvTemplates.SelectedRows[0].DataBoundItem;
-                btnDelete.Enabled = !template.EhPadrao; // Não pode excluir o padrão
-                btnSetPadrao.Enabled = !template.EhPadrao; // Não precisa definir se já é padrão
             }
         }
 
@@ -342,11 +494,11 @@ namespace SistemaNotifica.src.Forms.Template
                     ["docDevedor"] = "123.456.789-00",
                     ["valorTotal"] = "1.500,00",
                     ["dataVencimento"] = "15/12/2024",
-                    ["credor"] = "Empresa ABC Ltda"
+                    ["credor"] = "Empresa ABC Ltda",
+                    ["numeroFatura"] = "FAT-2024-001"
                 }
             };
         }
-
         private void SetStatus(string message)
         {
             lblStatus.Text = message;
