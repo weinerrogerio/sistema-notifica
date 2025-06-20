@@ -11,6 +11,7 @@ using System.IO;
 using Newtonsoft.Json;
 using SistemaNotifica.src.Models;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 
 
 namespace SistemaNotifica.src.Services
@@ -112,24 +113,29 @@ namespace SistemaNotifica.src.Services
         {
             try
             {
-                var conteudoHtml = Encoding.UTF8.GetString(fileBytes);
-
-                var uploadRequest = new UploadTemplateRequest
-                {
-                    NomeArquivo = nomeArquivo,
-                    Descricao = descricao ?? nomeArquivo,
-                    ConteudoHtml = conteudoHtml
-                };
-
-                var json = JsonConvert.SerializeObject(uploadRequest);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
                 Debug.WriteLine($"Fazendo upload: {nomeArquivo}");
-                var response = await _httpClient.PostAsync($"{_baseUrl}/template/upload", content);
-                response.EnsureSuccessStatusCode();
 
-                var responseJson = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<EmailTemplate>(responseJson);
+                using (var form = new MultipartFormDataContent())
+                {
+                    // Adicionar o arquivo como conteúdo binário
+                    var fileContent = new ByteArrayContent(fileBytes);
+                    fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("text/html");
+
+                    // Nome do campo deve ser "file" para corresponder ao FileInterceptor('file')
+                    form.Add(fileContent, "file", nomeArquivo);
+
+                    // Se precisar enviar outros dados, adicione como campos separados
+                    if (!string.IsNullOrEmpty(descricao))
+                    {
+                        form.Add(new StringContent(descricao), "descricao");
+                    }
+
+                    var response = await _httpClient.PostAsync($"{_baseUrl}/template/upload", form);
+                    response.EnsureSuccessStatusCode();
+
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<EmailTemplate>(responseJson);
+                }
             }
             catch (Exception ex)
             {

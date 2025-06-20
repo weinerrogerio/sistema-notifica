@@ -74,9 +74,9 @@
             btnRefresh.BackColor = Color.FromArgb(96, 125, 139);
             btnRefresh.FlatStyle = FlatStyle.Flat;
             btnRefresh.ForeColor = Color.White;
-            btnRefresh.Location = new Point(499, 1);
+            btnRefresh.Location = new Point(474, 3);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(90, 30);
+            btnRefresh.Size = new Size(90, 27);
             btnRefresh.TabIndex = 4;
             btnRefresh.Text = "🔄 Atualizar";
             btnRefresh.UseVisualStyleBackColor = false;
@@ -88,9 +88,9 @@
             btnPreview.Enabled = false;
             btnPreview.FlatStyle = FlatStyle.Flat;
             btnPreview.ForeColor = Color.White;
-            btnPreview.Location = new Point(389, 1);
+            btnPreview.Location = new Point(370, 3);
             btnPreview.Name = "btnPreview";
-            btnPreview.Size = new Size(100, 30);
+            btnPreview.Size = new Size(100, 27);
             btnPreview.TabIndex = 3;
             btnPreview.Text = "👁️ Visualizar";
             btnPreview.UseVisualStyleBackColor = false;
@@ -101,10 +101,10 @@
             btnSetPadrao.BackColor = Color.FromArgb(255, 193, 7);
             btnSetPadrao.Enabled = false;
             btnSetPadrao.FlatStyle = FlatStyle.Flat;
-            btnSetPadrao.ForeColor = Color.Black;
-            btnSetPadrao.Location = new Point(239, 1);
+            btnSetPadrao.ForeColor = Color.Transparent;
+            btnSetPadrao.Location = new Point(225, 3);
             btnSetPadrao.Name = "btnSetPadrao";
-            btnSetPadrao.Size = new Size(140, 30);
+            btnSetPadrao.Size = new Size(140, 27);
             btnSetPadrao.TabIndex = 2;
             btnSetPadrao.Text = "⭐ Definir como Padrão";
             btnSetPadrao.UseVisualStyleBackColor = false;
@@ -115,10 +115,10 @@
             btnDelete.BackColor = Color.FromArgb(244, 67, 54);
             btnDelete.Enabled = false;
             btnDelete.FlatStyle = FlatStyle.Flat;
-            btnDelete.ForeColor = Color.White;
-            btnDelete.Location = new Point(149, 1);
+            btnDelete.ForeColor = Color.Transparent;
+            btnDelete.Location = new Point(140, 3);
             btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(80, 30);
+            btnDelete.Size = new Size(80, 27);
             btnDelete.TabIndex = 1;
             btnDelete.Text = "🗑️ Excluir";
             btnDelete.UseVisualStyleBackColor = false;
@@ -133,9 +133,9 @@
             btnUpload.FlatAppearance.MouseOverBackColor = Color.FromArgb(70, 80, 90);
             btnUpload.FlatStyle = FlatStyle.Flat;
             btnUpload.ForeColor = Color.White;
-            btnUpload.Location = new Point(9, 1);
+            btnUpload.Location = new Point(4, 4);
             btnUpload.Name = "btnUpload";
-            btnUpload.Size = new Size(130, 30);
+            btnUpload.Size = new Size(130, 25);
             btnUpload.TabIndex = 0;
             btnUpload.Text = "📁 Upload Template";
             btnUpload.UseVisualStyleBackColor = false;
@@ -154,7 +154,7 @@
             dgvTemplates.Name = "dgvTemplates";
             dgvTemplates.ReadOnly = true;
             dgvTemplates.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTemplates.Size = new Size(197, 473);
+            dgvTemplates.Size = new Size(197, 472);
             dgvTemplates.TabIndex = 0;
             // 
             // label1
@@ -176,8 +176,9 @@
             webPreview.Dock = DockStyle.Fill;
             webPreview.Location = new Point(0, 0);
             webPreview.Name = "webPreview";
-            webPreview.Size = new Size(699, 475);
+            webPreview.Size = new Size(699, 474);
             webPreview.TabIndex = 0;
+            webPreview.DocumentCompleted += webPreview_DocumentCompleted;
             // 
             // toolbarPanel
             // 
@@ -190,7 +191,7 @@
             toolbarPanel.Dock = DockStyle.Top;
             toolbarPanel.Location = new Point(0, 0);
             toolbarPanel.Name = "toolbarPanel";
-            toolbarPanel.Size = new Size(898, 34);
+            toolbarPanel.Size = new Size(898, 35);
             toolbarPanel.TabIndex = 0;
             // 
             // panelMain
@@ -209,9 +210,9 @@
             pnlPreviewTemplateMain.Controls.Add(pnlPreviewTemplate);
             pnlPreviewTemplateMain.Controls.Add(label1);
             pnlPreviewTemplateMain.Dock = DockStyle.Fill;
-            pnlPreviewTemplateMain.Location = new Point(199, 34);
+            pnlPreviewTemplateMain.Location = new Point(199, 35);
             pnlPreviewTemplateMain.Name = "pnlPreviewTemplateMain";
-            pnlPreviewTemplateMain.Size = new Size(699, 505);
+            pnlPreviewTemplateMain.Size = new Size(699, 504);
             pnlPreviewTemplateMain.TabIndex = 5;
             // 
             // pnlPreviewTemplate
@@ -220,7 +221,7 @@
             pnlPreviewTemplate.Dock = DockStyle.Fill;
             pnlPreviewTemplate.Location = new Point(0, 30);
             pnlPreviewTemplate.Name = "pnlPreviewTemplate";
-            pnlPreviewTemplate.Size = new Size(699, 475);
+            pnlPreviewTemplate.Size = new Size(699, 474);
             pnlPreviewTemplate.TabIndex = 3;
             // 
             // panelTemplatesMain
@@ -230,9 +231,9 @@
             panelTemplatesMain.Controls.Add(panelTableTamplates);
             panelTemplatesMain.Controls.Add(label3);
             panelTemplatesMain.Dock = DockStyle.Left;
-            panelTemplatesMain.Location = new Point(0, 34);
+            panelTemplatesMain.Location = new Point(0, 35);
             panelTemplatesMain.Name = "panelTemplatesMain";
-            panelTemplatesMain.Size = new Size(199, 505);
+            panelTemplatesMain.Size = new Size(199, 504);
             panelTemplatesMain.TabIndex = 4;
             // 
             // panelTableTamplates
@@ -241,7 +242,7 @@
             panelTableTamplates.Dock = DockStyle.Fill;
             panelTableTamplates.Location = new Point(0, 30);
             panelTableTamplates.Name = "panelTableTamplates";
-            panelTableTamplates.Size = new Size(197, 473);
+            panelTableTamplates.Size = new Size(197, 472);
             panelTableTamplates.TabIndex = 5;
             // 
             // label3

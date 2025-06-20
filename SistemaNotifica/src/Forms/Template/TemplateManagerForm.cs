@@ -65,7 +65,7 @@ namespace SistemaNotifica.src.Forms.Template
 
                 // Busca todos os templates
                 _templates = await _apiService.GetTemplatesAsync();
-                Debug.WriteLine($"Templates carregados: {_templates.Count}");
+                Debug.WriteLine($"Templates carregados:::::::::: {_templates.Count}");
 
                 // Limpa cards existentes
                 _flowLayoutTemplates.Controls.Clear();
@@ -282,7 +282,7 @@ namespace SistemaNotifica.src.Forms.Template
             }
         }
 
-        
+
 
         // Métodos de botões atualizados
         private async void BtnDelete_Click(object sender, EventArgs e)
@@ -509,6 +509,11 @@ namespace SistemaNotifica.src.Forms.Template
         {
             _apiService?.Dispose();
             base.OnFormClosed(e);
+        }
+
+        private void webPreview_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+
         }
     }
 }
