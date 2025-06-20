@@ -29,26 +29,187 @@
         private void InitializeComponent()
         {
             label1 = new Label();
+            Data1 = new DataGridView();
+            dataGridView1 = new DataGridView();
+            dataGridView2 = new DataGridView();
+            dataGridView3 = new DataGridView();
+            dataGridView4 = new DataGridView();
+            label2 = new Label();
+            label3 = new Label();
+            label4 = new Label();
+            label5 = new Label();
+            label6 = new Label();
+            dataGridView5 = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)Data1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView4).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView5).BeginInit();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(317, 93);
+            label1.Location = new Point(574, 25);
             label1.Name = "label1";
-            label1.Size = new Size(75, 15);
+            label1.Size = new Size(76, 15);
             label1.TabIndex = 0;
-            label1.Text = "TELA HOME ";
+            label1.Text = "TELA INICIAL";
+            // 
+            // Data1
+            // 
+            Data1.AllowUserToDeleteRows = false;
+            Data1.BackgroundColor = SystemColors.Control;
+            Data1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            Data1.Location = new Point(280, 141);
+            Data1.Margin = new Padding(3, 2, 3, 2);
+            Data1.Name = "Data1";
+            Data1.ReadOnly = true;
+            Data1.RowHeadersWidth = 51;
+            Data1.Size = new Size(142, 22);
+            Data1.TabIndex = 1;
+            // 
+            // dataGridView1
+            // 
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.BackgroundColor = SystemColors.Control;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Location = new Point(426, 141);
+            dataGridView1.Margin = new Padding(3, 2, 3, 2);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.RowHeadersWidth = 51;
+            dataGridView1.Size = new Size(142, 22);
+            dataGridView1.TabIndex = 2;
+            // 
+            // dataGridView2
+            // 
+            dataGridView2.AllowUserToDeleteRows = false;
+            dataGridView2.BackgroundColor = SystemColors.Control;
+            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView2.Location = new Point(574, 141);
+            dataGridView2.Margin = new Padding(3, 2, 3, 2);
+            dataGridView2.Name = "dataGridView2";
+            dataGridView2.ReadOnly = true;
+            dataGridView2.RowHeadersWidth = 51;
+            dataGridView2.Size = new Size(142, 22);
+            dataGridView2.TabIndex = 3;
+            // 
+            // dataGridView3
+            // 
+            dataGridView3.AllowUserToDeleteRows = false;
+            dataGridView3.BackgroundColor = SystemColors.Control;
+            dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView3.Location = new Point(720, 141);
+            dataGridView3.Margin = new Padding(3, 2, 3, 2);
+            dataGridView3.Name = "dataGridView3";
+            dataGridView3.ReadOnly = true;
+            dataGridView3.RowHeadersWidth = 51;
+            dataGridView3.Size = new Size(142, 22);
+            dataGridView3.TabIndex = 4;
+            // 
+            // dataGridView4
+            // 
+            dataGridView4.AllowUserToDeleteRows = false;
+            dataGridView4.BackgroundColor = SystemColors.Control;
+            dataGridView4.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView4.Location = new Point(868, 141);
+            dataGridView4.Margin = new Padding(3, 2, 3, 2);
+            dataGridView4.Name = "dataGridView4";
+            dataGridView4.ReadOnly = true;
+            dataGridView4.RowHeadersWidth = 51;
+            dataGridView4.Size = new Size(142, 22);
+            dataGridView4.TabIndex = 5;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 8F);
+            label2.Location = new Point(280, 127);
+            label2.Name = "label2";
+            label2.Size = new Size(113, 13);
+            label2.TabIndex = 6;
+            label2.Text = "N° DA DISTRIBUIÇÃO";
+            label2.Click += label2_Click;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 8F);
+            label3.Location = new Point(426, 127);
+            label3.Name = "label3";
+            label3.Size = new Size(109, 13);
+            label3.TabIndex = 7;
+            label3.Text = "DATA DISTRIBUIÇÃO";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 8F);
+            label4.Location = new Point(574, 127);
+            label4.Name = "label4";
+            label4.Size = new Size(88, 13);
+            label4.TabIndex = 8;
+            label4.Text = "DOC. DEVEDOR";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 8F);
+            label5.Location = new Point(720, 127);
+            label5.Name = "label5";
+            label5.Size = new Size(81, 13);
+            label5.TabIndex = 9;
+            label5.Text = "DOC. CREDOR";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 8F);
+            label6.Location = new Point(868, 127);
+            label6.Name = "label6";
+            label6.Size = new Size(106, 13);
+            label6.TabIndex = 10;
+            label6.Text = "DATA IMPORTAÇÃO";
+            label6.Click += label6_Click;
+            // 
+            // dataGridView5
+            // 
+            dataGridView5.BackgroundColor = SystemColors.Control;
+            dataGridView5.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView5.Location = new Point(280, 168);
+            dataGridView5.Name = "dataGridView5";
+            dataGridView5.Size = new Size(730, 411);
+            dataGridView5.TabIndex = 11;
             // 
             // FormHome
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            BackColor = Color.White;
+            ClientSize = new Size(1164, 591);
+            Controls.Add(dataGridView5);
+            Controls.Add(label6);
+            Controls.Add(label5);
+            Controls.Add(label4);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(dataGridView4);
+            Controls.Add(dataGridView3);
+            Controls.Add(dataGridView2);
+            Controls.Add(dataGridView1);
+            Controls.Add(Data1);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.None;
             Name = "FormHome";
-            Text = "FormHome";
+            Text = "zz";
+            ((System.ComponentModel.ISupportInitialize)Data1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView5).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -56,5 +217,16 @@
         #endregion
 
         private Label label1;
+        private DataGridView Data1;
+        private DataGridView dataGridView1;
+        private DataGridView dataGridView2;
+        private DataGridView dataGridView3;
+        private DataGridView dataGridView4;
+        private Label label2;
+        private Label label3;
+        private Label label4;
+        private Label label5;
+        private Label label6;
+        private DataGridView dataGridView5;
     }
 }

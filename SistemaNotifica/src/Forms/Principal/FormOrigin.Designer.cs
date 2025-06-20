@@ -46,7 +46,7 @@ namespace SistemaNotifica
             panelUser = new Panel();
             btnUser = new Button();
             panelSettings = new Panel();
-            btnSettings = new Button();
+            btnConfig = new Button();
             panelSobre = new Panel();
             btnSobre = new Button();
             panelLogOut = new Panel();
@@ -75,7 +75,7 @@ namespace SistemaNotifica
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(927, 33);
+            panel1.Size = new Size(927, 34);
             panel1.TabIndex = 0;
             panel1.Paint += panel1_Paint;
             // 
@@ -117,7 +117,7 @@ namespace SistemaNotifica
             // 
             imgLogo.BackgroundImageLayout = ImageLayout.None;
             imgLogo.Image = (Image)resources.GetObject("imgLogo.Image");
-            imgLogo.Location = new Point(54, 0);
+            imgLogo.Location = new Point(50, 0);
             imgLogo.Name = "imgLogo";
             imgLogo.Size = new Size(99, 33);
             imgLogo.SizeMode = PictureBoxSizeMode.Zoom;
@@ -137,10 +137,11 @@ namespace SistemaNotifica
             sidebarMenu.Controls.Add(panelLogOut);
             sidebarMenu.Dock = DockStyle.Left;
             sidebarMenu.FlowDirection = FlowDirection.TopDown;
-            sidebarMenu.Location = new Point(0, 33);
+            sidebarMenu.Location = new Point(0, 34);
             sidebarMenu.Name = "sidebarMenu";
-            sidebarMenu.Size = new Size(50, 440);
+            sidebarMenu.Size = new Size(60, 439);
             sidebarMenu.TabIndex = 1;
+            sidebarMenu.Paint += sidebarMenu_Paint;
             // 
             // panel5
             // 
@@ -222,6 +223,7 @@ namespace SistemaNotifica
             btnDados.TabIndex = 2;
             btnDados.Text = " Dados";
             btnDados.UseVisualStyleBackColor = false;
+            btnDados.Click += btnDados_Click;
             // 
             // panelUser
             // 
@@ -246,30 +248,32 @@ namespace SistemaNotifica
             btnUser.TabIndex = 2;
             btnUser.Text = "Ususário";
             btnUser.UseVisualStyleBackColor = false;
+            btnUser.Click += btnUsuario_Click;
             // 
             // panelSettings
             // 
-            panelSettings.Controls.Add(btnSettings);
+            panelSettings.Controls.Add(btnConfig);
             panelSettings.Location = new Point(3, 232);
             panelSettings.Name = "panelSettings";
             panelSettings.Size = new Size(187, 44);
             panelSettings.TabIndex = 6;
             // 
-            // btnSettings
+            // btnConfig
             // 
-            btnSettings.BackColor = Color.Black;
-            btnSettings.FlatStyle = FlatStyle.Flat;
-            btnSettings.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnSettings.ForeColor = Color.White;
-            btnSettings.Image = (Image)resources.GetObject("btnSettings.Image");
-            btnSettings.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSettings.Location = new Point(-11, -5);
-            btnSettings.Name = "btnSettings";
-            btnSettings.Padding = new Padding(15, 0, 0, 0);
-            btnSettings.Size = new Size(214, 56);
-            btnSettings.TabIndex = 2;
-            btnSettings.Text = "Configurações";
-            btnSettings.UseVisualStyleBackColor = false;
+            btnConfig.BackColor = Color.Black;
+            btnConfig.FlatStyle = FlatStyle.Flat;
+            btnConfig.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnConfig.ForeColor = Color.White;
+            btnConfig.Image = (Image)resources.GetObject("btnConfig.Image");
+            btnConfig.ImageAlign = ContentAlignment.MiddleLeft;
+            btnConfig.Location = new Point(-9, -5);
+            btnConfig.Name = "btnConfig";
+            btnConfig.Padding = new Padding(15, 0, 0, 0);
+            btnConfig.Size = new Size(212, 56);
+            btnConfig.TabIndex = 2;
+            btnConfig.Text = "Configurações";
+            btnConfig.UseVisualStyleBackColor = false;
+            btnConfig.Click += btnConfig_Click;
             // 
             // panelSobre
             // 
@@ -294,6 +298,7 @@ namespace SistemaNotifica
             btnSobre.TabIndex = 2;
             btnSobre.Text = "Sobre";
             btnSobre.UseVisualStyleBackColor = false;
+            btnSobre.Click += btnSobre_Click;
             // 
             // panelLogOut
             // 
@@ -318,6 +323,7 @@ namespace SistemaNotifica
             btnLogOut.TabIndex = 2;
             btnLogOut.Text = "Sair";
             btnLogOut.UseVisualStyleBackColor = false;
+            btnLogOut.Click += btnLogOut_Click;
             // 
             // sidebarTransition
             // 
@@ -326,11 +332,11 @@ namespace SistemaNotifica
             // 
             // pnlMain
             // 
-            pnlMain.BackColor = Color.WhiteSmoke;
+            pnlMain.BackColor = Color.White;
             pnlMain.Dock = DockStyle.Fill;
-            pnlMain.Location = new Point(50, 33);
+            pnlMain.Location = new Point(60, 34);
             pnlMain.Name = "pnlMain";
-            pnlMain.Size = new Size(877, 440);
+            pnlMain.Size = new Size(867, 439);
             pnlMain.TabIndex = 3;
             pnlMain.Paint += pnlMain_Paint;
             // 
@@ -338,6 +344,7 @@ namespace SistemaNotifica
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.White;
             ClientSize = new Size(927, 473);
             Controls.Add(pnlMain);
             Controls.Add(sidebarMenu);
@@ -383,7 +390,7 @@ namespace SistemaNotifica
         private Panel panelUser;
         private Button btnUser;
         private Panel panelSettings;
-        private Button btnSettings;
+        private Button btnConfig;
         private Panel panelLogOut;
         private Button btnLogOut;
         private Panel pnlMain;
