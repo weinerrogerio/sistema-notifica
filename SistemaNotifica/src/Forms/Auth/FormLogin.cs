@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SistemaNotifica.src.Forms;
@@ -14,7 +8,8 @@ namespace SistemaNotifica
 {
     public partial class FormLogin : Form
     {
-        private Thread? nt;
+        private readonly ApiService _apiService;
+
         public FormLogin()
         {
             InitializeComponent();
