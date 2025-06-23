@@ -15,31 +15,68 @@ namespace SistemaNotifica.src.Forms.Template
         private Timer updateTimer;
         private bool isMonacoReady = false;
         private bool isPreviewReady = false;
+        private bool isInitializing = false;
+
+
 
         public TemplateEditForm()
         {
             InitializeComponent();
-            InitializeEditor();
+
+            // Configurar propriedades básicas do form
+            this.BackColor = SystemColors.Control;
+            this.MinimumSize = new Size(300, 200);
+
+            // Inicializar de forma assíncrona
+            this.Load += TemplateEditForm_Load;
         }
 
-        private void InitializeEditor()
+        private async void TemplateEditForm_Load(object sender, EventArgs e)
         {
-            // Configurar timer para atualização
-            updateTimer = new Timer();
-            updateTimer.Interval = 500; // 500ms de delay
-            updateTimer.Tick += UpdateTimer_Tick;
+            if (isInitializing) return;
+            isInitializing = true;
 
-            // Arquivo temporário para preview
-            tempHtmlFile = Path.Combine(Path.GetTempPath(), "template_preview.html");
+            try
+            {
+                await InitializeEditor();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro na inicialização: {ex.Message}", "Erro",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                isInitializing = false;
+            }
+        }
 
-            // Configurar eventos dos botões
-            ConfigureButtons();
+        private async Task InitializeEditor()
+        {
+            try
+            {
+                // Configurar timer para atualização
+                updateTimer = new Timer();
+                updateTimer.Interval = 500; // 500ms de delay
+                updateTimer.Tick += UpdateTimer_Tick;
 
-            // Inicializar Monaco Editor
-            InitializeMonacoEditor();
+                // Arquivo temporário para preview
+                tempHtmlFile = Path.Combine(Path.GetTempPath(), "template_preview.html");
 
-            // Inicializar Preview WebView
-            InitializePreviewWebView();
+                // Configurar eventos dos botões
+                ConfigureButtons();
+
+                // Aguardar um pouco antes de inicializar os WebViews
+                await Task.Delay(100);
+
+                // Inicializar Monaco Editor e Preview de forma sequencial
+                await InitializeMonacoEditor();
+                await InitializePreviewWebView();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro na inicialização do editor: {ex.Message}", ex);
+            }
         }
 
         private void ConfigureButtons()
@@ -54,16 +91,28 @@ namespace SistemaNotifica.src.Forms.Template
             btnCacelar.Enabled = false;
         }
 
-        private async void InitializeMonacoEditor()
+        private async Task InitializeMonacoEditor()
         {
             try
             {
+                // Verificar se o WebView2 está disponível
+                if (webView2 == null || webView2.IsDisposed)
+                    return;
+
                 // Garantir que o WebView2 está inicializado
                 await webView2.EnsureCoreWebView2Async(null);
+
+                // Aguardar um pouco após a inicialização
+                await Task.Delay(50);
 
                 // Configurar eventos do WebView2
                 webView2.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
                 webView2.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
+
+                // Configurar configurações do WebView2
+                webView2.CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
+                webView2.CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
+                webView2.CoreWebView2.Settings.AreDevToolsEnabled = true;
 
                 // Carregar Monaco Editor
                 string monacoHtml = GetMonacoEditorHtml();
@@ -71,20 +120,30 @@ namespace SistemaNotifica.src.Forms.Template
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao inicializar Monaco Editor: {ex.Message}", "Erro",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new Exception($"Erro ao inicializar Monaco Editor: {ex.Message}", ex);
             }
         }
 
-        private async void InitializePreviewWebView()
+        private async Task InitializePreviewWebView()
         {
             try
             {
+                // Verificar se o WebView2 está disponível
+                if (webView2Preview == null || webView2Preview.IsDisposed)
+                    return;
+
                 // Garantir que o WebView2 de preview está inicializado
                 await webView2Preview.EnsureCoreWebView2Async(null);
 
+                // Aguardar um pouco após a inicialização
+                await Task.Delay(50);
+
                 // Configurar eventos do WebView2 de preview
                 webView2Preview.CoreWebView2.NavigationCompleted += PreviewWebView2_NavigationCompleted;
+
+                // Configurar configurações do WebView2 Preview
+                webView2Preview.CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
+                webView2Preview.CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
 
                 isPreviewReady = true;
 
@@ -93,8 +152,7 @@ namespace SistemaNotifica.src.Forms.Template
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao inicializar Preview: {ex.Message}", "Erro",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new Exception($"Erro ao inicializar Preview: {ex.Message}", ex);
             }
         }
 
@@ -104,19 +162,42 @@ namespace SistemaNotifica.src.Forms.Template
             {
                 isPreviewReady = true;
             }
+            else
+            {
+                Console.WriteLine("Erro no carregamento do Preview");
+            }
         }
 
         private async void CoreWebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
-            if (e.IsSuccess)
+            try
             {
-                // Monaco Editor carregado com sucesso
-                isMonacoReady = true;
-                btnPreview.Enabled = true;
-                btnCacelar.Enabled = true;
+                if (e.IsSuccess)
+                {
+                    // Aguardar um pouco para garantir que tudo foi carregado
+                    await Task.Delay(200);
 
-                // Definir conteúdo inicial
-                await SetEditorContent(GetDefaultHtml());
+                    // Monaco Editor carregado com sucesso
+                    isMonacoReady = true;
+
+                    // Habilitar botões na thread da UI
+                    this.Invoke(() =>
+                    {
+                        btnPreview.Enabled = true;
+                        btnCacelar.Enabled = true;
+                    });
+
+                    // Definir conteúdo inicial
+                    await SetEditorContent(GetDefaultHtml());
+                }
+                else
+                {
+                    Console.WriteLine("Erro no carregamento do Monaco Editor");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro no NavigationCompleted: {ex.Message}");
             }
         }
 
@@ -157,6 +238,9 @@ namespace SistemaNotifica.src.Forms.Template
             try
             {
                 if (!isPreviewReady || string.IsNullOrEmpty(htmlContent))
+                    return;
+
+                if (webView2Preview == null || webView2Preview.IsDisposed)
                     return;
 
                 // Navegar para o novo conteúdo HTML
@@ -312,142 +396,40 @@ namespace SistemaNotifica.src.Forms.Template
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Monaco Editor</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        #container {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-        }
-        
-        #editor {
-            width: 100%;
-            height: 100%;
-        }
-        
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: #1e1e1e;
-            color: #fff;
-            font-size: 18px;
-        }
+        body { margin: 0; padding: 0; overflow: hidden; }
+        #container { width: 100%; height: 100vh; }
     </style>
 </head>
 <body>
-    <div id='container'>
-        <div class='loading' id='loading'>
-            🚀 Carregando Monaco Editor...
-        </div>
-        <div id='editor' style='display: none;'></div>
-    </div>
-
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js'></script>
+    <div id='container'></div>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js'></script>
     <script>
-        let editor;
-        let isInitialized = false;
-        
         require.config({ 
             paths: { 
-                vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' 
+                'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs' 
             } 
         });
         
         require(['vs/editor/editor.main'], function () {
-            // Ocultar loading
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('editor').style.display = 'block';
-            
-            editor = monaco.editor.create(document.getElementById('editor'), {
+            window.editor = monaco.editor.create(document.getElementById('container'), {
                 value: '',
                 language: 'html',
                 theme: 'vs-dark',
                 automaticLayout: true,
-                fontSize: 14,
-                fontFamily: 'Consolas, Monaco, monospace',
-                minimap: { 
-                    enabled: true,
-                    side: 'right'
-                },
+                minimap: { enabled: true },
                 wordWrap: 'on',
-                formatOnPaste: true,
-                formatOnType: true,
-                autoIndent: 'full',
-                scrollBeyondLastLine: false,
-                renderWhitespace: 'selection',
-                smoothScrolling: true,
-                cursorBlinking: 'smooth',
-                cursorSmoothCaretAnimation: true,
-                dragAndDrop: true,
-                copyWithSyntaxHighlighting: true,
-                colorDecorators: true,
-                codeLens: true,
+                fontSize: 14,
+                lineNumbers: 'on',
                 folding: true,
-                foldingHighlight: true,
-                showFoldingControls: 'always',
-                unfoldOnClickAfterEndOfLine: true,
-                disableLayerHinting: false,
-                enableSplitViewResizing: false,
-                hideCursorInOverviewRuler: false,
-                highlightActiveIndentGuide: true,
-                bracketPairColorization: {
-                    enabled: true
-                }
+                scrollBeyondLastLine: false
             });
-            
-            isInitialized = true;
-            
-            // Enviar alterações para o C# em tempo real
-            let changeTimeout;
-            editor.onDidChangeModelContent(() => {
-                clearTimeout(changeTimeout);
-                changeTimeout = setTimeout(() => {
-                    if (window.chrome && window.chrome.webview) {
-                        window.chrome.webview.postMessage('content:' + editor.getValue());
-                    }
-                }, 150); // Reduzido para 150ms para preview mais responsivo
+
+            // Enviar conteúdo quando houver mudanças
+            editor.onDidChangeModelContent(function () {
+                const content = editor.getValue();
+                window.chrome.webview.postMessage('content:' + content);
             });
-            
-            // Comandos adicionais
-            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function() {
-                // Ctrl+S para salvar
-                if (window.chrome && window.chrome.webview) {
-                    window.chrome.webview.postMessage('save:' + editor.getValue());
-                }
-            });
-            
-            // Melhorar experiência do usuário
-            editor.focus();
         });
-        
-        // Função para definir conteúdo externamente
-        function setContent(content) {
-            if (isInitialized && editor) {
-                editor.setValue(content);
-            }
-        }
-        
-        // Função para obter conteúdo
-        function getContent() {
-            if (isInitialized && editor) {
-                return editor.getValue();
-            }
-            return '';
-        }
-        
-        // Função para formatar código
-        function formatCode() {
-            if (isInitialized && editor) {
-                editor.getAction('editor.action.formatDocument').run();
-            }
-        }
     </script>
 </body>
 </html>";
@@ -474,88 +456,60 @@ namespace SistemaNotifica.src.Forms.Template
             color: #333;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .container {
+        .notification-container {
             background: white;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
-        .header {
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
         }
         
-        .header h1 {
-            color: #4a5568;
-            margin-bottom: 10px;
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
         
-        .content {
-            margin: 20px 0;
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
         }
         
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
-            text-align: center;
+        p {
             color: #666;
-            font-size: 14px;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
         }
         
-        .btn {
-            background: #667eea;
+        .button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
-            padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
             cursor: pointer;
-            font-size: 16px;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
+            transition: transform 0.2s;
         }
         
-        .btn:hover {
-            background: #5a67d8;
+        .button:hover {
             transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
-    <div class=""container"">
-        <div class=""header"">
-            <h1>🔔 Notificação do Sistema</h1>
-            <p>Template editável para notificações</p>
-        </div>
-        
-        <div class=""content"">
-            <h2>Olá, {{NOME_USUARIO}}!</h2>
-            <p>Esta é uma notificação do sistema <strong>{{NOME_SISTEMA}}</strong>.</p>
-            
-            <p>Detalhes da notificação:</p>
-            <ul>
-                <li>Data: {{DATA_ATUAL}}</li>
-                <li>Tipo: {{TIPO_NOTIFICACAO}}</li>
-                <li>Status: {{STATUS}}</li>
-            </ul>
-            
-            <p>Para mais informações, clique no botão abaixo:</p>
-            <a href=""{{LINK_DETALHES}}"" class=""btn"">Ver Detalhes</a>
-        </div>
-        
-        <div class=""footer"">
-            <p>Este é um email automático. Não responda a esta mensagem.</p>
-            <p>&copy; 2025 {{NOME_EMPRESA}}. Todos os direitos reservados.</p>
-        </div>
+    <div class=""notification-container"">
+        <div class=""icon"">🔔</div>
+        <h1>Notificação</h1>
+        <p>Esta é uma mensagem de exemplo para o template de notificação.</p>
+        <button class=""button"">Entendi</button>
     </div>
 </body>
 </html>";
@@ -563,16 +517,43 @@ namespace SistemaNotifica.src.Forms.Template
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            // Limpar arquivo temporário
             try
             {
+                // Parar timer
+                updateTimer?.Stop();
+                updateTimer?.Dispose();
+
+                // Limpar arquivo temporário
                 if (File.Exists(tempHtmlFile))
                     File.Delete(tempHtmlFile);
-            }
-            catch { }
 
-            updateTimer?.Dispose();
+                // Limpar WebViews
+                if (webView2?.CoreWebView2 != null)
+                {
+                    webView2.CoreWebView2.NavigationCompleted -= CoreWebView2_NavigationCompleted;
+                    webView2.CoreWebView2.WebMessageReceived -= CoreWebView2_WebMessageReceived;
+                }
+
+                if (webView2Preview?.CoreWebView2 != null)
+                {
+                    webView2Preview.CoreWebView2.NavigationCompleted -= PreviewWebView2_NavigationCompleted;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro no fechamento: {ex.Message}");
+            }
+
             base.OnFormClosing(e);
+        }
+
+        // Override para garantir que o form seja exibido corretamente
+        protected override void SetVisibleCore(bool value)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+                value = false;
+
+            base.SetVisibleCore(value);
         }
     }
 }

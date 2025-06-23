@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             statusStrip = new StatusStrip();
             lblStatus = new ToolStripStatusLabel();
             btnRefresh = new Button();
@@ -39,12 +40,15 @@
             label1 = new Label();
             webPreview = new WebBrowser();
             toolbarPanel = new Panel();
+            btnEdit = new Button();
             panelMain = new Panel();
             pnlPreviewTemplateMain = new Panel();
             pnlPreviewTemplate = new Panel();
             panelTemplatesMain = new Panel();
             panelTableTamplates = new Panel();
             label3 = new Label();
+            panelEdit = new Panel();
+            timerTransition = new System.Windows.Forms.Timer(components);
             statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvTemplates).BeginInit();
             toolbarPanel.SuspendLayout();
@@ -183,6 +187,7 @@
             // toolbarPanel
             // 
             toolbarPanel.BorderStyle = BorderStyle.FixedSingle;
+            toolbarPanel.Controls.Add(btnEdit);
             toolbarPanel.Controls.Add(btnUpload);
             toolbarPanel.Controls.Add(btnDelete);
             toolbarPanel.Controls.Add(btnRefresh);
@@ -193,6 +198,19 @@
             toolbarPanel.Name = "toolbarPanel";
             toolbarPanel.Size = new Size(898, 35);
             toolbarPanel.TabIndex = 0;
+            // 
+            // btnEdit
+            // 
+            btnEdit.BackColor = Color.FromArgb(33, 150, 243);
+            btnEdit.FlatStyle = FlatStyle.Flat;
+            btnEdit.ForeColor = Color.White;
+            btnEdit.Location = new Point(568, 3);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(90, 27);
+            btnEdit.TabIndex = 5;
+            btnEdit.Text = "Editar";
+            btnEdit.UseVisualStyleBackColor = false;
+            btnEdit.Click += btnEdit_Click;
             // 
             // panelMain
             // 
@@ -259,11 +277,26 @@
             label3.Text = "Templates Disponíveis";
             label3.TextAlign = ContentAlignment.MiddleLeft;
             // 
+            // panelEdit
+            // 
+            panelEdit.BackColor = Color.Red;
+            panelEdit.Dock = DockStyle.Right;
+            panelEdit.Location = new Point(898, 0);
+            panelEdit.Name = "panelEdit";
+            panelEdit.Size = new Size(0, 539);
+            panelEdit.TabIndex = 6;
+            // 
+            // timerTransition
+            // 
+            timerTransition.Interval = 8;
+            timerTransition.Tick += timerTransition_Tick;
+            // 
             // TemplateManagerForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(898, 561);
+            Controls.Add(panelEdit);
             Controls.Add(panelMain);
             Controls.Add(statusStrip);
             MinimumSize = new Size(800, 600);
@@ -311,5 +344,8 @@
         private Panel pnlPreviewTemplate;
         private Label label3;
         private Panel panelTemplatesMain;
+        private Button btnEdit;
+        private Panel panelEdit;
+        private System.Windows.Forms.Timer timerTransition;
     }
 }

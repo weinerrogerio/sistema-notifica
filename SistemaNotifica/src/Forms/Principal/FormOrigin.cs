@@ -19,7 +19,6 @@ namespace SistemaNotifica
         }
 
         Boolean sidebarExpand = false;
-
         private void sidebarTransition_Tick(object sender, EventArgs e)
         {
             if (sidebarExpand)

@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            splitter1 = new Splitter();
             metroPanelTop = new ReaLTaiizor.Controls.MetroPanel();
             btnSave = new Button();
             btnBack = new Button();
@@ -46,14 +45,6 @@
             ((System.ComponentModel.ISupportInitialize)webView2Preview).BeginInit();
             SuspendLayout();
             // 
-            // splitter1
-            // 
-            splitter1.Location = new Point(0, 0);
-            splitter1.Name = "splitter1";
-            splitter1.Size = new Size(3, 481);
-            splitter1.TabIndex = 0;
-            splitter1.TabStop = false;
-            // 
             // metroPanelTop
             // 
             metroPanelTop.BackgroundColor = Color.White;
@@ -65,9 +56,9 @@
             metroPanelTop.Controls.Add(btnPreview);
             metroPanelTop.Dock = DockStyle.Top;
             metroPanelTop.IsDerivedStyle = true;
-            metroPanelTop.Location = new Point(3, 0);
+            metroPanelTop.Location = new Point(0, 0);
             metroPanelTop.Name = "metroPanelTop";
-            metroPanelTop.Size = new Size(828, 35);
+            metroPanelTop.Size = new Size(831, 35);
             metroPanelTop.Style = ReaLTaiizor.Enum.Metro.Style.Light;
             metroPanelTop.StyleManager = null;
             metroPanelTop.TabIndex = 1;
@@ -101,6 +92,7 @@
             btnBack.TabIndex = 9;
             btnBack.Text = "🔄 Voltar";
             btnBack.UseVisualStyleBackColor = false;
+            btnBack.Click += BtnBack_Click;
             // 
             // btnCacelar
             // 
@@ -131,42 +123,43 @@
             // splitContainerMain
             // 
             splitContainerMain.Dock = DockStyle.Fill;
-            splitContainerMain.Location = new Point(3, 35);
+            splitContainerMain.Location = new Point(0, 35);
             splitContainerMain.Name = "splitContainerMain";
-            splitContainerMain.SplitterDistance = 420;
-            splitContainerMain.Panel1MinSize = 300;
-            splitContainerMain.Panel2MinSize = 300;
             // 
             // splitContainerMain.Panel1
             // 
             splitContainerMain.Panel1.Controls.Add(webView2);
+            splitContainerMain.Panel1MinSize = 300;
             // 
             // splitContainerMain.Panel2
             // 
             splitContainerMain.Panel2.Controls.Add(webView2Preview);
-            splitContainerMain.Size = new Size(828, 446);
-            splitContainerMain.SplitterDistance = 400;
+            splitContainerMain.Panel2MinSize = 300;
+            splitContainerMain.Size = new Size(831, 446);
+            splitContainerMain.SplitterDistance = 401;
             splitContainerMain.TabIndex = 2;
             // 
             // webView2
             // 
+            webView2.AllowExternalDrop = true;
             webView2.CreationProperties = null;
             webView2.DefaultBackgroundColor = Color.FromArgb(30, 30, 30);
             webView2.Dock = DockStyle.Fill;
             webView2.Location = new Point(0, 0);
             webView2.Name = "webView2";
-            webView2.Size = new Size(400, 446);
+            webView2.Size = new Size(401, 446);
             webView2.TabIndex = 0;
             webView2.ZoomFactor = 1D;
             // 
             // webView2Preview
             // 
+            webView2Preview.AllowExternalDrop = true;
             webView2Preview.CreationProperties = null;
             webView2Preview.DefaultBackgroundColor = Color.White;
             webView2Preview.Dock = DockStyle.Fill;
             webView2Preview.Location = new Point(0, 0);
             webView2Preview.Name = "webView2Preview";
-            webView2Preview.Size = new Size(424, 446);
+            webView2Preview.Size = new Size(426, 446);
             webView2Preview.TabIndex = 1;
             webView2Preview.ZoomFactor = 1D;
             // 
@@ -177,10 +170,9 @@
             ClientSize = new Size(831, 481);
             Controls.Add(splitContainerMain);
             Controls.Add(metroPanelTop);
-            Controls.Add(splitter1);
             Name = "TemplateEditForm";
             Text = "Template Editor - Monaco + Preview";
-            WindowState = FormWindowState.Maximized; // Abrir maximizado para melhor experiência
+            WindowState = FormWindowState.Maximized;
             metroPanelTop.ResumeLayout(false);
             splitContainerMain.Panel1.ResumeLayout(false);
             splitContainerMain.Panel2.ResumeLayout(false);
@@ -192,8 +184,6 @@
         }
 
         #endregion
-
-        private Splitter splitter1;
         private ReaLTaiizor.Controls.MetroPanel metroPanelTop;
         private Button btnSave;
         private Button btnCacelar;
