@@ -31,6 +31,8 @@ namespace SistemaNotifica.src.Forms.Template
 
         private TemplateEditForm _currentEditForm;
 
+
+
         public TemplateManagerForm()
         {
             InitializeComponent();
@@ -566,47 +568,153 @@ namespace SistemaNotifica.src.Forms.Template
             isFormLoaded = false;
         }
 
-        private async void CreateAndConfigureForm() 
+        //private async void CreateAndConfigureForm()
+        //{
+        //    try
+        //    {
+        //        // Criar o formulário
+        //        pnlForm = new TemplateEditForm
+        //        {
+        //            TopLevel = false,
+        //            FormBorderStyle = FormBorderStyle.None,
+        //            Dock = DockStyle.None,
+        //            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom,
+        //            WindowState = FormWindowState.Normal // Garantir que não está maximizado
+        //        };
+
+        //        // Definir tamanho inicial
+        //        pnlForm.Location = new Point(0, 0);
+        //        pnlForm.Size = new Size(0, panelEdit.Height);
+
+        //        // Adicionar ao painel ANTES de mostrar
+        //        panelEdit.Controls.Add(pnlForm);
+        //        //panelEdit.BringToFront();
+
+        //        // Aguardar um frame para garantir que o controle foi adicionado
+        //        await Task.Delay(1);
+
+        //        // Mostrar o formulário
+        //        pnlForm.Show();
+        //        pnlForm.BringToFront();
+
+        //        // Aguardar a inicialização dos WebView2 (importante!)
+        //        await Task.Delay(100);
+
+        //        isFormLoaded = true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Erro ao criar formulário: {ex.Message}", "Erro",
+        //            MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
+        private async void CreateAndConfigureForm()
         {
             try
             {
-                // Criar o formulário
-                pnlForm = new TemplateEditForm
+                if (_selectedTemplate == null)
+                {
+                    MessageBox.Show("Selecione um template para editar.", "Aviso",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Buscar template completo se necessário
+                EmailTemplate templateCompleto = _selectedTemplate;
+
+                if (string.IsNullOrEmpty(_selectedTemplate.ConteudoHtml))
+                {
+                    SetStatus("Carregando template completo...");
+                    templateCompleto = await _apiService.GetTemplateAsync(_selectedTemplate.Id);
+                }
+
+                // Criar form de edição com o template
+                _currentEditForm = new TemplateEditForm(templateCompleto)
                 {
                     TopLevel = false,
                     FormBorderStyle = FormBorderStyle.None,
-                    Dock = DockStyle.None,
+                    Dock = DockStyle.None, // ✅ Inicialmente sem Dock
                     Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom,
-                    WindowState = FormWindowState.Normal // Garantir que não está maximizado
+                    WindowState = FormWindowState.Normal
                 };
 
-                // Definir tamanho inicial
-                pnlForm.Location = new Point(0, 0);
-                pnlForm.Size = new Size(0, panelEdit.Height);
+                // ✅ CORREÇÃO: Configurar posição e tamanho inicial
+                _currentEditForm.Location = new Point(0, 0);
+                _currentEditForm.Size = new Size(0, panelEdit.Height);
 
-                // Adicionar ao painel ANTES de mostrar
-                panelEdit.Controls.Add(pnlForm);
-                //panelEdit.BringToFront();
+                // Configurar eventos
+                _currentEditForm.CloseRequested += EditForm_CloseRequested;
+                _currentEditForm.TemplateUpdated += EditForm_TemplateUpdated;
 
-                // Aguardar um frame para garantir que o controle foi adicionado
+                // ✅ CORREÇÃO: Adicionar ao painel ANTES de mostrar
+                panelEdit.Controls.Add(_currentEditForm);
+
+                // ✅ CORREÇÃO: Aguardar um frame para garantir que o controle foi adicionado
                 await Task.Delay(1);
 
-                // Mostrar o formulário
-                pnlForm.Show();
-                pnlForm.BringToFront();
+                // ✅ CORREÇÃO: Mostrar o formulário
+                _currentEditForm.Show();
+                _currentEditForm.BringToFront();
 
-                // Aguardar a inicialização dos WebView2 (importante!)
+                // Armazenar referência
+                pnlForm = _currentEditForm;
+
+                // ✅ CORREÇÃO: Aguardar a inicialização dos WebView2 (importante!)
                 await Task.Delay(100);
 
                 isFormLoaded = true;
+
+                SetStatus("Editor de template carregado");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao criar formulário: {ex.Message}", "Erro",
+                MessageBox.Show($"Erro ao carregar template para edição: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SetStatus("Erro ao carregar editor");
             }
         }
 
+        private void EditForm_CloseRequested(object sender, EventArgs e)
+        {
+            // Fechar o painel de edição
+            ContractPanel();
+        }
+
+        private async void EditForm_TemplateUpdated(object sender, EmailTemplate updatedTemplate)
+        {
+            try
+            {
+                SetStatus("Atualizando lista de templates...");
+
+                // Atualizar template na lista local
+                var index = _templates.FindIndex(t => t.Id == updatedTemplate.Id);
+                if (index >= 0)
+                {
+                    _templates[index] = updatedTemplate;
+                }
+
+                // Atualizar card correspondente
+                var card = _templateCards.FirstOrDefault(c => c.Template.Id == updatedTemplate.Id);
+                if (card != null)
+                {
+                    card.Template = updatedTemplate;
+                }
+
+                // Atualizar preview se este template estiver selecionado
+                if (_selectedTemplate?.Id == updatedTemplate.Id)
+                {
+                    _selectedTemplate = updatedTemplate;
+                    await ExibirPreview(updatedTemplate);
+                }
+
+                SetStatus("Template atualizado com sucesso");
+            }
+            catch (Exception ex)
+            {
+                SetStatus($"Erro ao atualizar template: {ex.Message}");
+            }
+        }
         private void SetupAnimation()
         {
             // Definir largura inicial do painel para 0
@@ -710,15 +818,54 @@ namespace SistemaNotifica.src.Forms.Template
             }
         }
 
-        // Método público para contrair o painel
-        public void ContractPanel()
+        // Método para fechar o painel de edição
+        private void ContractPanel()
         {
-            if (panelEdit.Width > 0 && !isAnimating)
+            if (!pnlFormExpanded || pnlForm == null)
+                return;
+
+            try
             {
+                // Verificar alterações pendentes
+                var editForm = pnlForm as TemplateEditForm;
+                if (editForm?.HasUnsavedChanges() == true)
+                {
+                    var result = MessageBox.Show("Existem alterações não salvas. Deseja fechar mesmo assim?",
+                        "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (result == DialogResult.No)
+                        return;
+                }
+
+                // Configurar animação de fechamento
                 isAnimating = true;
-                pnlFormExpanded = true; // Definir como true para iniciar contração
+                targetWidth = 0;
                 timerTransition.Start();
+
+                SetStatus("Fechando editor...");
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao fechar editor: {ex.Message}", "Erro",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Método utilitário para verificar se o template precisa ser recarregado
+        private bool NeedsFullTemplateData(EmailTemplate template)
+        {
+            return string.IsNullOrEmpty(template.ConteudoHtml) ||
+                   template.ConteudoHtml.Length < 100; // Exemplo de critério
+        }
+
+        // Método para pré-carregar dados do template se necessário
+        private async Task<EmailTemplate> EnsureTemplateComplete(EmailTemplate template)
+        {
+            if (NeedsFullTemplateData(template))
+            {
+                return await _apiService.GetTemplateAsync(template.Id);
+            }
+            return template;
         }
 
         // Override do evento Resize para manter responsividade

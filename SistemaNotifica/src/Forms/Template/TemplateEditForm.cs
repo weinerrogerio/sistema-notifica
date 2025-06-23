@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text;
 using Timer = System.Windows.Forms.Timer;
+using SistemaNotifica.src.Models;
 
 namespace SistemaNotifica.src.Forms.Template
 {
@@ -17,17 +18,20 @@ namespace SistemaNotifica.src.Forms.Template
         private bool isPreviewReady = false;
         private bool isInitializing = false;
 
+        private EmailTemplate _currentTemplate;
+        // Adicionar evento para comunicação com o form pai
+        public event EventHandler<EmailTemplate> TemplateUpdated;
+        public event EventHandler CloseRequested;
 
 
-        public TemplateEditForm()
+        // Construtor modificado para receber o template
+        public TemplateEditForm(EmailTemplate template = null)
         {
             InitializeComponent();
+            _currentTemplate = template;
 
-            // Configurar propriedades básicas do form
             this.BackColor = SystemColors.Control;
             this.MinimumSize = new Size(300, 200);
-
-            // Inicializar de forma assíncrona
             this.Load += TemplateEditForm_Load;
         }
 
@@ -39,6 +43,12 @@ namespace SistemaNotifica.src.Forms.Template
             try
             {
                 await InitializeEditor();
+
+                // Se há um template, carregá-lo no editor
+                if (_currentTemplate != null && !string.IsNullOrEmpty(_currentTemplate.ConteudoHtml))
+                {
+                    await SetEditorContent(_currentTemplate.ConteudoHtml);
+                }
             }
             catch (Exception ex)
             {
@@ -298,11 +308,11 @@ namespace SistemaNotifica.src.Forms.Template
             }
         }
 
+        // Método para salvar alterações no template atual
         private async void BtnSave_Click(object sender, EventArgs e)
         {
             try
             {
-                // Obter conteúdo atual do editor
                 string content = await GetEditorContent();
 
                 if (string.IsNullOrEmpty(content))
@@ -312,17 +322,35 @@ namespace SistemaNotifica.src.Forms.Template
                     return;
                 }
 
-                using (SaveFileDialog saveDialog = new SaveFileDialog())
+                if (_currentTemplate != null)
                 {
-                    saveDialog.Filter = "Arquivos HTML (*.html)|*.html|Todos os arquivos (*.*)|*.*";
-                    saveDialog.DefaultExt = "html";
-                    saveDialog.FileName = "template.html";
+                    // Salvar no servidor via API
+                    _currentTemplate.ConteudoHtml = content;
 
-                    if (saveDialog.ShowDialog() == DialogResult.OK)
+                    // Aqui você chamaria seu ApiService para salvar
+                    // await _apiService.UpdateTemplateAsync(_currentTemplate);
+
+                    // Disparar evento para atualizar a lista no form pai
+                    TemplateUpdated?.Invoke(this, _currentTemplate);
+
+                    MessageBox.Show("Template salvo com sucesso!", "Sucesso",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    // Salvar como novo arquivo
+                    using (SaveFileDialog saveDialog = new SaveFileDialog())
                     {
-                        await File.WriteAllTextAsync(saveDialog.FileName, content, Encoding.UTF8);
-                        MessageBox.Show("📁 Template salvo com sucesso!", "Salvar",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        saveDialog.Filter = "Arquivos HTML (*.html)|*.html|Todos os arquivos (*.*)|*.*";
+                        saveDialog.DefaultExt = "html";
+                        saveDialog.FileName = "template.html";
+
+                        if (saveDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            await File.WriteAllTextAsync(saveDialog.FileName, content, Encoding.UTF8);
+                            MessageBox.Show("📁 Template salvo com sucesso!", "Salvar",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
                     }
                 }
             }
@@ -333,10 +361,12 @@ namespace SistemaNotifica.src.Forms.Template
             }
         }
 
+        // Modificar o método de voltar para usar evento
         private void BtnBack_Click(object sender, EventArgs e)
         {
             // Verificar se há alterações não salvas
-            if (!string.IsNullOrEmpty(currentHtmlContent))
+            if (!string.IsNullOrEmpty(currentHtmlContent) &&
+                (_currentTemplate == null || currentHtmlContent != _currentTemplate.ConteudoHtml))
             {
                 var result = MessageBox.Show("Existem alterações não salvas. Deseja sair mesmo assim?",
                     "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -345,7 +375,8 @@ namespace SistemaNotifica.src.Forms.Template
                     return;
             }
 
-            this.Close();
+            // Disparar evento para o form pai
+            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
 
         private async void BtnCancelar_Click(object sender, EventArgs e)
@@ -385,6 +416,21 @@ namespace SistemaNotifica.src.Forms.Template
                 MessageBox.Show($"❌ Erro ao abrir preview: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        // Método para obter o template atual (útil para o form pai)
+        public EmailTemplate GetCurrentTemplate()
+        {
+            return _currentTemplate;
+        }
+
+        // Método para verificar se há alterações pendentes
+        public bool HasUnsavedChanges()
+        {
+            if (_currentTemplate == null)
+                return !string.IsNullOrEmpty(currentHtmlContent);
+
+            return currentHtmlContent != _currentTemplate.ConteudoHtml;
         }
 
         private string GetMonacoEditorHtml()
