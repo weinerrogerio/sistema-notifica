@@ -74,17 +74,30 @@ namespace SistemaNotifica
             panel1.Controls.Add(imgLogo);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
+<<<<<<< HEAD
             panel1.Name = "panel1";
             panel1.Size = new Size(927, 34);
+=======
+            panel1.Margin = new Padding(3, 4, 3, 4);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(1059, 46);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             panel1.TabIndex = 0;
             panel1.Paint += panel1_Paint;
             // 
             // btnHam
             // 
             btnHam.Image = (Image)resources.GetObject("btnHam.Image");
+<<<<<<< HEAD
             btnHam.Location = new Point(7, 0);
             btnHam.Name = "btnHam";
             btnHam.Size = new Size(38, 32);
+=======
+            btnHam.Location = new Point(8, 0);
+            btnHam.Margin = new Padding(3, 4, 3, 4);
+            btnHam.Name = "btnHam";
+            btnHam.Size = new Size(43, 43);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             btnHam.SizeMode = PictureBoxSizeMode.CenterImage;
             btnHam.TabIndex = 3;
             btnHam.TabStop = false;
@@ -104,7 +117,11 @@ namespace SistemaNotifica
             nightControlBox1.EnableMaximizeColor = Color.FromArgb(160, 160, 160);
             nightControlBox1.EnableMinimizeButton = true;
             nightControlBox1.EnableMinimizeColor = Color.FromArgb(160, 160, 160);
+<<<<<<< HEAD
             nightControlBox1.Location = new Point(788, 0);
+=======
+            nightControlBox1.Location = new Point(920, 0);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             nightControlBox1.MaximizeHoverColor = Color.FromArgb(15, 255, 255, 255);
             nightControlBox1.MaximizeHoverForeColor = Color.White;
             nightControlBox1.MinimizeHoverColor = Color.FromArgb(15, 255, 255, 255);
@@ -117,9 +134,16 @@ namespace SistemaNotifica
             // 
             imgLogo.BackgroundImageLayout = ImageLayout.None;
             imgLogo.Image = (Image)resources.GetObject("imgLogo.Image");
+<<<<<<< HEAD
             imgLogo.Location = new Point(50, 0);
             imgLogo.Name = "imgLogo";
             imgLogo.Size = new Size(99, 33);
+=======
+            imgLogo.Location = new Point(57, 0);
+            imgLogo.Margin = new Padding(3, 4, 3, 4);
+            imgLogo.Name = "imgLogo";
+            imgLogo.Size = new Size(113, 44);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             imgLogo.SizeMode = PictureBoxSizeMode.Zoom;
             imgLogo.TabIndex = 2;
             imgLogo.TabStop = false;
@@ -137,6 +161,7 @@ namespace SistemaNotifica
             sidebarMenu.Controls.Add(panelLogOut);
             sidebarMenu.Dock = DockStyle.Left;
             sidebarMenu.FlowDirection = FlowDirection.TopDown;
+<<<<<<< HEAD
             sidebarMenu.Location = new Point(0, 34);
             sidebarMenu.Name = "sidebarMenu";
             sidebarMenu.Size = new Size(60, 439);
@@ -148,14 +173,35 @@ namespace SistemaNotifica
             panel5.Location = new Point(3, 3);
             panel5.Name = "panel5";
             panel5.Size = new Size(200, 23);
+=======
+            sidebarMenu.Location = new Point(0, 46);
+            sidebarMenu.Margin = new Padding(3, 4, 3, 4);
+            sidebarMenu.Name = "sidebarMenu";
+            sidebarMenu.Size = new Size(60, 585);
+            sidebarMenu.TabIndex = 1;
+            // 
+            // panel5
+            // 
+            panel5.Location = new Point(3, 4);
+            panel5.Margin = new Padding(3, 4, 3, 4);
+            panel5.Name = "panel5";
+            panel5.Size = new Size(229, 31);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             panel5.TabIndex = 4;
             // 
             // panelHome
             // 
             panelHome.Controls.Add(btnHome);
+<<<<<<< HEAD
             panelHome.Location = new Point(3, 32);
             panelHome.Name = "panelHome";
             panelHome.Size = new Size(187, 44);
+=======
+            panelHome.Location = new Point(3, 43);
+            panelHome.Margin = new Padding(3, 4, 3, 4);
+            panelHome.Name = "panelHome";
+            panelHome.Size = new Size(214, 59);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             panelHome.TabIndex = 5;
             // 
             // btnHome
@@ -166,10 +212,18 @@ namespace SistemaNotifica
             btnHome.ForeColor = Color.White;
             btnHome.Image = (Image)resources.GetObject("btnHome.Image");
             btnHome.ImageAlign = ContentAlignment.MiddleLeft;
+<<<<<<< HEAD
             btnHome.Location = new Point(-12, -5);
             btnHome.Name = "btnHome";
             btnHome.Padding = new Padding(15, 0, 0, 0);
             btnHome.Size = new Size(214, 56);
+=======
+            btnHome.Location = new Point(-14, -7);
+            btnHome.Margin = new Padding(3, 4, 3, 4);
+            btnHome.Name = "btnHome";
+            btnHome.Padding = new Padding(17, 0, 0, 0);
+            btnHome.Size = new Size(245, 75);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             btnHome.TabIndex = 2;
             btnHome.Text = "Home";
             btnHome.UseVisualStyleBackColor = false;
@@ -178,9 +232,16 @@ namespace SistemaNotifica
             // panelImportar
             // 
             panelImportar.Controls.Add(btnImportarDoc);
+<<<<<<< HEAD
             panelImportar.Location = new Point(3, 82);
             panelImportar.Name = "panelImportar";
             panelImportar.Size = new Size(187, 44);
+=======
+            panelImportar.Location = new Point(3, 110);
+            panelImportar.Margin = new Padding(3, 4, 3, 4);
+            panelImportar.Name = "panelImportar";
+            panelImportar.Size = new Size(214, 59);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             panelImportar.TabIndex = 3;
             // 
             // btnImportarDoc
@@ -191,10 +252,18 @@ namespace SistemaNotifica
             btnImportarDoc.ForeColor = Color.White;
             btnImportarDoc.Image = (Image)resources.GetObject("btnImportarDoc.Image");
             btnImportarDoc.ImageAlign = ContentAlignment.MiddleLeft;
+<<<<<<< HEAD
             btnImportarDoc.Location = new Point(-11, -11);
             btnImportarDoc.Name = "btnImportarDoc";
             btnImportarDoc.Padding = new Padding(15, 0, 0, 0);
             btnImportarDoc.Size = new Size(209, 61);
+=======
+            btnImportarDoc.Location = new Point(-13, -15);
+            btnImportarDoc.Margin = new Padding(3, 4, 3, 4);
+            btnImportarDoc.Name = "btnImportarDoc";
+            btnImportarDoc.Padding = new Padding(17, 0, 0, 0);
+            btnImportarDoc.Size = new Size(239, 81);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             btnImportarDoc.TabIndex = 2;
             btnImportarDoc.Text = "     Importar";
             btnImportarDoc.UseVisualStyleBackColor = false;
@@ -203,9 +272,16 @@ namespace SistemaNotifica
             // panelData
             // 
             panelData.Controls.Add(btnDados);
+<<<<<<< HEAD
             panelData.Location = new Point(3, 132);
             panelData.Name = "panelData";
             panelData.Size = new Size(187, 44);
+=======
+            panelData.Location = new Point(3, 177);
+            panelData.Margin = new Padding(3, 4, 3, 4);
+            panelData.Name = "panelData";
+            panelData.Size = new Size(214, 59);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             panelData.TabIndex = 4;
             // 
             // btnDados
@@ -216,10 +292,18 @@ namespace SistemaNotifica
             btnDados.ForeColor = Color.White;
             btnDados.Image = (Image)resources.GetObject("btnDados.Image");
             btnDados.ImageAlign = ContentAlignment.MiddleLeft;
+<<<<<<< HEAD
             btnDados.Location = new Point(-11, -5);
             btnDados.Name = "btnDados";
             btnDados.Padding = new Padding(15, 0, 0, 0);
             btnDados.Size = new Size(214, 56);
+=======
+            btnDados.Location = new Point(-13, -7);
+            btnDados.Margin = new Padding(3, 4, 3, 4);
+            btnDados.Name = "btnDados";
+            btnDados.Padding = new Padding(17, 0, 0, 0);
+            btnDados.Size = new Size(245, 75);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             btnDados.TabIndex = 2;
             btnDados.Text = " Dados";
             btnDados.UseVisualStyleBackColor = false;
@@ -228,9 +312,16 @@ namespace SistemaNotifica
             // panelUser
             // 
             panelUser.Controls.Add(btnUser);
+<<<<<<< HEAD
             panelUser.Location = new Point(3, 182);
             panelUser.Name = "panelUser";
             panelUser.Size = new Size(187, 44);
+=======
+            panelUser.Location = new Point(3, 244);
+            panelUser.Margin = new Padding(3, 4, 3, 4);
+            panelUser.Name = "panelUser";
+            panelUser.Size = new Size(214, 59);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             panelUser.TabIndex = 5;
             // 
             // btnUser
@@ -241,10 +332,18 @@ namespace SistemaNotifica
             btnUser.ForeColor = Color.White;
             btnUser.Image = (Image)resources.GetObject("btnUser.Image");
             btnUser.ImageAlign = ContentAlignment.MiddleLeft;
+<<<<<<< HEAD
             btnUser.Location = new Point(-12, -5);
             btnUser.Name = "btnUser";
             btnUser.Padding = new Padding(15, 0, 0, 0);
             btnUser.Size = new Size(214, 56);
+=======
+            btnUser.Location = new Point(-14, -7);
+            btnUser.Margin = new Padding(3, 4, 3, 4);
+            btnUser.Name = "btnUser";
+            btnUser.Padding = new Padding(17, 0, 0, 0);
+            btnUser.Size = new Size(245, 75);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             btnUser.TabIndex = 2;
             btnUser.Text = "Ususário";
             btnUser.UseVisualStyleBackColor = false;
@@ -253,9 +352,16 @@ namespace SistemaNotifica
             // panelSettings
             // 
             panelSettings.Controls.Add(btnConfig);
+<<<<<<< HEAD
             panelSettings.Location = new Point(3, 232);
             panelSettings.Name = "panelSettings";
             panelSettings.Size = new Size(187, 44);
+=======
+            panelSettings.Location = new Point(3, 311);
+            panelSettings.Margin = new Padding(3, 4, 3, 4);
+            panelSettings.Name = "panelSettings";
+            panelSettings.Size = new Size(214, 59);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             panelSettings.TabIndex = 6;
             // 
             // btnConfig
@@ -266,10 +372,18 @@ namespace SistemaNotifica
             btnConfig.ForeColor = Color.White;
             btnConfig.Image = (Image)resources.GetObject("btnConfig.Image");
             btnConfig.ImageAlign = ContentAlignment.MiddleLeft;
+<<<<<<< HEAD
             btnConfig.Location = new Point(-9, -5);
             btnConfig.Name = "btnConfig";
             btnConfig.Padding = new Padding(15, 0, 0, 0);
             btnConfig.Size = new Size(212, 56);
+=======
+            btnConfig.Location = new Point(-13, -7);
+            btnConfig.Margin = new Padding(3, 4, 3, 4);
+            btnConfig.Name = "btnConfig";
+            btnConfig.Padding = new Padding(17, 0, 0, 0);
+            btnConfig.Size = new Size(245, 75);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             btnConfig.TabIndex = 2;
             btnConfig.Text = "Configurações";
             btnConfig.UseVisualStyleBackColor = false;
@@ -278,9 +392,16 @@ namespace SistemaNotifica
             // panelSobre
             // 
             panelSobre.Controls.Add(btnSobre);
+<<<<<<< HEAD
             panelSobre.Location = new Point(3, 282);
             panelSobre.Name = "panelSobre";
             panelSobre.Size = new Size(187, 44);
+=======
+            panelSobre.Location = new Point(3, 378);
+            panelSobre.Margin = new Padding(3, 4, 3, 4);
+            panelSobre.Name = "panelSobre";
+            panelSobre.Size = new Size(214, 59);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             panelSobre.TabIndex = 8;
             // 
             // btnSobre
@@ -291,10 +412,18 @@ namespace SistemaNotifica
             btnSobre.ForeColor = Color.White;
             btnSobre.Image = (Image)resources.GetObject("btnSobre.Image");
             btnSobre.ImageAlign = ContentAlignment.MiddleLeft;
+<<<<<<< HEAD
             btnSobre.Location = new Point(-9, -5);
             btnSobre.Name = "btnSobre";
             btnSobre.Padding = new Padding(15, 0, 0, 0);
             btnSobre.Size = new Size(214, 56);
+=======
+            btnSobre.Location = new Point(-10, -7);
+            btnSobre.Margin = new Padding(3, 4, 3, 4);
+            btnSobre.Name = "btnSobre";
+            btnSobre.Padding = new Padding(17, 0, 0, 0);
+            btnSobre.Size = new Size(245, 75);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             btnSobre.TabIndex = 2;
             btnSobre.Text = "Sobre";
             btnSobre.UseVisualStyleBackColor = false;
@@ -303,9 +432,16 @@ namespace SistemaNotifica
             // panelLogOut
             // 
             panelLogOut.Controls.Add(btnLogOut);
+<<<<<<< HEAD
             panelLogOut.Location = new Point(3, 332);
             panelLogOut.Name = "panelLogOut";
             panelLogOut.Size = new Size(187, 44);
+=======
+            panelLogOut.Location = new Point(3, 445);
+            panelLogOut.Margin = new Padding(3, 4, 3, 4);
+            panelLogOut.Name = "panelLogOut";
+            panelLogOut.Size = new Size(214, 59);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             panelLogOut.TabIndex = 7;
             // 
             // btnLogOut
@@ -316,10 +452,18 @@ namespace SistemaNotifica
             btnLogOut.ForeColor = Color.White;
             btnLogOut.Image = (Image)resources.GetObject("btnLogOut.Image");
             btnLogOut.ImageAlign = ContentAlignment.MiddleLeft;
+<<<<<<< HEAD
             btnLogOut.Location = new Point(-9, -5);
             btnLogOut.Name = "btnLogOut";
             btnLogOut.Padding = new Padding(15, 0, 0, 0);
             btnLogOut.Size = new Size(214, 56);
+=======
+            btnLogOut.Location = new Point(-10, -7);
+            btnLogOut.Margin = new Padding(3, 4, 3, 4);
+            btnLogOut.Name = "btnLogOut";
+            btnLogOut.Padding = new Padding(17, 0, 0, 0);
+            btnLogOut.Size = new Size(245, 75);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             btnLogOut.TabIndex = 2;
             btnLogOut.Text = "Sair";
             btnLogOut.UseVisualStyleBackColor = false;
@@ -332,25 +476,44 @@ namespace SistemaNotifica
             // 
             // pnlMain
             // 
+<<<<<<< HEAD
             pnlMain.BackColor = Color.White;
             pnlMain.Dock = DockStyle.Fill;
             pnlMain.Location = new Point(60, 34);
             pnlMain.Name = "pnlMain";
             pnlMain.Size = new Size(867, 439);
+=======
+            pnlMain.BackColor = Color.WhiteSmoke;
+            pnlMain.Dock = DockStyle.Fill;
+            pnlMain.Location = new Point(60, 46);
+            pnlMain.Margin = new Padding(3, 4, 3, 4);
+            pnlMain.Name = "pnlMain";
+            pnlMain.Size = new Size(999, 585);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             pnlMain.TabIndex = 3;
             pnlMain.Paint += pnlMain_Paint;
             // 
             // FormOrigin
             // 
+<<<<<<< HEAD
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
             ClientSize = new Size(927, 473);
+=======
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1059, 631);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             Controls.Add(pnlMain);
             Controls.Add(sidebarMenu);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
             IsMdiContainer = true;
+<<<<<<< HEAD
+=======
+            Margin = new Padding(3, 4, 3, 4);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             Name = "FormOrigin";
             Text = "Form1";
             panel1.ResumeLayout(false);

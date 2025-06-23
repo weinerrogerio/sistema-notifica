@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+<<<<<<< HEAD
             panel1 = new Panel();
             button2 = new Button();
             button1 = new Button();
@@ -239,5 +240,36 @@
         private DataGridView dataGridView4;
         private DataGridView dataGridView3;
         private Label label3;
+=======
+            lable = new Label();
+            SuspendLayout();
+            // 
+            // lable
+            // 
+            lable.AutoSize = true;
+            lable.Location = new Point(315, 80);
+            lable.Name = "lable";
+            lable.Size = new Size(98, 20);
+            lable.TabIndex = 0;
+            lable.Text = "TELA CONFIG";
+            lable.Click += btnConfig_Click;
+            // 
+            // FormSettings
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1330, 855);
+            Controls.Add(lable);
+            FormBorderStyle = FormBorderStyle.None;
+            Name = "FormSettings";
+            Text = "FormSettings";
+            ResumeLayout(false);
+            PerformLayout();
+        }
+
+        #endregion
+
+        private Label lable;
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
     }
 }

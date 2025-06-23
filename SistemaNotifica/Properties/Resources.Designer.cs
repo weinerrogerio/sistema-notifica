@@ -59,6 +59,7 @@ namespace SistemaNotifica.Properties {
                 resourceCulture = value;
             }
         }
+<<<<<<< HEAD
         
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
@@ -89,5 +90,7 @@ namespace SistemaNotifica.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
     }
 }

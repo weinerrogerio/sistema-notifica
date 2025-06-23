@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ï»¿using System.Drawing.Printing;
+=======
+using System.Drawing.Printing;
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
 using SistemaNotifica.src.Forms;
 using SistemaNotifica.src.Forms.Principal;
 
@@ -10,16 +14,25 @@ namespace SistemaNotifica
         public Form objForm;
         private string TelaAtual = string.Empty;
 
+<<<<<<< HEAD
         public FormOrigin(string token)
+=======
+        public FormOrigin()
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
         {
             InitializeComponent();
             objForm = new Form();
 
+<<<<<<< HEAD
             // Inicia o formulï¿½rio em tela cheia, mantendo a barra de tarefas visï¿½vel.
+=======
+            // Inicia o formulário em tela cheia, mantendo a barra de tarefas visível.
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             this.WindowState = FormWindowState.Maximized;
             this.FormBorderStyle = FormBorderStyle.Sizable;
         }
 
+<<<<<<< HEAD
         private void ResetSidebarButtons()
         {
             // Coloque aqui os botï¿½es da sidebar que devem ser "resetados"
@@ -33,6 +46,8 @@ namespace SistemaNotifica
             // Tambï¿½m pode mudar ï¿½cones ou fontes aqui se quiser
         }
 
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
         private void Form1_Load_1(object sender, EventArgs e)
         {
         }
@@ -81,10 +96,13 @@ namespace SistemaNotifica
         private void btnHome_Click(object sender, EventArgs e)
         {
             if (TelaAtual == "FormHome") return;
+<<<<<<< HEAD
 
             ResetSidebarButtons();
             btnHome.BackColor = Color.FromArgb(100, 100, 100);
 
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             objForm?.Close();
             objForm = new FormHome
             {
@@ -101,10 +119,13 @@ namespace SistemaNotifica
         private void btnImportarDoc_Click(object sender, EventArgs e)
         {
             if (TelaAtual == "formImport") return;
+<<<<<<< HEAD
 
             ResetSidebarButtons();
             btnImportarDoc.BackColor = Color.FromArgb(100, 100, 100);
 
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             objForm?.Close();
             objForm = new FormImport
             {
@@ -121,10 +142,13 @@ namespace SistemaNotifica
         private void btnDados_Click(object sender, EventArgs e)
         {
             if (TelaAtual == "FormData") return;
+<<<<<<< HEAD
 
             ResetSidebarButtons();
             btnDados.BackColor = Color.FromArgb(100, 100, 100);
 
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             objForm?.Close();
             objForm = new FormData
             {
@@ -141,10 +165,13 @@ namespace SistemaNotifica
         private void btnUsuario_Click(object sender, EventArgs e)
         {
             if (TelaAtual == "FormUser") return;
+<<<<<<< HEAD
 
             ResetSidebarButtons();
             btnUser.BackColor = Color.FromArgb(100, 100, 100);
 
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             objForm?.Close();
             objForm = new FormUser
             {
@@ -161,10 +188,13 @@ namespace SistemaNotifica
         private void btnConfig_Click(object sender, EventArgs e)
         {
             if (TelaAtual == "FormSettings") return;
+<<<<<<< HEAD
 
             ResetSidebarButtons();
             btnConfig.BackColor = Color.FromArgb(100, 100, 100);
 
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             objForm?.Close();
             objForm = new FormSettings
             {
@@ -181,10 +211,13 @@ namespace SistemaNotifica
         private void btnSobre_Click(object sender, EventArgs e)
         {
             if (TelaAtual == "FormSobre") return;
+<<<<<<< HEAD
 
             ResetSidebarButtons();
             btnSobre.BackColor = Color.FromArgb(100, 100, 100);
 
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             objForm?.Close();
             objForm = new FormSobre
             {
@@ -202,9 +235,12 @@ namespace SistemaNotifica
         {
             this.Close();
 
+<<<<<<< HEAD
             ResetSidebarButtons();
             btnLogOut.BackColor = Color.FromArgb(100, 100, 100);
 
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             Thread nt = new Thread(() =>
             {
                 Application.Run(new FormLogin());
@@ -215,12 +251,16 @@ namespace SistemaNotifica
 
         private void pnlMain_Paint(object sender, PaintEventArgs e)
         {
+<<<<<<< HEAD
 
         }
 
         private void sidebarMenu_Paint(object sender, PaintEventArgs e)
         {
 
+=======
+            // OnLoad.add
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
         }
     }
 }

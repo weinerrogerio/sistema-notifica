@@ -19,11 +19,16 @@ namespace SistemaNotifica.src.Forms.Principal
             InitializeComponent();
         }
 
+<<<<<<< HEAD
         private readonly string historicoPath = "historico_importacoes.txt";
 
         private void label2_Click(object sender, EventArgs e)
         {
 
+=======
+        private void label2_Click(object sender, EventArgs e)
+        {
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
         }
 
         private void btnSelecionarArquivo_Click(object sender, EventArgs e)
@@ -44,6 +49,7 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             if (!string.IsNullOrEmpty(filePath))
             {
+<<<<<<< HEAD
                 // Verificar se já foi importado
                 if (System.IO.File.Exists(historicoPath))
                 {
@@ -66,6 +72,11 @@ namespace SistemaNotifica.src.Forms.Principal
 
                 System.IO.File.AppendAllLines(historicoPath, new[] { item });
 
+=======
+                string dataAtual = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                string item = $"Arquivo: {filePath} | Data: {dataAtual}";
+                listBox1.Items.Add(item);
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
                 MessageBox.Show("Arquivo importado: " + filePath);
             }
             else
@@ -74,6 +85,7 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
+<<<<<<< HEAD
         private void FormImport_Load(object sender, EventArgs e)
         {
             if (System.IO.File.Exists(historicoPath))
@@ -83,6 +95,8 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
         }
@@ -90,6 +104,7 @@ namespace SistemaNotifica.src.Forms.Principal
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
         }
+<<<<<<< HEAD
 
         private void btnRemoverSelecionado_Click(object sender, EventArgs e)
         {
@@ -118,5 +133,7 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
     }
 }

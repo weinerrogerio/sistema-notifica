@@ -33,7 +33,10 @@ namespace SistemaNotifica.src.Forms.Principal
             lblDataImport.Visible = true;
             btnAcaoRelatorio.Visible = false;
             btnGrafico.Visible = false;
+<<<<<<< HEAD
             panelRelatorios.Visible = false;
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
 
         }
 
@@ -52,6 +55,7 @@ namespace SistemaNotifica.src.Forms.Principal
             lblDataImport.Visible = false;
             btnAcaoRelatorio.Visible = true;
             btnGrafico.Visible = true;
+<<<<<<< HEAD
             panelRelatorios.Visible = true;
         }
 
@@ -73,6 +77,18 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             ShowRelatorios();
             AtivarBotao(btnAbaRelatorios);
+=======
+        }
+
+        private void btnDados2_Click(object sender, EventArgs e) //botão da aba Dados
+        {
+            ShowDados();
+        }
+
+        private void btnAbaRelatorios_Click(object sender, EventArgs e) //botão da aba Relatorios
+        {
+            ShowRelatorios();
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
         }
 
         private void panelDados_Paint(object sender, PaintEventArgs e)
@@ -84,10 +100,13 @@ namespace SistemaNotifica.src.Forms.Principal
         {
 
         }
+<<<<<<< HEAD
 
         private void panelRelatorios_Paint(object sender, PaintEventArgs e)
         {
 
         }
+=======
+>>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
     }
 }
