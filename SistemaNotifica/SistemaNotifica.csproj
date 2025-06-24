@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
+HEAD
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 =======
 >>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9

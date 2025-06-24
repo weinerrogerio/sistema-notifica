@@ -1,7 +1,7 @@
-<<<<<<< HEAD
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SistemaNotifica.src.Forms;
 
 namespace SistemaNotifica
 {
@@ -96,6 +96,7 @@ namespace SistemaNotifica
         {
             Application.Exit();
         }
+
         private void textBoxName_TextChanged(object sender, EventArgs e)
         {
             // Você pode deixar vazio, ou implementar algo aqui se precisar
