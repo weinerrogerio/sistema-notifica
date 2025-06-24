@@ -39,6 +39,12 @@
             textBoxPassword = new TextBox();
             btnLogin = new Button();
             panel2 = new Panel();
+            // HEAD
+            btnCancelar = new Button();
+            label4 = new Label();
+            label3 = new Label();
+
+            // d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             label2 = new Label();
             topPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
@@ -50,7 +56,11 @@
             label1.AutoSize = true;
             label1.Location = new Point(102, 38);
             label1.Name = "label1";
+            //HEAD
+            label1.Size = new Size(239, 15);
+
             label1.Size = new Size(241, 15);
+            // d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             label1.TabIndex = 0;
             label1.Text = "BEM VINDO AO SISTEMA DE NOTIFICAÇÕES";
             // 
@@ -105,6 +115,10 @@
             textBoxName.Name = "textBoxName";
             textBoxName.Size = new Size(306, 23);
             textBoxName.TabIndex = 2;
+            //HEAD
+            textBoxName.TextChanged += textBoxName_TextChanged;
+
+            // d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             // 
             // poisonContextMenuStrip1
             // 
@@ -113,25 +127,48 @@
             // 
             // textBoxPassword
             // 
+            //HEAD
+            textBoxPassword.Location = new Point(117, 189);
+
             textBoxPassword.Location = new Point(112, 207);
+            //d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             textBoxPassword.Name = "textBoxPassword";
             textBoxPassword.Size = new Size(224, 23);
             textBoxPassword.TabIndex = 4;
             // 
             // btnLogin
             // 
+            //HEAD
+            btnLogin.BackColor = Color.White;
+            btnLogin.FlatStyle = FlatStyle.Flat;
+            btnLogin.ForeColor = Color.Black;
+            btnLogin.ImageAlign = ContentAlignment.MiddleLeft;
+            btnLogin.Location = new Point(140, 227);
+
             btnLogin.Location = new Point(184, 283);
+            // d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(75, 23);
             btnLogin.TabIndex = 5;
             btnLogin.Text = "Entrar";
+            //HEAD
+            btnLogin.UseVisualStyleBackColor = false;
+
             btnLogin.UseVisualStyleBackColor = true;
+            //d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             btnLogin.Click += btnLogin_Click;
             // 
             // panel2
             // 
             panel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            //HEAD
+            panel2.BackColor = SystemColors.Control;
+            panel2.Controls.Add(btnCancelar);
+            panel2.Controls.Add(label4);
+            panel2.Controls.Add(label3);
+
             panel2.BackColor = Color.FromArgb(224, 224, 224);
+            // d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             panel2.Controls.Add(label2);
             panel2.Controls.Add(label1);
             panel2.Controls.Add(textBoxName);
@@ -142,12 +179,50 @@
             panel2.Size = new Size(455, 358);
             panel2.TabIndex = 6;
             // 
+            // HEAD
+            // btnCancelar
+            // 
+            btnCancelar.BackColor = Color.White;
+            btnCancelar.FlatStyle = FlatStyle.Flat;
+            btnCancelar.Location = new Point(240, 227);
+            btnCancelar.Name = "btnCancelar";
+            btnCancelar.Size = new Size(75, 23);
+            btnCancelar.TabIndex = 9;
+            btnCancelar.Text = "Cancelar";
+            btnCancelar.UseVisualStyleBackColor = false;
+            btnCancelar.Click += btnCancelar_Click;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 9F);
+            label4.Location = new Point(117, 174);
+            label4.Name = "label4";
+            label4.Size = new Size(42, 15);
+            label4.TabIndex = 8;
+            label4.Text = "Senha:";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 9F);
+            label3.Location = new Point(76, 120);
+            label3.Name = "label3";
+            label3.Size = new Size(102, 15);
+            label3.TabIndex = 7;
+            label3.Text = "Nome de Usuário:";
+            // 
+            // d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             // label2
             // 
             label2.AutoSize = true;
             label2.Location = new Point(78, 73);
             label2.Name = "label2";
+            // HEAD
+            label2.Size = new Size(295, 15);
+
             label2.Size = new Size(296, 15);
+            // d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             label2.TabIndex = 6;
             label2.Text = "INSIRA OS DADOS DE USUÁRIO ABAIXO PARA ENTRAR";
             // 
@@ -160,6 +235,10 @@
             Controls.Add(panel2);
             Controls.Add(topPanel);
             FormBorderStyle = FormBorderStyle.None;
+            // HEAD
+            KeyPreview = true;
+
+            // d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             Name = "FormLogin";
             topPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)imgLogo).EndInit();
@@ -180,5 +259,11 @@
         private Button btnLogin;
         private Panel panel2;
         private Label label2;
+        // HEAD
+        private Label label4;
+        private Label label3;
+        private Button btnCancelar;
+
+        // d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
     }
 }
