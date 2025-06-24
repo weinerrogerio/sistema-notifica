@@ -620,55 +620,91 @@ namespace SistemaNotifica.src.Forms.Template
                     return;
                 }
 
-                // Buscar template completo se necessário
+                SetStatus("Preparando template para edição...");
+
+                // ✅ Garantir que temos o template completo
                 EmailTemplate templateCompleto = _selectedTemplate;
 
+                // ✅ Se o template não tem conteúdo HTML, buscar do servidor
                 if (string.IsNullOrEmpty(_selectedTemplate.ConteudoHtml))
                 {
-                    SetStatus("Carregando template completo...");
-                    templateCompleto = await _apiService.GetTemplateAsync(_selectedTemplate.Id);
+                    SetStatus("Carregando template completo do servidor...");
+                    try
+                    {
+                        templateCompleto = await _apiService.GetTemplateAsync(_selectedTemplate.Id);
+                        Debug.WriteLine($"Template carregado do servidor - ID: {templateCompleto?.Id}, ConteudoHtml: {templateCompleto?.ConteudoHtml?.Length ?? 0} chars");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Erro ao carregar template do servidor: {ex.Message}");
+                        MessageBox.Show($"Erro ao carregar template: {ex.Message}", "Erro",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine($"Usando template em memória - ID: {templateCompleto?.Id}, ConteudoHtml: {templateCompleto?.ConteudoHtml?.Length ?? 0} chars");
                 }
 
-                // Criar form de edição com o template
+                // ✅ Verificar se conseguimos obter o template
+                if (templateCompleto == null)
+                {
+                    MessageBox.Show("Não foi possível carregar o template.", "Erro",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                SetStatus("Criando editor de template...");
+
+                // ✅ Criar o form de edição com o template completo
                 _currentEditForm = new TemplateEditForm(templateCompleto)
                 {
                     TopLevel = false,
                     FormBorderStyle = FormBorderStyle.None,
-                    Dock = DockStyle.None, // ✅ Inicialmente sem Dock
-                    Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom,
+                    Dock = DockStyle.None, // Inicialmente sem Dock
+                    Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right, // ✅ Melhor ancoragem
                     WindowState = FormWindowState.Normal
                 };
 
-                // ✅ CORREÇÃO: Configurar posição e tamanho inicial
-                _currentEditForm.Location = new Point(0, 0);
-                _currentEditForm.Size = new Size(0, panelEdit.Height);
+                Debug.WriteLine($"TemplateEditForm criado com template ID: {templateCompleto.Id}");
 
-                // Configurar eventos
+                // ✅ Configurar posição e tamanho
+                _currentEditForm.Location = new Point(0, 0);
+                _currentEditForm.Size = panelEdit.Size; // ✅ Usar o tamanho do panel
+
+                // ✅ Configurar eventos
                 _currentEditForm.CloseRequested += EditForm_CloseRequested;
                 _currentEditForm.TemplateUpdated += EditForm_TemplateUpdated;
 
-                // ✅ CORREÇÃO: Adicionar ao painel ANTES de mostrar
+                // ✅ Limpar o panel antes de adicionar o novo form
+                panelEdit.Controls.Clear();
+
+                // ✅ Adicionar o form ao panel
                 panelEdit.Controls.Add(_currentEditForm);
 
-                // ✅ CORREÇÃO: Aguardar um frame para garantir que o controle foi adicionado
-                await Task.Delay(1);
+                // ✅ Aguardar um pouco para garantir que foi adicionado
+                await Task.Delay(50);
 
-                // ✅ CORREÇÃO: Mostrar o formulário
+                // ✅ Mostrar o form
                 _currentEditForm.Show();
                 _currentEditForm.BringToFront();
 
-                // Armazenar referência
+                // ✅ Definir referência
                 pnlForm = _currentEditForm;
 
-                // ✅ CORREÇÃO: Aguardar a inicialização dos WebView2 (importante!)
+                // ✅ Aguardar um pouco mais para garantir que tudo está carregado
                 await Task.Delay(100);
 
                 isFormLoaded = true;
 
-                SetStatus("Editor de template carregado");
+                SetStatus("Editor de template carregado com sucesso");
+
+                Debug.WriteLine("CreateAndConfigureForm concluído com sucesso");
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"Erro em CreateAndConfigureForm: {ex.Message}");
                 MessageBox.Show($"Erro ao carregar template para edição: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 SetStatus("Erro ao carregar editor");
