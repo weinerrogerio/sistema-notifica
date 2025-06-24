@@ -31,4 +31,8 @@ HEAD
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="src\Forms\Template\Utils\" />
+  </ItemGroup>
+
 </Project>

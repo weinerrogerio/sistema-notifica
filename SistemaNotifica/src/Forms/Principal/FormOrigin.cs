@@ -53,7 +53,6 @@ namespace SistemaNotifica
         }
 
         Boolean sidebarExpand = false;
-
         private void sidebarTransition_Tick(object sender, EventArgs e)
         {
             if (sidebarExpand)
@@ -91,6 +90,17 @@ namespace SistemaNotifica
         private void btnHam_Click(object sender, EventArgs e)
         {
             sidebarTransition.Start();
+
+        }
+
+        private void panel5_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void btnHome_Click(object sender, EventArgs e)

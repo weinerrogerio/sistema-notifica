@@ -64,6 +64,7 @@ namespace SistemaNotifica
             panelSettings.SuspendLayout();
             panelSobre.SuspendLayout();
             panelLogOut.SuspendLayout();
+            //panel2.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -152,13 +153,13 @@ namespace SistemaNotifica
             // 
             sidebarMenu.BackColor = Color.Black;
             sidebarMenu.Controls.Add(panel5);
-            sidebarMenu.Controls.Add(panelHome);
-            sidebarMenu.Controls.Add(panelImportar);
-            sidebarMenu.Controls.Add(panelData);
-            sidebarMenu.Controls.Add(panelUser);
             sidebarMenu.Controls.Add(panelSettings);
             sidebarMenu.Controls.Add(panelSobre);
             sidebarMenu.Controls.Add(panelLogOut);
+            sidebarMenu.Controls.Add(panelUser);
+            sidebarMenu.Controls.Add(panelData);
+            sidebarMenu.Controls.Add(panelImportar);
+            sidebarMenu.Controls.Add(panelHome);
             sidebarMenu.Dock = DockStyle.Left;
             sidebarMenu.FlowDirection = FlowDirection.TopDown;
 <<<<<<< HEAD
@@ -188,6 +189,7 @@ namespace SistemaNotifica
             panel5.Size = new Size(229, 31);
 >>>>>>> d7ad8ad943a45b8b3f1f09e8b48c35a06ef22de9
             panel5.TabIndex = 4;
+            panel5.Paint += panel5_Paint;
             // 
             // panelHome
             // 
@@ -527,6 +529,8 @@ namespace SistemaNotifica
             panelSettings.ResumeLayout(false);
             panelSobre.ResumeLayout(false);
             panelLogOut.ResumeLayout(false);
+            //panel2.ResumeLayout(false);
+            //panel2.PerformLayout();
             ResumeLayout(false);
         }
 
