@@ -16,5 +16,7 @@ namespace SistemaNotifica.src.Forms
         {
             InitializeComponent();
         }
+
+        
     }
 }

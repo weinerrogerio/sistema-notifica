@@ -28,33 +28,57 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
+            labelHome = new Label();
+            panelHome = new Panel();
+            panelHeader = new Panel();
+            panelHome.SuspendLayout();
+            panelHeader.SuspendLayout();
             SuspendLayout();
             // 
-            // label1
+            // labelHome
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(317, 93);
-            label1.Name = "label1";
-            label1.Size = new Size(75, 15);
-            label1.TabIndex = 0;
-            label1.Text = "TELA HOME ";
+            labelHome.AutoSize = true;
+            labelHome.Location = new Point(363, 6);
+            labelHome.Name = "labelHome";
+            labelHome.Size = new Size(77, 15);
+            labelHome.TabIndex = 0;
+            labelHome.Text = "TELA INICIAL";
+            // 
+            // panelHome
+            // 
+            panelHome.Controls.Add(panelHeader);
+            panelHome.Dock = DockStyle.Fill;
+            panelHome.Location = new Point(0, 0);
+            panelHome.Name = "panelHome";
+            panelHome.Size = new Size(800, 450);
+            panelHome.TabIndex = 1;
+            // 
+            // panelHeader
+            // 
+            panelHeader.Controls.Add(labelHome);
+            panelHeader.Location = new Point(3, 3);
+            panelHeader.Name = "panelHeader";
+            panelHeader.Size = new Size(794, 26);
+            panelHeader.TabIndex = 1;
             // 
             // FormHome
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(label1);
-            FormBorderStyle = FormBorderStyle.None;
+            Controls.Add(panelHome);
             Name = "FormHome";
             Text = "FormHome";
+            panelHome.ResumeLayout(false);
+            panelHeader.ResumeLayout(false);
+            panelHeader.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
-        private Label label1;
+        private Label labelHome;
+        private Panel panelHome;
+        private Panel panelHeader;
     }
 }

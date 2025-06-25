@@ -61,6 +61,8 @@ namespace SistemaNotifica
             sidebarTransition = new System.Windows.Forms.Timer(components);
             pnlMain = new Panel();
             menuTransition = new System.Windows.Forms.Timer(components);
+            metroLabelUsuario = new ReaLTaiizor.Controls.MetroLabel();
+            metroLabelUser = new ReaLTaiizor.Controls.MetroLabel();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnHam).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
@@ -81,6 +83,8 @@ namespace SistemaNotifica
             // panel1
             // 
             panel1.BackColor = Color.Silver;
+            panel1.Controls.Add(metroLabelUser);
+            panel1.Controls.Add(metroLabelUsuario);
             panel1.Controls.Add(btnHam);
             panel1.Controls.Add(nightControlBox1);
             panel1.Controls.Add(imgLogo);
@@ -451,6 +455,34 @@ namespace SistemaNotifica
             // 
             menuTransition.Tick += menuTransition_Tick;
             // 
+            // metroLabelUsuario
+            // 
+            metroLabelUsuario.Font = new Font("Microsoft Sans Serif", 10F);
+            metroLabelUsuario.IsDerivedStyle = true;
+            metroLabelUsuario.Location = new Point(169, 7);
+            metroLabelUsuario.Name = "metroLabelUsuario";
+            metroLabelUsuario.Size = new Size(65, 23);
+            metroLabelUsuario.Style = ReaLTaiizor.Enum.Metro.Style.Light;
+            metroLabelUsuario.StyleManager = null;
+            metroLabelUsuario.TabIndex = 0;
+            metroLabelUsuario.Text = "Usuário:";
+            metroLabelUsuario.ThemeAuthor = "Taiizor";
+            metroLabelUsuario.ThemeName = "MetroLight";
+            // 
+            // metroLabelUser
+            // 
+            metroLabelUser.Font = new Font("Microsoft Sans Serif", 10F);
+            metroLabelUser.IsDerivedStyle = true;
+            metroLabelUser.Location = new Point(228, 7);
+            metroLabelUser.Name = "metroLabelUser";
+            metroLabelUser.Size = new Size(45, 23);
+            metroLabelUser.Style = ReaLTaiizor.Enum.Metro.Style.Light;
+            metroLabelUser.StyleManager = null;
+            metroLabelUser.TabIndex = 4;
+            metroLabelUser.Text = "Error";
+            metroLabelUser.ThemeAuthor = "Taiizor";
+            metroLabelUser.ThemeName = "MetroLight";
+            // 
             // FormOrigin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -519,5 +551,7 @@ namespace SistemaNotifica
         private Panel panelSubMenu2;
         private Button btnConfigNotificacao;
         private System.Windows.Forms.Timer menuTransition;
+        private ReaLTaiizor.Controls.MetroLabel metroLabelUser;
+        private ReaLTaiizor.Controls.MetroLabel metroLabelUsuario;
     }
 }

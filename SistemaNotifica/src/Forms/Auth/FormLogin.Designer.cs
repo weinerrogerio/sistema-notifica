@@ -24,41 +24,43 @@
 
         /// <summary>
         /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
+        /// the contents of this code editor.
         /// </summary>
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLogin));
-            label1 = new Label();
-            nightControlBox1 = new ReaLTaiizor.Controls.NightControlBox();
             topPanel = new Panel();
+            nightControlBox1 = new ReaLTaiizor.Controls.NightControlBox();
             imgLogo = new PictureBox();
-            textBoxName = new TextBox();
-            poisonContextMenuStrip1 = new ReaLTaiizor.Controls.PoisonContextMenuStrip(components);
-            textBoxPassword = new TextBox();
+            panelLogin = new Panel();
             btnLogin = new Button();
-            panel2 = new Panel();
-            label2 = new Label();
+            textBoxPassword = new TextBox();
+            textBoxName = new TextBox();
+            lblTituloLogin = new Label();
+            lblInstrucaoLogin = new Label();
+            poisonContextMenuStrip1 = new ReaLTaiizor.Controls.PoisonContextMenuStrip(components);
             topPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
-            panel2.SuspendLayout();
+            panelLogin.SuspendLayout();
             SuspendLayout();
             // 
-            // label1
+            // topPanel
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(102, 38);
-            label1.Name = "label1";
-            label1.Size = new Size(241, 15);
-            label1.TabIndex = 0;
-            label1.Text = "BEM VINDO AO SISTEMA DE NOTIFICAÇÕES";
+            topPanel.BackColor = Color.FromArgb(64, 64, 64);
+            topPanel.Controls.Add(nightControlBox1);
+            topPanel.Controls.Add(imgLogo);
+            topPanel.Dock = DockStyle.Top;
+            topPanel.Location = new Point(0, 0);
+            topPanel.Name = "topPanel";
+            topPanel.Size = new Size(1164, 40);
+            topPanel.TabIndex = 1;
             // 
             // nightControlBox1
             // 
             nightControlBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             nightControlBox1.BackColor = Color.Transparent;
-            nightControlBox1.CloseHoverColor = Color.FromArgb(199, 80, 80);
+            nightControlBox1.CloseHoverColor = Color.FromArgb(232, 17, 35);
             nightControlBox1.CloseHoverForeColor = Color.White;
             nightControlBox1.DefaultLocation = true;
             nightControlBox1.DisableMaximizeColor = Color.FromArgb(105, 105, 105);
@@ -77,100 +79,117 @@
             nightControlBox1.Size = new Size(139, 31);
             nightControlBox1.TabIndex = 2;
             // 
-            // topPanel
-            // 
-            topPanel.BackColor = Color.Silver;
-            topPanel.Controls.Add(nightControlBox1);
-            topPanel.Controls.Add(imgLogo);
-            topPanel.Dock = DockStyle.Top;
-            topPanel.Location = new Point(0, 0);
-            topPanel.Name = "topPanel";
-            topPanel.Size = new Size(1164, 33);
-            topPanel.TabIndex = 1;
-            // 
             // imgLogo
             // 
             imgLogo.BackgroundImageLayout = ImageLayout.None;
             imgLogo.Image = (Image)resources.GetObject("imgLogo.Image");
-            imgLogo.Location = new Point(0, 0);
+            imgLogo.Location = new Point(10, 5);
             imgLogo.Name = "imgLogo";
-            imgLogo.Size = new Size(99, 33);
+            imgLogo.Size = new Size(90, 30);
             imgLogo.SizeMode = PictureBoxSizeMode.Zoom;
             imgLogo.TabIndex = 2;
             imgLogo.TabStop = false;
             // 
+            // panelLogin
+            // 
+            panelLogin.Anchor = AnchorStyles.None;
+            panelLogin.BackColor = Color.FromArgb(240, 240, 240);
+            panelLogin.Controls.Add(btnLogin);
+            panelLogin.Controls.Add(textBoxPassword);
+            panelLogin.Controls.Add(textBoxName);
+            panelLogin.Controls.Add(lblTituloLogin);
+            panelLogin.Controls.Add(lblInstrucaoLogin);
+            panelLogin.Location = new Point(350, 150);
+            panelLogin.Name = "panelLogin";
+            panelLogin.Size = new Size(460, 380);
+            panelLogin.TabIndex = 6;
+            // 
+            // btnLogin
+            // 
+            btnLogin.BackColor = Color.FromArgb(0, 122, 204);
+            btnLogin.FlatAppearance.BorderSize = 0;
+            btnLogin.FlatStyle = FlatStyle.Flat;
+            btnLogin.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnLogin.ForeColor = Color.White;
+            btnLogin.Location = new Point(130, 290);
+            btnLogin.Name = "btnLogin";
+            btnLogin.Size = new Size(200, 40);
+            btnLogin.TabIndex = 5;
+            btnLogin.Text = "Entrar";
+            btnLogin.UseVisualStyleBackColor = false;
+            btnLogin.Click += btnLogin_Click;
+            // 
+            // textBoxPassword
+            // 
+            textBoxPassword.Font = new Font("Segoe UI", 10F);
+            textBoxPassword.Location = new Point(80, 220);
+            textBoxPassword.Name = "textBoxPassword";
+            textBoxPassword.PasswordChar = '*';
+            textBoxPassword.PlaceholderText = "Senha";
+            textBoxPassword.Size = new Size(300, 25);
+            textBoxPassword.TabIndex = 4;
+            textBoxPassword.TextAlign = HorizontalAlignment.Center;
+            // 
             // textBoxName
             // 
-            textBoxName.Location = new Point(76, 135);
+            textBoxName.Font = new Font("Segoe UI", 10F);
+            textBoxName.Location = new Point(80, 160);
             textBoxName.Name = "textBoxName";
-            textBoxName.Size = new Size(306, 23);
+            textBoxName.PlaceholderText = "Nome de Usuário";
+            textBoxName.Size = new Size(300, 25);
             textBoxName.TabIndex = 2;
+            textBoxName.TextAlign = HorizontalAlignment.Center;
+            // 
+            // lblTituloLogin
+            // 
+            lblTituloLogin.AutoSize = true;
+            lblTituloLogin.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
+            lblTituloLogin.ForeColor = Color.FromArgb(64, 64, 64);
+            lblTituloLogin.Location = new Point(50, 40);
+            lblTituloLogin.Name = "lblTituloLogin";
+            lblTituloLogin.Size = new Size(351, 32);
+            lblTituloLogin.TabIndex = 6;
+            lblTituloLogin.Text = "Bem-vindo ao Sistema Notifica";
+            lblTituloLogin.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblInstrucaoLogin
+            // 
+            lblInstrucaoLogin.AutoSize = true;
+            lblInstrucaoLogin.Font = new Font("Segoe UI", 9.5F);
+            lblInstrucaoLogin.ForeColor = Color.FromArgb(100, 100, 100);
+            lblInstrucaoLogin.Location = new Point(80, 90);
+            lblInstrucaoLogin.Name = "lblInstrucaoLogin";
+            lblInstrucaoLogin.Size = new Size(270, 17);
+            lblInstrucaoLogin.TabIndex = 7;
+            lblInstrucaoLogin.Text = "Insira suas credenciais abaixo para continuar";
+            lblInstrucaoLogin.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // poisonContextMenuStrip1
             // 
             poisonContextMenuStrip1.Name = "poisonContextMenuStrip1";
             poisonContextMenuStrip1.Size = new Size(61, 4);
             // 
-            // textBoxPassword
-            // 
-            textBoxPassword.Location = new Point(112, 207);
-            textBoxPassword.Name = "textBoxPassword";
-            textBoxPassword.Size = new Size(224, 23);
-            textBoxPassword.TabIndex = 4;
-            // 
-            // btnLogin
-            // 
-            btnLogin.Location = new Point(184, 283);
-            btnLogin.Name = "btnLogin";
-            btnLogin.Size = new Size(75, 23);
-            btnLogin.TabIndex = 5;
-            btnLogin.Text = "Entrar";
-            btnLogin.UseVisualStyleBackColor = true;
-            btnLogin.Click += btnLogin_Click;
-            // 
-            // panel2
-            // 
-            panel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panel2.BackColor = Color.FromArgb(224, 224, 224);
-            panel2.Controls.Add(label2);
-            panel2.Controls.Add(label1);
-            panel2.Controls.Add(textBoxName);
-            panel2.Controls.Add(btnLogin);
-            panel2.Controls.Add(textBoxPassword);
-            panel2.Location = new Point(375, 133);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(455, 358);
-            panel2.TabIndex = 6;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(78, 73);
-            label2.Name = "label2";
-            label2.Size = new Size(296, 15);
-            label2.TabIndex = 6;
-            label2.Text = "INSIRA OS DADOS DE USUÁRIO ABAIXO PARA ENTRAR";
-            // 
             // FormLogin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.White;
+            BackColor = Color.FromArgb(230, 230, 230);
             ClientSize = new Size(1164, 641);
-            Controls.Add(panel2);
+            Controls.Add(panelLogin);
             Controls.Add(topPanel);
             FormBorderStyle = FormBorderStyle.None;
             Name = "FormLogin";
+            Load += FormLogin_Load;
             topPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)imgLogo).EndInit();
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
+            panelLogin.ResumeLayout(false);
+            panelLogin.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private Label label1;
+        private Label lblTituloLogin;
         private ReaLTaiizor.Controls.NightControlBox nightControlBox1;
         private Panel topPanel;
         private PictureBox imgLogo;
@@ -178,7 +197,7 @@
         private ReaLTaiizor.Controls.PoisonContextMenuStrip poisonContextMenuStrip1;
         private TextBox textBoxPassword;
         private Button btnLogin;
-        private Panel panel2;
-        private Label label2;
+        private Panel panelLogin;
+        private Label lblInstrucaoLogin;
     }
 }
