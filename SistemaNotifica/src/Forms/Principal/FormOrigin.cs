@@ -1,5 +1,8 @@
+using System.Diagnostics;
 using System.Drawing.Printing;
+using System.Reflection;
 using SistemaNotifica.src.Forms;
+
 
 namespace SistemaNotifica
 {
@@ -8,71 +11,187 @@ namespace SistemaNotifica
         //Thread nt;
         public Form objForm;
 
+        private const int SIDEBAR_MIN_WIDTH = 50;
+        private const int SIDEBAR_MAX_WIDTH = 190;
+
+        private const int SUBMENU_MIN_HEIGHT = 45;
+        private const int SUBMENU_MAX_HEIGHT = 125;
         public FormOrigin()
         {
             InitializeComponent();
             objForm = new Form();
+            ApplyPerformanceOptimizations();
+            //StartSidebarAnimation();
+            sidebarMenu.Width = SIDEBAR_MIN_WIDTH;
+            tableLayoutNotificacao.Height = SUBMENU_MIN_HEIGHT;
         }
-        private void Form1_Load_1(object sender, EventArgs e)
+
+        private void ApplyPerformanceOptimizations()
         {
+            // CONFIGURAÇÕES CRÍTICAS DE PERFORMANCE DO FORM
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint |
+                         ControlStyles.UserPaint |
+                         ControlStyles.DoubleBuffer |
+                         ControlStyles.ResizeRedraw |
+                         ControlStyles.OptimizedDoubleBuffer, true);
+            this.UpdateStyles();
 
+            // APLICAR DOUBLEBUFFERED A TODOS OS PAINÉIS USANDO REFLECTION
+            Panel[] panels = { panel1, panel5, panelHome, panelImportar, panelData, panelSettings,
+                              panelNotificação, panelSubMenu1, panelSubMenu2, panelUser,
+                              panelSobre, panelLogOut, pnlMain };
+
+            foreach (Panel panel in panels)
+            {
+                // CONFIGURAÇÃO CRÍTICA: Evita flickering durante animações
+                typeof(Panel).InvokeMember("DoubleBuffered",
+                    BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
+                    null, panel, new object[] { true });
+            }
+
+            // PERFORMANCE: PictureBox com DoubleBuffered para btnHam
+            typeof(PictureBox).InvokeMember("DoubleBuffered",
+               BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
+               null, btnHam, new object[] { true });
+
+            // PERFORMANCE: Logo com DoubleBuffered para imgLogo
+            typeof(PictureBox).InvokeMember("DoubleBuffered",
+                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
+                null, imgLogo, new object[] { true });
+
+            // CONFIGURAÇÃO ULTRA CRÍTICA - GARANTE ANIMAÇÕES A 60 FPS
+            typeof(FlowLayoutPanel).InvokeMember("DoubleBuffered",
+                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
+                null, sidebarMenu, new object[] { true });
+
+            // CONFIGURAÇÃO CRÍTICA PARA SUBMENU ANIMADO
+            typeof(TableLayoutPanel).InvokeMember("DoubleBuffered",
+                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
+                null, tableLayoutNotificacao, new object[] { true });
+
+            // sidebarTransition - CONFIGURAÇÃO CRÍTICA PARA 60 FPS
+            sidebarTransition.Interval = 24; // ~60 FPS
+
+            // menuTransition - CONFIGURAÇÃO PARA 60 FPS
+            menuTransition.Interval = 24; // ~60 FPS
         }
 
-        Boolean sidebarExpand = false;
+
+        //---------------------------------------- ANIMAÇÃO SIDEBAR --------------------------
+        //Boolean sidebarExpanded = false;
+        private float animationProgress = 0f;
+        private int startWidth, targetWidth;
+
+        
+        private void StartSidebarAnimation()
+        {
+            startWidth = sidebarMenu.Width;
+            if (startWidth == SIDEBAR_MIN_WIDTH)
+            {
+                targetWidth = SIDEBAR_MAX_WIDTH; 
+            }
+            else 
+            {
+                targetWidth = SIDEBAR_MIN_WIDTH;
+                if(menuTargetHeight == SUBMENU_MAX_HEIGHT)
+                {
+                    StartSubmenuAnimation();
+                }
+
+
+            }
+            animationProgress = 0f;
+            sidebarTransition.Start();
+        }
+
+        
+
         private void sidebarTransition_Tick(object sender, EventArgs e)
         {
-            if (sidebarExpand)
+            animationProgress += 0.05f;
+
+            if (animationProgress >= 1f)
             {
-                sidebarMenu.Width -= 10;
-                if (sidebarMenu.Width <= 50)
-                {
-                    sidebarExpand = false;
-                    sidebarTransition.Stop();
-                    // ajusta o tamanho dos containers dos botões dentro do width do menu
-                    adjustWidth(sidebarMenu.Width);
-                }
-
+                animationProgress = 1f; 
+                sidebarTransition.Stop(); 
             }
-            else
-            {
-                sidebarMenu.Width += 10;
-                if (sidebarMenu.Width >= 190)
-                {
-                    sidebarExpand = true;
-                    sidebarTransition.Stop();
 
-                    // ajusta o tamanho dos containers dos botões dentro do width do menu
-                    adjustWidth(sidebarMenu.Width);
+            float easedProgress = 1f - (float)Math.Pow(1 - animationProgress, 3);
+            int newWidth = (int)(startWidth + (targetWidth - startWidth) * easedProgress);
 
-                }
-            }
+            newWidth = Math.Max(50, Math.Min(190, newWidth));
+
+            sidebarMenu.Width = newWidth;
+            adjustWidth(newWidth); 
         }
-        //CONFERIR FUNCIONAMENTO DESSA FUNÇÃO
+
+
+        // ------------------------------ ANIMAÇÃO MENU - SUBMENUS ----------------------
+        private float menuAnimationProgress = 0f;
+        private int menuStartHeight, menuTargetHeight;
+        private void StartSubmenuAnimation()
+        {
+            menuStartHeight = tableLayoutNotificacao.Height; // Altura atual do submenu
+
+            // Determina a altura alvo com base na altura atual
+            if (menuStartHeight == SUBMENU_MIN_HEIGHT)
+            {
+                menuTargetHeight = SUBMENU_MAX_HEIGHT;
+                if(sidebarMenu.Width == SIDEBAR_MIN_WIDTH)
+                {
+                    StartSidebarAnimation();
+                }
+            }
+            else // Se menuStartHeight é SUBMENU_MAX_HEIGHT (ou outro valor)
+            {
+                menuTargetHeight = SUBMENU_MIN_HEIGHT; 
+            }
+
+            menuAnimationProgress = 0f; // Reinicia o progresso
+            menuTransition.Start(); // Inicia o Timer do submenu
+        }
+
+        private void menuTransition_Tick(object sender, EventArgs e)
+        {
+            menuAnimationProgress += 0.05f; // Velocidade da animação (ajuste conforme necessário)
+
+            if (menuAnimationProgress >= 1f)
+            {
+                menuAnimationProgress = 1f; // Garante que o progresso não passe de 1
+                menuTransition.Stop(); // Para a animação
+            }
+
+            float easedProgress = 1f - (float)Math.Pow(1 - menuAnimationProgress, 3);
+            int newHeight = (int)(menuStartHeight + (menuTargetHeight - menuStartHeight) * easedProgress);
+
+            newHeight = Math.Max(SUBMENU_MIN_HEIGHT, Math.Min(SUBMENU_MAX_HEIGHT, newHeight));
+
+            tableLayoutNotificacao.Height = newHeight;            
+        }
         private void adjustWidth(int barWidth)
         {
+            // Suspende layout para evitar múltiplos redesenhos
+            sidebarMenu.SuspendLayout();
             panelHome.Width = barWidth;
             panelImportar.Width = barWidth;
             panelData.Width = barWidth;
             panelUser.Width = barWidth;
             panelSettings.Width = barWidth;
             panelLogOut.Width = barWidth;
+            tableLayoutNotificacao.Width = barWidth;
+            sidebarMenu.ResumeLayout(false);
         }
+
         private void btnHam_Click(object sender, EventArgs e)
-        {
-            sidebarTransition.Start();
+        {            
+            StartSidebarAnimation();
 
         }
-
-        private void panel5_Paint(object sender, PaintEventArgs e)
+        private void btnNotificacao_Click(object sender, EventArgs e)
         {
-
+            StartSubmenuAnimation();
         }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
+            
         private void btnHome_Click(object sender, EventArgs e)
         {
             objForm?.Close();
@@ -92,10 +211,14 @@ namespace SistemaNotifica
 
         }
 
-        // A PRIMEIRA TELA A SER APRESENTADA PRECISA SER A HOME
+        // A PRIMEIRA TELA A SER APRESENTADA PRECISA SER A HOME --> fazer depois 
         private void pnlMain_Paint(object sender, PaintEventArgs e)
         {
             //OnLoad.add
         }
+
+        
+
+
     }
 }
