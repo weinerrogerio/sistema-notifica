@@ -21,13 +21,56 @@ namespace SistemaNotifica.src.Services
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl;
 
-        public ApiService(string baseUrl = "http://localhost:3000")
+        public ApiService(string baseUrl)
         {
             _baseUrl = baseUrl;
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromMinutes(5);
         }
 
+        // Método para definir o token de autorização
+        public void SetAuthorizationHeader(string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        }
+
+        // Método para remover o token de autorização
+        public void ClearAuthorizationHeader()
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+
+        // ------------- MÉTODOS PARA FAZER REQUISIÇÕES HTTP ------------- //
+        // GET /:endpoint
+        protected async Task<T> GetAsync<T>(string endpoint)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/{endpoint}");
+            response.EnsureSuccessStatusCode(); // Lança exceção para códigos de erro HTTP
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(json);
+        }
+        // POST /:endpoint
+        protected async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
+        {
+            var json = JsonConvert.SerializeObject(data);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync($"{_baseUrl}/{endpoint}", content);
+
+            string fullUrl = $"{_baseUrl}/{endpoint}"; // A URL completa 
+            Debug.WriteLine($"[API Service] Enviando POST para: {fullUrl}"); 
+            Debug.WriteLine($"[API Service] Corpo da requisição: {json}");
+
+            response.EnsureSuccessStatusCode();
+            var responseJson = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TResponse>(responseJson);
+        }
+
+        // --------------Adicione PutAsync, DeleteAsync conforme necessário...-------------------------------
+
+
+
+        //------------------------- REMOVER OS ENDPOINTS ABAIXO E COLOCAR EM UM SERVICE PROPRIO-------------------------//
         // GET / - Lista todos os templates
         public async Task<List<EmailTemplate>> GetTemplatesAsync()
         {

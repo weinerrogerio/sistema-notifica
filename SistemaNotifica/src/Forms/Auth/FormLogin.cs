@@ -9,14 +9,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SistemaNotifica.src.Forms;
+using SistemaNotifica.src.Services;
+using SistemaNotifica.src.Models;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using System.Diagnostics;
 
 namespace SistemaNotifica
 {
     public partial class FormLogin : Form
     {
+        private readonly AuthService _authService;
+
         private Point mouseLocation; // Para armazenar a posição do mouse
         private bool isDragging = false;
         private Thread? nt;
+
         public FormLogin()
         {
             InitializeComponent();
@@ -26,11 +33,14 @@ namespace SistemaNotifica
             this.textBoxName.Paint += new PaintEventHandler(this.TextBox_Paint);
             this.textBoxPassword.Paint += new PaintEventHandler(this.TextBox_Paint);
 
-            // Adicionar evento para quando o tamanho do form mudar, redesenhar o panelLogin
             this.Resize += new EventHandler(this.FormLogin_Resize);
             this.topPanel.MouseDown += new MouseEventHandler(this.TopPanel_MouseDown);
             this.topPanel.MouseMove += new MouseEventHandler(this.TopPanel_MouseMove);
             this.topPanel.MouseUp += new MouseEventHandler(this.TopPanel_MouseUp);
+
+            //_apiService = new ApiService();
+            _authService = Program.AuthService;
+            this.KeyPreview = true; // capturar teclas no form
         }
 
         // Evento quando o botão do mouse é pressionado no topPanel
@@ -63,23 +73,52 @@ namespace SistemaNotifica
             isDragging = false; // Para de arrastar
         }
 
-        private void btnLogin_Click(object sender, EventArgs e)
+        private async void btnLogin_Click(object sender, EventArgs e)
         {
-            //trazer autenticação do banco depois
-            if (textBoxName.Text == "user" && textBoxPassword.Text == "123")
+            //string username = textBoxName.Text.Trim();
+            //string password = textBoxPassword.Text;
+            string username = "admin".Trim();
+            string password = "123456".Trim();
+
+            // MELHORAR ISSO ADICIONAR BORDAS VERMELHAS AOS CAMPOS E MENSAGENS DE ERRO
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                this.Hide(); // Esconder o formulário de login em vez de fechar imediatamente
-                nt = new Thread(() =>
-                {
-                    Application.Run(new FormOrigin());
-                });
-                nt.SetApartmentState(ApartmentState.STA);
-                nt.Start();
-                MessageBox.Show("Logado com sucesso!", "Login", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Por favor, preencha todos os campos.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            else
+            try
             {
-                MessageBox.Show("Usuário ou senha inválidos.", "Erro de Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                btnLogin.Enabled = false;
+                btnLogin.Text = "Entrando...";
+                Cursor.Current = Cursors.WaitCursor;
+                Debug.WriteLine("Login: " + username + " - Senha: " + password);
+                // Chama a API para autenticação
+                // var loginResponse = await _apiService.LoginAsync(nome, senha);
+                LoginResponse response = await _authService.LoginAsync(username, password);
+                
+                MessageBox.Show("Login realizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Agora que o login foi bem-sucedido e Sessao.Token está preenchido,
+                // você pode acessar os dados da sessão globalmente.
+                // Ex: string token = Sessao.Token;
+                // string usuario = Sessao.UsuarioLogado;
+
+                // Redirecionar para o formulário principal
+                //FormHome formHome = new FormHome();
+                //formHome.Show();
+                //this.Hide();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao fazer login: {ex.Message}", "Erro",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textBoxPassword.Clear();
+                textBoxName.Focus();
+            }
+            finally
+            {
+                btnLogin.Enabled = true;
+                Cursor.Current = Cursors.Default;
             }
         }
 
@@ -210,6 +249,7 @@ namespace SistemaNotifica
             }
         }
 
-       
+
+
     }
 }
