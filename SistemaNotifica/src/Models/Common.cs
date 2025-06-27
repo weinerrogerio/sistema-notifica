@@ -69,4 +69,60 @@ namespace SistemaNotifica.src.Models
         [JsonProperty("role")]
         public string Role { get; set; }
     }
+
+
+
+    /// Clases Modelos para buscas de distribuição -- dada,dis,dev,docDev, email,status
+    public class StatusNotificacao
+    {
+        public bool emailEnviado { get; set; }
+        public DateTime? dataEnvio { get; set; } // Nullable DateTime
+        public bool lido { get; set; }
+        public DateTime? dataLeitura { get; set; }
+        public string trackingToken { get; set; }
+    }
+
+    public class Credor
+    {
+        public int id { get; set; }
+        public string sacador { get; set; }
+        public string cedente { get; set; }
+    }
+
+    public class Apresentante
+    {
+        public int id { get; set; }
+        public string nome { get; set; }
+    }
+
+    public class Devedor
+    {
+        public int id { get; set; }
+        public string nome { get; set; }
+        public string docDevedor { get; set; }
+        public string email { get; set; }
+        public bool devedorPj { get; set; }
+    }
+
+    public class Protesto
+    {
+        public int id { get; set; }
+        public string numDistribuicao { get; set; }
+        public DateTime dataDistribuicao { get; set; }
+        public DateTime dataApresentacao { get; set; }
+        public string cartProtesto { get; set; }
+        public string numTitulo { get; set; }
+        public int valor { get; set; } // O valor parece ser um int aqui, representando centavos
+        public int saldo { get; set; }
+        public string vencimento { get; set; }
+        public Devedor devedor { get; set; }
+        public Apresentante apresentante { get; set; }
+        public List<Credor> credores { get; set; }
+        public StatusNotificacao statusNotificacao { get; set; }
+    }
+
+
+
+
+
 }

@@ -24,8 +24,21 @@ namespace SistemaNotifica
             //StartSidebarAnimation();
             sidebarMenu.Width = SIDEBAR_MIN_WIDTH;
             tableLayoutNotificacao.Height = SUBMENU_MIN_HEIGHT;
+            
         }
+        private void FormOrigin_Load(object sender, EventArgs e)
+        {
+            objForm?.Close();
+            objForm = new FormHome
+            {
+                TopLevel = false,
+                FormBorderStyle = FormBorderStyle.None,
+                Dock = DockStyle.Fill
+            };
 
+            pnlMain.Controls.Add(objForm);
+            objForm.Show();
+        }
         private void ApplyPerformanceOptimizations()
         {
             // CONFIGURAÇÕES CRÍTICAS DE PERFORMANCE DO FORM

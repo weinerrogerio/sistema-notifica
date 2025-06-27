@@ -104,9 +104,9 @@ namespace SistemaNotifica
                 // string usuario = Sessao.UsuarioLogado;
 
                 // Redirecionar para o formulário principal
-                //FormHome formHome = new FormHome();
-                //formHome.Show();
-                //this.Hide();
+                FormHome formHome = new FormHome();
+                formHome.Show();
+                this.Hide();
             }
             catch (Exception ex)
             {

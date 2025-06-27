@@ -88,7 +88,10 @@ namespace SistemaNotifica.src.Services
         // Método para fazer logout (limpar tokens)
         public void Logout()
         {
-            Sessao.Token = null;
+            Sessao.AccessToken = null;
+            Sessao.RefreshToken = null;
+            Sessao.UsuarioLogado = null;
+            Sessao.TipoUsuario = null;  
             // Sessao.RefreshToken = null; // Limpa também o refresh token
             ClearAuthorizationHeader(); // Limpa o cabeçalho de autorização do HttpClient
         }
