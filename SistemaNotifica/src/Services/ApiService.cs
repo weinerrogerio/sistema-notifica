@@ -43,15 +43,16 @@ namespace SistemaNotifica.src.Services
 
         // ------------- MÉTODOS PARA FAZER REQUISIÇÕES HTTP ------------- //
         // GET /:endpoint
-        protected async Task<T> GetAsync<T>(string endpoint)
+        public async Task<T> GetAsync<T>(string endpoint)
         {
             var response = await _httpClient.GetAsync($"{_baseUrl}/{endpoint}");
             response.EnsureSuccessStatusCode(); // Lança exceção para códigos de erro HTTP
             var json = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"JSON retornado da API: {json}");//retirar depois 
             return JsonConvert.DeserializeObject<T>(json);
         }
         // POST /:endpoint
-        protected async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
+        public async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
         {
             var json = JsonConvert.SerializeObject(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");

@@ -38,20 +38,20 @@
             panel3 = new Panel();
             flowLayoutPanel = new FlowLayoutPanel();
             btnImport = new Button();
+            dataGridViewProtesto = new DataGridView();
             tableLayoutPanelBotton = new TableLayoutPanel();
             chartDist = new System.Windows.Forms.DataVisualization.Charting.Chart();
             panelArq = new Panel();
             panelHeader = new Panel();
-            dataGridViewProtesto = new DataGridView();
             panelHome.SuspendLayout();
             mainTableLayoutPanel.SuspendLayout();
             tableLayoutPanelTop.SuspendLayout();
             panel3.SuspendLayout();
             flowLayoutPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).BeginInit();
             tableLayoutPanelBotton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)chartDist).BeginInit();
             panelHeader.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).BeginInit();
             SuspendLayout();
             // 
             // labelHome
@@ -109,7 +109,7 @@
             // 
             // panel3
             // 
-            panel3.BackColor = Color.Transparent;
+            panel3.BackColor = SystemColors.Control; // Alterado de Transparent para SystemColors.Control
             panel3.Controls.Add(flowLayoutPanel);
             panel3.Dock = DockStyle.Fill;
             panel3.ForeColor = Color.Transparent;
@@ -120,7 +120,7 @@
             // 
             // flowLayoutPanel
             // 
-            flowLayoutPanel.BackColor = Color.Transparent;
+            flowLayoutPanel.BackColor = SystemColors.Control; // Alterado de Transparent para SystemColors.Control
             flowLayoutPanel.Controls.Add(btnImport);
             flowLayoutPanel.Dock = DockStyle.Right;
             flowLayoutPanel.Location = new Point(5, 0);
@@ -141,6 +141,19 @@
             btnImport.TabIndex = 6;
             btnImport.Text = "IMPORTAR NOVO ARQUIVO";
             btnImport.UseVisualStyleBackColor = false;
+            // 
+            // dataGridViewProtesto
+            // 
+            dataGridViewProtesto.AllowUserToAddRows = false;
+            dataGridViewProtesto.AllowUserToDeleteRows = false;
+            dataGridViewProtesto.AllowUserToOrderColumns = true;
+            dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewProtesto.Dock = DockStyle.Fill;
+            dataGridViewProtesto.Location = new Point(3, 3);
+            dataGridViewProtesto.Name = "dataGridViewProtesto";
+            dataGridViewProtesto.ReadOnly = true;
+            dataGridViewProtesto.Size = new Size(561, 192);
+            dataGridViewProtesto.TabIndex = 2;
             // 
             // tableLayoutPanelBotton
             // 
@@ -198,19 +211,6 @@
             panelHeader.Size = new Size(800, 25);
             panelHeader.TabIndex = 1;
             // 
-            // dataGridViewProtesto
-            // 
-            dataGridViewProtesto.AllowUserToAddRows = false;
-            dataGridViewProtesto.AllowUserToDeleteRows = false;
-            dataGridViewProtesto.AllowUserToOrderColumns = true;
-            dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewProtesto.Dock = DockStyle.Fill;
-            dataGridViewProtesto.Location = new Point(3, 3);
-            dataGridViewProtesto.Name = "dataGridViewProtesto";
-            dataGridViewProtesto.ReadOnly = true;
-            dataGridViewProtesto.Size = new Size(561, 192);
-            dataGridViewProtesto.TabIndex = 2;
-            // 
             // FormHome
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -225,11 +225,11 @@
             tableLayoutPanelTop.ResumeLayout(false);
             panel3.ResumeLayout(false);
             flowLayoutPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).EndInit();
             tableLayoutPanelBotton.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)chartDist).EndInit();
             panelHeader.ResumeLayout(false);
             panelHeader.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).EndInit();
             ResumeLayout(false);
         }
 

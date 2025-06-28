@@ -75,49 +75,81 @@ namespace SistemaNotifica
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
-            //string username = textBoxName.Text.Trim();
-            //string password = textBoxPassword.Text;
-            string username = "admin".Trim();
-            string password = "123456".Trim();
+            string username = textBoxName.Text.Trim();
+            string password = textBoxPassword.Text;
+            //string username = "admin".Trim();
+            //string password = "123456".Trim();
 
             // MELHORAR ISSO ADICIONAR BORDAS VERMELHAS AOS CAMPOS E MENSAGENS DE ERRO
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Por favor, preencha todos os campos.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //MessageBox.Show("Por favor, preencha todos os campos.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                // Aqui você pode exibir a mensagem no seu label de erro ou borda do campo
+                lblErrorMessage.Text = "Por favor, preencha todos os campos."; // Assumindo que você tem um Label lblErrorMessage
+                lblErrorMessage.Visible = true; // Torna o label visível
+                // Ou mudar a borda dos textboxes: textBoxName.BorderStyle = BorderStyle.FixedSingle; textBoxName.BackColor = Color.LightCoral;
+                
                 return;
             }
+            // Limpa mensagens de erro anteriores
+            lblErrorMessage.Text = "";
+            lblErrorMessage.Visible = false;
+            // Restaura estilos dos campos se tiver mudado
             try
             {
                 btnLogin.Enabled = false;
                 btnLogin.Text = "Entrando...";
                 Cursor.Current = Cursors.WaitCursor;
+                lblErrorMessage.Text = "";
                 Debug.WriteLine("Login: " + username + " - Senha: " + password);
                 // Chama a API para autenticação
                 // var loginResponse = await _apiService.LoginAsync(nome, senha);
                 LoginResponse response = await _authService.LoginAsync(username, password);
                 
-                MessageBox.Show("Login realizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show("Login realizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 // Agora que o login foi bem-sucedido e Sessao.Token está preenchido,
                 // você pode acessar os dados da sessão globalmente.
                 // Ex: string token = Sessao.Token;
                 // string usuario = Sessao.UsuarioLogado;
+               
+                if (response != null && !string.IsNullOrEmpty(response.AccessToken)) // Ou response.IsSuccess == true se você adicionar essa propriedade
+                {
+                    // O login foi REALMENTE bem-sucedido.
+                    // Não precisa de MessageBox aqui, o usuário verá o próximo formulário.
 
-                // Redirecionar para o formulário principal
-                FormHome formHome = new FormHome();
-                formHome.Show();
-                this.Hide();
+                    // Este é o passo chave: informa ao ShowDialog() no Program.cs que o login foi OK.
+                    this.DialogResult = DialogResult.OK;
+                    this.Close(); // Fecha o formulário de login
+                }
+                else
+                {
+                    // Login falhou por credenciais inválidas ou outro motivo retornado pela API
+                    // Use a mensagem da API, se disponível, ou uma mensagem padrão.
+                    string errorMessage = response?.Message ?? "Usuário ou senha inválidos.";
+                    lblErrorMessage.Text = errorMessage; // Exibe a mensagem da API na sua UI
+                    lblErrorMessage.Visible = true;
+                    textBoxPassword.Clear(); // Limpa a senha para nova tentativa
+                    textBoxName.Focus(); // Foca no nome de usuário
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Erro de conexão de rede ou servidor inacessível
+                lblErrorMessage.Text = $"Erro de conexão: Verifique sua internet ou contate o suporte. Detalhes: {ex.Message}";
+                lblErrorMessage.Visible = true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao fazer login: {ex.Message}", "Erro",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxPassword.Clear();
-                textBoxName.Focus();
+                // Outros erros inesperados
+                lblErrorMessage.Text = $"Ocorreu um erro inesperado: {ex.Message}";
+                lblErrorMessage.Visible = true;
             }
             finally
             {
+                // Sempre reabilita o botão e restaura o cursor, independentemente do sucesso ou falha.
                 btnLogin.Enabled = true;
+                btnLogin.Text = "Entrar";
                 Cursor.Current = Cursors.Default;
             }
         }

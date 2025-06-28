@@ -115,7 +115,7 @@ namespace SistemaNotifica.src.Models
         public int valor { get; set; } // O valor parece ser um int aqui, representando centavos
         public int saldo { get; set; }
         public string vencimento { get; set; }
-        public Devedor devedor { get; set; }
+        public List<Devedor> devedor { get; set; }
         public Apresentante apresentante { get; set; }
         public List<Credor> credores { get; set; }
         public StatusNotificacao statusNotificacao { get; set; }

@@ -11,9 +11,14 @@ using System.Diagnostics; // Para HttpRequestException
 
 namespace SistemaNotifica.src.Services
 {
-    internal class AuthService : ApiService
+    internal class AuthService
     {
-        public AuthService(string baseApiUrl) : base(baseApiUrl) { }
+        private readonly ApiService _apiService;
+
+        public AuthService(ApiService apiService)
+        {
+            _apiService = apiService;
+        }
 
         public async Task<LoginResponse> LoginAsync(string username, string password)
         {
@@ -25,7 +30,7 @@ namespace SistemaNotifica.src.Services
                     Password = password
                 };
                 
-                LoginResponse response = await PostAsync<LoginRequest, LoginResponse>("auth/login", loginData);
+                LoginResponse response = await _apiService.PostAsync<LoginRequest, LoginResponse>("auth/login", loginData);
 
                 if (response != null && !string.IsNullOrEmpty(response.AccessToken))
                 {
@@ -34,8 +39,8 @@ namespace SistemaNotifica.src.Services
                     Sessao.RefreshToken = response.RefreshToken;
                     Sessao.UsuarioLogado = response.UserData?.Nome ?? username; // Tenta pegar do UserData ou usa o nome de usuário
                     Sessao.TipoUsuario = response.UserData?.Role ?? "Unknown"; // Tenta pegar do UserData
-                   
-                    SetAuthorizationHeader(response.AccessToken);
+
+                    _apiService.SetAuthorizationHeader(response.AccessToken);
                     Debug.WriteLine($"Login::::::::    . {response}");
                     return response;
                 }
@@ -91,16 +96,16 @@ namespace SistemaNotifica.src.Services
             Sessao.AccessToken = null;
             Sessao.RefreshToken = null;
             Sessao.UsuarioLogado = null;
-            Sessao.TipoUsuario = null;  
+            Sessao.TipoUsuario = null;
             // Sessao.RefreshToken = null; // Limpa também o refresh token
-            ClearAuthorizationHeader(); // Limpa o cabeçalho de autorização do HttpClient
+            _apiService.ClearAuthorizationHeader(); // Limpa o cabeçalho de autorização do HttpClient
         }
 
         // Outros métodos relacionados a autenticação/usuário
         public async Task<User> GetUserProfileAsync()
         {
             // Este método usará o token que foi setado no HttpClient via SetAuthorizationHeader
-            return await GetAsync<User>("user/profile");
+            return await _apiService.GetAsync<User>("user/profile");
         }
     }
 }

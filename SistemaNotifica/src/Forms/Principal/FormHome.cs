@@ -23,66 +23,143 @@ namespace SistemaNotifica.src.Forms
         public FormHome()
         {
             InitializeComponent();
+            _protestoService = Program.ProtestoService;
             ConfigurarColunas();    
             CarregarGrafico();
             LoadProtestoDatagrid();
-            LoadDistribData();
-            _protestoService = Program.ProtestoService;
+            //_ = LoadDistribData();
         }
 
         private void ConfigurarColunas()
         {
-            // Limpar colunas existentes
             dataGridViewProtesto.Columns.Clear();
 
-            // Configurar propriedades gerais da tabela
             dataGridViewProtesto.AutoGenerateColumns = false;
-            dataGridViewProtesto.AllowUserToAddRows = false;
+            dataGridViewProtesto.AllowUserToAddRows = false; // Garante que não haverá linha vazia no final
             dataGridViewProtesto.ReadOnly = true;
             dataGridViewProtesto.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewProtesto.MultiSelect = false; // Geralmente melhor para exibição de dados
+
+            // Cores minimalistas e "não saturadas" (usando SystemColors.Control)
+            // A cor SystemColors.Control é o cinza claro padrão do VS Studio
+            this.BackColor = SystemColors.Control; // Fundo do formulário
+            panelHome.BackColor = SystemColors.Control;
+            mainTableLayoutPanel.BackColor = SystemColors.Control;
+            tableLayoutPanelTop.BackColor = SystemColors.Control;
+            panel3.BackColor = SystemColors.Control;
+            flowLayoutPanel.BackColor = SystemColors.Control;
+            tableLayoutPanelBotton.BackColor = SystemColors.Control;
+            chartDist.BackColor = SystemColors.Control;
+            chartDist.ChartAreas[0].BackColor = SystemColors.Control;
+            panelHeader.BackColor = SystemColors.Control; // Onde está o "TELA INICIAL"
+            dataGridViewProtesto.BackgroundColor = SystemColors.Control; // Fundo da tabela
+            dataGridViewProtesto.GridColor = SystemColors.ControlDark; // Cor das linhas da grade
+
+            dataGridViewProtesto.BorderStyle = BorderStyle.None;
+
+            // Estilo do cabeçalho
+            dataGridViewProtesto.EnableHeadersVisualStyles = false;
+            dataGridViewProtesto.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(50, 50, 50); // Cinza mais escuro para cabeçalho
+            dataGridViewProtesto.ColumnHeadersDefaultCellStyle.ForeColor = Color.WhiteSmoke; // Branco suave
+            dataGridViewProtesto.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewProtesto.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single; // Manter borda simples para o cabeçalho
+            dataGridViewProtesto.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft; // Alinhar texto do cabeçalho à esquerda
+
+            // Estilo das células
+            dataGridViewProtesto.DefaultCellStyle.BackColor = SystemColors.ControlLightLight; // Um branco bem suave para as células de dados
+            dataGridViewProtesto.DefaultCellStyle.ForeColor = Color.FromArgb(30, 30, 30); // Texto quase preto
+            dataGridViewProtesto.DefaultCellStyle.SelectionBackColor = Color.FromArgb(170, 200, 230); // Azul acinzentado suave para seleção
+            dataGridViewProtesto.DefaultCellStyle.SelectionForeColor = Color.Black;
+
+            // Estilo das linhas alternadas para melhor legibilidade
+            dataGridViewProtesto.AlternatingRowsDefaultCellStyle.BackColor = SystemColors.Control; // A cor de controle (cinza claro) para linhas alternadas
+
+            // Remover bordas das células
+            dataGridViewProtesto.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal; // Apenas bordas horizontais
 
             // Adicionar colunas
+            // Note os DataPropertyName correspondendo aos nomes das propriedades em ProtestoDisplayModel
             dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "DataDistribuicao",
+                Name = "ColumnDataDist", // Nome interno da coluna
                 HeaderText = "Data de Distribuição",
+                DataPropertyName = "DataDistribuicao", // Propriedade do objeto modelo
                 Width = 120,
-                DefaultCellStyle = new DataGridViewCellStyle { Format = "dd/MM/yyyy" }
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "dd/MM/yyyy", Alignment = DataGridViewContentAlignment.MiddleLeft }
             });
 
             dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "NumDistribuicao",
+                Name = "ColumnNumDist",
                 HeaderText = "Nº Distribuição",
-                Width = 100
+                DataPropertyName = "NumDistribuicao",
+                Width = 100,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleLeft }
             });
 
             dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "NomeDevedor",
+                Name = "ColumnDevedor",
                 HeaderText = "Nome do Devedor",
-                Width = 200
+                DataPropertyName = "NomeDevedor",
+                Width = 250, // Aumentado para nomes maiores
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill // Faz a coluna preencher o restante do espaço
             });
 
             dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "DocumentoDevedor",
+                Name = "ColumnDocDev",
                 HeaderText = "Documento",
-                Width = 120
+                DataPropertyName = "DocumentoDevedor",
+                Width = 150,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleLeft }
             });
 
             dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "Email",
+                Name = "ColumnEmail",
                 HeaderText = "Email",
-                Width = 180
-            });            
+                DataPropertyName = "Email",
+                Width = 200,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleLeft }
+            });
+
+            // Se você precisa de uma coluna para o status para colorir as linhas:
+            // Esta coluna pode ser invisível se você usar a Tag da linha ou uma propriedade dedicada.
+            // Para simplicidade, vou manter a lógica de Tag da linha, mas uma coluna oculta com DataPropertyName
+            // é mais robusta para DataBinding.
+            dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "StatusHidden",
+                DataPropertyName = "StatusNotificacao", // Bind para a nova propriedade no modelo
+                Visible = false // Coluna oculta
+            });
         }
 
         private async Task LoadDistribData()
         {
-            Protesto dados = await _protestoService.SearchDistAsync();
-            Debug.WriteLine(dados);
+            try
+            {
+                Debug.WriteLine("Iniciando LoadDistribData...");
+                List<Protesto> dados = await _protestoService.SearchDistAsync();
+
+                if (dados == null)
+                {
+                    Debug.WriteLine("LoadDistribData: dados retornados são NULL");
+                    return;
+                }
+
+                Debug.WriteLine($"LoadDistribData - Sucesso: {dados}");
+
+                // Se Protesto tem propriedades específicas, teste individualmente:
+                // Debug.WriteLine($"ID: {dados.Id}, Nome: {dados.Nome}");
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro em LoadDistribData: {ex.Message}");
+                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+            }
         }
 
 

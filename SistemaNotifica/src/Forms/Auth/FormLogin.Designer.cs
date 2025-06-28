@@ -34,6 +34,7 @@
             nightControlBox1 = new ReaLTaiizor.Controls.NightControlBox();
             imgLogo = new PictureBox();
             panelLogin = new Panel();
+            lblErrorMessage = new Label();
             btnLogin = new Button();
             textBoxPassword = new TextBox();
             textBoxName = new TextBox();
@@ -93,7 +94,8 @@
             // panelLogin
             // 
             panelLogin.Anchor = AnchorStyles.None;
-            panelLogin.BackColor = Color.FromArgb(240, 240, 240);
+            panelLogin.BackColor = SystemColors.Window;
+            panelLogin.Controls.Add(lblErrorMessage);
             panelLogin.Controls.Add(btnLogin);
             panelLogin.Controls.Add(textBoxPassword);
             panelLogin.Controls.Add(textBoxName);
@@ -103,6 +105,18 @@
             panelLogin.Name = "panelLogin";
             panelLogin.Size = new Size(460, 380);
             panelLogin.TabIndex = 6;
+            // 
+            // lblErrorMessage
+            // 
+            lblErrorMessage.AutoSize = false; // Mude para false
+            lblErrorMessage.Location = new Point(0, 142); // Altere a posição X para 0 (ou outro valor se quiser margens laterais)
+            lblErrorMessage.Name = "lblErrorMessage";
+            lblErrorMessage.Size = new Size(panelLogin.Width, 15); // Defina a largura do Label para a largura do panelLogin
+            lblErrorMessage.TabIndex = 8;
+            lblErrorMessage.Text = "labelError"; // Texto padrão, será substituído
+            lblErrorMessage.TextAlign = ContentAlignment.MiddleCenter; // Centraliza o texto dentro do Label
+            lblErrorMessage.ForeColor = Color.Red; // Geralmente mensagens de erro são vermelhas
+            lblErrorMessage.Visible = false; // Esconda-o por padrão
             // 
             // btnLogin
             // 
@@ -199,5 +213,7 @@
         private Button btnLogin;
         private Panel panelLogin;
         private Label lblInstrucaoLogin;
+        private Label label2;
+        private Label lblErrorMessage;
     }
 }
