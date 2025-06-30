@@ -13,6 +13,7 @@ using SistemaNotifica.src.Services;
 using SistemaNotifica.src.Models;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Diagnostics;
+using SistemaNotifica.src.Utils;
 
 namespace SistemaNotifica
 {
@@ -20,8 +21,8 @@ namespace SistemaNotifica
     {
         private readonly AuthService _authService;
 
-        private Point mouseLocation; // Para armazenar a posição do mouse
-        private bool isDragging = false;
+        //private Point mouseLocation; // Para armazenar a posição do mouse
+        //private bool isDragging = false;
         private Thread? nt;
 
         public FormLogin()
@@ -34,9 +35,11 @@ namespace SistemaNotifica
             this.textBoxPassword.Paint += new PaintEventHandler(this.TextBox_Paint);
 
             this.Resize += new EventHandler(this.FormLogin_Resize);
-            this.topPanel.MouseDown += new MouseEventHandler(this.TopPanel_MouseDown);
-            this.topPanel.MouseMove += new MouseEventHandler(this.TopPanel_MouseMove);
-            this.topPanel.MouseUp += new MouseEventHandler(this.TopPanel_MouseUp);
+            //this.topPanel.MouseDown += new MouseEventHandler(_mouseEvent.TopPanel_MouseDown);
+            //this.topPanel.MouseMove += new MouseEventHandler(_mouseEvent.TopPanel_MouseMove);
+            //this.topPanel.MouseUp += new MouseEventHandler(_mouseEvent.TopPanel_MouseUp);
+            // Habilitar movimentação da janela através do topPanel
+            this.EnableDragByControl(this.topPanel);
 
             //_apiService = new ApiService();
             _authService = Program.AuthService;
@@ -44,41 +47,41 @@ namespace SistemaNotifica
         }
 
         // Evento quando o botão do mouse é pressionado no topPanel
-        private void TopPanel_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left) // Apenas se o botão esquerdo do mouse for pressionado
-            {
-                isDragging = true;
-                mouseLocation = e.Location; // Armazena a posição atual do mouse
-            }
-        }
+        //private void TopPanel_MouseDown(object sender, MouseEventArgs e)
+        //{
+        //    if (e.Button == MouseButtons.Left) // Apenas se o botão esquerdo do mouse for pressionado
+        //    {
+        //        isDragging = true;
+        //        mouseLocation = e.Location; // Armazena a posição atual do mouse
+        //    }
+        //}
 
         // Evento quando o mouse se move no topPanel
-        private void TopPanel_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (isDragging)
-            {
-                // Calcula a nova posição do formulário
-                this.Location = new Point(
-                    (this.Location.X - mouseLocation.X) + e.X,
-                    (this.Location.Y - mouseLocation.Y) + e.Y
-                );
-                this.Update(); // Força a atualização da tela
-            }
-        }
+        //private void TopPanel_MouseMove(object sender, MouseEventArgs e)
+        //{
+        //    if (isDragging)
+        //    {
+        //        // Calcula a nova posição do formulário
+        //        this.Location = new Point(
+        //            (this.Location.X - mouseLocation.X) + e.X,
+        //            (this.Location.Y - mouseLocation.Y) + e.Y
+        //        );
+        //        this.Update(); // Força a atualização da tela
+        //    }
+        //}
 
         // Evento quando o botão do mouse é liberado no topPanel
-        private void TopPanel_MouseUp(object sender, MouseEventArgs e)
-        {
-            isDragging = false; // Para de arrastar
-        }
+        //private void TopPanel_MouseUp(object sender, MouseEventArgs e)
+        //{
+        //    isDragging = false; // Para de arrastar
+        //}
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
-            string username = textBoxName.Text.Trim();
-            string password = textBoxPassword.Text;
-            //string username = "admin".Trim();
-            //string password = "123456".Trim();
+            //string username = textBoxName.Text.Trim();
+            //string password = textBoxPassword.Text;
+            string username = "admin".Trim();
+            string password = "123456".Trim();
 
             // MELHORAR ISSO ADICIONAR BORDAS VERMELHAS AOS CAMPOS E MENSAGENS DE ERRO
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
@@ -87,8 +90,8 @@ namespace SistemaNotifica
                 // Aqui você pode exibir a mensagem no seu label de erro ou borda do campo
                 lblErrorMessage.Text = "Por favor, preencha todos os campos."; // Assumindo que você tem um Label lblErrorMessage
                 lblErrorMessage.Visible = true; // Torna o label visível
-                // Ou mudar a borda dos textboxes: textBoxName.BorderStyle = BorderStyle.FixedSingle; textBoxName.BackColor = Color.LightCoral;
-                
+                                                // Ou mudar a borda dos textboxes: textBoxName.BorderStyle = BorderStyle.FixedSingle; textBoxName.BackColor = Color.LightCoral;
+
                 return;
             }
             // Limpa mensagens de erro anteriores
@@ -105,14 +108,14 @@ namespace SistemaNotifica
                 // Chama a API para autenticação
                 // var loginResponse = await _apiService.LoginAsync(nome, senha);
                 LoginResponse response = await _authService.LoginAsync(username, password);
-                
+
                 //MessageBox.Show("Login realizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 // Agora que o login foi bem-sucedido e Sessao.Token está preenchido,
                 // você pode acessar os dados da sessão globalmente.
                 // Ex: string token = Sessao.Token;
                 // string usuario = Sessao.UsuarioLogado;
-               
+
                 if (response != null && !string.IsNullOrEmpty(response.AccessToken)) // Ou response.IsSuccess == true se você adicionar essa propriedade
                 {
                     // O login foi REALMENTE bem-sucedido.
@@ -281,7 +284,6 @@ namespace SistemaNotifica
             }
         }
 
-
-
+        
     }
 }

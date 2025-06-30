@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Reflection;
 using SistemaNotifica.src.Forms;
+using SistemaNotifica.src.Utils;
 
 
 namespace SistemaNotifica
@@ -19,12 +20,14 @@ namespace SistemaNotifica
         public FormOrigin()
         {
             InitializeComponent();
+            this.EnableDragByControl(this.topPanel);
             objForm = new Form();
             ApplyPerformanceOptimizations();
-            //StartSidebarAnimation();
             sidebarMenu.Width = SIDEBAR_MIN_WIDTH;
             tableLayoutNotificacao.Height = SUBMENU_MIN_HEIGHT;
-            
+            openHomeDefaultForm();
+
+
         }
         private void FormOrigin_Load(object sender, EventArgs e)
         {
@@ -50,7 +53,7 @@ namespace SistemaNotifica
             this.UpdateStyles();
 
             // APLICAR DOUBLEBUFFERED A TODOS OS PAINÉIS USANDO REFLECTION
-            Panel[] panels = { panel1, panel5, panelHome, panelImportar, panelData, panelSettings,
+            Panel[] panels = { topPanel, panel5, panelHome, panelImportar, panelData, panelSettings,
                               panelNotificação, panelSubMenu1, panelSubMenu2, panelUser,
                               panelSobre, panelLogOut, pnlMain };
 
@@ -206,6 +209,21 @@ namespace SistemaNotifica
         }
             
         private void btnHome_Click(object sender, EventArgs e)
+        {
+            //objForm?.Close();
+            //objForm = new FormHome
+            //{
+            //    TopLevel = false,
+            //    FormBorderStyle = FormBorderStyle.None,
+            //    Dock = DockStyle.Fill
+            //};
+
+            //pnlMain.Controls.Add(objForm);
+            //objForm.Show();
+            openHomeDefaultForm();
+        }
+
+        private void openHomeDefaultForm()
         {
             objForm?.Close();
             objForm = new FormHome

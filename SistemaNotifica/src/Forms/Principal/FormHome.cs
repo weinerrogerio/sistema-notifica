@@ -23,118 +23,38 @@ namespace SistemaNotifica.src.Forms
         public FormHome()
         {
             InitializeComponent();
-            _protestoService = Program.ProtestoService;
-            ConfigurarColunas();    
+            _protestoService = Program.ProtestoService;              
+            ConfigurarDataGridView();
             CarregarGrafico();
+            
             LoadProtestoDatagrid();
-            //_ = LoadDistribData();
+            LoadDistribData();// teste carregar os dados da API
         }
 
-        private void ConfigurarColunas()
+        private void ConfigurarDataGridView() // Renomeei e centralizei as configurações aqui
         {
-            dataGridViewProtesto.Columns.Clear();
+            dataGridViewProtesto.Rows.Clear();
+            // Ocultar a coluna de cabeçalho de linha (a coluna vazia à esquerda)
+            dataGridViewProtesto.RowHeadersVisible = false;
 
-            dataGridViewProtesto.AutoGenerateColumns = false;
-            dataGridViewProtesto.AllowUserToAddRows = false; // Garante que não haverá linha vazia no final
-            dataGridViewProtesto.ReadOnly = true;
+            // Fazer com que o clique selecione a linha inteira
             dataGridViewProtesto.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewProtesto.MultiSelect = false; // Geralmente melhor para exibição de dados
 
-            // Cores minimalistas e "não saturadas" (usando SystemColors.Control)
-            // A cor SystemColors.Control é o cinza claro padrão do VS Studio
-            this.BackColor = SystemColors.Control; // Fundo do formulário
-            panelHome.BackColor = SystemColors.Control;
-            mainTableLayoutPanel.BackColor = SystemColors.Control;
-            tableLayoutPanelTop.BackColor = SystemColors.Control;
-            panel3.BackColor = SystemColors.Control;
-            flowLayoutPanel.BackColor = SystemColors.Control;
-            tableLayoutPanelBotton.BackColor = SystemColors.Control;
-            chartDist.BackColor = SystemColors.Control;
-            chartDist.ChartAreas[0].BackColor = SystemColors.Control;
-            panelHeader.BackColor = SystemColors.Control; // Onde está o "TELA INICIAL"
-            dataGridViewProtesto.BackgroundColor = SystemColors.Control; // Fundo da tabela
-            dataGridViewProtesto.GridColor = SystemColors.ControlDark; // Cor das linhas da grade
+            // Desabilitar a adição de novas linhas pelo usuário
+            dataGridViewProtesto.AllowUserToAddRows = false;
 
-            dataGridViewProtesto.BorderStyle = BorderStyle.None;
+            // Desabilitar a seleção múltipla de linhas
+            dataGridViewProtesto.MultiSelect = false;
 
-            // Estilo do cabeçalho
-            dataGridViewProtesto.EnableHeadersVisualStyles = false;
-            dataGridViewProtesto.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(50, 50, 50); // Cinza mais escuro para cabeçalho
-            dataGridViewProtesto.ColumnHeadersDefaultCellStyle.ForeColor = Color.WhiteSmoke; // Branco suave
-            dataGridViewProtesto.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewProtesto.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single; // Manter borda simples para o cabeçalho
-            dataGridViewProtesto.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft; // Alinhar texto do cabeçalho à esquerda
-
-            // Estilo das células
-            dataGridViewProtesto.DefaultCellStyle.BackColor = SystemColors.ControlLightLight; // Um branco bem suave para as células de dados
-            dataGridViewProtesto.DefaultCellStyle.ForeColor = Color.FromArgb(30, 30, 30); // Texto quase preto
-            dataGridViewProtesto.DefaultCellStyle.SelectionBackColor = Color.FromArgb(170, 200, 230); // Azul acinzentado suave para seleção
-            dataGridViewProtesto.DefaultCellStyle.SelectionForeColor = Color.Black;
-
-            // Estilo das linhas alternadas para melhor legibilidade
-            dataGridViewProtesto.AlternatingRowsDefaultCellStyle.BackColor = SystemColors.Control; // A cor de controle (cinza claro) para linhas alternadas
-
-            // Remover bordas das células
-            dataGridViewProtesto.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal; // Apenas bordas horizontais
-
-            // Adicionar colunas
-            // Note os DataPropertyName correspondendo aos nomes das propriedades em ProtestoDisplayModel
-            dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "ColumnDataDist", // Nome interno da coluna
-                HeaderText = "Data de Distribuição",
-                DataPropertyName = "DataDistribuicao", // Propriedade do objeto modelo
-                Width = 120,
-                DefaultCellStyle = new DataGridViewCellStyle { Format = "dd/MM/yyyy", Alignment = DataGridViewContentAlignment.MiddleLeft }
-            });
-
-            dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "ColumnNumDist",
-                HeaderText = "Nº Distribuição",
-                DataPropertyName = "NumDistribuicao",
-                Width = 100,
-                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleLeft }
-            });
-
-            dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "ColumnDevedor",
-                HeaderText = "Nome do Devedor",
-                DataPropertyName = "NomeDevedor",
-                Width = 250, // Aumentado para nomes maiores
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill // Faz a coluna preencher o restante do espaço
-            });
-
-            dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "ColumnDocDev",
-                HeaderText = "Documento",
-                DataPropertyName = "DocumentoDevedor",
-                Width = 150,
-                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleLeft }
-            });
-
-            dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "ColumnEmail",
-                HeaderText = "Email",
-                DataPropertyName = "Email",
-                Width = 200,
-                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleLeft }
-            });
-
-            // Se você precisa de uma coluna para o status para colorir as linhas:
-            // Esta coluna pode ser invisível se você usar a Tag da linha ou uma propriedade dedicada.
-            // Para simplicidade, vou manter a lógica de Tag da linha, mas uma coluna oculta com DataPropertyName
-            // é mais robusta para DataBinding.
-            dataGridViewProtesto.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "StatusHidden",
-                DataPropertyName = "StatusNotificacao", // Bind para a nova propriedade no modelo
-                Visible = false // Coluna oculta
-            });
+            // Desabilitar a edição direta das células
+            dataGridViewProtesto.ReadOnly = true;
+            dataGridViewProtesto.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridViewProtesto.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridViewProtesto.Columns["ColumnNumDist"].MinimumWidth = 20;
+            //dataGridViewProtesto.Columns["ColumnNumDist"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
         }
+                
 
         private async Task LoadDistribData()
         {
@@ -143,20 +63,30 @@ namespace SistemaNotifica.src.Forms
                 Debug.WriteLine("Iniciando LoadDistribData...");
                 List<Protesto> dados = await _protestoService.SearchDistAsync();
 
+                //Debug.WriteLine("TESTE TESTE TESTE-----------------------");
+                //foreach (Protesto protesto in dados)
+                //{
+                //    Debug.WriteLine($"Protesto ID: {protesto.id}");
+                //    Debug.WriteLine($"Número Distribuição: {protesto.numDistribuicao}");
+                //    Debug.WriteLine($"Cartório: {protesto.cartProtesto}");
+                //    Debug.WriteLine($"Valor: {protesto.valor}");
+                //}
+                //Debug.WriteLine("TESTE TESTE TESTE-----------------------");
+
+
                 if (dados == null)
                 {
                     Debug.WriteLine("LoadDistribData: dados retornados são NULL");
                     return;
                 }
 
-                Debug.WriteLine($"LoadDistribData - Sucesso: {dados}");
+                Debug.WriteLine($"LoadDistribData - Sucesso: {dados}");                
 
-                // Se Protesto tem propriedades específicas, teste individualmente:
-                // Debug.WriteLine($"ID: {dados.Id}, Nome: {dados.Nome}");
 
             }
             catch (Exception ex)
             {
+                // ARRUMAR ESSAS EXEPTIONS
                 Debug.WriteLine($"Erro em LoadDistribData: {ex.Message}");
                 Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
             }

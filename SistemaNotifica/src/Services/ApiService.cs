@@ -49,6 +49,7 @@ namespace SistemaNotifica.src.Services
             response.EnsureSuccessStatusCode(); // Lança exceção para códigos de erro HTTP
             var json = await response.Content.ReadAsStringAsync();
             Debug.WriteLine($"JSON retornado da API: {json}");//retirar depois 
+            Debug.WriteLine($"JsonConvert.DeserializeObject<T>(json):::::: {JsonConvert.DeserializeObject<T>(json)}");
             return JsonConvert.DeserializeObject<T>(json);
         }
         // POST /:endpoint

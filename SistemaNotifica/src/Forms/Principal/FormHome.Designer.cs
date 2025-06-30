@@ -43,6 +43,11 @@
             chartDist = new System.Windows.Forms.DataVisualization.Charting.Chart();
             panelArq = new Panel();
             panelHeader = new Panel();
+            ColumnDataDist = new DataGridViewTextBoxColumn();
+            ColumnNumDist = new DataGridViewTextBoxColumn();
+            ColumnDevedor = new DataGridViewTextBoxColumn();
+            ColumnDocDev = new DataGridViewTextBoxColumn();
+            ColumnEmail = new DataGridViewTextBoxColumn();
             panelHome.SuspendLayout();
             mainTableLayoutPanel.SuspendLayout();
             tableLayoutPanelTop.SuspendLayout();
@@ -109,7 +114,7 @@
             // 
             // panel3
             // 
-            panel3.BackColor = SystemColors.Control; // Alterado de Transparent para SystemColors.Control
+            panel3.BackColor = SystemColors.Control;
             panel3.Controls.Add(flowLayoutPanel);
             panel3.Dock = DockStyle.Fill;
             panel3.ForeColor = Color.Transparent;
@@ -120,7 +125,7 @@
             // 
             // flowLayoutPanel
             // 
-            flowLayoutPanel.BackColor = SystemColors.Control; // Alterado de Transparent para SystemColors.Control
+            flowLayoutPanel.BackColor = SystemColors.Control;
             flowLayoutPanel.Controls.Add(btnImport);
             flowLayoutPanel.Dock = DockStyle.Right;
             flowLayoutPanel.Location = new Point(5, 0);
@@ -147,7 +152,7 @@
             dataGridViewProtesto.AllowUserToAddRows = false;
             dataGridViewProtesto.AllowUserToDeleteRows = false;
             dataGridViewProtesto.AllowUserToOrderColumns = true;
-            dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewProtesto.Columns.AddRange(new DataGridViewColumn[] { ColumnDataDist, ColumnNumDist, ColumnDevedor, ColumnDocDev, ColumnEmail });
             dataGridViewProtesto.Dock = DockStyle.Fill;
             dataGridViewProtesto.Location = new Point(3, 3);
             dataGridViewProtesto.Name = "dataGridViewProtesto";
@@ -211,6 +216,39 @@
             panelHeader.Size = new Size(800, 25);
             panelHeader.TabIndex = 1;
             // 
+            // ColumnDataDist
+            // 
+            ColumnDataDist.FillWeight = 58F;
+            ColumnDataDist.HeaderText = "Data Distribuição";
+            ColumnDataDist.Name = "ColumnDataDist";
+            ColumnDataDist.ReadOnly = true;
+            // 
+            // ColumnNumDist
+            // 
+            ColumnNumDist.FillWeight = 49F;
+            ColumnNumDist.HeaderText = "Distribuição";
+            ColumnNumDist.Name = "ColumnNumDist";
+            ColumnNumDist.ReadOnly = true;
+            // 
+            // ColumnDevedor
+            // 
+            ColumnDevedor.FillWeight = 125F;
+            ColumnDevedor.HeaderText = "Devedor";
+            ColumnDevedor.Name = "ColumnDevedor";
+            ColumnDevedor.ReadOnly = true;
+            // 
+            // ColumnDocDev
+            // 
+            ColumnDocDev.HeaderText = "Doc. Devedor";
+            ColumnDocDev.Name = "ColumnDocDev";
+            ColumnDocDev.ReadOnly = true;
+            // 
+            // ColumnEmail
+            // 
+            ColumnEmail.HeaderText = "Email";
+            ColumnEmail.Name = "ColumnEmail";
+            ColumnEmail.ReadOnly = true;
+            // 
             // FormHome
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -218,6 +256,7 @@
             ClientSize = new Size(800, 450);
             Controls.Add(panelHeader);
             Controls.Add(panelHome);
+            FormBorderStyle = FormBorderStyle.None;
             Name = "FormHome";
             Text = "FormHome";
             panelHome.ResumeLayout(false);
@@ -247,5 +286,10 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chartDist;
         private TableLayoutPanel mainTableLayoutPanel;
         private DataGridView dataGridViewProtesto;
+        private DataGridViewTextBoxColumn ColumnDataDist;
+        private DataGridViewTextBoxColumn ColumnNumDist;
+        private DataGridViewTextBoxColumn ColumnDevedor;
+        private DataGridViewTextBoxColumn ColumnDocDev;
+        private DataGridViewTextBoxColumn ColumnEmail;
     }
 }

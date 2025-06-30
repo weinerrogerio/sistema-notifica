@@ -48,7 +48,7 @@
             // 
             // topPanel
             // 
-            topPanel.BackColor = Color.FromArgb(64, 64, 64);
+            topPanel.BackColor = Color.Gray;
             topPanel.Controls.Add(nightControlBox1);
             topPanel.Controls.Add(imgLogo);
             topPanel.Dock = DockStyle.Top;
@@ -108,15 +108,14 @@
             // 
             // lblErrorMessage
             // 
-            lblErrorMessage.AutoSize = false; // Mude para false
-            lblErrorMessage.Location = new Point(0, 142); // Altere a posição X para 0 (ou outro valor se quiser margens laterais)
+            lblErrorMessage.ForeColor = Color.Red;
+            lblErrorMessage.Location = new Point(0, 142);
             lblErrorMessage.Name = "lblErrorMessage";
-            lblErrorMessage.Size = new Size(panelLogin.Width, 15); // Defina a largura do Label para a largura do panelLogin
+            lblErrorMessage.Size = new Size(200, 15);
             lblErrorMessage.TabIndex = 8;
-            lblErrorMessage.Text = "labelError"; // Texto padrão, será substituído
-            lblErrorMessage.TextAlign = ContentAlignment.MiddleCenter; // Centraliza o texto dentro do Label
-            lblErrorMessage.ForeColor = Color.Red; // Geralmente mensagens de erro são vermelhas
-            lblErrorMessage.Visible = false; // Esconda-o por padrão
+            lblErrorMessage.Text = "labelError";
+            lblErrorMessage.TextAlign = ContentAlignment.MiddleCenter;
+            lblErrorMessage.Visible = false;
             // 
             // btnLogin
             // 
