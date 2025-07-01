@@ -120,9 +120,4 @@ namespace SistemaNotifica.src.Models
         public List<Credor> credores { get; set; }
         public StatusNotificacao statusNotificacao { get; set; }
     }
-
-
-
-
-
 }

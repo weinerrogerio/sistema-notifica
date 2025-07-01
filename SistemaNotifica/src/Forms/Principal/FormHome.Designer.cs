@@ -39,15 +39,16 @@
             flowLayoutPanel = new FlowLayoutPanel();
             btnImport = new Button();
             dataGridViewProtesto = new DataGridView();
-            tableLayoutPanelBotton = new TableLayoutPanel();
-            chartDist = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            panelArq = new Panel();
-            panelHeader = new Panel();
             ColumnDataDist = new DataGridViewTextBoxColumn();
             ColumnNumDist = new DataGridViewTextBoxColumn();
             ColumnDevedor = new DataGridViewTextBoxColumn();
             ColumnDocDev = new DataGridViewTextBoxColumn();
             ColumnEmail = new DataGridViewTextBoxColumn();
+            ColumnStatus = new DataGridViewTextBoxColumn();
+            tableLayoutPanelBotton = new TableLayoutPanel();
+            chartDist = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            panelArq = new Panel();
+            panelHeader = new Panel();
             panelHome.SuspendLayout();
             mainTableLayoutPanel.SuspendLayout();
             tableLayoutPanelTop.SuspendLayout();
@@ -152,13 +153,55 @@
             dataGridViewProtesto.AllowUserToAddRows = false;
             dataGridViewProtesto.AllowUserToDeleteRows = false;
             dataGridViewProtesto.AllowUserToOrderColumns = true;
-            dataGridViewProtesto.Columns.AddRange(new DataGridViewColumn[] { ColumnDataDist, ColumnNumDist, ColumnDevedor, ColumnDocDev, ColumnEmail });
+            dataGridViewProtesto.BackgroundColor = SystemColors.Control;
+            dataGridViewProtesto.BorderStyle = BorderStyle.None;
+            dataGridViewProtesto.Columns.AddRange(new DataGridViewColumn[] { ColumnDataDist, ColumnNumDist, ColumnDevedor, ColumnDocDev, ColumnEmail, ColumnStatus });
             dataGridViewProtesto.Dock = DockStyle.Fill;
             dataGridViewProtesto.Location = new Point(3, 3);
             dataGridViewProtesto.Name = "dataGridViewProtesto";
             dataGridViewProtesto.ReadOnly = true;
             dataGridViewProtesto.Size = new Size(561, 192);
             dataGridViewProtesto.TabIndex = 2;
+            // 
+            // ColumnDataDist
+            // 
+            ColumnDataDist.FillWeight = 60F;
+            ColumnDataDist.HeaderText = "Data Distribuição";
+            ColumnDataDist.Name = "ColumnDataDist";
+            ColumnDataDist.ReadOnly = true;
+            // 
+            // ColumnNumDist
+            // 
+            ColumnNumDist.FillWeight = 55F;
+            ColumnNumDist.HeaderText = "Distribuição";
+            ColumnNumDist.Name = "ColumnNumDist";
+            ColumnNumDist.ReadOnly = true;
+            // 
+            // ColumnDevedor
+            // 
+            ColumnDevedor.FillWeight = 135F;
+            ColumnDevedor.HeaderText = "Devedor";
+            ColumnDevedor.Name = "ColumnDevedor";
+            ColumnDevedor.ReadOnly = true;
+            // 
+            // ColumnDocDev
+            // 
+            ColumnDocDev.HeaderText = "Doc. Devedor";
+            ColumnDocDev.Name = "ColumnDocDev";
+            ColumnDocDev.ReadOnly = true;
+            // 
+            // ColumnEmail
+            // 
+            ColumnEmail.HeaderText = "Email";
+            ColumnEmail.Name = "ColumnEmail";
+            ColumnEmail.ReadOnly = true;
+            // 
+            // ColumnStatus
+            // 
+            ColumnStatus.FillWeight = 45F;
+            ColumnStatus.HeaderText = "Status";
+            ColumnStatus.Name = "ColumnStatus";
+            ColumnStatus.ReadOnly = true;
             // 
             // tableLayoutPanelBotton
             // 
@@ -216,39 +259,6 @@
             panelHeader.Size = new Size(800, 25);
             panelHeader.TabIndex = 1;
             // 
-            // ColumnDataDist
-            // 
-            ColumnDataDist.FillWeight = 58F;
-            ColumnDataDist.HeaderText = "Data Distribuição";
-            ColumnDataDist.Name = "ColumnDataDist";
-            ColumnDataDist.ReadOnly = true;
-            // 
-            // ColumnNumDist
-            // 
-            ColumnNumDist.FillWeight = 49F;
-            ColumnNumDist.HeaderText = "Distribuição";
-            ColumnNumDist.Name = "ColumnNumDist";
-            ColumnNumDist.ReadOnly = true;
-            // 
-            // ColumnDevedor
-            // 
-            ColumnDevedor.FillWeight = 125F;
-            ColumnDevedor.HeaderText = "Devedor";
-            ColumnDevedor.Name = "ColumnDevedor";
-            ColumnDevedor.ReadOnly = true;
-            // 
-            // ColumnDocDev
-            // 
-            ColumnDocDev.HeaderText = "Doc. Devedor";
-            ColumnDocDev.Name = "ColumnDocDev";
-            ColumnDocDev.ReadOnly = true;
-            // 
-            // ColumnEmail
-            // 
-            ColumnEmail.HeaderText = "Email";
-            ColumnEmail.Name = "ColumnEmail";
-            ColumnEmail.ReadOnly = true;
-            // 
             // FormHome
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -291,5 +301,6 @@
         private DataGridViewTextBoxColumn ColumnDevedor;
         private DataGridViewTextBoxColumn ColumnDocDev;
         private DataGridViewTextBoxColumn ColumnEmail;
+        private DataGridViewTextBoxColumn ColumnStatus;
     }
 }

@@ -46,6 +46,4 @@ namespace SistemaNotifica.src.Services
             }
         }
     }
-
-
 }

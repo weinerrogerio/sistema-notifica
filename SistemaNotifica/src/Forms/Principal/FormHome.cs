@@ -23,13 +23,14 @@ namespace SistemaNotifica.src.Forms
         public FormHome()
         {
             InitializeComponent();
-            _protestoService = Program.ProtestoService;              
+            _protestoService = Program.ProtestoService;
             ConfigurarDataGridView();
             CarregarGrafico();
-            
-            LoadProtestoDatagrid();
-            LoadDistribData();// teste carregar os dados da API
+
+            //LoadProtestoDatagrid();
+            LoadDistribData().Wait(); //;// teste carregar os dados da API
         }
+
 
         private void ConfigurarDataGridView() // Renomeei e centralizei as configurações aqui
         {
@@ -51,10 +52,10 @@ namespace SistemaNotifica.src.Forms
             dataGridViewProtesto.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dataGridViewProtesto.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewProtesto.Columns["ColumnNumDist"].MinimumWidth = 20;
+            //dataGridViewProtesto.Columns["ColumnNumDist"].MinimumWidth = 20;
             //dataGridViewProtesto.Columns["ColumnNumDist"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
         }
-                
+
 
         private async Task LoadDistribData()
         {
@@ -63,124 +64,32 @@ namespace SistemaNotifica.src.Forms
                 Debug.WriteLine("Iniciando LoadDistribData...");
                 List<Protesto> dados = await _protestoService.SearchDistAsync();
 
-                //Debug.WriteLine("TESTE TESTE TESTE-----------------------");
-                //foreach (Protesto protesto in dados)
-                //{
-                //    Debug.WriteLine($"Protesto ID: {protesto.id}");
-                //    Debug.WriteLine($"Número Distribuição: {protesto.numDistribuicao}");
-                //    Debug.WriteLine($"Cartório: {protesto.cartProtesto}");
-                //    Debug.WriteLine($"Valor: {protesto.valor}");
-                //}
-                //Debug.WriteLine("TESTE TESTE TESTE-----------------------");
-
-
-                if (dados == null)
+                if (dados == null || dados.Count == 0)
                 {
-                    Debug.WriteLine("LoadDistribData: dados retornados são NULL");
+                    Debug.WriteLine("LoadDistribData: dados retornados são NULL ou vazios");
                     return;
                 }
 
-                Debug.WriteLine($"LoadDistribData - Sucesso: {dados}");                
+                Debug.WriteLine($"LoadDistribData - Sucesso: {dados.Count} registros encontrados");
 
-
-            }
-            catch (Exception ex)
-            {
-                // ARRUMAR ESSAS EXEPTIONS
-                Debug.WriteLine($"Erro em LoadDistribData: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-            }
-        }
-
-
-        // Carregar os dados da API
-        private void LoadProtestoDatagrid()
-        {
-            // Simulação de dados da sua API
-            string json = @"
-        [
-            {
-                ""id"": 13,
-                ""numDistribuicao"": ""181"",
-                ""dataDistribuicao"": ""2022-11-10T03:00:00.000Z"",
-                ""dataApresentacao"": ""2022-11-28T03:00:00.000Z"",
-                ""cartProtesto"": ""1° Oficio de Protesto de Títulos de Curitiba"",
-                ""numTitulo"": ""90421080357"",
-                ""valor"": 354701,
-                ""saldo"": 354701,
-                ""vencimento"": ""A VISTA"",
-                ""devedor"": {
-                    ""id"": 13,
-                    ""nome"": ""SONIA FRANCA DOS SANTOS"",
-                    ""docDevedor"": ""17844209000134"",
-                    ""email"": ""meuemail@gmail.com"",
-                    ""devedorPj"": true
-                },
-                ""apresentante"": {
-                    ""id"": 4,
-                    ""nome"": ""PGFN - Procuradoria Geral da Fazenda Nacional""
-                },
-                ""credores"": [
-                    {
-                        ""id"": 4,
-                        ""sacador"": ""FAZENDA NACIONAL - DIV.ATIVA-IRPJ"",
-                        ""cedente"": ""FAZENDA NACIONAL - DIV.ATIVA-IRPJ""
-                    }
-                ],
-                ""statusNotificacao"": {
-                    ""emailEnviado"": false,
-                    ""dataEnvio"": null,
-                    ""lido"": false,
-                    ""dataLeitura"": null,
-                    ""trackingToken"": null
-                }
-            },
-            {
-                ""id"": 3,
-                ""numDistribuicao"": ""47"",
-                ""dataDistribuicao"": ""2022-11-03T03:00:00.000Z"",
-                ""dataApresentacao"": ""2022-11-29T03:00:00.000Z"",
-                ""cartProtesto"": ""1° Oficio de Protesto de Títulos de Curitiba"",
-                ""numTitulo"": ""90587"",
-                ""valor"": 42642,
-                ""saldo"": 42642,
-                ""vencimento"": ""07/11/2022"",
-                ""devedor"": {
-                    ""id"": 3,
-                    ""nome"": ""KARIN BARCZYSZYN ODONTOLOGIA EIRELI"",
-                    ""docDevedor"": ""31391977000100"",
-                    ""email"": ""emailcliente@gmail.com"",
-                    ""devedorPj"": true
-                },
-                ""apresentante"": {
-                    ""id"": 1,
-                    ""nome"": ""Prefeitura do Município de Curitiba""
-                },
-                ""credores"": [
-                    {
-                        ""id"": 1,
-                        ""sacador"": ""PREFEITURA MUNICIPAL DE CURITIBA"",
-                        ""cedente"": ""PREFEITURA MUNICIPAL DE CURITIBA""
-                    }
-                ],
-                ""statusNotificacao"": {
-                    // Sem dados de notificação para este exemplo
-                }
-            }
-        ]";
-
-            try
-            {
-                // Desserializa o JSON para uma lista de objetos dinâmicos
-                List<dynamic> protestos = JsonConvert.DeserializeObject<List<dynamic>>(json);
-
-                // Limpar dados existentes
+                // Limpar dados existentes no grid
                 dataGridViewProtesto.Rows.Clear();
 
-                // Adicionar cada protesto como uma linha na tabela
-                foreach (var protesto in protestos)
+                // Para cada protesto, adicionar uma linha para cada devedor
+                foreach (var protesto in dados)
                 {
-                    AdicionarLinhaTabela(protesto);
+                    if (protesto.devedor != null && protesto.devedor.Count > 0)
+                    {
+                        foreach (var devedor in protesto.devedor)
+                        {
+                            AdicionarLinhaApiTabela(protesto, devedor);
+                        }
+                    }
+                    else
+                    {
+                        // Se não houver devedores, ainda assim adiciona uma linha (com dados de devedor vazios)
+                        AdicionarLinhaApiTabela(protesto, null);
+                    }
                 }
 
                 // Aplicar cores baseadas no status
@@ -188,95 +97,121 @@ namespace SistemaNotifica.src.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao carregar dados: {ex.Message}", "Erro",
+                Debug.WriteLine($"Erro em LoadDistribData: {ex.Message}");
+                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                MessageBox.Show($"Erro ao carregar dados da API: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void AdicionarLinhaTabela(dynamic protesto)
+
+        
+
+        private void AdicionarLinhaApiTabela(Protesto protesto, Devedor devedor)
         {
             try
             {
-                // Converter data de distribuição
-                DateTime dataDistribuicao = DateTime.Parse(protesto.dataDistribuicao.ToString());
-
                 // Determinar status baseado na notificação
                 string status = DeterminarStatus(protesto.statusNotificacao);
 
-                // MÉTODO 1: Usando Add direto (mais seguro)
+                // Adicionar nova linha
                 int rowIndex = dataGridViewProtesto.Rows.Add();
                 DataGridViewRow row = dataGridViewProtesto.Rows[rowIndex];
 
                 // Preencher dados usando os nomes das colunas
-                row.Cells["ColumnDataDist"].Value = dataDistribuicao;
-                row.Cells["ColumnNumDist"].Value = protesto.numDistribuicao.ToString();
-                row.Cells["ColumnDevedor"].Value = protesto.devedor.nome.ToString();
-                row.Cells["ColumnDocDev"].Value = FormatarDocumento(protesto.devedor.docDevedor.ToString());
-                row.Cells["ColumnEmail"].Value = protesto.devedor.email.ToString();
+                row.Cells["ColumnDataDist"].Value = protesto.dataDistribuicao;
+                row.Cells["ColumnNumDist"].Value = protesto.numDistribuicao;
+
+                // Dados do devedor (se existir)
+                if (devedor != null)
+                {
+                    row.Cells["ColumnDevedor"].Value = devedor.nome;
+                    row.Cells["ColumnDocDev"].Value = FormatarDocumento(devedor.docDevedor);
+                    row.Cells["ColumnEmail"].Value = devedor.email;
+                    row.Cells["ColumnStatus"].Value = status;
+                }
+                else
+                {
+                    row.Cells["ColumnDevedor"].Value = "Erro - Sem devedor";
+                    row.Cells["ColumnDocDev"].Value = "-";
+                    row.Cells["ColumnEmail"].Value = "-";
+                    row.Cells["ColumnStatus"].Value = status;
+                }
 
                 // Armazenar o status na Tag da linha para usar na coloração
                 row.Tag = status;
 
-                Console.WriteLine($"Linha adicionada com sucesso: {protesto.devedor.nome}");
+                Debug.WriteLine($"Linha adicionada com sucesso: {devedor?.nome ?? "Sem devedor"} - Distribuição: {protesto.numDistribuicao}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"MÉTODO 1 falhou: {ex.Message}");
-                // MÉTODO 2: Fallback usando índices
+                Debug.WriteLine($"Erro ao adicionar linha da API: {ex.Message}");
+
+                // Método alternativo usando índices
                 try
                 {
-                    AdicionarLinhaComIndices(protesto);
+                    AdicionarLinhaApiComIndices(protesto, devedor);
                 }
                 catch (Exception err)
-                {                    
-                    Console.WriteLine($"Todos os métodos para adicionar COLUNAS falharam ${err.Message}");
-                    return;
+                {
+                    Debug.WriteLine($"Todos os métodos para adicionar linha da API falharam: {err.Message}");
                 }
             }
         }
 
-        // Método alternativo usando índices
-        private void AdicionarLinhaComIndices(dynamic protesto)
+        // Método alternativo usando índices para dados da API
+        private void AdicionarLinhaApiComIndices(Protesto protesto, Devedor devedor)
         {
-            DateTime dataDistribuicao = DateTime.Parse(protesto.dataDistribuicao.ToString());
             string status = DeterminarStatus(protesto.statusNotificacao);
 
             // Adicionar linha vazia primeiro
             int rowIndex = dataGridViewProtesto.Rows.Add();
             DataGridViewRow row = dataGridViewProtesto.Rows[rowIndex];
 
-            // Preencher por índice
-            row.Cells[0].Value = dataDistribuicao;
-            row.Cells[1].Value = protesto.numDistribuicao.ToString();
-            row.Cells[2].Value = protesto.devedor.nome.ToString();
-            row.Cells[3].Value = FormatarDocumento(protesto.devedor.docDevedor.ToString());
-            row.Cells[4].Value = protesto.devedor.email.ToString();
+            // Preencher por índice (assumindo a ordem: Data, Distribuição, Devedor, Doc.Devedor, Email)
+            row.Cells[0].Value = protesto.dataDistribuicao;
+            row.Cells[1].Value = protesto.numDistribuicao;
+
+            if (devedor != null)
+            {
+                row.Cells[2].Value = devedor.nome;
+                row.Cells[3].Value = FormatarDocumento(devedor.docDevedor);
+                row.Cells[4].Value = devedor.email;
+                row.Cells[5].Value = status;
+            }
+            else
+            {
+                row.Cells[2].Value = "Sem devedor";
+                row.Cells[3].Value = "-";
+                row.Cells[4].Value = "-";
+                row.Cells[5].Value = status;
+            }
 
             row.Tag = status;
-            Console.WriteLine($"Linha adicionada por índices: {protesto.devedor.nome}");
+            Debug.WriteLine($"Linha adicionada por índices: {devedor?.nome ?? "Sem devedor"} - Distribuição: {protesto.numDistribuicao}");
         }
 
 
+
         // Determinar status baseado na notificação
-        private string DeterminarStatus(dynamic statusNotificacao)
+        private string DeterminarStatus(StatusNotificacao statusNotificacao)
         {
             try
             {
                 if (statusNotificacao == null)
                     return "Pendente";
 
-                bool emailEnviado = statusNotificacao.emailEnviado ?? false;
-                bool lido = statusNotificacao.lido ?? false;
-
-                if (lido)
+                if (statusNotificacao.lido)
                     return "Lido";
-                else if (emailEnviado)
+                else if (statusNotificacao.emailEnviado)
                     return "Enviado";
                 else
                     return "Pendente";
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine($"Erro ao determinar status: {ex.Message}");
                 return "Pendente";
             }
         }
@@ -314,16 +249,16 @@ namespace SistemaNotifica.src.Forms
                     switch (status)
                     {
                         case "Lido":
-                            row.DefaultCellStyle.BackColor = Color.LightGreen;
-                            row.DefaultCellStyle.ForeColor = Color.DarkGreen;
+                            row.DefaultCellStyle.BackColor = Color.Green;
+                            row.DefaultCellStyle.ForeColor = Color.Black;
                             break;
                         case "Enviado":
-                            row.DefaultCellStyle.BackColor = Color.LightBlue;
-                            row.DefaultCellStyle.ForeColor = Color.DarkBlue;
+                            row.DefaultCellStyle.BackColor = Color.LightGreen;
+                            row.DefaultCellStyle.ForeColor = Color.Black;
                             break;
                         case "Pendente":
-                            row.DefaultCellStyle.BackColor = Color.LightYellow;
-                            row.DefaultCellStyle.ForeColor = Color.DarkOrange;
+                            row.DefaultCellStyle.BackColor = Color.White;
+                            row.DefaultCellStyle.ForeColor = Color.Black;
                             break;
                         default:
                             row.DefaultCellStyle.BackColor = Color.White;
@@ -341,12 +276,12 @@ namespace SistemaNotifica.src.Forms
 
             foreach (var protesto in novosProtestos)
             {
-                AdicionarLinhaTabela(protesto);
+                AdicionarLinhaApiTabela(protesto, protesto.devedor);
             }
 
             AplicarCoresStatus();
         }
-    
+
 
 
         //chartDist
