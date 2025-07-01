@@ -30,28 +30,46 @@ namespace SistemaNotifica.src.Services
 
         // Método para definir o token de autorização
         public void SetAuthorizationHeader(string token)
-        {
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-        }
+            {
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
 
         // Método para remover o token de autorização
         public void ClearAuthorizationHeader()
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+            }
+
+        public string BuildUrlWithQueryParams(string endpoint, Dictionary<string, string> parameters = null)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = null;
+            var url = $"{_baseUrl}/{endpoint}";
+
+            if (parameters != null && parameters.Count > 0)
+            {
+                var queryString = string.Join("&", parameters.Select(p => $"{p.Key}={Uri.EscapeDataString(p.Value)}"));
+                url += $"?{queryString}";
+            }
+
+            return url;
         }
+
 
         // ------------- MÉTODOS PARA FAZER REQUISIÇÕES HTTP ------------- //
         // GET /:endpoint
-        public async Task<T> GetAsync<T>(string endpoint)
+        // Método GET com parâmetros
+        public async Task<T> GetAsync<T>(string endpoint, Dictionary<string, string> queryParams = null)
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/{endpoint}");
-            response.EnsureSuccessStatusCode(); // Lança exceção para códigos de erro HTTP
+            var url = BuildUrlWithQueryParams(endpoint, queryParams);
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();
-            Debug.WriteLine($"JSON retornado da API: {json}");//retirar depois 
-            Debug.WriteLine($"JsonConvert.DeserializeObject<T>(json):::::: {JsonConvert.DeserializeObject<T>(json)}");
+            Debug.WriteLine($"URL chamada: {url}");
+            Debug.WriteLine($"JSON retornado: {json}");
             return JsonConvert.DeserializeObject<T>(json);
         }
+
+
         // POST /:endpoint
         public async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
         {
@@ -67,8 +85,20 @@ namespace SistemaNotifica.src.Services
             var responseJson = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TResponse>(responseJson);
         }
+        // --------------Adicione PutAsync, DeleteAsync conforme necessário...-------------------------------
+
+
+
+        
+
+        
 
         // --------------Adicione PutAsync, DeleteAsync conforme necessário...-------------------------------
+
+
+
+
+
 
 
 

@@ -107,17 +107,35 @@ namespace SistemaNotifica.src.Models
     public class Protesto
     {
         public int id { get; set; }
-        public string numDistribuicao { get; set; }
+        public required string numDistribuicao { get; set; }
         public DateTime dataDistribuicao { get; set; }
         public DateTime dataApresentacao { get; set; }
-        public string cartProtesto { get; set; }
-        public string numTitulo { get; set; }
+        public required string cartProtesto { get; set; }
+        public required string numTitulo { get; set; }
         public int valor { get; set; } // O valor parece ser um int aqui, representando centavos
         public int saldo { get; set; }
-        public string vencimento { get; set; }
-        public List<Devedor> devedor { get; set; }
-        public Apresentante apresentante { get; set; }
-        public List<Credor> credores { get; set; }
-        public StatusNotificacao statusNotificacao { get; set; }
+        public string? vencimento { get; set; }
+        public required List<Devedor> devedor { get; set; }
+        public required Apresentante apresentante { get; set; }
+        public List<Credor>? credores { get; set; }
+        public StatusNotificacao? statusNotificacao { get; set; }
     }
+
+
+    /* ----------------------------------  Classes modelos para receber doc-protesto  -----------------------------------------*/
+    public class DocProtesto{        
+        public int id { get; set; }
+        public DateTime dataApresentacao { get;  set; }
+        public int numDistribuicao { get;  set; }
+        public DateTime dataDistribuicao { get;  set; }        
+        public required string cartProtesto { get;  set; }
+        public required string numTitulo { get;  set; }
+        public int valor { get;  set; }
+        public int saldo { get;  set; }
+        public string? vencimento { get;  set; }
+        public int fkApresentante { get;  set; }
+        public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
+    }
+
 }

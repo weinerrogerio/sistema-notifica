@@ -44,6 +44,7 @@ namespace SistemaNotifica
             //_apiService = new ApiService();
             _authService = Program.AuthService;
             this.KeyPreview = true; // capturar teclas no form
+
         }
 
         // Evento quando o botão do mouse é pressionado no topPanel

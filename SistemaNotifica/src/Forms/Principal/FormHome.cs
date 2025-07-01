@@ -25,10 +25,11 @@ namespace SistemaNotifica.src.Forms
             InitializeComponent();
             _protestoService = Program.ProtestoService;
             ConfigurarDataGridView();
-            CarregarGrafico();
-
             //LoadProtestoDatagrid();
-            LoadDistribData().Wait(); //;// teste carregar os dados da API
+            LoadDistribData(); // carregar os dados da API e preencher o grid
+            //CarregarGrafico();
+            //getDataToChart(startDate: new DateTime(2025, 6, 2), endDate: new DateTime(2025, 6, 17));
+            CarregarGrafico();
         }
 
 
@@ -270,7 +271,7 @@ namespace SistemaNotifica.src.Forms
         }
 
         // Método para atualizar dados (útil para quando os dados reais vierem da API)
-        public void AtualizarDadosTabela(List<dynamic> novosProtestos)
+        private void AtualizarDadosTabela(List<dynamic> novosProtestos)
         {
             dataGridViewProtesto.Rows.Clear();
 
@@ -285,53 +286,98 @@ namespace SistemaNotifica.src.Forms
 
 
         //chartDist
-        private void CarregarGrafico()
+        private async Task CarregarGrafico()
         {
             chartDist.Series.Clear();
             chartDist.ChartAreas.Clear();
             chartDist.Titles.Clear();
 
-            // Criar área do gráfico
+            // Criar área do gráfico     
             ChartArea areaGrafico = new ChartArea();
             areaGrafico.AxisX.IntervalType = DateTimeIntervalType.Number;
             areaGrafico.AxisX.Interval = 1;
             areaGrafico.AxisX.MajorGrid.Enabled = false;
             areaGrafico.AxisY.MajorGrid.Enabled = false;
-
-            // ALTERAR COR DE FUNDO DA ÁREA INTERNA DO GRÁFICO            
-            areaGrafico.BackColor = Color.FromArgb(240, 240, 240); // Cor personalizada --> control.
+            areaGrafico.BackColor = Color.FromArgb(240, 240, 240);
             chartDist.ChartAreas.Add(areaGrafico);
 
-            // Criar série
-            Series serieDados = new Series("Dados da API");
+            // Criar série     
+            Series serieDados = new Series("Quantidade por Data");
             serieDados.ChartType = SeriesChartType.Column;
             serieDados.IsValueShownAsLabel = true;
             serieDados.LabelFormat = "#";
+            serieDados.Color = Color.DodgerBlue;
 
-            // ALTERAR COR DAS COLUNAS
-            serieDados.Color = Color.DodgerBlue; // Cor das colunas
-                                                 // serieDados.Color = Color.FromArgb(54, 162, 235); // Cor personalizada
-
-            // OPCIONAL: Cor da borda das colunas
-            serieDados.BorderColor = Color.DarkBlue;
-            serieDados.BorderWidth = 1;
-
-            // VERSÃO DINÂMICA: Arrays com seus dados
-            string[] labels = { "A", "B", "C", "D", "E", "F", "G", "H", "I" };
-            double[] valores = { 100, 150, 80, 120, 90, 110, 140, 75, 95 };
-
-            // Adicionar pontos dinamicamente
-            for (int i = 0; i < labels.Length && i < valores.Length; i++)
+            try
             {
-                int pontoIndex = serieDados.Points.AddXY(i + 1, valores[i]);
-                serieDados.Points[pontoIndex].AxisLabel = labels[i];
+                // Obter dados da API
+                List<DocProtesto> dados = await GetDataToChart(
+                    startDate: new DateTime(2025, 6, 2),
+                    endDate: new DateTime(2025, 6, 17)
+                );
+
+                // Debug: Verificar os dados recebidos
+                Debug.WriteLine($"Total de registros recebidos: {dados.Count}");
+                foreach (var item in dados.Take(3)) // Mostra apenas os 3 primeiros
+                {
+                    Debug.WriteLine($"createdAt: {item.createdAt:yyyy-MM-dd HH:mm:ss}");
+                }
+
+                // Agrupar dados por data e contar quantidade - VERSÃO CORRIGIDA
+                var dadosAgrupados = dados
+                    .GroupBy(d => d.createdAt.Date) // Agrupa apenas pela data (sem hora)
+                    .Select(g => new
+                    {
+                        Data = g.Key,
+                        Quantidade = g.Count()
+                    })
+                    .OrderBy(x => x.Data) // Ordena por data
+                    .ToList();
+
+                // Debug: Verificar o agrupamento
+                Debug.WriteLine($"Grupos criados: {dadosAgrupados.Count}");
+                foreach (var grupo in dadosAgrupados)
+                {
+                    Debug.WriteLine($"Data: {grupo.Data:dd/MM/yyyy}, Quantidade: {grupo.Quantidade}");
+                }
+
+                // Adicionar pontos ao gráfico
+                for (int i = 0; i < dadosAgrupados.Count; i++)
+                {
+                    int pontoIndex = serieDados.Points.AddXY(i + 1, dadosAgrupados[i].Quantidade);
+                    serieDados.Points[pontoIndex].AxisLabel = dadosAgrupados[i].Data.ToString("dd/MM/yyyy");
+                }
+
+                chartDist.Series.Add(serieDados);
+
+                // Adicionar título     
+                Title titulo = new Title("Quantidade de Registros por Data");
+                chartDist.Titles.Add(titulo);
             }
-
-            chartDist.Series.Add(serieDados);
-
-            // Adicionar título
-            Title titulo = new Title("Gráfico de Dados da API");
-            chartDist.Titles.Add(titulo);
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro ao carregar gráfico: {ex.Message}");
+                // Opcional: Mostrar mensagem de erro para o usuário
+            }
         }
+
+        private async Task<List<DocProtesto>> GetDataToChart(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                Debug.WriteLine("Iniciando getDataToChart...");                
+                List<DocProtesto> dados = await _protestoService.FindByDateRange(startDate, endDate);
+                Debug.WriteLine($"getDataToChart - Sucesso: {dados.Count} registros encontrados");
+                return dados;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro: {ex.Message}");
+                return new List<DocProtesto>();
+            }
+            
+        }
+
+
     }
 }

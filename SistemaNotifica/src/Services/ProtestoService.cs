@@ -23,10 +23,7 @@ namespace SistemaNotifica.src.Services
         {
             try
             {
-                Debug.WriteLine("Fazendo requisição para API...");
-
                 var response = await _apiService.GetAsync<List< Protesto >>("doc-protesto/distribuicoes/buscar/");
-                Debug.WriteLine("Resposta recebida da API com sucesso");
                 return response;
             }
             catch (HttpRequestException ex)
@@ -45,5 +42,32 @@ namespace SistemaNotifica.src.Services
                 throw;
             }
         }
+
+
+        public async Task<List<DocProtesto>> FindByDateRange(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                var queryParams = new Dictionary<string, string>();
+
+                if (startDate.HasValue)
+                {
+                    queryParams["startDate"] = startDate.Value.ToString("yyyy-MM-dd");
+                }
+
+                if (endDate.HasValue)
+                {
+                    queryParams["endDate"] = endDate.Value.ToString("yyyy-MM-dd");
+                }
+                var response = await _apiService.GetAsync<List<DocProtesto>>("doc-protesto/date-range", queryParams);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro: {ex.Message}");
+                throw;
+            }
+        }
+
     }
 }
