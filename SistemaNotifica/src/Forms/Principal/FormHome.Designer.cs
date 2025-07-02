@@ -48,6 +48,11 @@
             tableLayoutPanelBotton = new TableLayoutPanel();
             chartDist = new System.Windows.Forms.DataVisualization.Charting.Chart();
             panelArq = new Panel();
+            dataGridViewImports = new DataGridView();
+            ColumnArquivo = new DataGridViewTextBoxColumn();
+            ColumnDataImport = new DataGridViewTextBoxColumn();
+            ColumnUser = new DataGridViewTextBoxColumn();
+            ColumnStatusArquivo = new DataGridViewTextBoxColumn();
             panelHeader = new Panel();
             panelHome.SuspendLayout();
             mainTableLayoutPanel.SuspendLayout();
@@ -57,6 +62,8 @@
             ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).BeginInit();
             tableLayoutPanelBotton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)chartDist).BeginInit();
+            panelArq.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewImports).BeginInit();
             panelHeader.SuspendLayout();
             SuspendLayout();
             // 
@@ -147,6 +154,7 @@
             btnImport.TabIndex = 6;
             btnImport.Text = "IMPORTAR NOVO ARQUIVO";
             btnImport.UseVisualStyleBackColor = false;
+            btnImport.Click += btnImport_Click;
             // 
             // dataGridViewProtesto
             // 
@@ -244,11 +252,52 @@
             // panelArq
             // 
             panelArq.BackColor = Color.SlateGray;
+            panelArq.Controls.Add(dataGridViewImports);
             panelArq.Dock = DockStyle.Fill;
             panelArq.Location = new Point(3, 3);
             panelArq.Name = "panelArq";
             panelArq.Size = new Size(381, 188);
             panelArq.TabIndex = 0;
+            // 
+            // dataGridViewImports
+            // 
+            dataGridViewImports.AllowUserToAddRows = false;
+            dataGridViewImports.AllowUserToOrderColumns = true;
+            dataGridViewImports.BackgroundColor = SystemColors.Control;
+            dataGridViewImports.BorderStyle = BorderStyle.None;
+            dataGridViewImports.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewImports.Columns.AddRange(new DataGridViewColumn[] { ColumnArquivo, ColumnDataImport, ColumnUser, ColumnStatusArquivo });
+            dataGridViewImports.Dock = DockStyle.Fill;
+            dataGridViewImports.Location = new Point(0, 0);
+            dataGridViewImports.Name = "dataGridViewImports";
+            dataGridViewImports.ReadOnly = true;
+            dataGridViewImports.Size = new Size(381, 188);
+            dataGridViewImports.TabIndex = 0;
+            // 
+            // ColumnArquivo
+            // 
+            ColumnArquivo.HeaderText = "Arquivo";
+            ColumnArquivo.Name = "ColumnArquivo";
+            ColumnArquivo.ReadOnly = true;
+            // 
+            // ColumnDataImport
+            // 
+            ColumnDataImport.HeaderText = "Importação";
+            ColumnDataImport.Name = "ColumnDataImport";
+            ColumnDataImport.ReadOnly = true;
+            // 
+            // ColumnUser
+            // 
+            ColumnUser.HeaderText = "Importado por";
+            ColumnUser.Name = "ColumnUser";
+            ColumnUser.ReadOnly = true;
+            // 
+            // ColumnStatusArquivo
+            // 
+            ColumnStatusArquivo.FillWeight = 50F;
+            ColumnStatusArquivo.HeaderText = "Status";
+            ColumnStatusArquivo.Name = "ColumnStatusArquivo";
+            ColumnStatusArquivo.ReadOnly = true;
             // 
             // panelHeader
             // 
@@ -277,6 +326,8 @@
             ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).EndInit();
             tableLayoutPanelBotton.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)chartDist).EndInit();
+            panelArq.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridViewImports).EndInit();
             panelHeader.ResumeLayout(false);
             panelHeader.PerformLayout();
             ResumeLayout(false);
@@ -302,5 +353,10 @@
         private DataGridViewTextBoxColumn ColumnDocDev;
         private DataGridViewTextBoxColumn ColumnEmail;
         private DataGridViewTextBoxColumn ColumnStatus;
+        private DataGridView dataGridViewImports;
+        private DataGridViewTextBoxColumn ColumnArquivo;
+        private DataGridViewTextBoxColumn ColumnDataImport;
+        private DataGridViewTextBoxColumn ColumnUser;
+        private DataGridViewTextBoxColumn ColumnStatusArquivo;
     }
 }

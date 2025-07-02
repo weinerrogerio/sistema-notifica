@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Reflection;
 using SistemaNotifica.src.Forms;
+using SistemaNotifica.src.Forms.Principal;
 using SistemaNotifica.src.Utils;
 
 
@@ -11,6 +12,7 @@ namespace SistemaNotifica
     {
         //Thread nt;
         public Form objForm;
+        private string TelaAtual = string.Empty;
 
         private const int SIDEBAR_MIN_WIDTH = 50;
         private const int SIDEBAR_MAX_WIDTH = 190;
@@ -198,6 +200,21 @@ namespace SistemaNotifica
             sidebarMenu.ResumeLayout(false);
         }
 
+        private void ResetSidebarButtons()
+        {
+            // Coloque aqui os bot�es da sidebar que devem ser "resetados"
+            btnHome.BackColor = Color.FromArgb(0, 0, 0);
+            btnImportarDoc.BackColor = Color.FromArgb(0, 0, 0);
+            btnDados.BackColor = Color.FromArgb(0, 0, 0);
+            btnUser.BackColor = Color.FromArgb(0, 0, 0);
+            btnSettings.BackColor = Color.FromArgb(0, 0, 0);
+            btnSobre.BackColor = Color.FromArgb(0, 0, 0);
+            btnConfigNotificacao.BackColor = Color.FromArgb(0, 0, 0);
+            btnNotificacao.BackColor = Color.FromArgb(0, 0,0);
+            btnLogOut.BackColor = Color.FromArgb(0, 0, 0);           
+
+        }
+
         private void btnHam_Click(object sender, EventArgs e)
         {            
             StartSidebarAnimation();
@@ -210,36 +227,51 @@ namespace SistemaNotifica
             
         private void btnHome_Click(object sender, EventArgs e)
         {
-            //objForm?.Close();
-            //objForm = new FormHome
-            //{
-            //    TopLevel = false,
-            //    FormBorderStyle = FormBorderStyle.None,
-            //    Dock = DockStyle.Fill
-            //};
-
-            //pnlMain.Controls.Add(objForm);
-            //objForm.Show();
-            openHomeDefaultForm();
+            
+            if (!(TelaAtual == "FormHome")) {
+                openHomeDefaultForm();
+                ResetSidebarButtons();
+                btnHome.BackColor = Color.FromArgb(60, 60, 60);
+            }
+            return;
         }
 
         private void openHomeDefaultForm()
         {
             objForm?.Close();
+            ResetSidebarButtons();
             objForm = new FormHome
             {
                 TopLevel = false,
                 FormBorderStyle = FormBorderStyle.None,
                 Dock = DockStyle.Fill
             };
-
+            TelaAtual = "FormHome";
             pnlMain.Controls.Add(objForm);
             objForm.Show();
         }
 
+        
         private void btnImportarDoc_Click(object sender, EventArgs e)
         {
+            
+            if (!(TelaAtual == "FormImport")) {
+                ResetSidebarButtons();
+                btnImportarDoc.BackColor = Color.FromArgb(60, 60, 60);
+                objForm?.Close();
+                objForm = new FormImport
+                {
+                    TopLevel = false,
+                    FormBorderStyle = FormBorderStyle.None,
+                    Dock = DockStyle.Fill
+                };
 
+                TelaAtual = "FormImport";
+                pnlMain.Controls.Add(objForm);
+                objForm.Show();
+            }
+            return;           
+            
         }
 
         // A PRIMEIRA TELA A SER APRESENTADA PRECISA SER A HOME --> fazer depois 

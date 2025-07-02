@@ -471,7 +471,7 @@ namespace SistemaNotifica
             // 
             // pnlMain
             // 
-            pnlMain.BackColor = Color.WhiteSmoke;
+            pnlMain.BackColor = SystemColors.Control;
             pnlMain.Dock = DockStyle.Fill;
             pnlMain.Location = new Point(190, 33);
             pnlMain.Name = "pnlMain";

@@ -55,6 +55,16 @@ namespace SistemaNotifica.src.Forms
             dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             //dataGridViewProtesto.Columns["ColumnNumDist"].MinimumWidth = 20;
             //dataGridViewProtesto.Columns["ColumnNumDist"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+
+            dataGridViewImports.Rows.Clear();
+            dataGridViewImports.RowHeadersVisible = false;
+            dataGridViewImports.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewImports.AllowUserToAddRows = false;
+            dataGridViewImports.MultiSelect = false;
+            dataGridViewImports.ReadOnly = true;
+            dataGridViewImports.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridViewImports.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewImports.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
         }
 
 
@@ -107,7 +117,7 @@ namespace SistemaNotifica.src.Forms
         }
 
 
-        
+
 
         private void AdicionarLinhaApiTabela(Protesto protesto, Devedor devedor)
         {
@@ -196,7 +206,7 @@ namespace SistemaNotifica.src.Forms
 
 
         // Determinar status baseado na notificação
-        private string DeterminarStatus(StatusNotificacao statusNotificacao)
+        private static string DeterminarStatus(StatusNotificacao statusNotificacao)
         {
             try
             {
@@ -293,7 +303,7 @@ namespace SistemaNotifica.src.Forms
             chartDist.Titles.Clear();
 
             // Criar área do gráfico     
-            ChartArea areaGrafico = new ChartArea();
+            ChartArea areaGrafico = new();
             areaGrafico.AxisX.IntervalType = DateTimeIntervalType.Number;
             areaGrafico.AxisX.Interval = 1;
             areaGrafico.AxisX.MajorGrid.Enabled = false;
@@ -302,11 +312,17 @@ namespace SistemaNotifica.src.Forms
             chartDist.ChartAreas.Add(areaGrafico);
 
             // Criar série     
-            Series serieDados = new Series("Quantidade por Data");
-            serieDados.ChartType = SeriesChartType.Column;
-            serieDados.IsValueShownAsLabel = true;
-            serieDados.LabelFormat = "#";
-            serieDados.Color = Color.DodgerBlue;
+            Series serieDados = new("Quantidade por Data")
+            {
+                ChartType = SeriesChartType.Column,
+                IsValueShownAsLabel = true,
+                LabelFormat = "#",
+                Color = Color.DodgerBlue
+            };
+            chartDist.Legends.Clear();
+            chartDist.TabStop = false;
+            chartDist.Cursor = Cursors.Default;
+            chartDist.Enabled = false;
 
             try
             {
@@ -351,7 +367,7 @@ namespace SistemaNotifica.src.Forms
                 chartDist.Series.Add(serieDados);
 
                 // Adicionar título     
-                Title titulo = new Title("Quantidade de Registros por Data");
+                Title titulo = new("Quantidade de Registros por Data");
                 chartDist.Titles.Add(titulo);
             }
             catch (Exception ex)
@@ -365,7 +381,7 @@ namespace SistemaNotifica.src.Forms
         {
             try
             {
-                Debug.WriteLine("Iniciando getDataToChart...");                
+                Debug.WriteLine("Iniciando getDataToChart...");
                 List<DocProtesto> dados = await _protestoService.FindByDateRange(startDate, endDate);
                 Debug.WriteLine($"getDataToChart - Sucesso: {dados.Count} registros encontrados");
                 return dados;
@@ -373,11 +389,15 @@ namespace SistemaNotifica.src.Forms
             catch (Exception ex)
             {
                 Debug.WriteLine($"Erro: {ex.Message}");
-                return new List<DocProtesto>();
+                return [];
             }
-            
+
         }
 
+        // fazer evento de transição para form de importação - -> não exibir form, APENAS PUXAR A FUNÇÃO DE IMPORTAÇÃO
+        private void btnImport_Click(object sender, EventArgs e)
+        {
 
+        }
     }
 }
