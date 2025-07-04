@@ -138,4 +138,15 @@ namespace SistemaNotifica.src.Models
         public DateTime updatedAt { get; set; }
     }
 
+    /*-------------------------------------     CLASSE MODELO  PARA RESPOSTA DO UPLOAD  ---------------------------------------                   -*/
+    // Exemplo de classe de resposta da API de upload, se ela retornar algo simples
+    public class ImportResponse
+    {
+        //return { processedCount, errorCount, skippedCount, errors };
+        public string? processedCount { get; }
+        public object? errorCount { get; }
+        public object? skippedCount { get; }
+        public object? errors { get; }
+    }
+
 }

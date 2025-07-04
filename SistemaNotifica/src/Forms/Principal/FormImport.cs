@@ -8,21 +8,23 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReaLTaiizor.Controls;
+using SistemaNotifica.src.Models;
 using SistemaNotifica.src.Services;
 
 namespace SistemaNotifica.src.Forms.Principal
 {
     public partial class FormImport : Form
     {
-        private readonly ImportService _importService; 
+        private readonly ImportService _importService;
 
         public FormImport()
         {
-            InitializeComponent();            
+            InitializeComponent();
             _importService = Program.ImportService;
+
         }
 
-        private void buttonSelect_Click(object sender, EventArgs e)
+        private void dialogImport()
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
@@ -31,7 +33,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 openFileDialog.InitialDirectory = "C:\\Users\\Dist02\\js\\Nest.js\\sistema-notifica-nestjs";
                 openFileDialog.Filter = "Arquivos de Texto (*.txt)|*.txt|Arquivos CSV (*.csv)|*.csv|Todos os Arquivos (*.*)|*.*"; // Filtra os tipos de arquivo
                 openFileDialog.FilterIndex = 3; // Define o filtro padrão (Todos os Arquivos (*.*))
-                openFileDialog.RestoreDirectory = true; 
+                openFileDialog.RestoreDirectory = true;
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -66,6 +68,22 @@ namespace SistemaNotifica.src.Forms.Principal
                 }
             }
         }
+        private void buttonSelect_Click(object sender, EventArgs e)
+        {
+            dialogImport();
+        }
+               
+
+        private void smallTextBoxSelectFile_Click(object sender, EventArgs e)
+        {
+            dialogImport();
+        }      
+
+        private void smallTextBoxSelectFile_MouseClick(object sender, MouseEventArgs e)
+        {
+            dialogImport();
+        }
+
 
         private async void buttonImport_Click(object sender, EventArgs e)
         {
@@ -91,8 +109,8 @@ namespace SistemaNotifica.src.Forms.Principal
 
                 // Chamar o serviço de importação para enviar o arquivo
                 ImportResponse response = await _importService.UploadFileAsync(fileBytes, fileName);
-
-                MessageBox.Show($"Arquivo importado com sucesso!\nMensagem: {response}", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //processedCount
+                MessageBox.Show($"Arquivo importado com sucesso!\e Registros: {response.processedCount}\n Erros encontrados: {response.errorCount}", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 // Aqui você pode atualizar seu DataGridView com base na resposta ou buscar os dados novamente
                 // Limpe o smallTextBox1 após o sucesso
                 smallTextBoxSelectFile.Text = "Selecione um arquivo...";
@@ -115,5 +133,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 buttonSelect.Enabled = true;
             }
         }
+
+        
     }
 }
