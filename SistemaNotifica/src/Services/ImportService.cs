@@ -42,7 +42,6 @@ public class ImportService
 }
 
 // Exemplo de classe de resposta da API de upload, se ela retornar algo simples
-public class ImportResponse
 {
     //return { processedCount, errorCount, skippedCount, errors };
     public string? processedCount { get; }
