@@ -240,7 +240,7 @@ namespace SistemaNotifica
         {
             objForm?.Close();
             ResetSidebarButtons();
-            objForm = new FormHome
+            objForm = new FormImport()// padrão FormHome
             {
                 TopLevel = false,
                 FormBorderStyle = FormBorderStyle.None,

@@ -109,27 +109,16 @@ namespace SistemaNotifica
                 // Chama a API para autenticação
                 // var loginResponse = await _apiService.LoginAsync(nome, senha);
                 LoginResponse response = await _authService.LoginAsync(username, password);
+                
 
-                //MessageBox.Show("Login realizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                // Agora que o login foi bem-sucedido e Sessao.Token está preenchido,
-                // você pode acessar os dados da sessão globalmente.
-                // Ex: string token = Sessao.Token;
-                // string usuario = Sessao.UsuarioLogado;
-
-                if (response != null && !string.IsNullOrEmpty(response.AccessToken)) // Ou response.IsSuccess == true se você adicionar essa propriedade
-                {
-                    // O login foi REALMENTE bem-sucedido.
-                    // Não precisa de MessageBox aqui, o usuário verá o próximo formulário.
-
-                    // Este é o passo chave: informa ao ShowDialog() no Program.cs que o login foi OK.
+                if (response != null && !string.IsNullOrEmpty(response.AccessToken)) // Ou response.IsSuccess == true 
+                {                    
                     this.DialogResult = DialogResult.OK;
                     this.Close(); // Fecha o formulário de login
                 }
                 else
                 {
                     // Login falhou por credenciais inválidas ou outro motivo retornado pela API
-                    // Use a mensagem da API, se disponível, ou uma mensagem padrão.
                     string errorMessage = response?.Message ?? "Usuário ou senha inválidos.";
                     lblErrorMessage.Text = errorMessage; // Exibe a mensagem da API na sua UI
                     lblErrorMessage.Visible = true;

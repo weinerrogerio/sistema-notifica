@@ -85,18 +85,65 @@ namespace SistemaNotifica.src.Services
             var responseJson = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TResponse>(responseJson);
         }
+
+
+        // POST -  MÉTODO PARA UPLOAD DE ARQUIVOS
+        public async Task<TResponse> PostFileAsync<TResponse>(string endpoint, byte[] fileBytes, string fileName, Dictionary<string, string> additionalFormFields = null)
+        {
+            using (var multipartContent = new MultipartFormDataContent())
+            {
+                // Adiciona o arquivo
+                var fileContent = new ByteArrayContent(fileBytes);
+                string fileExtension = System.IO.Path.GetExtension(fileName).ToLowerInvariant();
+                string contentType = "application/octet-stream"; // Padrão
+
+
+                Debug.WriteLine("fileContent" + fileContent);
+                Debug.WriteLine("fileExtension" + fileExtension);
+                Debug.WriteLine("contentType" + contentType);
+
+                switch (fileExtension)
+                {
+                    case ".txt":
+                        contentType = "text/plain";
+                        break;
+                    case ".csv":
+                        contentType = "text/csv";
+                        break;
+                    case ".xml":
+                        contentType = "application/xml"; // Ou "text/xml" dependendo do servidor
+                        break;
+                        // Adicione outros casos conforme necessário
+                }
+
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+
+                // CORREÇÃO: Adicionar o arquivo apenas UMA VEZ
+                multipartContent.Add(fileContent, "file", fileName); // "file" deve ser o nome do campo esperado pelo Multer no backend
+
+                // Adiciona campos de formulário adicionais, se houver
+                if (additionalFormFields != null)
+                {
+                    foreach (var field in additionalFormFields)
+                    {
+                        multipartContent.Add(new StringContent(field.Value), field.Key);
+                    }
+                }
+
+                var url = $"{_baseUrl}/{endpoint}";
+                Debug.WriteLine($"[API Service] Enviando POST (File) para: {url}");
+                Debug.WriteLine($"[API Service] Nome do arquivo: {fileName}");
+
+                var response = await _httpClient.PostAsync(url, multipartContent);
+                response.EnsureSuccessStatusCode();
+                var responseJson = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"[API Service] Resposta (File): {responseJson}");
+                return JsonConvert.DeserializeObject<TResponse>(responseJson);
+            }
+        }
+
+
         // --------------Adicione PutAsync, DeleteAsync conforme necessário...-------------------------------
-
-
-
-        
-
-        
-
-        // --------------Adicione PutAsync, DeleteAsync conforme necessário...-------------------------------
-
-
-
 
 
 

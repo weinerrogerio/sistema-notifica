@@ -122,7 +122,7 @@ namespace SistemaNotifica.src.Models
     }
 
 
-    /* ----------------------------------  Classes modelos para receber doc-protesto  -----------------------------------------*/
+    /* ----------------------------------  Classes modelos para receber doc-protesto (Get)  -----------------------------------------*/
     public class DocProtesto{        
         public int id { get; set; }
         public DateTime dataApresentacao { get;  set; }
