@@ -13,10 +13,12 @@ namespace SistemaNotifica.src.Models
 
     public static class Sessao
     {
-        public static string AccessToken { get; set; } = "";
-        public static string RefreshToken { get; set; } = "";
-        public static string UsuarioLogado { get; set; } = "";
-        public static string TipoUsuario { get; set; } = "";
+        public static string AccessToken { get; set; } = ""; // token
+        public static string RefreshToken { get; set; } = ""; // token --> principal
+        public static int SessionId { get; set; } = 0;// sessão
+        public static int UserId { get; set; } = 0; // id do usuário
+        public static string UsuarioLogado { get; set; } = ""; // nome do usuário
+        public static string TipoUsuario { get; set; } = ""; // tipo (admin, user, etc)
     }
 
     public class Usuario
@@ -58,7 +60,7 @@ namespace SistemaNotifica.src.Models
     public class User
     {
         [JsonProperty("id")]
-        public int Id { get; set; } // Mudei para int
+        public int Id { get; set; } // int
 
         [JsonProperty("nome")]
         public string Nome { get; set; }
@@ -137,6 +139,27 @@ namespace SistemaNotifica.src.Models
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
     }
+
+    /* -------------------------------------------   Classes para receber dados de log-import (Get) ---------------------------------------------*/
+
+    //classe simples de immportações e user
+    public class DataImportsUser
+    {
+        public int id { get; set; }
+        public required string nome_arquivo { get; set; }
+        public int tamanho_arquivo { get; set; }
+        public required string status { get; set; }
+        public int total_registros { get; set; }
+        public int registros_com_erro { get; set; }
+        public int registrosDuplicados { get; set; }
+        public DateTime data_importacao { get; set; }
+        public required User usuario { get; set; }
+    }
+
+    //classe extendida de importações e user
+    public class DataImportUserDetails { }
+
+
 
     /*-------------------------------------     CLASSE MODELO  PARA RESPOSTA DO UPLOAD  ---------------------------------------                   -*/
     // Exemplo de classe de resposta da API de upload, se ela retornar algo simples

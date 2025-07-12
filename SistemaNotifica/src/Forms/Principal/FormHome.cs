@@ -24,30 +24,22 @@ namespace SistemaNotifica.src.Forms
         {
             InitializeComponent();
             _protestoService = Program.ProtestoService;
-            ConfigurarDataGridView();
-            //LoadProtestoDatagrid();
-            LoadDistribData(); // carregar os dados da API e preencher o grid
-            //CarregarGrafico();
-            //getDataToChart(startDate: new DateTime(2025, 6, 2), endDate: new DateTime(2025, 6, 17));
-            CarregarGrafico();
+            //ConfigDataGridView();
+            //LoadDistribData();
+            LoadDataImport();
+           // CarregarGrafico();
         }
-
-
-        private void ConfigurarDataGridView() // Renomeei e centralizei as configurações aqui
+        private void ConfigDataGridView() 
         {
             dataGridViewProtesto.Rows.Clear();
             // Ocultar a coluna de cabeçalho de linha (a coluna vazia à esquerda)
             dataGridViewProtesto.RowHeadersVisible = false;
-
             // Fazer com que o clique selecione a linha inteira
             dataGridViewProtesto.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-
             // Desabilitar a adição de novas linhas pelo usuário
             dataGridViewProtesto.AllowUserToAddRows = false;
-
             // Desabilitar a seleção múltipla de linhas
             dataGridViewProtesto.MultiSelect = false;
-
             // Desabilitar a edição direta das células
             dataGridViewProtesto.ReadOnly = true;
             dataGridViewProtesto.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
@@ -66,8 +58,6 @@ namespace SistemaNotifica.src.Forms
             dataGridViewImports.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewImports.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
         }
-
-
         private async Task LoadDistribData()
         {
             try
@@ -104,7 +94,7 @@ namespace SistemaNotifica.src.Forms
                 }
 
                 // Aplicar cores baseadas no status
-                AplicarCoresStatus();
+                AplicarCoresGidProtestoStatus();
             }
             catch (Exception ex)
             {
@@ -115,10 +105,6 @@ namespace SistemaNotifica.src.Forms
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
-
-
         private void AdicionarLinhaApiTabela(Protesto protesto, Devedor devedor)
         {
             try
@@ -203,6 +189,117 @@ namespace SistemaNotifica.src.Forms
             Debug.WriteLine($"Linha adicionada por índices: {devedor?.nome ?? "Sem devedor"} - Distribuição: {protesto.numDistribuicao}");
         }
 
+        //TABELA DE ARQUIVOS IMPORTADOS E USUÁRIOS
+
+        //dataGridViewImports
+        private async void LoadDataImport()
+        {
+            try
+            {
+                Debug.WriteLine("Iniciando LoadDataImport...");
+                List<DataImportsUser> dados = await _protestoService.SearchImportsAsync();
+
+                if (dados == null || dados.Count == 0)
+                {
+                    Debug.WriteLine("LoadDataImport: dados retornados são NULL ou vazios");
+                    return;
+                }
+
+                Debug.WriteLine($"LoadgDataImport - Sucesso: {dados.Count} registros encontrados");
+
+                // Limpar dados existentes no grid
+                dataGridViewImports.Rows.Clear();
+
+                // CORREÇÃO: Loop simples, sem aninhamento desnecessário
+                foreach (var file in dados)
+                {
+                    if (file != null)
+                    {
+                        AdicionarLinhaApiTabelaFile(file);
+                    }
+                }
+
+                // Aplicar cores baseadas no status
+                AplicarCoresImportStatus();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro em ConfigDataImport: {ex.Message}");
+                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                MessageBox.Show($"Erro ao carregar dados da API de importações: {ex.Message}", "Erro",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void AdicionarLinhaApiTabelaFile(DataImportsUser data)
+        {
+            try
+            {
+                string status = data.status;
+
+                // CORREÇÃO: Adicionar linha no grid correto (dataGridViewImports)
+                int rowIndex = dataGridViewImports.Rows.Add();
+                DataGridViewRow row = dataGridViewImports.Rows[rowIndex];
+
+                // Preencher dados usando os nomes das colunas
+                row.Cells["file"].Value = data.nome_arquivo;
+                row.Cells["dataImportacao"].Value = data.data_importacao;
+                row.Cells["user"].Value = data.usuario?.Nome ?? "N/A"; // Proteção contra null
+                row.Cells["status"].Value = data.status;
+
+                // Campos opcionais comentados - descomente conforme necessário
+                // row.Cells["size"].Value = data.size;
+                // row.Cells["totalRegistros"].Value = data.totalRegistros;
+                // row.Cells["registrosComErro"].Value = data.registrosComErro;
+                // row.Cells["registrosDuplicados"].Value = data.registrosDuplicados;
+
+                // Armazenar o status na Tag da linha para usar na coloração
+                row.Tag = status;
+
+                Debug.WriteLine($"Linha de importação adicionada: {data.nome_arquivo} - Status: {status}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro ao adicionar linha da API de importações: {ex.Message}");
+
+                // Método alternativo usando índices
+                try
+                {
+                    AdicionarLinhaImportComIndices(data);
+                }
+                catch (Exception err)
+                {
+                    Debug.WriteLine($"Todos os métodos para adicionar linha de importação falharam: {err.Message}");
+                }
+            }
+        }
+
+        // Método alternativo usando índices
+        private void AdicionarLinhaImportComIndices(DataImportsUser data)
+        {
+            try
+            {
+                string status = data.status;
+
+                // Adicionar linha vazia primeiro
+                int rowIndex = dataGridViewImports.Rows.Add();
+                DataGridViewRow row = dataGridViewImports.Rows[rowIndex];
+
+                // Preencher por índice (assumindo ordem: file, dataImportacao, user, status)
+                row.Cells[0].Value = data.nome_arquivo;
+                row.Cells[1].Value = data.data_importacao;
+                row.Cells[2].Value = data.usuario?.Nome ?? "N/A"; // Proteção contra null
+                row.Cells[3].Value = data.status;
+                row.Tag = status;
+                Debug.WriteLine($"Linha de importação adicionada por índices: {data.nome_arquivo} - Status: {status}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro ao adicionar linha por índices: {ex.Message}");
+            }
+        }
+
 
 
         // Determinar status baseado na notificação
@@ -249,7 +346,38 @@ namespace SistemaNotifica.src.Forms
         }
 
         // Aplicar cores baseadas no status
-        private void AplicarCoresStatus()
+        private void AplicarCoresImportStatus()
+        {
+            foreach (DataGridViewRow row in dataGridViewImports.Rows)
+            {
+                if (row.Tag != null)
+                {
+                    string status = row.Tag.ToString();
+
+                    switch (status)
+                    {
+                        case "sucesso":
+                            row.DefaultCellStyle.BackColor = Color.Green;
+                            row.DefaultCellStyle.ForeColor = Color.Black;
+                            break;
+                        case "parcial":
+                            row.DefaultCellStyle.BackColor = Color.LightYellow;
+                            row.DefaultCellStyle.ForeColor = Color.Black;
+                            break;
+                        case "falha":
+                            row.DefaultCellStyle.BackColor = Color.FromArgb(255, 142, 136);
+                            row.DefaultCellStyle.ForeColor = Color.Black;
+                            break;
+                        default:
+                            row.DefaultCellStyle.BackColor = Color.White;
+                            row.DefaultCellStyle.ForeColor = Color.Black;
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void AplicarCoresGidProtestoStatus()
         {
             foreach (DataGridViewRow row in dataGridViewProtesto.Rows)
             {
@@ -290,7 +418,7 @@ namespace SistemaNotifica.src.Forms
                 AdicionarLinhaApiTabela(protesto, protesto.devedor);
             }
 
-            AplicarCoresStatus();
+            AplicarCoresGidProtestoStatus();
         }
 
 

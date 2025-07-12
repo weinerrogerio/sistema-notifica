@@ -43,6 +43,30 @@ namespace SistemaNotifica.src.Services
             }
         }
 
+        public async Task<List<DataImportsUser>> SearchImportsAsync()
+        {
+            try
+            {
+                var response = await _apiService.GetAsync<List<DataImportsUser>>("doc-protesto/log-arquivo-import/all-and-user/");
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine($"Erro HTTP: {ex.Message}");
+                throw new Exception($"Erro durante o processo de busca de Importações com usuário::::Erro de conexão com o servidor. Verifique sua rede ou a URL da API. Detalhes: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                Debug.WriteLine($"Erro JSON: {ex.Message}");
+                throw new Exception($"Erro ao processar resposta da API: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro geral: {ex.Message}");
+                throw;
+            }
+        }
+
 
         public async Task<List<DocProtesto>> FindByDateRange(DateTime? startDate = null, DateTime? endDate = null)
         {

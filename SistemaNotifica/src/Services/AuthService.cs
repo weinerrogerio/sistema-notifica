@@ -37,9 +37,11 @@ namespace SistemaNotifica.src.Services
                     // Armazena o token na sua classe estática Sessao
                     Sessao.AccessToken = response.AccessToken;
                     Sessao.RefreshToken = response.RefreshToken;
+                    Sessao.SessionId = response.SessionId;
+                    Sessao.UserId = response.UserData.Id;
                     Sessao.UsuarioLogado = response.UserData?.Nome ?? username; // Tenta pegar do UserData ou usa o nome de usuário
                     Sessao.TipoUsuario = response.UserData?.Role ?? "Unknown"; // Tenta pegar do UserData
-
+                       
                     _apiService.SetAuthorizationHeader(response.AccessToken);
                     Debug.WriteLine($"Login::::::::    . {response}");
                     return response;
