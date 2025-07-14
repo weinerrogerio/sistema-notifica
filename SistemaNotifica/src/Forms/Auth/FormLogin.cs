@@ -34,55 +34,23 @@ namespace SistemaNotifica
             this.textBoxName.Paint += new PaintEventHandler(this.TextBox_Paint);
             this.textBoxPassword.Paint += new PaintEventHandler(this.TextBox_Paint);
 
-            this.Resize += new EventHandler(this.FormLogin_Resize);
-            //this.topPanel.MouseDown += new MouseEventHandler(_mouseEvent.TopPanel_MouseDown);
-            //this.topPanel.MouseMove += new MouseEventHandler(_mouseEvent.TopPanel_MouseMove);
-            //this.topPanel.MouseUp += new MouseEventHandler(_mouseEvent.TopPanel_MouseUp);
-            // Habilitar movimentação da janela através do topPanel
+            this.Resize += new EventHandler(this.FormLogin_Resize);            
             this.EnableDragByControl(this.topPanel);
-
-            //_apiService = new ApiService();
+            
             _authService = Program.AuthService;
-            this.KeyPreview = true; // capturar teclas no form
+            this.KeyPreview = true;
+
+
 
         }
 
-        // Evento quando o botão do mouse é pressionado no topPanel
-        //private void TopPanel_MouseDown(object sender, MouseEventArgs e)
-        //{
-        //    if (e.Button == MouseButtons.Left) // Apenas se o botão esquerdo do mouse for pressionado
-        //    {
-        //        isDragging = true;
-        //        mouseLocation = e.Location; // Armazena a posição atual do mouse
-        //    }
-        //}
-
-        // Evento quando o mouse se move no topPanel
-        //private void TopPanel_MouseMove(object sender, MouseEventArgs e)
-        //{
-        //    if (isDragging)
-        //    {
-        //        // Calcula a nova posição do formulário
-        //        this.Location = new Point(
-        //            (this.Location.X - mouseLocation.X) + e.X,
-        //            (this.Location.Y - mouseLocation.Y) + e.Y
-        //        );
-        //        this.Update(); // Força a atualização da tela
-        //    }
-        //}
-
-        // Evento quando o botão do mouse é liberado no topPanel
-        //private void TopPanel_MouseUp(object sender, MouseEventArgs e)
-        //{
-        //    isDragging = false; // Para de arrastar
-        //}
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
-            //string username = textBoxName.Text.Trim();
-            //string password = textBoxPassword.Text;
-            string username = "admin".Trim();
-            string password = "123456".Trim();
+            string username = textBoxName.Text.Trim();
+            string password = textBoxPassword.Text;
+            //string username = "admin".Trim();
+            //string password = "123456".Trim();
 
             // MELHORAR ISSO ADICIONAR BORDAS VERMELHAS AOS CAMPOS E MENSAGENS DE ERRO
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))

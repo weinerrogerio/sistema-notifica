@@ -24,10 +24,10 @@ namespace SistemaNotifica.src.Forms
         {
             InitializeComponent();
             _protestoService = Program.ProtestoService;
-            //ConfigDataGridView();
-            //LoadDistribData();
-            LoadDataImport();
-           // CarregarGrafico();
+            ConfigDataGridView();//Configurando o DataGrid
+            LoadDistribData(); // carega dados de distribuição
+            LoadDataImport(); // carrega dados de importação -> arquivos impoartados
+            CarregarGrafico(); // carrega dados de registros por dia(15 dias ou menos) para gráfico
         }
         private void ConfigDataGridView() 
         {
@@ -57,6 +57,7 @@ namespace SistemaNotifica.src.Forms
             dataGridViewImports.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dataGridViewImports.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewImports.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridViewImports.AllowUserToOrderColumns = false;
         }
         private async Task LoadDistribData()
         {
@@ -243,10 +244,10 @@ namespace SistemaNotifica.src.Forms
                 DataGridViewRow row = dataGridViewImports.Rows[rowIndex];
 
                 // Preencher dados usando os nomes das colunas
-                row.Cells["file"].Value = data.nome_arquivo;
-                row.Cells["dataImportacao"].Value = data.data_importacao;
-                row.Cells["user"].Value = data.usuario?.Nome ?? "N/A"; // Proteção contra null
-                row.Cells["status"].Value = data.status;
+                row.Cells["ColumnArquivo"].Value = data.nome_arquivo;
+                row.Cells["ColumnDataImport"].Value = data.data_importacao;
+                row.Cells["ColumnUser"].Value = data.usuario?.Nome ?? "N/A"; // Proteção contra null
+                row.Cells["ColumnStatusArquivo"].Value = data.status;
 
                 // Campos opcionais comentados - descomente conforme necessário
                 // row.Cells["size"].Value = data.size;
@@ -455,11 +456,12 @@ namespace SistemaNotifica.src.Forms
             try
             {
                 // Obter dados da API
-                List<DocProtesto> dados = await GetDataToChart(
+                /*List<DocProtesto> dados = await GetDataToChart(
                     startDate: new DateTime(2025, 6, 2),
                     endDate: new DateTime(2025, 6, 17)
-                );
+                );*/
 
+                List<DocProtesto> dados = await GetDataToChart();
                 // Debug: Verificar os dados recebidos
                 Debug.WriteLine($"Total de registros recebidos: {dados.Count}");
                 foreach (var item in dados.Take(3)) // Mostra apenas os 3 primeiros
@@ -495,7 +497,7 @@ namespace SistemaNotifica.src.Forms
                 chartDist.Series.Add(serieDados);
 
                 // Adicionar título     
-                Title titulo = new("Quantidade de Registros por Data");
+                Title titulo = new("Quantidade de Registros dos ultimos 15 dias");
                 chartDist.Titles.Add(titulo);
             }
             catch (Exception ex)

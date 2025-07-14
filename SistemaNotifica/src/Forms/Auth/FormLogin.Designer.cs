@@ -54,7 +54,7 @@
             topPanel.Dock = DockStyle.Top;
             topPanel.Location = new Point(0, 0);
             topPanel.Name = "topPanel";
-            topPanel.Size = new Size(1164, 40);
+            topPanel.Size = new Size(1164, 33);
             topPanel.TabIndex = 1;
             // 
             // nightControlBox1
@@ -71,7 +71,7 @@
             nightControlBox1.EnableMaximizeColor = Color.FromArgb(160, 160, 160);
             nightControlBox1.EnableMinimizeButton = true;
             nightControlBox1.EnableMinimizeColor = Color.FromArgb(160, 160, 160);
-            nightControlBox1.Location = new Point(1025, 0);
+            nightControlBox1.Location = new Point(1025, 1);
             nightControlBox1.MaximizeHoverColor = Color.FromArgb(15, 255, 255, 255);
             nightControlBox1.MaximizeHoverForeColor = Color.White;
             nightControlBox1.MinimizeHoverColor = Color.FromArgb(15, 255, 255, 255);
@@ -84,7 +84,7 @@
             // 
             imgLogo.BackgroundImageLayout = ImageLayout.None;
             imgLogo.Image = (Image)resources.GetObject("imgLogo.Image");
-            imgLogo.Location = new Point(10, 5);
+            imgLogo.Location = new Point(4, 2);
             imgLogo.Name = "imgLogo";
             imgLogo.Size = new Size(90, 30);
             imgLogo.SizeMode = PictureBoxSizeMode.Zoom;

@@ -23,7 +23,7 @@ namespace SistemaNotifica.src.Services
         {
             try
             {
-                var response = await _apiService.GetAsync<List< Protesto >>("doc-protesto/distribuicoes/buscar/");
+                var response = await _apiService.GetAsync<List<Protesto>>("doc-protesto/distribuicoes/buscar/");
                 return response;
             }
             catch (HttpRequestException ex)
@@ -47,7 +47,8 @@ namespace SistemaNotifica.src.Services
         {
             try
             {
-                var response = await _apiService.GetAsync<List<DataImportsUser>>("doc-protesto/log-arquivo-import/all-and-user/");
+                Debug.WriteLine("Buscando Importações com usuário...........................");
+                var response = await _apiService.GetAsync<List<DataImportsUser>>("log-arquivo-import/all-and-user/");
                 return response;
             }
             catch (HttpRequestException ex)
