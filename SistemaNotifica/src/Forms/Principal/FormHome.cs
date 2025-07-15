@@ -19,11 +19,15 @@ namespace SistemaNotifica.src.Forms
     public partial class FormHome : Form
     {
         private readonly ProtestoService _protestoService;
+        private readonly ImportService _importService;
+
+        public event Action OnNavigateToImport;
 
         public FormHome()
         {
             InitializeComponent();
             _protestoService = Program.ProtestoService;
+            _importService = Program.ImportService;
             ConfigDataGridView();//Configurando o DataGrid
             LoadDistribData(); // carega dados de distribuição
             LoadDataImport(); // carrega dados de importação -> arquivos impoartados
@@ -32,21 +36,16 @@ namespace SistemaNotifica.src.Forms
         private void ConfigDataGridView() 
         {
             dataGridViewProtesto.Rows.Clear();
-            // Ocultar a coluna de cabeçalho de linha (a coluna vazia à esquerda)
             dataGridViewProtesto.RowHeadersVisible = false;
-            // Fazer com que o clique selecione a linha inteira
             dataGridViewProtesto.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            // Desabilitar a adição de novas linhas pelo usuário
             dataGridViewProtesto.AllowUserToAddRows = false;
-            // Desabilitar a seleção múltipla de linhas
             dataGridViewProtesto.MultiSelect = false;
-            // Desabilitar a edição direta das células
             dataGridViewProtesto.ReadOnly = true;
             dataGridViewProtesto.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dataGridViewProtesto.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            //dataGridViewProtesto.Columns["ColumnNumDist"].MinimumWidth = 20;
-            //dataGridViewProtesto.Columns["ColumnNumDist"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewProtesto.AllowUserToResizeRows = false;
+            dataGridViewProtesto.AllowUserToResizeColumns = false;
 
             dataGridViewImports.Rows.Clear();
             dataGridViewImports.RowHeadersVisible = false;
@@ -58,11 +57,21 @@ namespace SistemaNotifica.src.Forms
             dataGridViewImports.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewImports.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dataGridViewImports.AllowUserToOrderColumns = false;
+            dataGridViewImports.AllowUserToResizeRows = false;
+            dataGridViewImports.AllowUserToResizeColumns = false;
         }
         private async Task LoadDistribData()
         {
             try
             {
+
+                if (_protestoService == null)
+                {
+                    Debug.WriteLine("ProtestoService não foi inicializado!");
+                    MessageBox.Show("Erro: Serviço não disponivel, verifique sua conexão.", "Erro",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 Debug.WriteLine("Iniciando LoadDistribData...");
                 List<Protesto> dados = await _protestoService.SearchDistAsync();
 
@@ -197,8 +206,15 @@ namespace SistemaNotifica.src.Forms
         {
             try
             {
+                if (_protestoService == null)
+                {
+                    Debug.WriteLine("ImportService não foi inicializado!");
+                    MessageBox.Show("Erro: Serviço não disponivel, verifique sua conexão.", "Erro",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 Debug.WriteLine("Iniciando LoadDataImport...");
-                List<DataImportsUser> dados = await _protestoService.SearchImportsAsync();
+                List<DataImportsUser> dados = await _importService.SearchImportsAsync();
 
                 if (dados == null || dados.Count == 0)
                 {
@@ -247,14 +263,7 @@ namespace SistemaNotifica.src.Forms
                 row.Cells["ColumnArquivo"].Value = data.nome_arquivo;
                 row.Cells["ColumnDataImport"].Value = data.data_importacao;
                 row.Cells["ColumnUser"].Value = data.usuario?.Nome ?? "N/A"; // Proteção contra null
-                row.Cells["ColumnStatusArquivo"].Value = data.status;
-
-                // Campos opcionais comentados - descomente conforme necessário
-                // row.Cells["size"].Value = data.size;
-                // row.Cells["totalRegistros"].Value = data.totalRegistros;
-                // row.Cells["registrosComErro"].Value = data.registrosComErro;
-                // row.Cells["registrosDuplicados"].Value = data.registrosDuplicados;
-
+                row.Cells["ColumnStatusArquivo"].Value = data.status;             
                 // Armazenar o status na Tag da linha para usar na coloração
                 row.Tag = status;
 
@@ -527,7 +536,7 @@ namespace SistemaNotifica.src.Forms
         // fazer evento de transição para form de importação - -> não exibir form, APENAS PUXAR A FUNÇÃO DE IMPORTAÇÃO
         private void btnImport_Click(object sender, EventArgs e)
         {
-
+            OnNavigateToImport?.Invoke();
         }
     }
 }

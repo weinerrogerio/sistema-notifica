@@ -10,6 +10,8 @@ namespace SistemaNotifica
 {
     public partial class FormOrigin : Form
     {
+
+
         //Thread nt;
         public Form objForm;
         private string TelaAtual = string.Empty;
@@ -33,14 +35,20 @@ namespace SistemaNotifica
         }
         private void FormOrigin_Load(object sender, EventArgs e)
         {
+            
             objForm?.Close();
-            objForm = new FormHome
+
+            FormHome formHome = new FormHome
             {
                 TopLevel = false,
                 FormBorderStyle = FormBorderStyle.None,
                 Dock = DockStyle.Fill
             };
 
+            // INSCREVA-SE NO EVENTO AQUI TAMBÉM
+            formHome.OnNavigateToImport += HandleNavigateToImport;
+
+            objForm = formHome;
             pnlMain.Controls.Add(objForm);
             objForm.Show();
         }
@@ -201,8 +209,7 @@ namespace SistemaNotifica
         }
 
         private void ResetSidebarButtons()
-        {
-            // Coloque aqui os botï¿½es da sidebar que devem ser "resetados"
+        {            
             btnHome.BackColor = Color.FromArgb(0, 0, 0);
             btnImportarDoc.BackColor = Color.FromArgb(0, 0, 0);
             btnDados.BackColor = Color.FromArgb(0, 0, 0);
@@ -237,21 +244,32 @@ namespace SistemaNotifica
         }
 
         private void openHomeDefaultForm()
-        {
+        {            
             objForm?.Close();
             ResetSidebarButtons();
-            objForm = new FormHome()// padrão FormHome
+
+            FormHome formHome = new FormHome() // Mude para variável local
             {
                 TopLevel = false,
                 FormBorderStyle = FormBorderStyle.None,
                 Dock = DockStyle.Fill
             };
+
+            // INSCREVA-SE NO EVENTO AQUI
+            formHome.OnNavigateToImport += HandleNavigateToImport;
+
+            objForm = formHome; // Atribua à variável global
             TelaAtual = "FormHome";
             pnlMain.Controls.Add(objForm);
             objForm.Show();
         }
+        private void HandleNavigateToImport()
+        {
+            // Chama sua função existente de navegação para FormImport
+            btnImportarDoc_Click(null, null);
+        }
 
-        
+
         private void btnImportarDoc_Click(object sender, EventArgs e)
         {
             
@@ -270,14 +288,14 @@ namespace SistemaNotifica
                 pnlMain.Controls.Add(objForm);
                 objForm.Show();
             }
-            return;           
-            
+            return; 
         }
+
 
         // A PRIMEIRA TELA A SER APRESENTADA PRECISA SER A HOME --> fazer depois 
         private void pnlMain_Paint(object sender, PaintEventArgs e)
         {
-            //OnLoad.add
+            
         }
 
         

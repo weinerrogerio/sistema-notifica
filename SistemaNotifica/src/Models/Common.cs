@@ -149,9 +149,11 @@ namespace SistemaNotifica.src.Models
         public required string nome_arquivo { get; set; }
         public int tamanho_arquivo { get; set; }
         public required string status { get; set; }
-        public int total_registros { get; set; }
+        public int total_registros { get; set; }//total_registros
         public int registros_com_erro { get; set; }
-        public int registrosDuplicados { get; set; }
+        public string detalhes_erro { get; set; }
+        public int registros_duplicados { get; set; }
+        public string detalhes_duplicidade { get; set; }
         public DateTime data_importacao { get; set; }
         public required User usuario { get; set; }
     }

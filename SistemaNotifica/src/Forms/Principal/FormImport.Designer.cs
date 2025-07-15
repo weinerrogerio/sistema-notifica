@@ -57,15 +57,6 @@
             labelFilterBy = new Label();
             groupBoxImportHistory = new GroupBox();
             dataGridViewDataImport = new DataGridView();
-            ColumnFile = new DataGridViewTextBoxColumn();
-            ColumnDate = new DataGridViewTextBoxColumn();
-            ColumnStatus = new DataGridViewTextBoxColumn();
-            ColumnUser = new DataGridViewTextBoxColumn();
-            ColumnFileSize = new DataGridViewTextBoxColumn();
-            ColumnRecordsCount = new DataGridViewTextBoxColumn();
-            ColumnErrorMessage = new DataGridViewTextBoxColumn();
-            ColumnDuration = new DataGridViewTextBoxColumn();
-            ColumnActions = new DataGridViewButtonColumn();
             contextMenuStripGrid = new ContextMenuStrip(components);
             toolStripMenuItemReprocess = new ToolStripMenuItem();
             toolStripMenuItemViewError = new ToolStripMenuItem();
@@ -78,6 +69,14 @@
             errorProviderMain = new ErrorProvider(components);
             toolTipMain = new ToolTip(components);
             timerAutoRefresh = new System.Windows.Forms.Timer(components);
+            ColumnFile = new DataGridViewTextBoxColumn();
+            ColumnDate = new DataGridViewTextBoxColumn();
+            ColumnStatus = new DataGridViewTextBoxColumn();
+            ColumnUser = new DataGridViewTextBoxColumn();
+            ColumnRecordsCount = new DataGridViewTextBoxColumn();
+            ColumnErrorCount = new DataGridViewTextBoxColumn();
+            ColumnDuplicatesCount = new DataGridViewTextBoxColumn();
+            ColumnFileSize = new DataGridViewTextBoxColumn();
             tableLayoutPanelFormImportMain.SuspendLayout();
             panelTop.SuspendLayout();
             groupBoxFileSelection.SuspendLayout();
@@ -400,7 +399,7 @@
             dataGridViewDataImport.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dataGridViewDataImport.BackgroundColor = SystemColors.Control;
             dataGridViewDataImport.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewDataImport.Columns.AddRange(new DataGridViewColumn[] { ColumnFile, ColumnDate, ColumnStatus, ColumnUser, ColumnFileSize, ColumnRecordsCount, ColumnErrorMessage, ColumnDuration, ColumnActions });
+            dataGridViewDataImport.Columns.AddRange(new DataGridViewColumn[] { ColumnFile, ColumnDate, ColumnStatus, ColumnUser, ColumnRecordsCount, ColumnErrorCount, ColumnDuplicatesCount, ColumnFileSize });
             dataGridViewDataImport.ContextMenuStrip = contextMenuStripGrid;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Window;
@@ -419,70 +418,6 @@
             dataGridViewDataImport.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewDataImport.Size = new Size(834, 307);
             dataGridViewDataImport.TabIndex = 0;
-            // 
-            // ColumnFile
-            // 
-            ColumnFile.HeaderText = "Arquivo";
-            ColumnFile.Name = "ColumnFile";
-            ColumnFile.ReadOnly = true;
-            ColumnFile.Width = 200;
-            // 
-            // ColumnDate
-            // 
-            ColumnDate.HeaderText = "Data/Hora";
-            ColumnDate.Name = "ColumnDate";
-            ColumnDate.ReadOnly = true;
-            ColumnDate.Width = 120;
-            // 
-            // ColumnStatus
-            // 
-            ColumnStatus.HeaderText = "Status";
-            ColumnStatus.Name = "ColumnStatus";
-            ColumnStatus.ReadOnly = true;
-            ColumnStatus.Width = 80;
-            // 
-            // ColumnUser
-            // 
-            ColumnUser.HeaderText = "Usuário";
-            ColumnUser.Name = "ColumnUser";
-            ColumnUser.ReadOnly = true;
-            // 
-            // ColumnFileSize
-            // 
-            ColumnFileSize.HeaderText = "Tamanho";
-            ColumnFileSize.Name = "ColumnFileSize";
-            ColumnFileSize.ReadOnly = true;
-            ColumnFileSize.Width = 80;
-            // 
-            // ColumnRecordsCount
-            // 
-            ColumnRecordsCount.HeaderText = "Registros";
-            ColumnRecordsCount.Name = "ColumnRecordsCount";
-            ColumnRecordsCount.ReadOnly = true;
-            ColumnRecordsCount.Width = 70;
-            // 
-            // ColumnErrorMessage
-            // 
-            ColumnErrorMessage.HeaderText = "Erro";
-            ColumnErrorMessage.Name = "ColumnErrorMessage";
-            ColumnErrorMessage.ReadOnly = true;
-            ColumnErrorMessage.Width = 150;
-            // 
-            // ColumnDuration
-            // 
-            ColumnDuration.HeaderText = "Duração";
-            ColumnDuration.Name = "ColumnDuration";
-            ColumnDuration.ReadOnly = true;
-            ColumnDuration.Width = 80;
-            // 
-            // ColumnActions
-            // 
-            ColumnActions.HeaderText = "Ações";
-            ColumnActions.Name = "ColumnActions";
-            ColumnActions.ReadOnly = true;
-            ColumnActions.Text = "Detalhes";
-            ColumnActions.UseColumnTextForButtonValue = true;
-            ColumnActions.Width = 80;
             // 
             // contextMenuStripGrid
             // 
@@ -550,6 +485,60 @@
             // timerAutoRefresh
             // 
             timerAutoRefresh.Interval = 30000;
+            // 
+            // ColumnFile
+            // 
+            ColumnFile.HeaderText = "Arquivo";
+            ColumnFile.Name = "ColumnFile";
+            ColumnFile.ReadOnly = true;
+            ColumnFile.Width = 200;
+            // 
+            // ColumnDate
+            // 
+            ColumnDate.HeaderText = "Data/Hora";
+            ColumnDate.Name = "ColumnDate";
+            ColumnDate.ReadOnly = true;
+            ColumnDate.Width = 120;
+            // 
+            // ColumnStatus
+            // 
+            ColumnStatus.HeaderText = "Status";
+            ColumnStatus.Name = "ColumnStatus";
+            ColumnStatus.ReadOnly = true;
+            ColumnStatus.Width = 80;
+            // 
+            // ColumnUser
+            // 
+            ColumnUser.HeaderText = "Usuário";
+            ColumnUser.Name = "ColumnUser";
+            ColumnUser.ReadOnly = true;
+            // 
+            // ColumnRecordsCount
+            // 
+            ColumnRecordsCount.HeaderText = "Registros";
+            ColumnRecordsCount.Name = "ColumnRecordsCount";
+            ColumnRecordsCount.ReadOnly = true;
+            ColumnRecordsCount.Width = 70;
+            // 
+            // ColumnErrorCount
+            // 
+            ColumnErrorCount.HeaderText = "Erros";
+            ColumnErrorCount.Name = "ColumnErrorCount";
+            ColumnErrorCount.ReadOnly = true;
+            ColumnErrorCount.Width = 150;
+            // 
+            // ColumnDuplicatesCount
+            // 
+            ColumnDuplicatesCount.HeaderText = "Duplicidades";
+            ColumnDuplicatesCount.Name = "ColumnDuplicatesCount";
+            ColumnDuplicatesCount.ReadOnly = true;
+            // 
+            // ColumnFileSize
+            // 
+            ColumnFileSize.HeaderText = "Tamanho";
+            ColumnFileSize.Name = "ColumnFileSize";
+            ColumnFileSize.ReadOnly = true;
+            ColumnFileSize.Width = 80;
             // 
             // FormImport
             // 
@@ -633,10 +622,9 @@
         private DataGridViewTextBoxColumn ColumnDate;
         private DataGridViewTextBoxColumn ColumnStatus;
         private DataGridViewTextBoxColumn ColumnUser;
-        private DataGridViewTextBoxColumn ColumnFileSize;
         private DataGridViewTextBoxColumn ColumnRecordsCount;
-        private DataGridViewTextBoxColumn ColumnErrorMessage;
-        private DataGridViewTextBoxColumn ColumnDuration;
-        private DataGridViewButtonColumn ColumnActions;
+        private DataGridViewTextBoxColumn ColumnErrorCount;
+        private DataGridViewTextBoxColumn ColumnDuplicatesCount;
+        private DataGridViewTextBoxColumn ColumnFileSize;
     }
 }

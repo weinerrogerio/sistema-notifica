@@ -47,10 +47,10 @@ namespace SistemaNotifica
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
-            string username = textBoxName.Text.Trim();
-            string password = textBoxPassword.Text;
-            //string username = "admin".Trim();
-            //string password = "123456".Trim();
+            //string username = textBoxName.Text.Trim();
+            //string password = textBoxPassword.Text;
+            string username = "admin".Trim();
+            string password = "123456".Trim();
 
             // MELHORAR ISSO ADICIONAR BORDAS VERMELHAS AOS CAMPOS E MENSAGENS DE ERRO
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))

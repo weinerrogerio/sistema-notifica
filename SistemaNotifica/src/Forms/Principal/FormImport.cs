@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,144 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             InitializeComponent();
             _importService = Program.ImportService;
+            ConfigDataGridView();
+            LoadDataImport();
 
+        }
+
+        //dataGridViewDataImport
+        private void ConfigDataGridView()
+        {   
+            dataGridViewDataImport.Rows.Clear();
+            dataGridViewDataImport.RowHeadersVisible = false;
+            dataGridViewDataImport.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewDataImport.AllowUserToAddRows = false;
+            dataGridViewDataImport.MultiSelect = false;
+            dataGridViewDataImport.ReadOnly = true;
+            dataGridViewDataImport.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridViewDataImport.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewDataImport.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridViewDataImport.AllowUserToOrderColumns = false;
+            dataGridViewDataImport.AllowUserToResizeRows = false;
+            dataGridViewDataImport.AllowUserToResizeColumns = false;
+        }
+        private async void LoadDataImport()
+        {
+            try
+            {
+                if (_importService == null)
+                {
+                    Debug.WriteLine("ImportService não foi inicializado!");
+                    MessageBox.Show("Erro: Serviço não disponivel, verifique sua conexão.", "Erro", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                Debug.WriteLine("Iniciando LoadDataImport...");
+                List<DataImportsUser> dados = await _importService.SearchImportsAsync();
+
+                if (dados == null || dados.Count == 0)
+                {
+                    Debug.WriteLine("LoadDataImport: dados retornados são NULL ou vazios");
+                    return;
+                }
+
+                Debug.WriteLine($"LoadgDataImport - Sucesso: {dados.Count} registros encontrados");
+
+                // Limpar dados existentes no grid
+                dataGridViewDataImport.Rows.Clear();
+
+                // CORREÇÃO: Loop simples, sem aninhamento desnecessário
+                foreach (var file in dados)
+                {
+                    if (file != null)
+                    {
+                        AdicionarLinhaApiTabelaFile(file);
+                    }
+                }
+
+                // Aplicar cores baseadas no status
+                AplicarCoresImportStatus();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro em ConfigDataImport: {ex.Message}");
+                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                MessageBox.Show($"Erro ao carregar dados da API de importações: {ex.Message}", "Erro",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void AdicionarLinhaApiTabelaFile(DataImportsUser data)
+        {
+            try
+            {
+                string status = data.status;
+
+                // CORREÇÃO: Adicionar linha no grid correto (dataGridViewDataImport)
+                int rowIndex = dataGridViewDataImport.Rows.Add();
+                DataGridViewRow row = dataGridViewDataImport.Rows[rowIndex];
+
+                // Preencher dados usando os nomes das colunas
+                row.Cells["ColumnFile"].Value = data.nome_arquivo;
+                row.Cells["ColumnDate"].Value = data.data_importacao;
+                row.Cells["ColumnStatus"].Value = data.status;
+                row.Cells["ColumnUser"].Value = data.usuario?.Nome ?? "N/A"; // Proteção contra null
+                row.Cells["ColumnRecordsCount"].Value = data.total_registros; //totalRegistros
+                row.Cells["ColumnErrorCount"].Value = data.registros_com_erro; // total com erros
+                row.Cells["ColumnDuplicatesCount"].Value = data.registros_duplicados; // total duplicadoss
+                row.Cells["ColumnFileSize"].Value = data.tamanho_arquivo;
+
+                // Armazenar o status na Tag da linha para usar na coloração
+                row.Tag = status;
+
+                Debug.WriteLine($"Linha de importação adicionada: {data.nome_arquivo} - Status: {status}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro ao adicionar linha da API de importações: {ex.Message}");
+
+                // Método alternativo usando índices
+                try
+                {
+                    //AdicionarLinhaImportComIndices(data);
+                }
+                catch (Exception err)
+                {
+                    Debug.WriteLine($"Todos os métodos para adicionar linha de importação falharam: {err.Message}");
+                }
+            }
+        }
+
+        private void AplicarCoresImportStatus()
+        {
+            foreach (DataGridViewRow row in dataGridViewDataImport.Rows)
+            {
+                if (row.Tag != null)
+                {
+                    string status = row.Tag.ToString();
+
+                    switch (status)
+                    {
+                        case "sucesso":
+                            row.DefaultCellStyle.BackColor = Color.Green;
+                            row.DefaultCellStyle.ForeColor = Color.Black;
+                            break;
+                        case "parcial":
+                            row.DefaultCellStyle.BackColor = Color.LightYellow;
+                            row.DefaultCellStyle.ForeColor = Color.Black;
+                            break;
+                        case "falha":
+                            row.DefaultCellStyle.BackColor = Color.FromArgb(255, 142, 136);
+                            row.DefaultCellStyle.ForeColor = Color.Black;
+                            break;
+                        default:
+                            row.DefaultCellStyle.BackColor = Color.White;
+                            row.DefaultCellStyle.ForeColor = Color.Black;
+                            break;
+                    }
+                }
+            }
         }
 
         private void dialogImport()
@@ -30,6 +168,7 @@ namespace SistemaNotifica.src.Forms.Principal
             {
                 // Configurações do OpenFileDialog
                 //openFileDialog.InitialDirectory = "c:\\"; // Define o diretório inicial
+                // RETIRAR ESSE DIRETÓRIO -- TESTES
                 openFileDialog.InitialDirectory = "C:\\Users\\Dist02\\js\\Nest.js\\sistema-notifica-nestjs";
                 openFileDialog.Filter = "Arquivos de Texto (*.txt)|*.txt|Arquivos CSV (*.csv)|*.csv|Todos os Arquivos (*.*)|*.*"; // Filtra os tipos de arquivo
                 openFileDialog.FilterIndex = 3; // Define o filtro padrão (Todos os Arquivos (*.*))
