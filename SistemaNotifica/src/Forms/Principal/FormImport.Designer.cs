@@ -34,9 +34,9 @@
             tableLayoutPanelFormImportMain = new TableLayoutPanel();
             panelTop = new Panel();
             groupBoxFileSelection = new GroupBox();
+            btnDelete = new Button();
             buttonRefresh = new Button();
             buttonExportLog = new Button();
-            buttonClearList = new Button();
             labelDescription = new Label();
             labelFilePath = new Label();
             smallTextBoxSelectFile = new ReaLTaiizor.Controls.SmallTextBox();
@@ -45,6 +45,7 @@
             panelBottonMain = new Panel();
             tableLayoutPanelBottom = new TableLayoutPanel();
             panelFilters = new Panel();
+            btnDatails = new Button();
             buttonClearFilter = new Button();
             buttonApplyFilter = new Button();
             textBoxUserFilter = new TextBox();
@@ -57,6 +58,16 @@
             labelFilterBy = new Label();
             groupBoxImportHistory = new GroupBox();
             dataGridViewDataImport = new DataGridView();
+            ColumnFile = new DataGridViewTextBoxColumn();
+            ColumnDate = new DataGridViewTextBoxColumn();
+            ColumnStatus = new DataGridViewTextBoxColumn();
+            ColumnUser = new DataGridViewTextBoxColumn();
+            ColumnRecordsCount = new DataGridViewTextBoxColumn();
+            ColumnErrorCount = new DataGridViewTextBoxColumn();
+            ColumnDuplicatesCount = new DataGridViewTextBoxColumn();
+            ColumnFileSize = new DataGridViewTextBoxColumn();
+            ColumnDetalhesErros = new DataGridViewTextBoxColumn();
+            ColumnDetalhesDuplicidades = new DataGridViewTextBoxColumn();
             contextMenuStripGrid = new ContextMenuStrip(components);
             toolStripMenuItemReprocess = new ToolStripMenuItem();
             toolStripMenuItemViewError = new ToolStripMenuItem();
@@ -69,14 +80,6 @@
             errorProviderMain = new ErrorProvider(components);
             toolTipMain = new ToolTip(components);
             timerAutoRefresh = new System.Windows.Forms.Timer(components);
-            ColumnFile = new DataGridViewTextBoxColumn();
-            ColumnDate = new DataGridViewTextBoxColumn();
-            ColumnStatus = new DataGridViewTextBoxColumn();
-            ColumnUser = new DataGridViewTextBoxColumn();
-            ColumnRecordsCount = new DataGridViewTextBoxColumn();
-            ColumnErrorCount = new DataGridViewTextBoxColumn();
-            ColumnDuplicatesCount = new DataGridViewTextBoxColumn();
-            ColumnFileSize = new DataGridViewTextBoxColumn();
             tableLayoutPanelFormImportMain.SuspendLayout();
             panelTop.SuspendLayout();
             groupBoxFileSelection.SuspendLayout();
@@ -119,9 +122,9 @@
             // 
             // groupBoxFileSelection
             // 
+            groupBoxFileSelection.Controls.Add(btnDelete);
             groupBoxFileSelection.Controls.Add(buttonRefresh);
             groupBoxFileSelection.Controls.Add(buttonExportLog);
-            groupBoxFileSelection.Controls.Add(buttonClearList);
             groupBoxFileSelection.Controls.Add(labelDescription);
             groupBoxFileSelection.Controls.Add(labelFilePath);
             groupBoxFileSelection.Controls.Add(smallTextBoxSelectFile);
@@ -136,10 +139,25 @@
             groupBoxFileSelection.TabStop = false;
             groupBoxFileSelection.Text = "Seleção de Arquivo";
             // 
+            // btnDelete
+            // 
+            btnDelete.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnDelete.BackColor = Color.Brown;
+            btnDelete.FlatStyle = FlatStyle.Flat;
+            btnDelete.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnDelete.ForeColor = Color.White;
+            btnDelete.Location = new Point(695, 41);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(119, 28);
+            btnDelete.TabIndex = 8;
+            btnDelete.Text = "🗑 Excluir arquivo";
+            toolTipMain.SetToolTip(btnDelete, "Iniciar importação do arquivo selecionado");
+            btnDelete.UseVisualStyleBackColor = false;
+            // 
             // buttonRefresh
             // 
             buttonRefresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonRefresh.Location = new Point(736, 51);
+            buttonRefresh.Location = new Point(577, 76);
             buttonRefresh.Name = "buttonRefresh";
             buttonRefresh.Size = new Size(90, 28);
             buttonRefresh.TabIndex = 6;
@@ -150,24 +168,13 @@
             // buttonExportLog
             // 
             buttonExportLog.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonExportLog.Location = new Point(639, 41);
+            buttonExportLog.Location = new Point(711, 76);
             buttonExportLog.Name = "buttonExportLog";
             buttonExportLog.Size = new Size(85, 28);
             buttonExportLog.TabIndex = 7;
             buttonExportLog.Text = "📊 Exportar Log";
             toolTipMain.SetToolTip(buttonExportLog, "Exportar log de importações para Excel");
             buttonExportLog.UseVisualStyleBackColor = true;
-            // 
-            // buttonClearList
-            // 
-            buttonClearList.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonClearList.Location = new Point(736, 18);
-            buttonClearList.Name = "buttonClearList";
-            buttonClearList.Size = new Size(90, 28);
-            buttonClearList.TabIndex = 5;
-            buttonClearList.Text = "🗑 Limpar Lista";
-            toolTipMain.SetToolTip(buttonClearList, "Limpar todos os registros da lista");
-            buttonClearList.UseVisualStyleBackColor = true;
             // 
             // labelDescription
             // 
@@ -216,9 +223,9 @@
             buttonImport.FlatStyle = FlatStyle.Flat;
             buttonImport.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             buttonImport.ForeColor = Color.White;
-            buttonImport.Location = new Point(547, 42);
+            buttonImport.Location = new Point(577, 41);
             buttonImport.Name = "buttonImport";
-            buttonImport.Size = new Size(84, 26);
+            buttonImport.Size = new Size(90, 28);
             buttonImport.TabIndex = 4;
             buttonImport.Text = "▶ Importar";
             toolTipMain.SetToolTip(buttonImport, "Iniciar importação do arquivo selecionado");
@@ -229,7 +236,7 @@
             // 
             buttonSelect.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             buttonSelect.Font = new Font("Segoe UI", 9F);
-            buttonSelect.Location = new Point(406, 41);
+            buttonSelect.Location = new Point(416, 41);
             buttonSelect.Name = "buttonSelect";
             buttonSelect.Size = new Size(136, 28);
             buttonSelect.TabIndex = 3;
@@ -268,6 +275,7 @@
             // 
             panelFilters.BackColor = Color.FromArgb(248, 249, 250);
             panelFilters.BorderStyle = BorderStyle.FixedSingle;
+            panelFilters.Controls.Add(btnDatails);
             panelFilters.Controls.Add(buttonClearFilter);
             panelFilters.Controls.Add(buttonApplyFilter);
             panelFilters.Controls.Add(textBoxUserFilter);
@@ -285,12 +293,26 @@
             panelFilters.Size = new Size(834, 54);
             panelFilters.TabIndex = 3;
             // 
+            // btnDatails
+            // 
+            btnDatails.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnDatails.BackColor = Color.Green;
+            btnDatails.FlatStyle = FlatStyle.Flat;
+            btnDatails.ForeColor = Color.White;
+            btnDatails.Location = new Point(745, 21);
+            btnDatails.Name = "btnDatails";
+            btnDatails.Size = new Size(80, 23);
+            btnDatails.TabIndex = 10;
+            btnDatails.Text = "Detalhes";
+            btnDatails.UseVisualStyleBackColor = false;
+            btnDatails.Click += btnDatails_Click;
+            // 
             // buttonClearFilter
             // 
             buttonClearFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonClearFilter.Location = new Point(764, 18);
+            buttonClearFilter.Location = new Point(663, 21);
             buttonClearFilter.Name = "buttonClearFilter";
-            buttonClearFilter.Size = new Size(60, 23);
+            buttonClearFilter.Size = new Size(77, 23);
             buttonClearFilter.TabIndex = 9;
             buttonClearFilter.Text = "✖ Limpar";
             buttonClearFilter.UseVisualStyleBackColor = true;
@@ -301,16 +323,17 @@
             buttonApplyFilter.BackColor = Color.FromArgb(40, 167, 69);
             buttonApplyFilter.FlatStyle = FlatStyle.Flat;
             buttonApplyFilter.ForeColor = Color.White;
-            buttonApplyFilter.Location = new Point(678, 18);
+            buttonApplyFilter.Location = new Point(577, 21);
             buttonApplyFilter.Name = "buttonApplyFilter";
             buttonApplyFilter.Size = new Size(80, 23);
             buttonApplyFilter.TabIndex = 8;
             buttonApplyFilter.Text = "🔍 Filtrar";
             buttonApplyFilter.UseVisualStyleBackColor = false;
+            buttonApplyFilter.Click += buttonApplyFilter_Click;
             // 
             // textBoxUserFilter
             // 
-            textBoxUserFilter.Location = new Point(488, 18);
+            textBoxUserFilter.Location = new Point(411, 21);
             textBoxUserFilter.Name = "textBoxUserFilter";
             textBoxUserFilter.PlaceholderText = "Nome do usuário...";
             textBoxUserFilter.Size = new Size(150, 23);
@@ -319,7 +342,7 @@
             // labelUserFilter
             // 
             labelUserFilter.AutoSize = true;
-            labelUserFilter.Location = new Point(488, 5);
+            labelUserFilter.Location = new Point(411, 8);
             labelUserFilter.Name = "labelUserFilter";
             labelUserFilter.Size = new Size(50, 15);
             labelUserFilter.TabIndex = 6;
@@ -328,7 +351,7 @@
             // dateTimePickerTo
             // 
             dateTimePickerTo.Format = DateTimePickerFormat.Short;
-            dateTimePickerTo.Location = new Point(378, 18);
+            dateTimePickerTo.Location = new Point(301, 21);
             dateTimePickerTo.Name = "dateTimePickerTo";
             dateTimePickerTo.Size = new Size(100, 23);
             dateTimePickerTo.TabIndex = 5;
@@ -336,7 +359,7 @@
             // labelDateTo
             // 
             labelDateTo.AutoSize = true;
-            labelDateTo.Location = new Point(378, 5);
+            labelDateTo.Location = new Point(301, 8);
             labelDateTo.Name = "labelDateTo";
             labelDateTo.Size = new Size(28, 15);
             labelDateTo.TabIndex = 4;
@@ -345,7 +368,7 @@
             // dateTimePickerFrom
             // 
             dateTimePickerFrom.Format = DateTimePickerFormat.Short;
-            dateTimePickerFrom.Location = new Point(268, 18);
+            dateTimePickerFrom.Location = new Point(191, 21);
             dateTimePickerFrom.Name = "dateTimePickerFrom";
             dateTimePickerFrom.Size = new Size(100, 23);
             dateTimePickerFrom.TabIndex = 3;
@@ -353,7 +376,7 @@
             // labelDateFrom
             // 
             labelDateFrom.AutoSize = true;
-            labelDateFrom.Location = new Point(268, 5);
+            labelDateFrom.Location = new Point(191, 8);
             labelDateFrom.Name = "labelDateFrom";
             labelDateFrom.Size = new Size(24, 15);
             labelDateFrom.TabIndex = 2;
@@ -363,7 +386,7 @@
             // 
             comboBoxStatusFilter.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxStatusFilter.Items.AddRange(new object[] { "Todos", "Sucesso", "Erro", "Processando" });
-            comboBoxStatusFilter.Location = new Point(158, 18);
+            comboBoxStatusFilter.Location = new Point(81, 21);
             comboBoxStatusFilter.Name = "comboBoxStatusFilter";
             comboBoxStatusFilter.Size = new Size(100, 23);
             comboBoxStatusFilter.TabIndex = 1;
@@ -394,12 +417,13 @@
             // dataGridViewDataImport
             // 
             dataGridViewDataImport.AllowUserToAddRows = false;
+            dataGridViewDataImport.AllowUserToDeleteRows = false;
             dataGridViewDataImport.AllowUserToOrderColumns = true;
             dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 249, 250);
             dataGridViewDataImport.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dataGridViewDataImport.BackgroundColor = SystemColors.Control;
             dataGridViewDataImport.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewDataImport.Columns.AddRange(new DataGridViewColumn[] { ColumnFile, ColumnDate, ColumnStatus, ColumnUser, ColumnRecordsCount, ColumnErrorCount, ColumnDuplicatesCount, ColumnFileSize });
+            dataGridViewDataImport.Columns.AddRange(new DataGridViewColumn[] { ColumnFile, ColumnDate, ColumnStatus, ColumnUser, ColumnRecordsCount, ColumnErrorCount, ColumnDuplicatesCount, ColumnFileSize, ColumnDetalhesErros, ColumnDetalhesDuplicidades });
             dataGridViewDataImport.ContextMenuStrip = contextMenuStripGrid;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Window;
@@ -418,6 +442,74 @@
             dataGridViewDataImport.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewDataImport.Size = new Size(834, 307);
             dataGridViewDataImport.TabIndex = 0;
+            // 
+            // ColumnFile
+            // 
+            ColumnFile.HeaderText = "Arquivo";
+            ColumnFile.Name = "ColumnFile";
+            ColumnFile.ReadOnly = true;
+            ColumnFile.Width = 200;
+            // 
+            // ColumnDate
+            // 
+            ColumnDate.HeaderText = "Data/Hora";
+            ColumnDate.Name = "ColumnDate";
+            ColumnDate.ReadOnly = true;
+            ColumnDate.Width = 120;
+            // 
+            // ColumnStatus
+            // 
+            ColumnStatus.HeaderText = "Status";
+            ColumnStatus.Name = "ColumnStatus";
+            ColumnStatus.ReadOnly = true;
+            ColumnStatus.Width = 80;
+            // 
+            // ColumnUser
+            // 
+            ColumnUser.HeaderText = "Usuário";
+            ColumnUser.Name = "ColumnUser";
+            ColumnUser.ReadOnly = true;
+            // 
+            // ColumnRecordsCount
+            // 
+            ColumnRecordsCount.HeaderText = "Registros";
+            ColumnRecordsCount.Name = "ColumnRecordsCount";
+            ColumnRecordsCount.ReadOnly = true;
+            ColumnRecordsCount.Width = 70;
+            // 
+            // ColumnErrorCount
+            // 
+            ColumnErrorCount.HeaderText = "Erros";
+            ColumnErrorCount.Name = "ColumnErrorCount";
+            ColumnErrorCount.ReadOnly = true;
+            ColumnErrorCount.Width = 150;
+            // 
+            // ColumnDuplicatesCount
+            // 
+            ColumnDuplicatesCount.HeaderText = "Duplicidades";
+            ColumnDuplicatesCount.Name = "ColumnDuplicatesCount";
+            ColumnDuplicatesCount.ReadOnly = true;
+            // 
+            // ColumnFileSize
+            // 
+            ColumnFileSize.HeaderText = "Tamanho";
+            ColumnFileSize.Name = "ColumnFileSize";
+            ColumnFileSize.ReadOnly = true;
+            ColumnFileSize.Width = 80;
+            // 
+            // ColumnDetalhesErros
+            // 
+            ColumnDetalhesErros.HeaderText = "DetalhesErros";
+            ColumnDetalhesErros.Name = "ColumnDetalhesErros";
+            ColumnDetalhesErros.ReadOnly = true;
+            ColumnDetalhesErros.Visible = false;
+            // 
+            // ColumnDetalhesDuplicidades
+            // 
+            ColumnDetalhesDuplicidades.HeaderText = "DetalhesDuplicidades";
+            ColumnDetalhesDuplicidades.Name = "ColumnDetalhesDuplicidades";
+            ColumnDetalhesDuplicidades.ReadOnly = true;
+            ColumnDetalhesDuplicidades.Visible = false;
             // 
             // contextMenuStripGrid
             // 
@@ -486,60 +578,6 @@
             // 
             timerAutoRefresh.Interval = 30000;
             // 
-            // ColumnFile
-            // 
-            ColumnFile.HeaderText = "Arquivo";
-            ColumnFile.Name = "ColumnFile";
-            ColumnFile.ReadOnly = true;
-            ColumnFile.Width = 200;
-            // 
-            // ColumnDate
-            // 
-            ColumnDate.HeaderText = "Data/Hora";
-            ColumnDate.Name = "ColumnDate";
-            ColumnDate.ReadOnly = true;
-            ColumnDate.Width = 120;
-            // 
-            // ColumnStatus
-            // 
-            ColumnStatus.HeaderText = "Status";
-            ColumnStatus.Name = "ColumnStatus";
-            ColumnStatus.ReadOnly = true;
-            ColumnStatus.Width = 80;
-            // 
-            // ColumnUser
-            // 
-            ColumnUser.HeaderText = "Usuário";
-            ColumnUser.Name = "ColumnUser";
-            ColumnUser.ReadOnly = true;
-            // 
-            // ColumnRecordsCount
-            // 
-            ColumnRecordsCount.HeaderText = "Registros";
-            ColumnRecordsCount.Name = "ColumnRecordsCount";
-            ColumnRecordsCount.ReadOnly = true;
-            ColumnRecordsCount.Width = 70;
-            // 
-            // ColumnErrorCount
-            // 
-            ColumnErrorCount.HeaderText = "Erros";
-            ColumnErrorCount.Name = "ColumnErrorCount";
-            ColumnErrorCount.ReadOnly = true;
-            ColumnErrorCount.Width = 150;
-            // 
-            // ColumnDuplicatesCount
-            // 
-            ColumnDuplicatesCount.HeaderText = "Duplicidades";
-            ColumnDuplicatesCount.Name = "ColumnDuplicatesCount";
-            ColumnDuplicatesCount.ReadOnly = true;
-            // 
-            // ColumnFileSize
-            // 
-            ColumnFileSize.HeaderText = "Tamanho";
-            ColumnFileSize.Name = "ColumnFileSize";
-            ColumnFileSize.ReadOnly = true;
-            ColumnFileSize.Width = 80;
-            // 
             // FormImport
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -582,7 +620,6 @@
         private ReaLTaiizor.Controls.SmallTextBox smallTextBoxSelectFile;
         private Button buttonSelect;
         private Button buttonImport;
-        private Button buttonClearList;
         private Button buttonRefresh;
         private Button buttonExportLog;
 
@@ -626,5 +663,9 @@
         private DataGridViewTextBoxColumn ColumnErrorCount;
         private DataGridViewTextBoxColumn ColumnDuplicatesCount;
         private DataGridViewTextBoxColumn ColumnFileSize;
+        private DataGridViewTextBoxColumn ColumnDetalhesErros;
+        private DataGridViewTextBoxColumn ColumnDetalhesDuplicidades;
+        private Button btnDatails;
+        private Button btnDelete;
     }
 }

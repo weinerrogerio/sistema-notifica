@@ -29,7 +29,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
         //dataGridViewDataImport
         private void ConfigDataGridView()
-        {   
+        {
             dataGridViewDataImport.Rows.Clear();
             dataGridViewDataImport.RowHeadersVisible = false;
             dataGridViewDataImport.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -50,7 +50,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 if (_importService == null)
                 {
                     Debug.WriteLine("ImportService não foi inicializado!");
-                    MessageBox.Show("Erro: Serviço não disponivel, verifique sua conexão.", "Erro", 
+                    MessageBox.Show("Erro: Serviço não disponivel, verifique sua conexão.", "Erro",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
@@ -109,6 +109,10 @@ namespace SistemaNotifica.src.Forms.Principal
                 row.Cells["ColumnErrorCount"].Value = data.registros_com_erro; // total com erros
                 row.Cells["ColumnDuplicatesCount"].Value = data.registros_duplicados; // total duplicadoss
                 row.Cells["ColumnFileSize"].Value = data.tamanho_arquivo;
+
+                //Colunas invisiveis -> exibir apenas em "detalhes" por conta da quantidade de detalhes
+                row.Cells["ColumnDetalhesErros"].Value = data.detalhes_erro;
+                row.Cells["ColumnDetalhesDuplicidades"].Value = data.detalhes_duplicidade;
 
                 // Armazenar o status na Tag da linha para usar na coloração
                 row.Tag = status;
@@ -211,12 +215,12 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             dialogImport();
         }
-               
+
 
         private void smallTextBoxSelectFile_Click(object sender, EventArgs e)
         {
             dialogImport();
-        }      
+        }
 
         private void smallTextBoxSelectFile_MouseClick(object sender, MouseEventArgs e)
         {
@@ -270,6 +274,48 @@ namespace SistemaNotifica.src.Forms.Principal
                 toolStripProgressBarImport.Style = ProgressBarStyle.Blocks; // Volta ao estilo normal
                 buttonImport.Enabled = true; // Reabilita o botão
                 buttonSelect.Enabled = true;
+            }
+        }
+
+        private void buttonApplyFilter_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnDatails_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewDataImport.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Por favor, selecione uma linha para ver os detalhes.", "Nenhuma linha selecionada",
+                               MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Obter a linha selecionada
+            DataGridViewRow linhaSelecionada = dataGridViewDataImport.SelectedRows[0];
+
+            // Extrair os dados das colunas de detalhes
+            string detalhesErros = linhaSelecionada.Cells["ColumnDetalhesErros"]?.Value?.ToString() ?? "";
+            string detalhesDuplicidades = linhaSelecionada.Cells["ColumnDetalhesDuplicidades"]?.Value?.ToString() ?? "";
+            string nomeArquivo = linhaSelecionada.Cells["ColumnFile"]?.Value?.ToString() ?? "Arquivo";
+
+            // Verificar se há detalhes para mostrar
+            bool temErros = !string.IsNullOrEmpty(detalhesErros) && detalhesErros != "[null]";
+            bool temDuplicidades = !string.IsNullOrEmpty(detalhesDuplicidades) && detalhesDuplicidades != "[null]";
+
+            if (!temErros && !temDuplicidades)
+            {
+                MessageBox.Show("Esse Arquivo não possui detalhes de erros ou duplicidades.", "Sem detalhes",
+                               MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Criar e exibir o modal
+            using (FormDetalhesErros formDetalhes = new FormDetalhesErros())
+            {
+                formDetalhes.Text = $"Detalhes dos Erros - {nomeArquivo}";
+                formDetalhes.ExibirDetalhes(detalhesErros, detalhesDuplicidades);
+                formDetalhes.ShowDialog(this);
             }
         }
 
