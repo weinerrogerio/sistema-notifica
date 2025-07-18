@@ -31,24 +31,33 @@
             pnlMain = new Panel();
             tableLayoutPanelData = new TableLayoutPanel();
             panelTop = new Panel();
+            btnSendSelected = new Button();
             btnSend = new Button();
             panelFilters = new Panel();
+            maskedTextBoxFinalDate = new MaskedTextBox();
+            maskedTextBoxInitialDate = new MaskedTextBox();
             labelFinalDate = new Label();
             labelInitialDate = new Label();
-            dateTimePickerFinal = new DateTimePicker();
-            dateTimePickerInitial = new DateTimePicker();
-            chkBoxEmail = new CheckBox();
+            dateTimePickerFinalDate = new DateTimePicker();
+            dateTimePickerInitialDate = new DateTimePicker();
+            chkBoxNotNaoEnviadas = new CheckBox();
             chkBoxNotSended = new CheckBox();
             dataGridViewDataNotification = new DataGridView();
+            ColumnSelect = new DataGridViewCheckBoxColumn();
+            ColumnId = new DataGridViewTextBoxColumn();
             ColumnDate = new DataGridViewTextBoxColumn();
             ColumnDist = new DataGridViewTextBoxColumn();
+            ColumnNumTitulo = new DataGridViewTextBoxColumn();
+            ColumnTotal = new DataGridViewTextBoxColumn();
             ColumnDev = new DataGridViewTextBoxColumn();
             ColumnDocDev = new DataGridViewTextBoxColumn();
+            ColumnDevEmail = new DataGridViewTextBoxColumn();
             ColumnCred = new DataGridViewTextBoxColumn();
-            ColumnEmailSended = new DataGridViewTextBoxColumn();
+            ColumnSended = new DataGridViewTextBoxColumn();
             ColumnDateSend = new DataGridViewTextBoxColumn();
             ColumnLido = new DataGridViewTextBoxColumn();
-            button1 = new Button();
+            ColumnTabelionato = new DataGridViewTextBoxColumn();
+            ColumnPortador = new DataGridViewTextBoxColumn();
             pnlMain.SuspendLayout();
             tableLayoutPanelData.SuspendLayout();
             panelTop.SuspendLayout();
@@ -68,7 +77,7 @@
             // tableLayoutPanelData
             // 
             tableLayoutPanelData.ColumnCount = 1;
-            tableLayoutPanelData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanelData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanelData.Controls.Add(panelTop, 0, 0);
             tableLayoutPanelData.Controls.Add(panelFilters, 0, 1);
             tableLayoutPanelData.Controls.Add(dataGridViewDataNotification, 0, 2);
@@ -76,21 +85,31 @@
             tableLayoutPanelData.Location = new Point(0, 0);
             tableLayoutPanelData.Name = "tableLayoutPanelData";
             tableLayoutPanelData.RowCount = 3;
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 55.2631569F));
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 44.7368431F));
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 356F));
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 13.0340548F));
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 10.8617086F));
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 76.10424F));
             tableLayoutPanelData.Size = new Size(887, 471);
             tableLayoutPanelData.TabIndex = 0;
             // 
             // panelTop
             // 
-            panelTop.Controls.Add(button1);
+            panelTop.Controls.Add(btnSendSelected);
             panelTop.Controls.Add(btnSend);
             panelTop.Dock = DockStyle.Fill;
             panelTop.Location = new Point(3, 3);
             panelTop.Name = "panelTop";
-            panelTop.Size = new Size(881, 57);
+            panelTop.Size = new Size(881, 55);
             panelTop.TabIndex = 0;
+            // 
+            // btnSendSelected
+            // 
+            btnSendSelected.Location = new Point(214, 9);
+            btnSendSelected.Name = "btnSendSelected";
+            btnSendSelected.Size = new Size(184, 45);
+            btnSendSelected.TabIndex = 1;
+            btnSendSelected.Text = "Enviar Notificações marcadas";
+            btnSendSelected.UseVisualStyleBackColor = true;
+            btnSendSelected.Click += btnSendSelected_Click;
             // 
             // btnSend
             // 
@@ -103,71 +122,94 @@
             // 
             // panelFilters
             // 
+            panelFilters.Controls.Add(maskedTextBoxFinalDate);
+            panelFilters.Controls.Add(maskedTextBoxInitialDate);
             panelFilters.Controls.Add(labelFinalDate);
             panelFilters.Controls.Add(labelInitialDate);
-            panelFilters.Controls.Add(dateTimePickerFinal);
-            panelFilters.Controls.Add(dateTimePickerInitial);
-            panelFilters.Controls.Add(chkBoxEmail);
+            panelFilters.Controls.Add(dateTimePickerFinalDate);
+            panelFilters.Controls.Add(dateTimePickerInitialDate);
+            panelFilters.Controls.Add(chkBoxNotNaoEnviadas);
             panelFilters.Controls.Add(chkBoxNotSended);
             panelFilters.Dock = DockStyle.Fill;
-            panelFilters.Location = new Point(3, 66);
+            panelFilters.Location = new Point(3, 64);
             panelFilters.Name = "panelFilters";
             panelFilters.Size = new Size(881, 45);
             panelFilters.TabIndex = 1;
             // 
+            // maskedTextBoxFinalDate
+            // 
+            maskedTextBoxFinalDate.Location = new Point(642, 12);
+            maskedTextBoxFinalDate.Mask = "00/00/0000";
+            maskedTextBoxFinalDate.Name = "maskedTextBoxFinalDate";
+            maskedTextBoxFinalDate.Size = new Size(75, 23);
+            maskedTextBoxFinalDate.TabIndex = 7;
+            maskedTextBoxFinalDate.ValidatingType = typeof(DateTime);
+            // 
+            // maskedTextBoxInitialDate
+            // 
+            maskedTextBoxInitialDate.Location = new Point(455, 12);
+            maskedTextBoxInitialDate.Mask = "00/00/0000";
+            maskedTextBoxInitialDate.Name = "maskedTextBoxInitialDate";
+            maskedTextBoxInitialDate.Size = new Size(75, 23);
+            maskedTextBoxInitialDate.TabIndex = 6;
+            maskedTextBoxInitialDate.ValidatingType = typeof(DateTime);
+            // 
             // labelFinalDate
             // 
             labelFinalDate.AutoSize = true;
-            labelFinalDate.Location = new Point(502, 15);
+            labelFinalDate.Location = new Point(577, 16);
             labelFinalDate.Name = "labelFinalDate";
-            labelFinalDate.Size = new Size(59, 15);
+            labelFinalDate.Size = new Size(62, 15);
             labelFinalDate.TabIndex = 5;
-            labelFinalDate.Text = "Data Final";
+            labelFinalDate.Text = "Data Final:";
             // 
             // labelInitialDate
             // 
             labelInitialDate.AutoSize = true;
-            labelInitialDate.Location = new Point(333, 15);
+            labelInitialDate.Location = new Point(382, 16);
             labelInitialDate.Name = "labelInitialDate";
-            labelInitialDate.Size = new Size(65, 15);
+            labelInitialDate.Size = new Size(68, 15);
             labelInitialDate.TabIndex = 4;
-            labelInitialDate.Text = "Data Inicial";
+            labelInitialDate.Text = "Data Inicial:";
             // 
-            // dateTimePickerFinal
+            // dateTimePickerFinalDate
             // 
-            dateTimePickerFinal.Format = DateTimePickerFormat.Short;
-            dateTimePickerFinal.Location = new Point(421, 11);
-            dateTimePickerFinal.Name = "dateTimePickerFinal";
-            dateTimePickerFinal.Size = new Size(79, 23);
-            dateTimePickerFinal.TabIndex = 3;
+            dateTimePickerFinalDate.Format = DateTimePickerFormat.Short;
+            dateTimePickerFinalDate.ImeMode = ImeMode.NoControl;
+            dateTimePickerFinalDate.Location = new Point(717, 12);
+            dateTimePickerFinalDate.Name = "dateTimePickerFinalDate";
+            dateTimePickerFinalDate.Size = new Size(14, 23);
+            dateTimePickerFinalDate.TabIndex = 3;
             // 
-            // dateTimePickerInitial
+            // dateTimePickerInitialDate
             // 
-            dateTimePickerInitial.Format = DateTimePickerFormat.Short;
-            dateTimePickerInitial.Location = new Point(252, 11);
-            dateTimePickerInitial.Name = "dateTimePickerInitial";
-            dateTimePickerInitial.Size = new Size(79, 23);
-            dateTimePickerInitial.TabIndex = 2;
+            dateTimePickerInitialDate.Format = DateTimePickerFormat.Short;
+            dateTimePickerInitialDate.Location = new Point(530, 12);
+            dateTimePickerInitialDate.Name = "dateTimePickerInitialDate";
+            dateTimePickerInitialDate.Size = new Size(14, 23);
+            dateTimePickerInitialDate.TabIndex = 2;
             // 
-            // chkBoxEmail
+            // chkBoxNotNaoEnviadas
             // 
-            chkBoxEmail.AutoSize = true;
-            chkBoxEmail.Location = new Point(162, 15);
-            chkBoxEmail.Name = "chkBoxEmail";
-            chkBoxEmail.Size = new Size(84, 19);
-            chkBoxEmail.TabIndex = 1;
-            chkBoxEmail.Text = "Com Email";
-            chkBoxEmail.UseVisualStyleBackColor = true;
+            chkBoxNotNaoEnviadas.AutoSize = true;
+            chkBoxNotNaoEnviadas.Location = new Point(9, 15);
+            chkBoxNotNaoEnviadas.Name = "chkBoxNotNaoEnviadas";
+            chkBoxNotNaoEnviadas.Size = new Size(164, 19);
+            chkBoxNotNaoEnviadas.TabIndex = 1;
+            chkBoxNotNaoEnviadas.Text = "Notificações não enviadas";
+            chkBoxNotNaoEnviadas.UseVisualStyleBackColor = true;
+            chkBoxNotNaoEnviadas.CheckedChanged += chkBoxNotNaoEnviadas_CheckedChanged;
             // 
             // chkBoxNotSended
             // 
             chkBoxNotSended.AutoSize = true;
-            chkBoxNotSended.Location = new Point(9, 15);
+            chkBoxNotSended.Location = new Point(202, 15);
             chkBoxNotSended.Name = "chkBoxNotSended";
             chkBoxNotSended.Size = new Size(147, 19);
             chkBoxNotSended.TabIndex = 0;
             chkBoxNotSended.Text = "Notificaçãoes Enviadas";
             chkBoxNotSended.UseVisualStyleBackColor = true;
+            chkBoxNotSended.CheckedChanged += chkBoxNotSended_CheckedChanged;
             // 
             // dataGridViewDataNotification
             // 
@@ -175,13 +217,28 @@
             dataGridViewDataNotification.AllowUserToDeleteRows = false;
             dataGridViewDataNotification.AllowUserToOrderColumns = true;
             dataGridViewDataNotification.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewDataNotification.Columns.AddRange(new DataGridViewColumn[] { ColumnDate, ColumnDist, ColumnDev, ColumnDocDev, ColumnCred, ColumnEmailSended, ColumnDateSend, ColumnLido });
+            dataGridViewDataNotification.Columns.AddRange(new DataGridViewColumn[] { ColumnSelect, ColumnId, ColumnDate, ColumnDist, ColumnNumTitulo, ColumnTotal, ColumnDev, ColumnDocDev, ColumnDevEmail, ColumnCred, ColumnSended, ColumnDateSend, ColumnLido, ColumnTabelionato, ColumnPortador });
             dataGridViewDataNotification.Dock = DockStyle.Fill;
-            dataGridViewDataNotification.Location = new Point(3, 117);
+            dataGridViewDataNotification.Location = new Point(3, 115);
             dataGridViewDataNotification.Name = "dataGridViewDataNotification";
             dataGridViewDataNotification.ReadOnly = true;
-            dataGridViewDataNotification.Size = new Size(881, 351);
+            dataGridViewDataNotification.Size = new Size(881, 353);
             dataGridViewDataNotification.TabIndex = 2;
+            // 
+            // ColumnSelect
+            // 
+            ColumnSelect.FillWeight = 45F;
+            ColumnSelect.HeaderText = "Sel.";
+            ColumnSelect.Name = "ColumnSelect";
+            ColumnSelect.ReadOnly = true;
+            ColumnSelect.Width = 45;
+            // 
+            // ColumnId
+            // 
+            ColumnId.HeaderText = "Id";
+            ColumnId.Name = "ColumnId";
+            ColumnId.ReadOnly = true;
+            ColumnId.Visible = false;
             // 
             // ColumnDate
             // 
@@ -195,6 +252,19 @@
             ColumnDist.Name = "ColumnDist";
             ColumnDist.ReadOnly = true;
             // 
+            // ColumnNumTitulo
+            // 
+            ColumnNumTitulo.HeaderText = "Num. Titulo";
+            ColumnNumTitulo.Name = "ColumnNumTitulo";
+            ColumnNumTitulo.ReadOnly = true;
+            // 
+            // ColumnTotal
+            // 
+            ColumnTotal.HeaderText = "Total";
+            ColumnTotal.Name = "ColumnTotal";
+            ColumnTotal.ReadOnly = true;
+            ColumnTotal.Visible = false;
+            // 
             // ColumnDev
             // 
             ColumnDev.HeaderText = "Devedor";
@@ -207,17 +277,23 @@
             ColumnDocDev.Name = "ColumnDocDev";
             ColumnDocDev.ReadOnly = true;
             // 
+            // ColumnDevEmail
+            // 
+            ColumnDevEmail.HeaderText = "Email";
+            ColumnDevEmail.Name = "ColumnDevEmail";
+            ColumnDevEmail.ReadOnly = true;
+            // 
             // ColumnCred
             // 
             ColumnCred.HeaderText = "Credor";
             ColumnCred.Name = "ColumnCred";
             ColumnCred.ReadOnly = true;
             // 
-            // ColumnEmailSended
+            // ColumnSended
             // 
-            ColumnEmailSended.HeaderText = "Enviado";
-            ColumnEmailSended.Name = "ColumnEmailSended";
-            ColumnEmailSended.ReadOnly = true;
+            ColumnSended.HeaderText = "Enviado";
+            ColumnSended.Name = "ColumnSended";
+            ColumnSended.ReadOnly = true;
             // 
             // ColumnDateSend
             // 
@@ -231,14 +307,19 @@
             ColumnLido.Name = "ColumnLido";
             ColumnLido.ReadOnly = true;
             // 
-            // button1
+            // ColumnTabelionato
             // 
-            button1.Location = new Point(214, 9);
-            button1.Name = "button1";
-            button1.Size = new Size(184, 45);
-            button1.TabIndex = 1;
-            button1.Text = "Enviar Notificações marcadas";
-            button1.UseVisualStyleBackColor = true;
+            ColumnTabelionato.HeaderText = "Tabelionato";
+            ColumnTabelionato.Name = "ColumnTabelionato";
+            ColumnTabelionato.ReadOnly = true;
+            ColumnTabelionato.Visible = false;
+            // 
+            // ColumnPortador
+            // 
+            ColumnPortador.HeaderText = "Portador";
+            ColumnPortador.Name = "ColumnPortador";
+            ColumnPortador.ReadOnly = true;
+            ColumnPortador.Visible = false;
             // 
             // FormNotification
             // 
@@ -246,7 +327,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(887, 471);
             Controls.Add(pnlMain);
-            FormBorderStyle = FormBorderStyle.None;
             Name = "FormNotification";
             Text = "FormNotification";
             pnlMain.ResumeLayout(false);
@@ -266,20 +346,29 @@
         private Panel panelFilters;
         private CheckBox chkBoxNotSended;
         private DataGridView dataGridViewDataNotification;
-        private DateTimePicker dateTimePickerInitial;
-        private CheckBox chkBoxEmail;
-        private DateTimePicker dateTimePickerFinal;
+        private DateTimePicker dateTimePickerInitialDate;
+        private CheckBox chkBoxNotNaoEnviadas;
+        private DateTimePicker dateTimePickerFinalDate;
         private Label labelFinalDate;
         private Label labelInitialDate;
+        private Button btnSend;
+        private Button btnSendSelected;
+        private MaskedTextBox maskedTextBoxInitialDate;
+        private MaskedTextBox maskedTextBoxFinalDate;
+        private DataGridViewCheckBoxColumn ColumnSelect;
+        private DataGridViewTextBoxColumn ColumnId;
         private DataGridViewTextBoxColumn ColumnDate;
         private DataGridViewTextBoxColumn ColumnDist;
+        private DataGridViewTextBoxColumn ColumnNumTitulo;
+        private DataGridViewTextBoxColumn ColumnTotal;
         private DataGridViewTextBoxColumn ColumnDev;
         private DataGridViewTextBoxColumn ColumnDocDev;
+        private DataGridViewTextBoxColumn ColumnDevEmail;
         private DataGridViewTextBoxColumn ColumnCred;
-        private DataGridViewTextBoxColumn ColumnEmailSended;
+        private DataGridViewTextBoxColumn ColumnSended;
         private DataGridViewTextBoxColumn ColumnDateSend;
         private DataGridViewTextBoxColumn ColumnLido;
-        private Button btnSend;
-        private Button button1;
+        private DataGridViewTextBoxColumn ColumnTabelionato;
+        private DataGridViewTextBoxColumn ColumnPortador;
     }
 }

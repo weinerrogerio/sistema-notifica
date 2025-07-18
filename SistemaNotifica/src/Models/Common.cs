@@ -1,14 +1,35 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace SistemaNotifica.src.Models
 {
     internal class Common
     {
+
+         public string FormatarDocumento(string documento)
+        {
+            if (string.IsNullOrEmpty(documento))
+                return documento;
+
+            // Remove caracteres não numéricos
+            documento = documento.Replace(".", "").Replace("-", "").Replace("/", "");
+
+            if (documento.Length == 11) // CPF
+            {
+                return $"{documento.Substring(0, 3)}.{documento.Substring(3, 3)}.{documento.Substring(6, 3)}-{documento.Substring(9, 2)}";
+            }
+            else if (documento.Length == 14) // CNPJ
+            {
+                return $"{documento.Substring(0, 2)}.{documento.Substring(2, 3)}.{documento.Substring(5, 3)}/{documento.Substring(8, 4)}-{documento.Substring(12, 2)}";
+            }
+
+            return documento;
+        }
     }
 
     public static class Sessao
@@ -173,5 +194,33 @@ namespace SistemaNotifica.src.Models
         public object? skippedCount { get; }
         public object? errors { get; }
     }
+
+
+    /*-----------------------------------  CLASSES PARA NOTIFICAÇÃO -----------------------------------*/
+
+    public class Notificacao
+    {
+        public int logNotificacaoId { get; set; }
+        public string nomeDevedor { get; set; }
+        public string devedorEmail { get; set; }
+        public string docDevedor { get; set; }
+        public string distribuicao { get; set; }
+        public string numTitulo { get; set; }
+        public int total { get; set; }
+        public DateTime dataDistribuicao { get; set; }
+        public int valorTotal { get; set; }
+        public string dataVencimento { get; set; }
+        public string tabelionato { get; set; }
+        public string credor { get; set; }
+        public string portador { get; set; }
+        public DateTime? dataEnvio { get; set; }
+        public bool emailEnviado { get; set; }
+        public bool emailLido { get; set; }
+    }   
+
+
+
+
+
 
 }
