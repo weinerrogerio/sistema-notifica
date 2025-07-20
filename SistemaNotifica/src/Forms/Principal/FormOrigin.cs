@@ -25,8 +25,20 @@ namespace SistemaNotifica
         public FormOrigin()
         {
             InitializeComponent();
-            this.EnableDragByControl(this.topPanel);
-            objForm = new Form();
+            this.Text = "Sistema de Notificações - Versão 1.0";
+            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "src/icons", "Logo_transp_pb.ico");
+            if (File.Exists(iconPath))
+            {
+                Debug.WriteLine("+++++++++++++++++++++++++Ícone encontrado: +++++++++++++++++++++++++++++++" + iconPath);
+                this.Icon = new Icon(iconPath);
+            }
+            else
+            {
+                Debug.WriteLine("---------------------Ícone não encontrado: -------------------" + iconPath);
+            }
+
+                //this.EnableDragByControl(this.topPanel);
+                objForm = new Form();
             ApplyPerformanceOptimizations();
             sidebarMenu.Width = SIDEBAR_MIN_WIDTH;
             tableLayoutNotificacao.Height = SUBMENU_MIN_HEIGHT;
@@ -81,10 +93,7 @@ namespace SistemaNotifica
                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
                null, btnHam, new object[] { true });
 
-            // PERFORMANCE: Logo com DoubleBuffered para imgLogo
-            typeof(PictureBox).InvokeMember("DoubleBuffered",
-                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
-                null, imgLogo, new object[] { true });
+           
 
             // CONFIGURAÇÃO ULTRA CRÍTICA - GARANTE ANIMAÇÕES A 60 FPS
             typeof(FlowLayoutPanel).InvokeMember("DoubleBuffered",

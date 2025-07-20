@@ -35,8 +35,6 @@ namespace SistemaNotifica
             metroLabelUser = new ReaLTaiizor.Controls.MetroLabel();
             metroLabelUsuario = new ReaLTaiizor.Controls.MetroLabel();
             btnHam = new PictureBox();
-            nightControlBox1 = new ReaLTaiizor.Controls.NightControlBox();
-            imgLogo = new PictureBox();
             sidebarMenu = new FlowLayoutPanel();
             panel5 = new Panel();
             panelHome = new Panel();
@@ -65,7 +63,6 @@ namespace SistemaNotifica
             menuTransition = new System.Windows.Forms.Timer(components);
             topPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnHam).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
             sidebarMenu.SuspendLayout();
             panelHome.SuspendLayout();
             panelImportar.SuspendLayout();
@@ -86,8 +83,6 @@ namespace SistemaNotifica
             topPanel.Controls.Add(metroLabelUser);
             topPanel.Controls.Add(metroLabelUsuario);
             topPanel.Controls.Add(btnHam);
-            topPanel.Controls.Add(nightControlBox1);
-            topPanel.Controls.Add(imgLogo);
             topPanel.Dock = DockStyle.Top;
             topPanel.Location = new Point(0, 0);
             topPanel.Name = "topPanel";
@@ -99,7 +94,7 @@ namespace SistemaNotifica
             // 
             metroLabelUser.Font = new Font("Microsoft Sans Serif", 10F);
             metroLabelUser.IsDerivedStyle = true;
-            metroLabelUser.Location = new Point(228, 7);
+            metroLabelUser.Location = new Point(107, 7);
             metroLabelUser.Name = "metroLabelUser";
             metroLabelUser.Size = new Size(45, 23);
             metroLabelUser.Style = ReaLTaiizor.Enum.Metro.Style.Light;
@@ -113,7 +108,7 @@ namespace SistemaNotifica
             // 
             metroLabelUsuario.Font = new Font("Microsoft Sans Serif", 10F);
             metroLabelUsuario.IsDerivedStyle = true;
-            metroLabelUsuario.Location = new Point(169, 7);
+            metroLabelUsuario.Location = new Point(48, 7);
             metroLabelUsuario.Name = "metroLabelUsuario";
             metroLabelUsuario.Size = new Size(65, 23);
             metroLabelUsuario.Style = ReaLTaiizor.Enum.Metro.Style.Light;
@@ -133,40 +128,6 @@ namespace SistemaNotifica
             btnHam.TabIndex = 3;
             btnHam.TabStop = false;
             btnHam.Click += btnHam_Click;
-            // 
-            // nightControlBox1
-            // 
-            nightControlBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            nightControlBox1.BackColor = Color.Transparent;
-            nightControlBox1.CloseHoverColor = Color.FromArgb(199, 80, 80);
-            nightControlBox1.CloseHoverForeColor = Color.White;
-            nightControlBox1.DefaultLocation = true;
-            nightControlBox1.DisableMaximizeColor = Color.FromArgb(105, 105, 105);
-            nightControlBox1.DisableMinimizeColor = Color.FromArgb(105, 105, 105);
-            nightControlBox1.EnableCloseColor = Color.FromArgb(160, 160, 160);
-            nightControlBox1.EnableMaximizeButton = true;
-            nightControlBox1.EnableMaximizeColor = Color.FromArgb(160, 160, 160);
-            nightControlBox1.EnableMinimizeButton = true;
-            nightControlBox1.EnableMinimizeColor = Color.FromArgb(160, 160, 160);
-            nightControlBox1.Location = new Point(788, 0);
-            nightControlBox1.MaximizeHoverColor = Color.FromArgb(15, 255, 255, 255);
-            nightControlBox1.MaximizeHoverForeColor = Color.White;
-            nightControlBox1.MinimizeHoverColor = Color.FromArgb(15, 255, 255, 255);
-            nightControlBox1.MinimizeHoverForeColor = Color.White;
-            nightControlBox1.Name = "nightControlBox1";
-            nightControlBox1.Size = new Size(139, 31);
-            nightControlBox1.TabIndex = 2;
-            // 
-            // imgLogo
-            // 
-            imgLogo.BackgroundImageLayout = ImageLayout.None;
-            imgLogo.Image = (Image)resources.GetObject("imgLogo.Image");
-            imgLogo.Location = new Point(54, 0);
-            imgLogo.Name = "imgLogo";
-            imgLogo.Size = new Size(99, 33);
-            imgLogo.SizeMode = PictureBoxSizeMode.Zoom;
-            imgLogo.TabIndex = 2;
-            imgLogo.TabStop = false;
             // 
             // sidebarMenu
             // 
@@ -496,14 +457,12 @@ namespace SistemaNotifica
             Controls.Add(pnlMain);
             Controls.Add(sidebarMenu);
             Controls.Add(topPanel);
-            FormBorderStyle = FormBorderStyle.None;
             IsMdiContainer = true;
             MdiChildrenMinimizedAnchorBottom = false;
             Name = "FormOrigin";
             Text = "Form1";
             topPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)btnHam).EndInit();
-            ((System.ComponentModel.ISupportInitialize)imgLogo).EndInit();
             sidebarMenu.ResumeLayout(false);
             panelHome.ResumeLayout(false);
             panelImportar.ResumeLayout(false);
@@ -528,8 +487,6 @@ namespace SistemaNotifica
 
         private Panel topPanel;
         private FlowLayoutPanel sidebarMenu;
-        private PictureBox imgLogo;
-        private ReaLTaiizor.Controls.NightControlBox nightControlBox1;
         private Button btnImportarDoc;
         private Panel panelImportar;
         private PictureBox btnHam;
