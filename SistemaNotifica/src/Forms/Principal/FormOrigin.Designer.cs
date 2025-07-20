@@ -148,7 +148,7 @@ namespace SistemaNotifica
             nightControlBox1.EnableMaximizeColor = Color.FromArgb(160, 160, 160);
             nightControlBox1.EnableMinimizeButton = true;
             nightControlBox1.EnableMinimizeColor = Color.FromArgb(160, 160, 160);
-            nightControlBox1.Location = new Point(788, 1);
+            nightControlBox1.Location = new Point(788, 0);
             nightControlBox1.MaximizeHoverColor = Color.FromArgb(15, 255, 255, 255);
             nightControlBox1.MaximizeHoverForeColor = Color.White;
             nightControlBox1.MinimizeHoverColor = Color.FromArgb(15, 255, 255, 255);
@@ -310,7 +310,7 @@ namespace SistemaNotifica
             tableLayoutNotificacao.RowStyles.Add(new RowStyle());
             tableLayoutNotificacao.RowStyles.Add(new RowStyle());
             tableLayoutNotificacao.RowStyles.Add(new RowStyle());
-            tableLayoutNotificacao.Size = new Size(187, 45);
+            tableLayoutNotificacao.Size = new Size(187, 43);
             tableLayoutNotificacao.TabIndex = 9;
             // 
             // panelNotificação
@@ -356,13 +356,15 @@ namespace SistemaNotifica
             btnConfigNotificacao.ForeColor = Color.White;
             btnConfigNotificacao.Image = (Image)resources.GetObject("btnConfigNotificacao.Image");
             btnConfigNotificacao.ImageAlign = ContentAlignment.MiddleLeft;
-            btnConfigNotificacao.Location = new Point(-12, -6);
+            btnConfigNotificacao.Location = new Point(12, -6);
             btnConfigNotificacao.Name = "btnConfigNotificacao";
-            btnConfigNotificacao.Padding = new Padding(15, 0, 0, 0);
-            btnConfigNotificacao.Size = new Size(214, 56);
+            btnConfigNotificacao.Padding = new Padding(5, 0, 0, 0);
+            btnConfigNotificacao.Size = new Size(178, 56);
             btnConfigNotificacao.TabIndex = 2;
-            btnConfigNotificacao.Text = "  Config Notificação";
+            btnConfigNotificacao.Text = "   Config Notificação";
+            btnConfigNotificacao.TextAlign = ContentAlignment.MiddleRight;
             btnConfigNotificacao.UseVisualStyleBackColor = false;
+            btnConfigNotificacao.Click += btnConfigNotificacao_Click;
             // 
             // panelSubMenu1
             // 
@@ -381,18 +383,21 @@ namespace SistemaNotifica
             btnEnviarNotificacao.ForeColor = Color.White;
             btnEnviarNotificacao.Image = (Image)resources.GetObject("btnEnviarNotificacao.Image");
             btnEnviarNotificacao.ImageAlign = ContentAlignment.MiddleLeft;
-            btnEnviarNotificacao.Location = new Point(-11, -5);
+            btnEnviarNotificacao.Location = new Point(12, -5);
+            btnEnviarNotificacao.Margin = new Padding(0);
             btnEnviarNotificacao.Name = "btnEnviarNotificacao";
-            btnEnviarNotificacao.Padding = new Padding(15, 0, 0, 0);
-            btnEnviarNotificacao.Size = new Size(214, 56);
+            btnEnviarNotificacao.Padding = new Padding(5, 0, 0, 0);
+            btnEnviarNotificacao.Size = new Size(178, 56);
             btnEnviarNotificacao.TabIndex = 2;
-            btnEnviarNotificacao.Text = " Enviar Notificação";
+            btnEnviarNotificacao.Text = "   Enviar Notificação";
+            btnEnviarNotificacao.TextAlign = ContentAlignment.MiddleRight;
             btnEnviarNotificacao.UseVisualStyleBackColor = false;
+            btnEnviarNotificacao.Click += btnEnviarNotificacao_Click;
             // 
             // panelUser
             // 
             panelUser.Controls.Add(btnUser);
-            panelUser.Location = new Point(0, 250);
+            panelUser.Location = new Point(0, 248);
             panelUser.Margin = new Padding(0);
             panelUser.Name = "panelUser";
             panelUser.Size = new Size(187, 44);
@@ -417,7 +422,7 @@ namespace SistemaNotifica
             // panelSobre
             // 
             panelSobre.Controls.Add(btnSobre);
-            panelSobre.Location = new Point(0, 294);
+            panelSobre.Location = new Point(0, 292);
             panelSobre.Margin = new Padding(0);
             panelSobre.Name = "panelSobre";
             panelSobre.Size = new Size(187, 44);
@@ -442,7 +447,7 @@ namespace SistemaNotifica
             // panelLogOut
             // 
             panelLogOut.Controls.Add(btnLogOut);
-            panelLogOut.Location = new Point(0, 338);
+            panelLogOut.Location = new Point(0, 336);
             panelLogOut.Margin = new Padding(0);
             panelLogOut.Name = "panelLogOut";
             panelLogOut.Size = new Size(187, 44);

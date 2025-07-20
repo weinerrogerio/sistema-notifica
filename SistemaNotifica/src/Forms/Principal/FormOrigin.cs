@@ -1,9 +1,10 @@
+using SistemaNotifica.src.Forms;
+using SistemaNotifica.src.Forms.Principal;
+using SistemaNotifica.src.Forms.Template;
+using SistemaNotifica.src.Utils;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Reflection;
-using SistemaNotifica.src.Forms;
-using SistemaNotifica.src.Forms.Principal;
-using SistemaNotifica.src.Utils;
 
 
 namespace SistemaNotifica
@@ -19,7 +20,7 @@ namespace SistemaNotifica
         private const int SIDEBAR_MIN_WIDTH = 50;
         private const int SIDEBAR_MAX_WIDTH = 190;
 
-        private const int SUBMENU_MIN_HEIGHT = 45;
+        private const int SUBMENU_MIN_HEIGHT = 42;
         private const int SUBMENU_MAX_HEIGHT = 125;
         public FormOrigin()
         {
@@ -35,7 +36,7 @@ namespace SistemaNotifica
         }
         private void FormOrigin_Load(object sender, EventArgs e)
         {
-            
+
             objForm?.Close();
 
             FormHome formHome = new FormHome
@@ -108,18 +109,18 @@ namespace SistemaNotifica
         private float animationProgress = 0f;
         private int startWidth, targetWidth;
 
-        
+
         private void StartSidebarAnimation()
         {
             startWidth = sidebarMenu.Width;
             if (startWidth == SIDEBAR_MIN_WIDTH)
             {
-                targetWidth = SIDEBAR_MAX_WIDTH; 
+                targetWidth = SIDEBAR_MAX_WIDTH;
             }
-            else 
+            else
             {
                 targetWidth = SIDEBAR_MIN_WIDTH;
-                if(menuTargetHeight == SUBMENU_MAX_HEIGHT)
+                if (menuTargetHeight == SUBMENU_MAX_HEIGHT)
                 {
                     StartSubmenuAnimation();
                 }
@@ -130,7 +131,7 @@ namespace SistemaNotifica
             sidebarTransition.Start();
         }
 
-        
+
 
         private void sidebarTransition_Tick(object sender, EventArgs e)
         {
@@ -138,8 +139,8 @@ namespace SistemaNotifica
 
             if (animationProgress >= 1f)
             {
-                animationProgress = 1f; 
-                sidebarTransition.Stop(); 
+                animationProgress = 1f;
+                sidebarTransition.Stop();
             }
 
             float easedProgress = 1f - (float)Math.Pow(1 - animationProgress, 3);
@@ -148,7 +149,7 @@ namespace SistemaNotifica
             newWidth = Math.Max(50, Math.Min(190, newWidth));
 
             sidebarMenu.Width = newWidth;
-            adjustWidth(newWidth); 
+            adjustWidth(newWidth);
         }
 
 
@@ -163,14 +164,14 @@ namespace SistemaNotifica
             if (menuStartHeight == SUBMENU_MIN_HEIGHT)
             {
                 menuTargetHeight = SUBMENU_MAX_HEIGHT;
-                if(sidebarMenu.Width == SIDEBAR_MIN_WIDTH)
+                if (sidebarMenu.Width == SIDEBAR_MIN_WIDTH)
                 {
                     StartSidebarAnimation();
                 }
             }
             else // Se menuStartHeight é SUBMENU_MAX_HEIGHT (ou outro valor)
             {
-                menuTargetHeight = SUBMENU_MIN_HEIGHT; 
+                menuTargetHeight = SUBMENU_MIN_HEIGHT;
             }
 
             menuAnimationProgress = 0f; // Reinicia o progresso
@@ -192,8 +193,16 @@ namespace SistemaNotifica
 
             newHeight = Math.Max(SUBMENU_MIN_HEIGHT, Math.Min(SUBMENU_MAX_HEIGHT, newHeight));
 
-            tableLayoutNotificacao.Height = newHeight;            
+            tableLayoutNotificacao.Height = newHeight;
         }
+
+
+        
+
+
+
+
+
         private void adjustWidth(int barWidth)
         {
             // Suspende layout para evitar múltiplos redesenhos
@@ -209,7 +218,7 @@ namespace SistemaNotifica
         }
 
         private void ResetSidebarButtons()
-        {            
+        {
             btnHome.BackColor = Color.FromArgb(0, 0, 0);
             btnImportarDoc.BackColor = Color.FromArgb(0, 0, 0);
             btnDados.BackColor = Color.FromArgb(0, 0, 0);
@@ -217,13 +226,13 @@ namespace SistemaNotifica
             btnSettings.BackColor = Color.FromArgb(0, 0, 0);
             btnSobre.BackColor = Color.FromArgb(0, 0, 0);
             btnConfigNotificacao.BackColor = Color.FromArgb(0, 0, 0);
-            btnNotificacao.BackColor = Color.FromArgb(0, 0,0);
-            btnLogOut.BackColor = Color.FromArgb(0, 0, 0);           
+            btnNotificacao.BackColor = Color.FromArgb(0, 0, 0);
+            btnLogOut.BackColor = Color.FromArgb(0, 0, 0);
 
         }
 
         private void btnHam_Click(object sender, EventArgs e)
-        {            
+        {
             StartSidebarAnimation();
 
         }
@@ -231,11 +240,12 @@ namespace SistemaNotifica
         {
             StartSubmenuAnimation();
         }
-            
+
         private void btnHome_Click(object sender, EventArgs e)
         {
-            
-            if (!(TelaAtual == "FormHome")) {
+
+            if (!(TelaAtual == "FormHome"))
+            {
                 openHomeDefaultForm();
                 ResetSidebarButtons();
                 btnHome.BackColor = Color.FromArgb(60, 60, 60);
@@ -244,7 +254,7 @@ namespace SistemaNotifica
         }
 
         private void openHomeDefaultForm()
-        {            
+        {
             objForm?.Close();
             ResetSidebarButtons();
 
@@ -272,8 +282,9 @@ namespace SistemaNotifica
 
         private void btnImportarDoc_Click(object sender, EventArgs e)
         {
-            
-            if (!(TelaAtual == "FormImport")) {
+
+            if (!(TelaAtual == "FormImport"))
+            {
                 ResetSidebarButtons();
                 btnImportarDoc.BackColor = Color.FromArgb(60, 60, 60);
                 objForm?.Close();
@@ -288,18 +299,56 @@ namespace SistemaNotifica
                 pnlMain.Controls.Add(objForm);
                 objForm.Show();
             }
-            return; 
+            return;
         }
 
 
         // A PRIMEIRA TELA A SER APRESENTADA PRECISA SER A HOME --> fazer depois 
         private void pnlMain_Paint(object sender, PaintEventArgs e)
         {
-            
+
         }
 
-        
+        private void btnEnviarNotificacao_Click(object sender, EventArgs e)
+        {
+            if (!(TelaAtual == "FormNotification"))
+            {
+                ResetSidebarButtons();
+                btnImportarDoc.BackColor = Color.FromArgb(60, 60, 60);
+                objForm?.Close();
+                objForm = new FormNotification
+                {
+                    TopLevel = false,
+                    FormBorderStyle = FormBorderStyle.None,
+                    Dock = DockStyle.Fill
+                };
 
+                TelaAtual = "FormImport";
+                pnlMain.Controls.Add(objForm);
+                objForm.Show();
+            }
+            return;
+        }
 
+        private void btnConfigNotificacao_Click(object sender, EventArgs e)
+        {
+            if (!(TelaAtual == "TemplateManagerForm"))
+            {
+                ResetSidebarButtons();
+                btnImportarDoc.BackColor = Color.FromArgb(60, 60, 60);
+                objForm?.Close();
+                objForm = new TemplateManagerForm
+                {
+                    TopLevel = false,
+                    FormBorderStyle = FormBorderStyle.None,
+                    Dock = DockStyle.Fill
+                };
+
+                TelaAtual = "FormImport";
+                pnlMain.Controls.Add(objForm);
+                objForm.Show();
+            }
+            return;
+        }
     }
 }

@@ -32,8 +32,8 @@ namespace SistemaNotifica
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.            
             //ApplicationConfiguration.Initialize();
-            Application.Run(new FormNotification());
-            //using (FormLogin loginForm = new FormLogin()) 
+            Application.Run(new FormOrigin());
+            //using (FormLogin loginForm = new FormLogin())
             //{
             //    if (loginForm.ShowDialog() == DialogResult.OK)
             //    {

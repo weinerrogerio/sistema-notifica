@@ -85,9 +85,9 @@
             tableLayoutPanelData.Location = new Point(0, 0);
             tableLayoutPanelData.Name = "tableLayoutPanelData";
             tableLayoutPanelData.RowCount = 3;
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 13.0340548F));
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 10.8617086F));
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 76.10424F));
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 13.8951F));
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 10.7541676F));
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 75.35073F));
             tableLayoutPanelData.Size = new Size(887, 471);
             tableLayoutPanelData.TabIndex = 0;
             // 
@@ -98,7 +98,7 @@
             panelTop.Dock = DockStyle.Fill;
             panelTop.Location = new Point(3, 3);
             panelTop.Name = "panelTop";
-            panelTop.Size = new Size(881, 55);
+            panelTop.Size = new Size(881, 59);
             panelTop.TabIndex = 0;
             // 
             // btnSendSelected
@@ -131,9 +131,9 @@
             panelFilters.Controls.Add(chkBoxNotNaoEnviadas);
             panelFilters.Controls.Add(chkBoxNotSended);
             panelFilters.Dock = DockStyle.Fill;
-            panelFilters.Location = new Point(3, 64);
+            panelFilters.Location = new Point(3, 68);
             panelFilters.Name = "panelFilters";
-            panelFilters.Size = new Size(881, 45);
+            panelFilters.Size = new Size(881, 44);
             panelFilters.TabIndex = 1;
             // 
             // maskedTextBoxFinalDate
@@ -219,10 +219,10 @@
             dataGridViewDataNotification.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewDataNotification.Columns.AddRange(new DataGridViewColumn[] { ColumnSelect, ColumnId, ColumnDate, ColumnDist, ColumnNumTitulo, ColumnTotal, ColumnDev, ColumnDocDev, ColumnDevEmail, ColumnCred, ColumnSended, ColumnDateSend, ColumnLido, ColumnTabelionato, ColumnPortador });
             dataGridViewDataNotification.Dock = DockStyle.Fill;
-            dataGridViewDataNotification.Location = new Point(3, 115);
+            dataGridViewDataNotification.Location = new Point(3, 118);
             dataGridViewDataNotification.Name = "dataGridViewDataNotification";
             dataGridViewDataNotification.ReadOnly = true;
-            dataGridViewDataNotification.Size = new Size(881, 353);
+            dataGridViewDataNotification.Size = new Size(881, 350);
             dataGridViewDataNotification.TabIndex = 2;
             // 
             // ColumnSelect
@@ -327,6 +327,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(887, 471);
             Controls.Add(pnlMain);
+            FormBorderStyle = FormBorderStyle.None;
             Name = "FormNotification";
             Text = "FormNotification";
             pnlMain.ResumeLayout(false);
