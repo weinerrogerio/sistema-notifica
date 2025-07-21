@@ -15,6 +15,7 @@ namespace SistemaNotifica
         public static AuthService AuthService { get; private set; }
         public static ProtestoService ProtestoService { get; private set; }
         public static ImportService ImportService { get; private set; }
+        public static NotificationService NotificationService { get; private set; }
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -28,23 +29,24 @@ namespace SistemaNotifica
             // Passar a mesma instância para todos os serviços
             AuthService = new AuthService(ApiService);
             ProtestoService = new ProtestoService(ApiService);
-            ImportService = new ImportService(ApiService); 
+            ImportService = new ImportService(ApiService);
+            NotificationService = new NotificationService(ApiService);
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.            
             //ApplicationConfiguration.Initialize();
-            Application.Run(new FormOrigin());
-            //using (FormLogin loginForm = new FormLogin())
-            //{
-            //    if (loginForm.ShowDialog() == DialogResult.OK)
-            //    {
-            //        // Login bem-sucedido, agora inicie o formulário principal da aplicação
-            //        Application.Run(new FormOrigin()); // Assumindo que FormOrigin é o seu formulário principal
-            //    }
-            //    else
-            //    {
-            //        Debug.WriteLine("ERRO EM PROGRAM.CS --> LOGIN");
-            //    }
-            //}
+            //Application.Run(new FormNotification());
+            using (FormLogin loginForm = new FormLogin())
+            {
+                if (loginForm.ShowDialog() == DialogResult.OK)
+                {
+                    // Login bem-sucedido, agora inicie o formulário principal da aplicação
+                    Application.Run(new FormOrigin()); // Assumindo que FormOrigin é o seu formulário principal
+                }
+                else
+                {
+                    Debug.WriteLine("ERRO EM PROGRAM.CS --> LOGIN");
+                }
+            }
         }
     }
 }

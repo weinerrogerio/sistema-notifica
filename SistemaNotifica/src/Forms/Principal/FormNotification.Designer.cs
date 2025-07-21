@@ -40,8 +40,8 @@
             labelInitialDate = new Label();
             dateTimePickerFinalDate = new DateTimePicker();
             dateTimePickerInitialDate = new DateTimePicker();
-            chkBoxNotNaoEnviadas = new CheckBox();
             chkBoxNotSended = new CheckBox();
+            chkBoxSended = new CheckBox();
             dataGridViewDataNotification = new DataGridView();
             ColumnSelect = new DataGridViewCheckBoxColumn();
             ColumnId = new DataGridViewTextBoxColumn();
@@ -58,6 +58,7 @@
             ColumnLido = new DataGridViewTextBoxColumn();
             ColumnTabelionato = new DataGridViewTextBoxColumn();
             ColumnPortador = new DataGridViewTextBoxColumn();
+            ColumnCreatedAt = new DataGridViewTextBoxColumn();
             pnlMain.SuspendLayout();
             tableLayoutPanelData.SuspendLayout();
             panelTop.SuspendLayout();
@@ -85,9 +86,9 @@
             tableLayoutPanelData.Location = new Point(0, 0);
             tableLayoutPanelData.Name = "tableLayoutPanelData";
             tableLayoutPanelData.RowCount = 3;
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 13.8951F));
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 10.7541676F));
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 75.35073F));
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 14.1786737F));
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 8.932827F));
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 76.888504F));
             tableLayoutPanelData.Size = new Size(887, 471);
             tableLayoutPanelData.TabIndex = 0;
             // 
@@ -98,7 +99,7 @@
             panelTop.Dock = DockStyle.Fill;
             panelTop.Location = new Point(3, 3);
             panelTop.Name = "panelTop";
-            panelTop.Size = new Size(881, 59);
+            panelTop.Size = new Size(881, 60);
             panelTop.TabIndex = 0;
             // 
             // btnSendSelected
@@ -128,17 +129,17 @@
             panelFilters.Controls.Add(labelInitialDate);
             panelFilters.Controls.Add(dateTimePickerFinalDate);
             panelFilters.Controls.Add(dateTimePickerInitialDate);
-            panelFilters.Controls.Add(chkBoxNotNaoEnviadas);
             panelFilters.Controls.Add(chkBoxNotSended);
+            panelFilters.Controls.Add(chkBoxSended);
             panelFilters.Dock = DockStyle.Fill;
-            panelFilters.Location = new Point(3, 68);
+            panelFilters.Location = new Point(3, 69);
             panelFilters.Name = "panelFilters";
-            panelFilters.Size = new Size(881, 44);
+            panelFilters.Size = new Size(881, 36);
             panelFilters.TabIndex = 1;
             // 
             // maskedTextBoxFinalDate
             // 
-            maskedTextBoxFinalDate.Location = new Point(642, 12);
+            maskedTextBoxFinalDate.Location = new Point(574, 12);
             maskedTextBoxFinalDate.Mask = "00/00/0000";
             maskedTextBoxFinalDate.Name = "maskedTextBoxFinalDate";
             maskedTextBoxFinalDate.Size = new Size(75, 23);
@@ -147,7 +148,7 @@
             // 
             // maskedTextBoxInitialDate
             // 
-            maskedTextBoxInitialDate.Location = new Point(455, 12);
+            maskedTextBoxInitialDate.Location = new Point(403, 12);
             maskedTextBoxInitialDate.Mask = "00/00/0000";
             maskedTextBoxInitialDate.Name = "maskedTextBoxInitialDate";
             maskedTextBoxInitialDate.Size = new Size(75, 23);
@@ -157,7 +158,7 @@
             // labelFinalDate
             // 
             labelFinalDate.AutoSize = true;
-            labelFinalDate.Location = new Point(577, 16);
+            labelFinalDate.Location = new Point(509, 16);
             labelFinalDate.Name = "labelFinalDate";
             labelFinalDate.Size = new Size(62, 15);
             labelFinalDate.TabIndex = 5;
@@ -166,7 +167,7 @@
             // labelInitialDate
             // 
             labelInitialDate.AutoSize = true;
-            labelInitialDate.Location = new Point(382, 16);
+            labelInitialDate.Location = new Point(330, 16);
             labelInitialDate.Name = "labelInitialDate";
             labelInitialDate.Size = new Size(68, 15);
             labelInitialDate.TabIndex = 4;
@@ -176,53 +177,58 @@
             // 
             dateTimePickerFinalDate.Format = DateTimePickerFormat.Short;
             dateTimePickerFinalDate.ImeMode = ImeMode.NoControl;
-            dateTimePickerFinalDate.Location = new Point(717, 12);
+            dateTimePickerFinalDate.Location = new Point(649, 12);
             dateTimePickerFinalDate.Name = "dateTimePickerFinalDate";
             dateTimePickerFinalDate.Size = new Size(14, 23);
             dateTimePickerFinalDate.TabIndex = 3;
             // 
             // dateTimePickerInitialDate
             // 
-            dateTimePickerInitialDate.Format = DateTimePickerFormat.Short;
-            dateTimePickerInitialDate.Location = new Point(530, 12);
+            dateTimePickerInitialDate.CalendarForeColor = SystemColors.Control;
+            dateTimePickerInitialDate.CalendarTitleForeColor = SystemColors.Control;
+            dateTimePickerInitialDate.CalendarTrailingForeColor = SystemColors.Control;
+            dateTimePickerInitialDate.Format = DateTimePickerFormat.Custom;
+            dateTimePickerInitialDate.Location = new Point(478, 12);
             dateTimePickerInitialDate.Name = "dateTimePickerInitialDate";
+            dateTimePickerInitialDate.RightToLeft = RightToLeft.No;
             dateTimePickerInitialDate.Size = new Size(14, 23);
             dateTimePickerInitialDate.TabIndex = 2;
-            // 
-            // chkBoxNotNaoEnviadas
-            // 
-            chkBoxNotNaoEnviadas.AutoSize = true;
-            chkBoxNotNaoEnviadas.Location = new Point(9, 15);
-            chkBoxNotNaoEnviadas.Name = "chkBoxNotNaoEnviadas";
-            chkBoxNotNaoEnviadas.Size = new Size(164, 19);
-            chkBoxNotNaoEnviadas.TabIndex = 1;
-            chkBoxNotNaoEnviadas.Text = "Notificações não enviadas";
-            chkBoxNotNaoEnviadas.UseVisualStyleBackColor = true;
-            chkBoxNotNaoEnviadas.CheckedChanged += chkBoxNotNaoEnviadas_CheckedChanged;
             // 
             // chkBoxNotSended
             // 
             chkBoxNotSended.AutoSize = true;
-            chkBoxNotSended.Location = new Point(202, 15);
+            chkBoxNotSended.Location = new Point(9, 15);
             chkBoxNotSended.Name = "chkBoxNotSended";
-            chkBoxNotSended.Size = new Size(147, 19);
-            chkBoxNotSended.TabIndex = 0;
-            chkBoxNotSended.Text = "Notificaçãoes Enviadas";
+            chkBoxNotSended.Size = new Size(164, 19);
+            chkBoxNotSended.TabIndex = 1;
+            chkBoxNotSended.Text = "Notificações não enviadas";
             chkBoxNotSended.UseVisualStyleBackColor = true;
             chkBoxNotSended.CheckedChanged += chkBoxNotSended_CheckedChanged;
+            // 
+            // chkBoxSended
+            // 
+            chkBoxSended.AutoSize = true;
+            chkBoxSended.Location = new Point(179, 15);
+            chkBoxSended.Name = "chkBoxSended";
+            chkBoxSended.Size = new Size(147, 19);
+            chkBoxSended.TabIndex = 0;
+            chkBoxSended.Text = "Notificaçãoes Enviadas";
+            chkBoxSended.UseVisualStyleBackColor = true;
+            chkBoxSended.CheckedChanged += chkBoxSended_CheckedChanged;
             // 
             // dataGridViewDataNotification
             // 
             dataGridViewDataNotification.AllowUserToAddRows = false;
             dataGridViewDataNotification.AllowUserToDeleteRows = false;
             dataGridViewDataNotification.AllowUserToOrderColumns = true;
+            dataGridViewDataNotification.BackgroundColor = SystemColors.Control;
             dataGridViewDataNotification.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewDataNotification.Columns.AddRange(new DataGridViewColumn[] { ColumnSelect, ColumnId, ColumnDate, ColumnDist, ColumnNumTitulo, ColumnTotal, ColumnDev, ColumnDocDev, ColumnDevEmail, ColumnCred, ColumnSended, ColumnDateSend, ColumnLido, ColumnTabelionato, ColumnPortador });
+            dataGridViewDataNotification.Columns.AddRange(new DataGridViewColumn[] { ColumnSelect, ColumnId, ColumnDate, ColumnDist, ColumnNumTitulo, ColumnTotal, ColumnDev, ColumnDocDev, ColumnDevEmail, ColumnCred, ColumnSended, ColumnDateSend, ColumnLido, ColumnTabelionato, ColumnPortador, ColumnCreatedAt });
             dataGridViewDataNotification.Dock = DockStyle.Fill;
-            dataGridViewDataNotification.Location = new Point(3, 118);
+            dataGridViewDataNotification.Location = new Point(3, 111);
             dataGridViewDataNotification.Name = "dataGridViewDataNotification";
             dataGridViewDataNotification.ReadOnly = true;
-            dataGridViewDataNotification.Size = new Size(881, 350);
+            dataGridViewDataNotification.Size = new Size(881, 357);
             dataGridViewDataNotification.TabIndex = 2;
             // 
             // ColumnSelect
@@ -321,6 +327,12 @@
             ColumnPortador.ReadOnly = true;
             ColumnPortador.Visible = false;
             // 
+            // ColumnCreatedAt
+            // 
+            ColumnCreatedAt.HeaderText = "Criado Em";
+            ColumnCreatedAt.Name = "ColumnCreatedAt";
+            ColumnCreatedAt.ReadOnly = true;
+            // 
             // FormNotification
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -345,10 +357,10 @@
         private TableLayoutPanel tableLayoutPanelData;
         private Panel panelTop;
         private Panel panelFilters;
-        private CheckBox chkBoxNotSended;
+        private CheckBox chkBoxSended;
         private DataGridView dataGridViewDataNotification;
         private DateTimePicker dateTimePickerInitialDate;
-        private CheckBox chkBoxNotNaoEnviadas;
+        private CheckBox chkBoxNotSended;
         private DateTimePicker dateTimePickerFinalDate;
         private Label labelFinalDate;
         private Label labelInitialDate;
@@ -371,5 +383,6 @@
         private DataGridViewTextBoxColumn ColumnLido;
         private DataGridViewTextBoxColumn ColumnTabelionato;
         private DataGridViewTextBoxColumn ColumnPortador;
+        private DataGridViewTextBoxColumn ColumnCreatedAt;
     }
 }

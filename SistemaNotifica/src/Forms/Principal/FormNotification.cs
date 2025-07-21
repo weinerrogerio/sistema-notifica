@@ -19,6 +19,7 @@ namespace SistemaNotifica.src.Forms.Principal
     {
         private Common _common;
         private List<Notificacao> dados = [];
+        private NotificationService _notificacaoService;
 
         public FormNotification()
         {
@@ -28,8 +29,10 @@ namespace SistemaNotifica.src.Forms.Principal
             ConfigDateTimePickers();
             ConfigCheckBoxes();
             _common = new Common();
+            _notificacaoService = Program.NotificationService;
             LoadDistribData();
         }
+
 
         private void ConfigDataGridView()
         {
@@ -101,12 +104,12 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private void ConfigCheckBoxes()
         {
-            chkBoxNotNaoEnviadas.Checked = true;
-            chkBoxNotSended.Checked = false;
+            chkBoxNotSended.Checked = true;
+            chkBoxSended.Checked = false;
 
             // Eventos já existem no designer, mas garantir que estão configurados
-            chkBoxNotNaoEnviadas.CheckedChanged += ChkBoxNotNaoEnviadas_CheckedChanged;
-            chkBoxNotSended.CheckedChanged += ChkBoxNotSended_CheckedChanged;
+            chkBoxNotSended.CheckedChanged += chkBoxNotSended_CheckedChanged;
+            chkBoxSended.CheckedChanged += chkBoxSended_CheckedChanged;
         }
 
         // Eventos para sincronizar MaskedTextBox com DateTimePicker
@@ -143,15 +146,19 @@ namespace SistemaNotifica.src.Forms.Principal
         }
 
         // Eventos dos CheckBoxes
-        private void ChkBoxNotNaoEnviadas_CheckedChanged(object sender, EventArgs e)
+        private void chkBoxNotSended_CheckedChanged(object sender, EventArgs e)
         {
             ApplyFilters();
         }
 
-        private void ChkBoxNotSended_CheckedChanged(object sender, EventArgs e)
+        private void chkBoxSended_CheckedChanged(object sender, EventArgs e)
         {
             ApplyFilters();
         }
+
+
+
+
 
         // Método para interpretar datas com valores padrão
         private bool TryParseDateWithDefaults(string dateText, out DateTime result)
@@ -215,7 +222,9 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             try
             {
-                dados = JsonSerializer.Deserialize<List<Notificacao>>(jsonData);
+
+                dados = await _notificacaoService.SearchNotAsync();
+                Debug.WriteLine($"LoadDistribData - Sucesso: {dados.Count} registros encontrados {dados}");
                 ApplyFilters();
             }
             catch (Exception ex)
@@ -261,40 +270,37 @@ namespace SistemaNotifica.src.Forms.Principal
 
             var resultado = dados.AsEnumerable();
 
-            // Filtro por status de envio
-            bool mostrarNaoEnviados = chkBoxNotNaoEnviadas.Checked;
-            bool mostrarEnviados = chkBoxNotSended.Checked;
+            bool mostrarNaoEnviados = chkBoxNotSended.Checked;
+            bool mostrarEnviados = chkBoxSended.Checked;
 
-            // Se nenhum checkbox estiver marcado, não mostrar nada
+            // Se ambos os checkboxes estiverem desmarcados, retornar uma lista vazia
             if (!mostrarNaoEnviados && !mostrarEnviados)
-                return new List<Notificacao>();
-
-            // Aplicar filtro de status
-            if (!(mostrarNaoEnviados && mostrarEnviados))
             {
-                // Aplicar filtro baseado no que está marcado
-                List<Notificacao> registrosFiltrados = new List<Notificacao>();
-
-                if (mostrarNaoEnviados)
-                {
-                    registrosFiltrados.AddRange(resultado.Where(n => !n.emailEnviado));
-                }
-
-                if (mostrarEnviados)
-                {
-                    registrosFiltrados.AddRange(resultado.Where(n => n.emailEnviado));
-                }
-
-                resultado = registrosFiltrados.AsEnumerable();
+                return new List<Notificacao>();
+            }
+            // Se ambos estiverem marcados, não aplicar filtro por status (mostrar todos)
+            else if (mostrarNaoEnviados && mostrarEnviados)
+            {
+                // Não faz nada, resultado já contém todos os dados.
+                // O filtro de data será aplicado em seguida.
+            }
+            // Se apenas 'Não Enviados' estiver marcado
+            else if (mostrarNaoEnviados)
+            {
+                resultado = resultado.Where(n => !n.emailEnviado);
+            }
+            // Se apenas 'Enviados' estiver marcado
+            else if (mostrarEnviados)
+            {
+                resultado = resultado.Where(n => n.emailEnviado);
             }
 
-
-            // Filtro por data
+            // Filtro por data de criação (createdAt)
             DateTime? dataInicial = null;
             DateTime? dataFinal = null;
 
             if (TryParseDateWithDefaults(maskedTextBoxInitialDate.Text, out DateTime dtInicial))
-                dataInicial = dtInicial;
+                dataInicial = dtInicial.Date; // Assegura que é apenas a data, sem hora
 
             if (TryParseDateWithDefaults(maskedTextBoxFinalDate.Text, out DateTime dtFinal))
                 dataFinal = dtFinal.Date.AddDays(1).AddTicks(-1); // Incluir todo o dia final
@@ -304,17 +310,21 @@ namespace SistemaNotifica.src.Forms.Principal
             {
                 resultado = resultado.Where(n =>
                 {
+                    // Pega a data de criação e normaliza para comparar apenas a data
+                    DateTime createdAtDate = n.createdAt.Date;
+
                     bool dentroIntervalo = true;
 
                     if (dataInicial.HasValue)
-                        dentroIntervalo = dentroIntervalo && n.dataDistribuicao >= dataInicial.Value;
+                        dentroIntervalo = dentroIntervalo && createdAtDate >= dataInicial.Value;
 
                     if (dataFinal.HasValue)
-                        dentroIntervalo = dentroIntervalo && n.dataDistribuicao <= dataFinal.Value;
+                        dentroIntervalo = dentroIntervalo && createdAtDate <= dataFinal.Value.Date;
 
                     return dentroIntervalo;
                 });
             }
+
             return resultado.ToList();
         }
 
@@ -346,6 +356,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 row.Cells["ColumnLido"].Value = dado.emailLido ? "Sim" : "Não"; // Corrigido para lido
                 row.Cells["ColumnTabelionato"].Value = dado.tabelionato;
                 row.Cells["ColumnPortador"].Value = dado.portador;
+                row.Cells["ColumnCreatedAt"].Value = dado.createdAt;
                 if (dado.emailEnviado)
                 {
                     row.DefaultCellStyle.BackColor = Color.Green;
@@ -357,25 +368,7 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-        // Eventos originais mantidos para compatibilidade
-        private void chkBoxNotNaoEnviadas_CheckedChanged(object sender, EventArgs e)
-        {
-            ApplyFilters();
-        }
-
-        private void chkBoxNotSended_CheckedChanged(object sender, EventArgs e)
-        {
-            ApplyFilters();
-        }
-
-
-
-        
-
-
-
-
-
+       
 
         // Obter IDs das linhas selecionadas
         public List<int> ObterLinhasSelecionadas()
@@ -410,78 +403,23 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private void btnSendSelected_Click(object sender, EventArgs e)
         {
-            //ObterLinhasSelecionadas();
-            Debug.WriteLine($"IDs selecionados: {string.Join(", ", ObterLinhasSelecionadas())}");
+            //NOTA: Elaborar melhor essa mensagem
+            DialogResult result = MessageBox.Show("Alerta: Ao confirmar, as notificações serão enviadas aos destinatários. Seus dados serão tratados conforme nossa Política de Privacidade, em conformidade com a LGPD. " +
+                "\n É totalmente desaconceslhavel enviar duas notificações da mesma distribuição para o mesmo destinatário.","Deseja enviar as notificações marcadas?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                var selecionados = ObterLinhasSelecionadas();
+                Debug.WriteLine($"IDs selecionados: {string.Join(", ", ObterLinhasSelecionadas())}");
+
+                // TODO: Implementar envio de notificação para os IDs selecionados depois
+            }
+            else if (result == DialogResult.No)
+            {
+                // Código a ser executado se o usuário clicar em "Não"
+                MessageBox.Show("Você clicou em Não!");
+            }
+            
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-        // JSON de exemplo mantido
-        string jsonData = @"
-        [
-            {
-            ""logNotificacaoId"": 1,
-            ""nomeDevedor"": ""SANTA INTERMEDIACOES DE CONSORCIOS - EIRELI"",
-            ""devedorEmail"": ""emailcliente@gmail.com"",
-            ""docDevedor"": ""89674486000157"",
-            ""numTitulo"": ""1234a"",
-            ""distribuicao"": ""4564862"",
-            ""dataDistribuicao"": ""2025-07-18T03:00:00.000Z"",
-            ""valorTotal"": 223936,
-            ""dataVencimento"": ""11/03/2022"",
-            ""tabelionato"": ""3° Oficio de Protesto de Títulos de Curitiba"",
-            ""credor"": ""PREFEITURA MUNICIPAL DE PINHAIS"",
-            ""portador"": ""Prefeitura do Município de Curitiba"",
-            ""dataEnvio"": ""2022-03-08T03:00:00.000Z"",
-            ""emailEnviado"": true,
-            ""lido"": true
-          },
-          {
-            ""logNotificacaoId"": 2,
-            ""nomeDevedor"": ""CLEUZA DE MORAIS COSTA"",
-            ""devedorEmail"": ""emailcliente@gmail.com"",
-            ""docDevedor"": ""54322656000150"",
-            ""distribuicao"": ""123456"",
-            ""numTitulo"": ""1234a"",
-            ""dataDistribuicao"": ""2025-07-10T03:00:00.000Z"",
-            ""valorTotal"": 60651,
-            ""dataVencimento"": ""20/10/2019"",
-            ""tabelionato"": ""1° Oficio de Protesto de Títulos de Curitiba"",
-            ""credor"": ""SECRETARIA DE ESTADO DA FAZENDA PUBLICA"",
-            ""portador"": ""PGE - PROCURADORIA GERAL DO ESTADO"",
-            ""dataEnvio"": ""2022-03-08T03:00:00.000Z"",
-            ""emailEnviado"": false,
-            ""lido"": false  
-          },
-          {
-            ""logNotificacaoId"": 3,
-            ""nomeDevedor"": ""FELIPE AUGUSTO ZIMMERMANN SACHSER"",
-            ""devedorEmail"": ""emailcliente@hotmail.com"",
-            ""docDevedor"": ""31191927000180"",
-            ""distribuicao"": ""654548"",
-            ""numTitulo"": ""1234a"",
-            ""dataDistribuicao"": ""2025-07-01T03:00:00.000Z"",
-            ""valorTotal"": 85218,
-            ""dataVencimento"": ""11/03/2022"",
-            ""tabelionato"": ""2° Oficio de Protesto de Títulos de Curitiba"",
-            ""credor"": ""PREFEITURA MUNICIPAL DE CURITIBA"",
-            ""portador"": ""Prefeitura do Município de Curitiba"",
-            ""dataEnvio"": null,
-            ""emailEnviado"": false,
-            ""lido"": false
-          }
-        ]";
-
-        
     }
 }

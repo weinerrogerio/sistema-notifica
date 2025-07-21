@@ -71,7 +71,7 @@
             nightControlBox1.EnableMaximizeColor = Color.FromArgb(160, 160, 160);
             nightControlBox1.EnableMinimizeButton = true;
             nightControlBox1.EnableMinimizeColor = Color.FromArgb(160, 160, 160);
-            nightControlBox1.Location = new Point(1025, 1);
+            nightControlBox1.Location = new Point(1025, 0);
             nightControlBox1.MaximizeHoverColor = Color.FromArgb(15, 255, 255, 255);
             nightControlBox1.MaximizeHoverForeColor = Color.White;
             nightControlBox1.MinimizeHoverColor = Color.FromArgb(15, 255, 255, 255);
@@ -190,7 +190,6 @@
             ClientSize = new Size(1164, 641);
             Controls.Add(panelLogin);
             Controls.Add(topPanel);
-            FormBorderStyle = FormBorderStyle.None;
             Name = "FormLogin";
             Load += FormLogin_Load;
             topPanel.ResumeLayout(false);
