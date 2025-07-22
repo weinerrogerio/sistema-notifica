@@ -29,10 +29,6 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLogin));
-            topPanel = new Panel();
-            nightControlBox1 = new ReaLTaiizor.Controls.NightControlBox();
-            imgLogo = new PictureBox();
             panelLogin = new Panel();
             lblErrorMessage = new Label();
             btnLogin = new Button();
@@ -41,55 +37,8 @@
             lblTituloLogin = new Label();
             lblInstrucaoLogin = new Label();
             poisonContextMenuStrip1 = new ReaLTaiizor.Controls.PoisonContextMenuStrip(components);
-            topPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
             panelLogin.SuspendLayout();
             SuspendLayout();
-            // 
-            // topPanel
-            // 
-            topPanel.BackColor = Color.Gray;
-            topPanel.Controls.Add(nightControlBox1);
-            topPanel.Controls.Add(imgLogo);
-            topPanel.Dock = DockStyle.Top;
-            topPanel.Location = new Point(0, 0);
-            topPanel.Name = "topPanel";
-            topPanel.Size = new Size(1164, 33);
-            topPanel.TabIndex = 1;
-            // 
-            // nightControlBox1
-            // 
-            nightControlBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            nightControlBox1.BackColor = Color.Transparent;
-            nightControlBox1.CloseHoverColor = Color.FromArgb(232, 17, 35);
-            nightControlBox1.CloseHoverForeColor = Color.White;
-            nightControlBox1.DefaultLocation = true;
-            nightControlBox1.DisableMaximizeColor = Color.FromArgb(105, 105, 105);
-            nightControlBox1.DisableMinimizeColor = Color.FromArgb(105, 105, 105);
-            nightControlBox1.EnableCloseColor = Color.FromArgb(160, 160, 160);
-            nightControlBox1.EnableMaximizeButton = true;
-            nightControlBox1.EnableMaximizeColor = Color.FromArgb(160, 160, 160);
-            nightControlBox1.EnableMinimizeButton = true;
-            nightControlBox1.EnableMinimizeColor = Color.FromArgb(160, 160, 160);
-            nightControlBox1.Location = new Point(1025, 0);
-            nightControlBox1.MaximizeHoverColor = Color.FromArgb(15, 255, 255, 255);
-            nightControlBox1.MaximizeHoverForeColor = Color.White;
-            nightControlBox1.MinimizeHoverColor = Color.FromArgb(15, 255, 255, 255);
-            nightControlBox1.MinimizeHoverForeColor = Color.White;
-            nightControlBox1.Name = "nightControlBox1";
-            nightControlBox1.Size = new Size(139, 31);
-            nightControlBox1.TabIndex = 2;
-            // 
-            // imgLogo
-            // 
-            imgLogo.BackgroundImageLayout = ImageLayout.None;
-            imgLogo.Image = (Image)resources.GetObject("imgLogo.Image");
-            imgLogo.Location = new Point(4, 2);
-            imgLogo.Name = "imgLogo";
-            imgLogo.Size = new Size(90, 30);
-            imgLogo.SizeMode = PictureBoxSizeMode.Zoom;
-            imgLogo.TabIndex = 2;
-            imgLogo.TabStop = false;
             // 
             // panelLogin
             // 
@@ -101,7 +50,7 @@
             panelLogin.Controls.Add(textBoxName);
             panelLogin.Controls.Add(lblTituloLogin);
             panelLogin.Controls.Add(lblInstrucaoLogin);
-            panelLogin.Location = new Point(350, 150);
+            panelLogin.Location = new Point(235, 60);
             panelLogin.Name = "panelLogin";
             panelLogin.Size = new Size(460, 380);
             panelLogin.TabIndex = 6;
@@ -187,13 +136,10 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(230, 230, 230);
-            ClientSize = new Size(1164, 641);
+            ClientSize = new Size(934, 461);
             Controls.Add(panelLogin);
-            Controls.Add(topPanel);
             Name = "FormLogin";
             Load += FormLogin_Load;
-            topPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)imgLogo).EndInit();
             panelLogin.ResumeLayout(false);
             panelLogin.PerformLayout();
             ResumeLayout(false);
@@ -202,9 +148,6 @@
         #endregion
 
         private Label lblTituloLogin;
-        private ReaLTaiizor.Controls.NightControlBox nightControlBox1;
-        private Panel topPanel;
-        private PictureBox imgLogo;
         private TextBox textBoxName;
         private ReaLTaiizor.Controls.PoisonContextMenuStrip poisonContextMenuStrip1;
         private TextBox textBoxPassword;

@@ -34,14 +34,14 @@ namespace SistemaNotifica
             this.textBoxName.Paint += new PaintEventHandler(this.TextBox_Paint);
             this.textBoxPassword.Paint += new PaintEventHandler(this.TextBox_Paint);
 
-            this.Resize += new EventHandler(this.FormLogin_Resize);            
-            this.EnableDragByControl(this.topPanel);
+            this.Resize += new EventHandler(this.FormLogin_Resize); 
             
             _authService = Program.AuthService;
             this.KeyPreview = true;
 
-
-
+            this.Text = "Sistema de Notificações - Versão 1.0";
+            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "src/icons", "Logo_transp_pb.ico");
+            if (File.Exists(iconPath)) this.Icon = new Icon(iconPath);
         }
 
 

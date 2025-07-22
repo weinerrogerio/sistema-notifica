@@ -27,18 +27,11 @@ namespace SistemaNotifica
             InitializeComponent();
             this.Text = "Sistema de Notificações - Versão 1.0";
             string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "src/icons", "Logo_transp_pb.ico");
-            if (File.Exists(iconPath))
-            {
-                Debug.WriteLine("+++++++++++++++++++++++++Ícone encontrado: +++++++++++++++++++++++++++++++" + iconPath);
-                this.Icon = new Icon(iconPath);
-            }
-            else
-            {
-                Debug.WriteLine("---------------------Ícone não encontrado: -------------------" + iconPath);
-            }
+            if (File.Exists(iconPath)) this.Icon = new Icon(iconPath);
 
-                //this.EnableDragByControl(this.topPanel);
-                objForm = new Form();
+
+            //this.EnableDragByControl(this.topPanel);
+            objForm = new Form();
             ApplyPerformanceOptimizations();
             sidebarMenu.Width = SIDEBAR_MIN_WIDTH;
             tableLayoutNotificacao.Height = SUBMENU_MIN_HEIGHT;
