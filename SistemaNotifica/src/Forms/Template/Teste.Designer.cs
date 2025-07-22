@@ -72,7 +72,7 @@
             panelMain.Dock = DockStyle.Fill;
             panelMain.Location = new Point(0, 0);
             panelMain.Name = "panelMain";
-            panelMain.Size = new Size(800, 450);
+            panelMain.Size = new Size(940, 450);
             panelMain.TabIndex = 1;
             // 
             // statusStrip
@@ -80,7 +80,7 @@
             statusStrip.Items.AddRange(new ToolStripItem[] { lblStatus });
             statusStrip.Location = new Point(0, 428);
             statusStrip.Name = "statusStrip";
-            statusStrip.Size = new Size(800, 22);
+            statusStrip.Size = new Size(940, 22);
             statusStrip.TabIndex = 5;
             // 
             // lblStatus
@@ -96,7 +96,7 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(800, 450);
+            panel1.Size = new Size(940, 450);
             panel1.TabIndex = 2;
             // 
             // panel2
@@ -107,7 +107,7 @@
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(800, 450);
+            panel2.Size = new Size(940, 450);
             panel2.TabIndex = 6;
             // 
             // pnlPreviewTemplateMain
@@ -117,7 +117,7 @@
             pnlPreviewTemplateMain.Dock = DockStyle.Fill;
             pnlPreviewTemplateMain.Location = new Point(199, 35);
             pnlPreviewTemplateMain.Name = "pnlPreviewTemplateMain";
-            pnlPreviewTemplateMain.Size = new Size(601, 415);
+            pnlPreviewTemplateMain.Size = new Size(741, 415);
             pnlPreviewTemplateMain.TabIndex = 5;
             // 
             // pnlPreviewTemplate
@@ -126,7 +126,7 @@
             pnlPreviewTemplate.Dock = DockStyle.Fill;
             pnlPreviewTemplate.Location = new Point(0, 30);
             pnlPreviewTemplate.Name = "pnlPreviewTemplate";
-            pnlPreviewTemplate.Size = new Size(601, 385);
+            pnlPreviewTemplate.Size = new Size(741, 385);
             pnlPreviewTemplate.TabIndex = 3;
             // 
             // webPreview
@@ -134,7 +134,7 @@
             webPreview.Dock = DockStyle.Fill;
             webPreview.Location = new Point(0, 0);
             webPreview.Name = "webPreview";
-            webPreview.Size = new Size(601, 385);
+            webPreview.Size = new Size(741, 385);
             webPreview.TabIndex = 0;
             // 
             // label1
@@ -146,7 +146,7 @@
             label1.Location = new Point(0, 0);
             label1.Name = "label1";
             label1.Padding = new Padding(10, 0, 0, 0);
-            label1.Size = new Size(601, 30);
+            label1.Size = new Size(741, 30);
             label1.TabIndex = 2;
             label1.Text = "Preview do Template";
             label1.TextAlign = ContentAlignment.MiddleLeft;
@@ -214,7 +214,7 @@
             toolbarPanel.Dock = DockStyle.Top;
             toolbarPanel.Location = new Point(0, 0);
             toolbarPanel.Name = "toolbarPanel";
-            toolbarPanel.Size = new Size(800, 35);
+            toolbarPanel.Size = new Size(940, 35);
             toolbarPanel.TabIndex = 0;
             // 
             // btnEdit
@@ -301,7 +301,7 @@
             // 
             panelAux.BackColor = Color.FromArgb(192, 0, 0);
             panelAux.Dock = DockStyle.Right;
-            panelAux.Location = new Point(800, 0);
+            panelAux.Location = new Point(940, 0);
             panelAux.Name = "panelAux";
             panelAux.Size = new Size(0, 450);
             panelAux.TabIndex = 1;
@@ -315,7 +315,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(940, 450);
             Controls.Add(panelMain);
             Name = "Teste";
             Text = "Teste";

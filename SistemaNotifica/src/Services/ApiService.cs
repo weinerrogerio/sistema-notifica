@@ -30,16 +30,16 @@ namespace SistemaNotifica.src.Services
 
         // Método para definir o token de autorização
         public void SetAuthorizationHeader(string token)
-            {
-                _httpClient.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            }
+        {
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        }
 
         // Método para remover o token de autorização
         public void ClearAuthorizationHeader()
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = null;
-            }
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
 
         public string BuildUrlWithQueryParams(string endpoint, Dictionary<string, string> parameters = null)
         {
@@ -78,7 +78,7 @@ namespace SistemaNotifica.src.Services
             var response = await _httpClient.PostAsync($"{_baseUrl}/{endpoint}", content);
 
             string fullUrl = $"{_baseUrl}/{endpoint}"; // A URL completa 
-            Debug.WriteLine($"[API Service] Enviando POST para: {fullUrl}"); 
+            Debug.WriteLine($"[API Service] Enviando POST para: {fullUrl}");
             Debug.WriteLine($"[API Service] Corpo da requisição: {json}");
 
             response.EnsureSuccessStatusCode();
@@ -141,11 +141,6 @@ namespace SistemaNotifica.src.Services
                 return JsonConvert.DeserializeObject<TResponse>(responseJson);
             }
         }
-
-
-        // --------------Adicione PutAsync, DeleteAsync conforme necessário...-------------------------------
-
-
 
 
 
@@ -236,7 +231,6 @@ namespace SistemaNotifica.src.Services
             try
             {
                 Debug.WriteLine($"Fazendo upload: {nomeArquivo}");
-
                 using (var form = new MultipartFormDataContent())
                 {
                     // Adicionar o arquivo como conteúdo binário

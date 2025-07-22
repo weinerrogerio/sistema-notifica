@@ -36,7 +36,8 @@ namespace SistemaNotifica.src.Forms.Template
         public TemplateManagerForm()
         {
             InitializeComponent();
-            _apiService = new ApiService("http://localhost:3000/");
+            //_apiService = new ApiService("http://localhost:3000/");
+            _apiService = Program.ApiService;
             _templates = new List<EmailTemplate>();
             _templateCards = new List<TemplateCard>();
             SetupTemplatePanel();

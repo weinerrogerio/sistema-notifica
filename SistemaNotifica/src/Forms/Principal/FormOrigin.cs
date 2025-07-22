@@ -199,12 +199,6 @@ namespace SistemaNotifica
         }
 
 
-        
-
-
-
-
-
         private void adjustWidth(int barWidth)
         {
             // Suspende layout para evitar múltiplos redesenhos
@@ -316,7 +310,7 @@ namespace SistemaNotifica
             if (!(TelaAtual == "FormNotification"))
             {
                 ResetSidebarButtons();
-                btnImportarDoc.BackColor = Color.FromArgb(60, 60, 60);
+                btnEnviarNotificacao.BackColor = Color.FromArgb(60, 60, 60);
                 objForm?.Close();
                 objForm = new FormNotification
                 {
@@ -337,7 +331,7 @@ namespace SistemaNotifica
             if (!(TelaAtual == "TemplateManagerForm"))
             {
                 ResetSidebarButtons();
-                btnImportarDoc.BackColor = Color.FromArgb(60, 60, 60);
+                btnConfigNotificacao.BackColor = Color.FromArgb(60, 60, 60);
                 objForm?.Close();
                 objForm = new TemplateManagerForm
                 {
