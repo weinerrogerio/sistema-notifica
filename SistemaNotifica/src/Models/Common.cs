@@ -221,16 +221,22 @@ namespace SistemaNotifica.src.Models
 
     public class NotificacaoDetalhe
     {
-        public int logNotificacaoId { get; set; }
-       
+        public int logNotificacaoId { get; set; }       
         public DateTime? dataEnvio { get; set; }
-        public bool emailEnviado { get; set; }
-        public bool emailLido { get; set; }
-
+        public bool? emailEnviado { get; set; }
+        public bool? emailLido { get; set; }
         public Devedor? Devedor { get; set; }
         public Protesto? Protesto { get; set; }
+    }
 
+    public class SendNotificationRequest
+    {
+        public int logNotificacaoId { get; set; }
+    }
 
+    public class NotificacaoResponse { 
+        public bool success { get; set; } = false;   
+        public string message { get; set; } 
     }
 
 

@@ -120,6 +120,7 @@
             btnSend.TabIndex = 0;
             btnSend.Text = "Enviar Todas Notificações Pendentes";
             btnSend.UseVisualStyleBackColor = true;
+            btnSend.Click += btnSend_Click;
             // 
             // panelFilters
             // 

@@ -49,7 +49,7 @@ namespace SistemaNotifica.src.Services
         {
             try
             {
-                var response = await _apiService.GetAsync<List<Notificacao>>("/log-notificacao/busca-completa");
+                var response = await _apiService.GetAsync<List<Notificacao>>("log-notificacao/busca-completa");
                 return response;
             }
             catch (HttpRequestException ex)
@@ -68,5 +68,35 @@ namespace SistemaNotifica.src.Services
                 throw;
             }
         }
+
+
+        //ENVIA UMA NOTIFICAÇÃO PARA O DEVEDOR --> CHAMAR VARIAS VEZES SE MUITOS ENVIOS
+        public async Task<NotificacaoResponse> SendNotification(int notificacaoId)
+        {
+            try
+            {
+                var requestData = new SendNotificationRequest { logNotificacaoId = notificacaoId };
+                NotificacaoResponse response = await _apiService.PostAsync<SendNotificationRequest, NotificacaoResponse>("notification/intimacao-tracking", requestData);
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine($"Erro HTTP: {ex.Message}");
+                throw new Exception($"Erro durante o processo de busca de Notificações::::Erro de conexão com o servidor. Verifique sua rede ou a URL da API. Detalhes: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                Debug.WriteLine($"Erro JSON: {ex.Message}");
+                throw new Exception($"Erro ao processar resposta da API: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro geral: {ex.Message}");
+                throw;
+            }
+        }
+
+
+
     }
 }

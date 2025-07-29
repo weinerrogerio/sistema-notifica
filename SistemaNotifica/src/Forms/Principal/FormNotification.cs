@@ -15,11 +15,13 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace SistemaNotifica.src.Forms.Principal
 {
+
+
     public partial class FormNotification : Form
     {
         private Common _common;
         private List<Notificacao> dados = [];
-        private NotificationService _notificacaoService;
+        private NotificationService _notificationService;
 
         public FormNotification()
         {
@@ -29,7 +31,7 @@ namespace SistemaNotifica.src.Forms.Principal
             ConfigDateTimePickers();
             ConfigCheckBoxes();
             _common = new Common();
-            _notificacaoService = Program.NotificationService;
+            _notificationService = Program.NotificationService;
             LoadDistribData();
         }
 
@@ -223,7 +225,7 @@ namespace SistemaNotifica.src.Forms.Principal
             try
             {
 
-                dados = await _notificacaoService.SearchNotAsync();
+                dados = await _notificationService.SearchNotAsync();
                 Debug.WriteLine($"LoadDistribData - Sucesso: {dados.Count} registros encontrados {dados}");
                 ApplyFilters();
             }
@@ -368,58 +370,190 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-       
 
-        // Obter IDs das linhas selecionadas
-        public List<int> ObterLinhasSelecionadas()
+
+        
+
+
+
+        // Selecionar/Deselecionar todas
+        private void SelecionarTodas()
         {
-            List<int> idsSelecionados = new List<int>();
+            foreach (DataGridViewRow row in dataGridViewDataNotification.Rows)
+            {
+                row.Cells["ColumnSelect"].Value = true;
+            }
+        }       
+
+        private void btnSend_Click(object sender, EventArgs e)
+        {
+            SelecionarTodas();
+        }
+
+
+
+        private void btnSendSelected_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 1. Validar se há registros selecionados
+                var registrosSelecionados = ObterRegistrosSelecionados();
+
+                if (registrosSelecionados.Count == 0)
+                {
+                    MessageBox.Show("Nenhuma notificação foi selecionada. Por favor, selecione pelo menos uma notificação para enviar.",
+                                  "Nenhum registro selecionado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 2. Verificar se algum registro já foi enviado
+                var registrosJaEnviados = registrosSelecionados.Where(r => r.emailEnviado).ToList();
+
+                if (registrosJaEnviados.Any())
+                {       
+                    DialogResult resultJaEnviados = MessageBox.Show("\n Existem registros selecionados que ja foram enviados anteriormente.\n  " +
+                        "Ao continuar os registros ja enviados serao ignorados.\n\n" +
+                        "Deseja continuar enviando apenas as notificações que ainda nao foram enviadas?\n",
+                        "Registros ja enviados detectados",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                    if (resultJaEnviados == DialogResult.No)
+                    {
+                        return;
+                    }
+                    // Remove os já enviados da lista
+                    registrosSelecionados = registrosSelecionados.Where(r => !r.emailEnviado).ToList();
+                }
+
+                // 3. Verificar se ainda restam registros para enviar
+                if (registrosSelecionados.Count == 0)
+                {
+                    MessageBox.Show("Todos os registros selecionados já foram enviados anteriormente.",
+                                  "Nenhum registro para enviar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // 4. Mostrar confirmação final 
+                int quantidadeRegistros = registrosSelecionados.Count;
+                string mensagemConfirmacao = "Ao confirmar, as notificações serão enviadas aos ${quantidadeRegistros} destinatários.\n" +
+                    "As notificações serão tratadas conforme nossa Política de Privacidade, em conformidade com a LGPD.\n\n" +
+                    "É totalmente NÃO RECOMENDADO enviar mais de uma notificação da mesma distribuição para o mesmo destinatário.\n\n" +
+                    "Confirma o envio das notificações?";
+
+                DialogResult resultFinal = MessageBox.Show(mensagemConfirmacao,
+                                                          "Confirmar envio de notificações",
+                                                          MessageBoxButtons.YesNo,
+                                                          MessageBoxIcon.Question);
+
+                if (resultFinal == DialogResult.Yes)
+                {
+                    // TODO: Implementar envio das notificações
+                    EnviarNotificacoes(registrosSelecionados);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao processar envio de notificações: {ex.Message}",
+                               "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Debug.WriteLine($"Erro em btnSendSelected_Click: {ex.Message}");
+            }
+        }
+
+        public List<Notificacao> ObterRegistrosSelecionados()
+        {
+            List<Notificacao> registrosSelecionados = new List<Notificacao>();
 
             foreach (DataGridViewRow row in dataGridViewDataNotification.Rows)
             {
-                // CORREÇÃO: Verificar se o checkbox está marcado
                 if (row.Cells["ColumnSelect"].Value != null &&
                     Convert.ToBoolean(row.Cells["ColumnSelect"].Value) == true)
                 {
                     if (row.Tag != null)
                     {
-                        idsSelecionados.Add((int)row.Tag);
+                        var registro = new Notificacao
+                        {
+                            logNotificacaoId = (int)row.Tag,
+                            nomeDevedor = row.Cells["ColumnDev"].Value?.ToString() ?? "",
+                            devedorEmail = row.Cells["ColumnDevEmail"].Value?.ToString() ?? "",
+                            distribuicao = row.Cells["ColumnDist"].Value?.ToString() ?? "",
+                            numTitulo = row.Cells["ColumnNumTitulo"].Value?.ToString() ?? "",
+                            emailEnviado = row.Cells["ColumnSended"].Value?.ToString() == "Sim"
+                        };
+
+                        registrosSelecionados.Add(registro);
                     }
                 }
             }
-            return idsSelecionados;
+            return registrosSelecionados;
+        }
+       
+
+
+
+        private async void EnviarNotificacoes(List<Notificacao> registros)
+        {
+            // TODO: Interface de progresso seria interessante aqui
+            int sucessos = 0;
+            int falhas = 0;
+            List<string> errosDetalhados = new List<string>();
+
+            foreach (var registro in registros)
+            {
+                try
+                {    
+                    // Chama o serviço de envio
+                    var response = await _notificationService.SendNotification(registro.logNotificacaoId);
+
+                    if (response.success) // Assumindo que você corrigiu a classe NotificacaoResponse
+                    {
+                        sucessos++;
+                        // Atualizar a linha no grid para mostrar como enviada
+                        AtualizarLinhaComoEnviada(registro.logNotificacaoId);
+                    }
+                    else
+                    {
+                        falhas++;
+                        errosDetalhados.Add($"{registro.nomeDevedor}: {response.message}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    falhas++;
+                    errosDetalhados.Add($"{registro.nomeDevedor}: {ex.Message}");
+                    Debug.WriteLine($"Erro ao enviar notificação para {registro.nomeDevedor}: {ex.Message}");
+                }
+            }
+
+            // Mostrar resultado final
+            string mensagemResultado = $"Envio concluído!\n\n";
+            mensagemResultado += $"✅ Sucessos: {sucessos}\n";
+            mensagemResultado += $"❌ Falhas: {falhas}";
+
+            if (errosDetalhados.Any())
+            {
+                mensagemResultado += "\n\nDetalhes dos erros:\n";
+                mensagemResultado += string.Join("\n", errosDetalhados);
+            }
+
+            MessageBox.Show(mensagemResultado, "Resultado do Envio",
+                           MessageBoxButtons.OK,
+                           falhas == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
         }
 
-
-
-        // Selecionar/Deselecionar todas
-        private void SelecionarTodas(bool selecionar)
+        private void AtualizarLinhaComoEnviada(int logNotificacaoId)
         {
             foreach (DataGridViewRow row in dataGridViewDataNotification.Rows)
             {
-                row.Cells["ColumnSelect"].Value = selecionar;
+                if (row.Tag != null && (int)row.Tag == logNotificacaoId)
+                {
+                    row.Cells["ColumnSended"].Value = "Sim";
+                    row.Cells["ColumnDateSend"].Value = DateTime.Now;
+                    row.DefaultCellStyle.BackColor = Color.Green;
+                    break;
+                }
             }
         }
 
-        private void btnSendSelected_Click(object sender, EventArgs e)
-        {
-            //NOTA: Elaborar melhor essa mensagem
-            DialogResult result = MessageBox.Show("Alerta: Ao confirmar, as notificações serão enviadas aos destinatários. Seus dados serão tratados conforme nossa Política de Privacidade, em conformidade com a LGPD. " +
-                "\n É totalmente desaconceslhavel enviar duas notificações da mesma distribuição para o mesmo destinatário.","Deseja enviar as notificações marcadas?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
-            {
-                var selecionados = ObterLinhasSelecionadas();
-                Debug.WriteLine($"IDs selecionados: {string.Join(", ", ObterLinhasSelecionadas())}");
-
-                // TODO: Implementar envio de notificação para os IDs selecionados depois
-            }
-            else if (result == DialogResult.No)
-            {
-                // Código a ser executado se o usuário clicar em "Não"
-                MessageBox.Show("Você clicou em Não!");
-            }
-            
-        }
 
     }
 }
