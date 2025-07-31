@@ -2,6 +2,7 @@ using System.Diagnostics;
 using SistemaNotifica.src.Forms;
 using SistemaNotifica.src.Forms.Principal;
 using SistemaNotifica.src.Forms.Template;
+using SistemaNotifica.src.Models;
 using SistemaNotifica.src.Services;
 
 namespace SistemaNotifica
@@ -34,7 +35,8 @@ namespace SistemaNotifica
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.            
             //ApplicationConfiguration.Initialize();
-            //Application.Run(new Teste());
+            //List<ErroDetalhado> erros = new List<ErroDetalhado>();
+            //Application.Run(new FormLogin());
             using (FormLogin loginForm = new FormLogin())
             {
                 if (loginForm.ShowDialog() == DialogResult.OK)

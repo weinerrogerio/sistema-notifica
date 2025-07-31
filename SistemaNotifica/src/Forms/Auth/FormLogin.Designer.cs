@@ -58,12 +58,11 @@
             // lblErrorMessage
             // 
             lblErrorMessage.ForeColor = Color.Red;
-            lblErrorMessage.Location = new Point(0, 142);
-            lblErrorMessage.Name = "lblErrorMessage";
-            lblErrorMessage.Size = new Size(200, 15);
+            lblErrorMessage.Location = new Point(0, 142); 
+            lblErrorMessage.Size = new Size(panelLogin.Width, 15); 
             lblErrorMessage.TabIndex = 8;
-            lblErrorMessage.Text = "labelError";
-            lblErrorMessage.TextAlign = ContentAlignment.MiddleCenter;
+            lblErrorMessage.Text = "labelError"; 
+            lblErrorMessage.TextAlign = ContentAlignment.MiddleCenter; 
             lblErrorMessage.Visible = false;
             // 
             // btnLogin

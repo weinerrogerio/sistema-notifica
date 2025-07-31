@@ -56,13 +56,14 @@ namespace SistemaNotifica.src.Services
             // Captura exceções de comunicação HTTP (rede, servidor indisponível)
             catch (HttpRequestException ex)
             {
+                Debug.WriteLine($"Erro HttpRequestException em LoginAsync: {ex.Message}");
                 throw new Exception($"Erro de conexão com o servidor. Verifique sua rede ou a URL da API. Detalhes: {ex.Message}");
             }
             // Captura outras exceções gerais
             catch (Exception ex)
             {
                 // Inclui a mensagem da exceção interna para depuração
-                throw new Exception($"Erro durante o processo de login: {ex.Message}");
+                throw new Exception($"{ex.Message}");
             }
         }
 

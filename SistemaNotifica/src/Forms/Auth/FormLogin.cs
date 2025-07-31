@@ -34,8 +34,8 @@ namespace SistemaNotifica
             this.textBoxName.Paint += new PaintEventHandler(this.TextBox_Paint);
             this.textBoxPassword.Paint += new PaintEventHandler(this.TextBox_Paint);
 
-            this.Resize += new EventHandler(this.FormLogin_Resize); 
-            
+            this.Resize += new EventHandler(this.FormLogin_Resize);
+
             _authService = Program.AuthService;
             this.KeyPreview = true;
 
@@ -47,20 +47,18 @@ namespace SistemaNotifica
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
-            //string username = textBoxName.Text.Trim();
-            //string password = textBoxPassword.Text;
-            string username = "admin".Trim();
-            string password = "123456".Trim();
+            string username = textBoxName.Text.Trim();
+            string password = textBoxPassword.Text.Trim();
+            //string username = "admin".Trim();
+            //string password = "123456".Trim();
 
             // MELHORAR ISSO ADICIONAR BORDAS VERMELHAS AOS CAMPOS E MENSAGENS DE ERRO
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
                 //MessageBox.Show("Por favor, preencha todos os campos.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 // Aqui você pode exibir a mensagem no seu label de erro ou borda do campo
-                lblErrorMessage.Text = "Por favor, preencha todos os campos."; // Assumindo que você tem um Label lblErrorMessage
-                lblErrorMessage.Visible = true; // Torna o label visível
-                                                // Ou mudar a borda dos textboxes: textBoxName.BorderStyle = BorderStyle.FixedSingle; textBoxName.BackColor = Color.LightCoral;
-
+                lblErrorMessage.Text = "Por favor, preencha todos os campos.";
+                lblErrorMessage.Visible = true;
                 return;
             }
             // Limpa mensagens de erro anteriores
@@ -77,10 +75,10 @@ namespace SistemaNotifica
                 // Chama a API para autenticação
                 // var loginResponse = await _apiService.LoginAsync(nome, senha);
                 LoginResponse response = await _authService.LoginAsync(username, password);
-                
+
 
                 if (response != null && !string.IsNullOrEmpty(response.AccessToken)) // Ou response.IsSuccess == true 
-                {                    
+                {
                     this.DialogResult = DialogResult.OK;
                     this.Close(); // Fecha o formulário de login
                 }
@@ -97,13 +95,16 @@ namespace SistemaNotifica
             catch (HttpRequestException ex)
             {
                 // Erro de conexão de rede ou servidor inacessível
-                lblErrorMessage.Text = $"Erro de conexão: Verifique sua internet ou contate o suporte. Detalhes: {ex.Message}";
+                //lblErrorMessage.Text = $"Erro de conexão: Verifique sua internet ou contate o suporte. Detalhes: {ex.Message}";
+                lblErrorMessage.Text = $"Usuário ou senha inválidos.";
                 lblErrorMessage.Visible = true;
+
             }
             catch (Exception ex)
             {
                 // Outros erros inesperados
-                lblErrorMessage.Text = $"Ocorreu um erro inesperado: {ex.Message}";
+                Debug.WriteLine($"Ocorreu um erro inesperado: {ex.Message}");
+                lblErrorMessage.Text = $"{ex.Message}";
                 lblErrorMessage.Visible = true;
             }
             finally
@@ -242,6 +243,6 @@ namespace SistemaNotifica
             }
         }
 
-        
+
     }
 }

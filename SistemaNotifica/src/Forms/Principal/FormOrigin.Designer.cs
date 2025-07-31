@@ -39,12 +39,10 @@ namespace SistemaNotifica
             panel5 = new Panel();
             panelHome = new Panel();
             btnHome = new Button();
-            panelImportar = new Panel();
-            btnImportarDoc = new Button();
             panelData = new Panel();
             btnDados = new Button();
-            panelSettings = new Panel();
-            btnSettings = new Button();
+            panelImportar = new Panel();
+            btnImportarDoc = new Button();
             tableLayoutNotificacao = new TableLayoutPanel();
             panelNotificação = new Panel();
             btnNotificacao = new Button();
@@ -52,10 +50,12 @@ namespace SistemaNotifica
             btnConfigNotificacao = new Button();
             panelSubMenu1 = new Panel();
             btnEnviarNotificacao = new Button();
-            panelUser = new Panel();
-            btnUser = new Button();
+            panelSettings = new Panel();
+            btnSettings = new Button();
             panelSobre = new Panel();
             btnSobre = new Button();
+            panelUser = new Panel();
+            btnUser = new Button();
             panelLogOut = new Panel();
             btnLogOut = new Button();
             sidebarTransition = new System.Windows.Forms.Timer(components);
@@ -65,15 +65,15 @@ namespace SistemaNotifica
             ((System.ComponentModel.ISupportInitialize)btnHam).BeginInit();
             sidebarMenu.SuspendLayout();
             panelHome.SuspendLayout();
-            panelImportar.SuspendLayout();
             panelData.SuspendLayout();
-            panelSettings.SuspendLayout();
+            panelImportar.SuspendLayout();
             tableLayoutNotificacao.SuspendLayout();
             panelNotificação.SuspendLayout();
             panelSubMenu2.SuspendLayout();
             panelSubMenu1.SuspendLayout();
-            panelUser.SuspendLayout();
+            panelSettings.SuspendLayout();
             panelSobre.SuspendLayout();
+            panelUser.SuspendLayout();
             panelLogOut.SuspendLayout();
             SuspendLayout();
             // 
@@ -82,7 +82,6 @@ namespace SistemaNotifica
             topPanel.BackColor = Color.Gray;
             topPanel.Controls.Add(metroLabelUser);
             topPanel.Controls.Add(metroLabelUsuario);
-            topPanel.Controls.Add(btnHam);
             topPanel.Dock = DockStyle.Top;
             topPanel.Location = new Point(0, 0);
             topPanel.Name = "topPanel";
@@ -121,7 +120,7 @@ namespace SistemaNotifica
             // btnHam
             // 
             btnHam.Image = (Image)resources.GetObject("btnHam.Image");
-            btnHam.Location = new Point(4, 1);
+            btnHam.Location = new Point(3, 3);
             btnHam.Name = "btnHam";
             btnHam.Size = new Size(38, 32);
             btnHam.SizeMode = PictureBoxSizeMode.CenterImage;
@@ -132,14 +131,15 @@ namespace SistemaNotifica
             // sidebarMenu
             // 
             sidebarMenu.BackColor = Color.Black;
+            sidebarMenu.Controls.Add(btnHam);
             sidebarMenu.Controls.Add(panel5);
             sidebarMenu.Controls.Add(panelHome);
-            sidebarMenu.Controls.Add(panelImportar);
             sidebarMenu.Controls.Add(panelData);
-            sidebarMenu.Controls.Add(panelSettings);
+            sidebarMenu.Controls.Add(panelImportar);
             sidebarMenu.Controls.Add(tableLayoutNotificacao);
-            sidebarMenu.Controls.Add(panelUser);
+            sidebarMenu.Controls.Add(panelSettings);
             sidebarMenu.Controls.Add(panelSobre);
+            sidebarMenu.Controls.Add(panelUser);
             sidebarMenu.Controls.Add(panelLogOut);
             sidebarMenu.Dock = DockStyle.Left;
             sidebarMenu.FlowDirection = FlowDirection.TopDown;
@@ -150,15 +150,15 @@ namespace SistemaNotifica
             // 
             // panel5
             // 
-            panel5.Location = new Point(3, 3);
+            panel5.Location = new Point(3, 41);
             panel5.Name = "panel5";
-            panel5.Size = new Size(200, 23);
+            panel5.Size = new Size(187, 11);
             panel5.TabIndex = 4;
             // 
             // panelHome
             // 
             panelHome.Controls.Add(btnHome);
-            panelHome.Location = new Point(0, 29);
+            panelHome.Location = new Point(0, 55);
             panelHome.Margin = new Padding(0);
             panelHome.Name = "panelHome";
             panelHome.Size = new Size(187, 44);
@@ -172,7 +172,7 @@ namespace SistemaNotifica
             btnHome.ForeColor = Color.White;
             btnHome.Image = (Image)resources.GetObject("btnHome.Image");
             btnHome.ImageAlign = ContentAlignment.MiddleLeft;
-            btnHome.Location = new Point(-11, -5);
+            btnHome.Location = new Point(-10, -5);
             btnHome.Name = "btnHome";
             btnHome.Padding = new Padding(15, 0, 0, 0);
             btnHome.Size = new Size(214, 56);
@@ -181,36 +181,10 @@ namespace SistemaNotifica
             btnHome.UseVisualStyleBackColor = false;
             btnHome.Click += btnHome_Click;
             // 
-            // panelImportar
-            // 
-            panelImportar.Controls.Add(btnImportarDoc);
-            panelImportar.Location = new Point(0, 73);
-            panelImportar.Margin = new Padding(0);
-            panelImportar.Name = "panelImportar";
-            panelImportar.Size = new Size(187, 44);
-            panelImportar.TabIndex = 3;
-            // 
-            // btnImportarDoc
-            // 
-            btnImportarDoc.BackColor = Color.Black;
-            btnImportarDoc.FlatStyle = FlatStyle.Flat;
-            btnImportarDoc.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnImportarDoc.ForeColor = Color.White;
-            btnImportarDoc.Image = (Image)resources.GetObject("btnImportarDoc.Image");
-            btnImportarDoc.ImageAlign = ContentAlignment.MiddleLeft;
-            btnImportarDoc.Location = new Point(-11, -11);
-            btnImportarDoc.Name = "btnImportarDoc";
-            btnImportarDoc.Padding = new Padding(15, 0, 0, 0);
-            btnImportarDoc.Size = new Size(209, 61);
-            btnImportarDoc.TabIndex = 2;
-            btnImportarDoc.Text = "     Importar";
-            btnImportarDoc.UseVisualStyleBackColor = false;
-            btnImportarDoc.Click += btnImportarDoc_Click;
-            // 
             // panelData
             // 
             panelData.Controls.Add(btnDados);
-            panelData.Location = new Point(0, 117);
+            panelData.Location = new Point(0, 99);
             panelData.Margin = new Padding(0);
             panelData.Name = "panelData";
             panelData.Size = new Size(187, 44);
@@ -224,7 +198,7 @@ namespace SistemaNotifica
             btnDados.ForeColor = Color.White;
             btnDados.Image = (Image)resources.GetObject("btnDados.Image");
             btnDados.ImageAlign = ContentAlignment.MiddleLeft;
-            btnDados.Location = new Point(-12, -5);
+            btnDados.Location = new Point(-10, -6);
             btnDados.Name = "btnDados";
             btnDados.Padding = new Padding(15, 0, 0, 0);
             btnDados.Size = new Size(214, 56);
@@ -232,30 +206,31 @@ namespace SistemaNotifica
             btnDados.Text = " Dados";
             btnDados.UseVisualStyleBackColor = false;
             // 
-            // panelSettings
+            // panelImportar
             // 
-            panelSettings.Controls.Add(btnSettings);
-            panelSettings.Location = new Point(0, 161);
-            panelSettings.Margin = new Padding(0);
-            panelSettings.Name = "panelSettings";
-            panelSettings.Size = new Size(187, 44);
-            panelSettings.TabIndex = 6;
+            panelImportar.Controls.Add(btnImportarDoc);
+            panelImportar.Location = new Point(0, 143);
+            panelImportar.Margin = new Padding(0);
+            panelImportar.Name = "panelImportar";
+            panelImportar.Size = new Size(187, 44);
+            panelImportar.TabIndex = 3;
             // 
-            // btnSettings
+            // btnImportarDoc
             // 
-            btnSettings.BackColor = Color.Black;
-            btnSettings.FlatStyle = FlatStyle.Flat;
-            btnSettings.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnSettings.ForeColor = Color.White;
-            btnSettings.Image = (Image)resources.GetObject("btnSettings.Image");
-            btnSettings.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSettings.Location = new Point(-11, -5);
-            btnSettings.Name = "btnSettings";
-            btnSettings.Padding = new Padding(15, 0, 0, 0);
-            btnSettings.Size = new Size(214, 56);
-            btnSettings.TabIndex = 2;
-            btnSettings.Text = "Configurações";
-            btnSettings.UseVisualStyleBackColor = false;
+            btnImportarDoc.BackColor = Color.Black;
+            btnImportarDoc.FlatStyle = FlatStyle.Flat;
+            btnImportarDoc.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnImportarDoc.ForeColor = Color.White;
+            btnImportarDoc.Image = (Image)resources.GetObject("btnImportarDoc.Image");
+            btnImportarDoc.ImageAlign = ContentAlignment.MiddleLeft;
+            btnImportarDoc.Location = new Point(-9, -11);
+            btnImportarDoc.Name = "btnImportarDoc";
+            btnImportarDoc.Padding = new Padding(15, 0, 0, 0);
+            btnImportarDoc.Size = new Size(209, 61);
+            btnImportarDoc.TabIndex = 2;
+            btnImportarDoc.Text = "     Importar";
+            btnImportarDoc.UseVisualStyleBackColor = false;
+            btnImportarDoc.Click += btnImportarDoc_Click;
             // 
             // tableLayoutNotificacao
             // 
@@ -264,7 +239,7 @@ namespace SistemaNotifica
             tableLayoutNotificacao.Controls.Add(panelNotificação, 0, 0);
             tableLayoutNotificacao.Controls.Add(panelSubMenu2, 0, 2);
             tableLayoutNotificacao.Controls.Add(panelSubMenu1, 0, 1);
-            tableLayoutNotificacao.Location = new Point(0, 205);
+            tableLayoutNotificacao.Location = new Point(0, 187);
             tableLayoutNotificacao.Margin = new Padding(0);
             tableLayoutNotificacao.Name = "tableLayoutNotificacao";
             tableLayoutNotificacao.RowCount = 3;
@@ -291,7 +266,7 @@ namespace SistemaNotifica
             btnNotificacao.ForeColor = Color.White;
             btnNotificacao.Image = (Image)resources.GetObject("btnNotificacao.Image");
             btnNotificacao.ImageAlign = ContentAlignment.MiddleLeft;
-            btnNotificacao.Location = new Point(-12, -5);
+            btnNotificacao.Location = new Point(-8, -6);
             btnNotificacao.Name = "btnNotificacao";
             btnNotificacao.Padding = new Padding(15, 0, 0, 0);
             btnNotificacao.Size = new Size(214, 56);
@@ -355,35 +330,35 @@ namespace SistemaNotifica
             btnEnviarNotificacao.UseVisualStyleBackColor = false;
             btnEnviarNotificacao.Click += btnEnviarNotificacao_Click;
             // 
-            // panelUser
+            // panelSettings
             // 
-            panelUser.Controls.Add(btnUser);
-            panelUser.Location = new Point(0, 248);
-            panelUser.Margin = new Padding(0);
-            panelUser.Name = "panelUser";
-            panelUser.Size = new Size(187, 44);
-            panelUser.TabIndex = 5;
+            panelSettings.Controls.Add(btnSettings);
+            panelSettings.Location = new Point(0, 230);
+            panelSettings.Margin = new Padding(0);
+            panelSettings.Name = "panelSettings";
+            panelSettings.Size = new Size(187, 44);
+            panelSettings.TabIndex = 6;
             // 
-            // btnUser
+            // btnSettings
             // 
-            btnUser.BackColor = Color.Black;
-            btnUser.FlatStyle = FlatStyle.Flat;
-            btnUser.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnUser.ForeColor = Color.White;
-            btnUser.Image = (Image)resources.GetObject("btnUser.Image");
-            btnUser.ImageAlign = ContentAlignment.MiddleLeft;
-            btnUser.Location = new Point(-12, -5);
-            btnUser.Name = "btnUser";
-            btnUser.Padding = new Padding(15, 0, 0, 0);
-            btnUser.Size = new Size(214, 56);
-            btnUser.TabIndex = 2;
-            btnUser.Text = "Ususário";
-            btnUser.UseVisualStyleBackColor = false;
+            btnSettings.BackColor = Color.Black;
+            btnSettings.FlatStyle = FlatStyle.Flat;
+            btnSettings.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnSettings.ForeColor = Color.White;
+            btnSettings.Image = (Image)resources.GetObject("btnSettings.Image");
+            btnSettings.ImageAlign = ContentAlignment.MiddleLeft;
+            btnSettings.Location = new Point(-9, -5);
+            btnSettings.Name = "btnSettings";
+            btnSettings.Padding = new Padding(15, 0, 0, 0);
+            btnSettings.Size = new Size(214, 56);
+            btnSettings.TabIndex = 2;
+            btnSettings.Text = "Configurações";
+            btnSettings.UseVisualStyleBackColor = false;
             // 
             // panelSobre
             // 
             panelSobre.Controls.Add(btnSobre);
-            panelSobre.Location = new Point(0, 292);
+            panelSobre.Location = new Point(0, 274);
             panelSobre.Margin = new Padding(0);
             panelSobre.Name = "panelSobre";
             panelSobre.Size = new Size(187, 44);
@@ -397,7 +372,7 @@ namespace SistemaNotifica
             btnSobre.ForeColor = Color.White;
             btnSobre.Image = (Image)resources.GetObject("btnSobre.Image");
             btnSobre.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSobre.Location = new Point(-9, -5);
+            btnSobre.Location = new Point(-9, -2);
             btnSobre.Name = "btnSobre";
             btnSobre.Padding = new Padding(15, 0, 0, 0);
             btnSobre.Size = new Size(214, 56);
@@ -405,10 +380,35 @@ namespace SistemaNotifica
             btnSobre.Text = "Sobre";
             btnSobre.UseVisualStyleBackColor = false;
             // 
+            // panelUser
+            // 
+            panelUser.Controls.Add(btnUser);
+            panelUser.Location = new Point(0, 318);
+            panelUser.Margin = new Padding(0);
+            panelUser.Name = "panelUser";
+            panelUser.Size = new Size(187, 44);
+            panelUser.TabIndex = 5;
+            // 
+            // btnUser
+            // 
+            btnUser.BackColor = Color.Black;
+            btnUser.FlatStyle = FlatStyle.Flat;
+            btnUser.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnUser.ForeColor = Color.White;
+            btnUser.Image = (Image)resources.GetObject("btnUser.Image");
+            btnUser.ImageAlign = ContentAlignment.MiddleLeft;
+            btnUser.Location = new Point(-10, -5);
+            btnUser.Name = "btnUser";
+            btnUser.Padding = new Padding(15, 0, 0, 0);
+            btnUser.Size = new Size(214, 56);
+            btnUser.TabIndex = 2;
+            btnUser.Text = "Ususário";
+            btnUser.UseVisualStyleBackColor = false;
+            // 
             // panelLogOut
             // 
             panelLogOut.Controls.Add(btnLogOut);
-            panelLogOut.Location = new Point(0, 336);
+            panelLogOut.Location = new Point(0, 362);
             panelLogOut.Margin = new Padding(0);
             panelLogOut.Name = "panelLogOut";
             panelLogOut.Size = new Size(187, 44);
@@ -422,7 +422,7 @@ namespace SistemaNotifica
             btnLogOut.ForeColor = Color.White;
             btnLogOut.Image = (Image)resources.GetObject("btnLogOut.Image");
             btnLogOut.ImageAlign = ContentAlignment.MiddleLeft;
-            btnLogOut.Location = new Point(-7, -5);
+            btnLogOut.Location = new Point(-8, -5);
             btnLogOut.Name = "btnLogOut";
             btnLogOut.Padding = new Padding(15, 0, 0, 0);
             btnLogOut.Size = new Size(214, 56);
@@ -465,15 +465,15 @@ namespace SistemaNotifica
             ((System.ComponentModel.ISupportInitialize)btnHam).EndInit();
             sidebarMenu.ResumeLayout(false);
             panelHome.ResumeLayout(false);
-            panelImportar.ResumeLayout(false);
             panelData.ResumeLayout(false);
-            panelSettings.ResumeLayout(false);
+            panelImportar.ResumeLayout(false);
             tableLayoutNotificacao.ResumeLayout(false);
             panelNotificação.ResumeLayout(false);
             panelSubMenu2.ResumeLayout(false);
             panelSubMenu1.ResumeLayout(false);
-            panelUser.ResumeLayout(false);
+            panelSettings.ResumeLayout(false);
             panelSobre.ResumeLayout(false);
+            panelUser.ResumeLayout(false);
             panelLogOut.ResumeLayout(false);
             ResumeLayout(false);
         }

@@ -1,10 +1,12 @@
 using SistemaNotifica.src.Forms;
 using SistemaNotifica.src.Forms.Principal;
 using SistemaNotifica.src.Forms.Template;
+using SistemaNotifica.src.Models;
 using SistemaNotifica.src.Utils;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Reflection;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 
 namespace SistemaNotifica
@@ -22,22 +24,19 @@ namespace SistemaNotifica
 
         private const int SUBMENU_MIN_HEIGHT = 42;
         private const int SUBMENU_MAX_HEIGHT = 125;
+        
         public FormOrigin()
         {
             InitializeComponent();
-            this.Text = "Sistema de Notificações - Versão 1.0";
+            this.Text = $"Sistema de Notificações - Versão 1.0       Usuário: {Sessao.UsuarioLogado}";        
             string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "src/icons", "Logo_transp_pb.ico");
             if (File.Exists(iconPath)) this.Icon = new Icon(iconPath);
-
-
             //this.EnableDragByControl(this.topPanel);
             objForm = new Form();
             ApplyPerformanceOptimizations();
             sidebarMenu.Width = SIDEBAR_MIN_WIDTH;
             tableLayoutNotificacao.Height = SUBMENU_MIN_HEIGHT;
             openHomeDefaultForm();
-
-
         }
         private void FormOrigin_Load(object sender, EventArgs e)
         {

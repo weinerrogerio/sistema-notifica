@@ -486,58 +486,134 @@ namespace SistemaNotifica.src.Forms.Principal
             }
             return registrosSelecionados;
         }
-       
+
 
 
 
         private async void EnviarNotificacoes(List<Notificacao> registros)
         {
-            // TODO: Interface de progresso seria interessante aqui
             int sucessos = 0;
             int falhas = 0;
-            List<string> errosDetalhados = new List<string>();
+            List<ErroDetalhado> errosDetalhados = new List<ErroDetalhado>();
 
-            foreach (var registro in registros)
+            // Criar arquivo de log com timestamp
+            string nomeArquivoLog = $"envio_notificacoes_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+            string caminhoLog = Path.Combine(Application.StartupPath, "Logs", nomeArquivoLog);
+
+            // Garantir que a pasta Logs existe
+            Directory.CreateDirectory(Path.GetDirectoryName(caminhoLog));
+
+            try
             {
-                try
-                {    
-                    // Chama o serviço de envio
-                    var response = await _notificationService.SendNotification(registro.logNotificacaoId);
+                // Escrever cabeçalho do log
+                await File.WriteAllTextAsync(caminhoLog,
+                    $"=== LOG DE ENVIO DE NOTIFICAÇÕES ===\n" +
+                    $"Data/Hora: {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n" +
+                    $"Total de registros: {registros.Count}\n\n");
 
-                    if (response.success) // Assumindo que você corrigiu a classe NotificacaoResponse
+                foreach (var registro in registros)
+                {
+                    try
                     {
-                        sucessos++;
-                        // Atualizar a linha no grid para mostrar como enviada
-                        AtualizarLinhaComoEnviada(registro.logNotificacaoId);
+                        var response = await _notificationService.SendNotification(registro.logNotificacaoId);
+
+                        if (response.success)
+                        {
+                            sucessos++;
+                            AtualizarLinhaComoEnviada(registro.logNotificacaoId);
+
+                            // Log de sucesso (opcional, apenas para auditoria)
+                            await File.AppendAllTextAsync(caminhoLog,
+                                $"✅ SUCESSO - {registro.nomeDevedor} ({registro.docDevedor}) - {registro.devedorEmail}\n");
+                        }
+                        else
+                        {
+                            falhas++;
+                            var erro = new ErroDetalhado
+                            {
+                                NomeDevedor = registro.nomeDevedor,
+                                Documento = registro.docDevedor,
+                                Email = registro.devedorEmail,
+                                MensagemErro = response.message,
+                                TipoErro = "Resposta de Falha do Serviço"
+                            };
+                            errosDetalhados.Add(erro);
+
+                            // Log detalhado do erro
+                            await File.AppendAllTextAsync(caminhoLog,
+                                $"❌ FALHA - {registro.nomeDevedor} ({registro.docDevedor}) - {registro.devedorEmail}\n" +
+                                $"   Erro: {response.message}\n\n");
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
                         falhas++;
-                        errosDetalhados.Add($"{registro.nomeDevedor}: {response.message}");
+                        var erro = new ErroDetalhado
+                        {
+                            NomeDevedor = registro.nomeDevedor,
+                            Documento = registro.docDevedor,
+                            Email = registro.devedorEmail,
+                            MensagemErro = ex.Message,
+                            TipoErro = "Exceção"
+                        };
+                        errosDetalhados.Add(erro);
+
+                        // Log detalhado da exceção
+                        await File.AppendAllTextAsync(caminhoLog,
+                            $"💥 EXCEÇÃO - {registro.nomeDevedor} ({registro.docDevedor}) - {registro.devedorEmail}\n" +
+                            $"   Erro: {ex.Message}\n" +
+                            $"   Stack: {ex.StackTrace}\n\n");
+
+                        Debug.WriteLine($"Erro ao enviar notificação para {registro.nomeDevedor}: {ex.Message}");
                     }
                 }
-                catch (Exception ex)
-                {
-                    falhas++;
-                    errosDetalhados.Add($"{registro.nomeDevedor}: {ex.Message}");
-                    Debug.WriteLine($"Erro ao enviar notificação para {registro.nomeDevedor}: {ex.Message}");
-                }
-            }
 
-            // Mostrar resultado final
+                // Escrever resumo no log
+                await File.AppendAllTextAsync(caminhoLog,
+                    $"\n=== RESUMO ===\n" +
+                    $"Sucessos: {sucessos}\n" +
+                    $"Falhas: {falhas}\n" +
+                    $"Total: {registros.Count}\n");
+
+                // Exibir resultado
+                ExibirResultado(sucessos, falhas, errosDetalhados, caminhoLog);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro crítico durante o envio: {ex.Message}",
+                               "Erro Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ExibirResultado(int sucessos, int falhas, List<ErroDetalhado> errosDetalhados, string caminhoLog)
+        {
             string mensagemResultado = $"Envio concluído!\n\n";
             mensagemResultado += $"✅ Sucessos: {sucessos}\n";
             mensagemResultado += $"❌ Falhas: {falhas}";
 
-            if (errosDetalhados.Any())
+            if (falhas == 0)
             {
-                mensagemResultado += "\n\nDetalhes dos erros:\n";
-                mensagemResultado += string.Join("\n", errosDetalhados);
+                MessageBox.Show(mensagemResultado, "Resultado do Envio",
+                               MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+            else
+            {
+                // Se há falhas, dar opções ao usuário
+                mensagemResultado += $"\n\nLog salvo em: {Path.GetFileName(caminhoLog)}";
 
-            MessageBox.Show(mensagemResultado, "Resultado do Envio",
-                           MessageBoxButtons.OK,
-                           falhas == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+                var result = MessageBox.Show(
+                    mensagemResultado + "\n\nDeseja visualizar os detalhes dos erros?",
+                    "Resultado do Envio",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Abrir form com detalhes dos erros
+                    var formErros = new FormDetalhesErrosNotification(errosDetalhados, caminhoLog);
+                    formErros.ShowDialog();
+                }
+            }
         }
 
         private void AtualizarLinhaComoEnviada(int logNotificacaoId)

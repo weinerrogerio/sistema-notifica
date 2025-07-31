@@ -239,7 +239,15 @@ namespace SistemaNotifica.src.Models
         public string message { get; set; } 
     }
 
-
+    public class ErroDetalhado
+    {
+        public string NomeDevedor { get; set; }
+        public string Documento { get; set; }
+        public string Email { get; set; }
+        public string MensagemErro { get; set; }
+        public string TipoErro { get; set; }
+        public DateTime DataHora { get; set; } = DateTime.Now;
+    }
 
 
 

@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
+using SistemaNotifica.src.Models;
+using System;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.IO;
-using Newtonsoft.Json;
-using SistemaNotifica.src.Models;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 
 namespace SistemaNotifica.src.Services
@@ -71,20 +72,154 @@ namespace SistemaNotifica.src.Services
 
 
         // POST /:endpoint
+        //public async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
+        //{
+        //    var json = JsonConvert.SerializeObject(data);
+        //    var content = new StringContent(json, Encoding.UTF8, "application/json");
+        //    var response = await _httpClient.PostAsync($"{_baseUrl}/{endpoint}", content);
+
+        //    string fullUrl = $"{_baseUrl}/{endpoint}"; // A URL completa 
+        //    Debug.WriteLine($"[API Service] Enviando POST para: {fullUrl}");
+        //    Debug.WriteLine($"[API Service] Corpo da requisição: {json}");
+
+        //    response.EnsureSuccessStatusCode();
+        //    var responseJson = await response.Content.ReadAsStringAsync();
+        //    return JsonConvert.DeserializeObject<TResponse>(responseJson);
+        //}
         public async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
         {
-            var json = JsonConvert.SerializeObject(data);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync($"{_baseUrl}/{endpoint}", content);
+            try
+            {
+                var json = JsonConvert.SerializeObject(data);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                string fullUrl = $"{_baseUrl}/{endpoint}";
 
-            string fullUrl = $"{_baseUrl}/{endpoint}"; // A URL completa 
-            Debug.WriteLine($"[API Service] Enviando POST para: {fullUrl}");
-            Debug.WriteLine($"[API Service] Corpo da requisição: {json}");
+                Debug.WriteLine($"[API Service] Enviando POST para: {fullUrl}");
+                Debug.WriteLine($"[API Service] Corpo da requisição: {json}");
 
-            response.EnsureSuccessStatusCode();
-            var responseJson = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TResponse>(responseJson);
+                var response = await _httpClient.PostAsync(fullUrl, content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                Debug.WriteLine($"[API Service] Status: {response.StatusCode}");
+                Debug.WriteLine($"[API Service] Resposta: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return JsonConvert.DeserializeObject<TResponse>(responseContent);
+                }
+                else
+                {
+                    // Tratamento específico para diferentes status codes
+                    switch (response.StatusCode)
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            string authErrorMessage = ExtractApiErrorMessage(responseContent) ?? "Credenciais inválidas.";
+                            throw new UnauthorizedAccessException(authErrorMessage);
+
+                        case HttpStatusCode.BadRequest:
+                            string badRequestMessage = ExtractApiErrorMessage(responseContent) ?? "Dados inválidos.";
+                            throw new ArgumentException(badRequestMessage);
+
+                        case HttpStatusCode.NotFound:
+                            string notFoundMessage = ExtractApiErrorMessage(responseContent) ?? "Recurso não encontrado.";
+                            throw new FileNotFoundException(notFoundMessage);
+
+                        case HttpStatusCode.InternalServerError:
+                            string serverErrorMessage = ExtractApiErrorMessage(responseContent) ?? "Erro interno do servidor.";
+                            throw new Exception($"Erro do servidor: {serverErrorMessage}");
+
+                        default:
+                            string generalErrorMessage = ExtractApiErrorMessage(responseContent) ?? response.ReasonPhrase;
+                            throw new HttpRequestException($"HTTP {(int)response.StatusCode}: {generalErrorMessage}");
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw; // Re-lança para manter tratamento específico
+            }
+            catch (ArgumentException)
+            {
+                throw; // Re-lança para manter tratamento específico
+            }
+            catch (FileNotFoundException)
+            {
+                throw; // Re-lança para manter tratamento específico
+            }
+            catch (HttpRequestException)
+            {
+                throw; // Re-lança para manter tratamento específico
+            }
+            catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
+            {
+                throw new TimeoutException("A requisição expirou. Verifique sua conexão.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[API Service] Erro inesperado: {ex.Message}");
+                throw new HttpRequestException($"Erro na comunicação com o servidor: {ex.Message}");
+            }
         }
+
+
+        private string ExtractApiErrorMessage(string responseContent)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(responseContent))
+                    return null;
+
+                Debug.WriteLine($"[API Service] Tentando extrair erro de: {responseContent}");
+
+                // Tenta deserializar como um objeto genérico primeiro
+                var errorObject = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
+
+                // Formato NestJS padrão: { "statusCode": 401, "message": "Credenciais Inválidas", "error": "Unauthorized" }
+                if (errorObject.ContainsKey("message"))
+                {
+                    string message = errorObject["message"].ToString();
+                    Debug.WriteLine($"[API Service] Mensagem extraída: {message}");
+                    return message;
+                }
+
+                // Formato alternativo: { "error": "mensagem de erro" }
+                if (errorObject.ContainsKey("error"))
+                {
+                    return errorObject["error"].ToString();
+                }
+
+                // Formato alternativo: { "detail": "mensagem de erro" }
+                if (errorObject.ContainsKey("detail"))
+                {
+                    return errorObject["detail"].ToString();
+                }
+
+                return null;
+            }
+            catch (JsonException ex)
+            {
+                Debug.WriteLine($"[API Service] Erro ao deserializar JSON de erro: {ex.Message}");
+
+                // Se não conseguir deserializar como JSON, tenta usar como texto simples
+                if (!string.IsNullOrEmpty(responseContent) && responseContent.Length < 500)
+                {
+                    // Remove caracteres HTML básicos se houver
+                    string cleanMessage = responseContent.Replace("<", "").Replace(">", "").Trim();
+                    if (!string.IsNullOrEmpty(cleanMessage))
+                    {
+                        return cleanMessage;
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[API Service] Erro inesperado ao extrair mensagem: {ex.Message}");
+                return null;
+            }
+        }
+
 
 
         // POST -  MÉTODO PARA UPLOAD DE ARQUIVOS
