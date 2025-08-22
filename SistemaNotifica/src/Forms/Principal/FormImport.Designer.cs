@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             tableLayoutPanelFormImportMain = new TableLayoutPanel();
             panelTop = new Panel();
             groupBoxFileSelection = new GroupBox();
@@ -73,13 +73,13 @@
             toolStripMenuItemViewError = new ToolStripMenuItem();
             toolStripMenuItemDelete = new ToolStripMenuItem();
             toolStripMenuItemCopyPath = new ToolStripMenuItem();
-            statusStripMain = new StatusStrip();
-            toolStripStatusLabelRecords = new ToolStripStatusLabel();
-            toolStripStatusLabelLastUpdate = new ToolStripStatusLabel();
-            toolStripProgressBarImport = new ToolStripProgressBar();
             errorProviderMain = new ErrorProvider(components);
             toolTipMain = new ToolTip(components);
             timerAutoRefresh = new System.Windows.Forms.Timer(components);
+            toolStripStatusLabelRecords = new ToolStripStatusLabel();
+            toolStripStatusLabelLastUpdate = new ToolStripStatusLabel();
+            toolStripProgressBarImport = new ToolStripProgressBar();
+            statusStripMain = new StatusStrip();
             tableLayoutPanelFormImportMain.SuspendLayout();
             panelTop.SuspendLayout();
             groupBoxFileSelection.SuspendLayout();
@@ -87,10 +87,10 @@
             tableLayoutPanelBottom.SuspendLayout();
             panelFilters.SuspendLayout();
             groupBoxImportHistory.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewDataImport).BeginInit();
+            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewDataImport ).BeginInit();
             contextMenuStripGrid.SuspendLayout();
+            ( ( System.ComponentModel.ISupportInitialize ) errorProviderMain ).BeginInit();
             statusStripMain.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)errorProviderMain).BeginInit();
             SuspendLayout();
             // 
             // tableLayoutPanelFormImportMain
@@ -141,7 +141,7 @@
             // 
             // btnDelete
             // 
-            btnDelete.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnDelete.Anchor =     AnchorStyles.Top  |  AnchorStyles.Right ;
             btnDelete.BackColor = Color.Brown;
             btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
@@ -156,7 +156,7 @@
             // 
             // buttonRefresh
             // 
-            buttonRefresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonRefresh.Anchor =     AnchorStyles.Top  |  AnchorStyles.Right ;
             buttonRefresh.Location = new Point(577, 76);
             buttonRefresh.Name = "buttonRefresh";
             buttonRefresh.Size = new Size(90, 28);
@@ -167,7 +167,7 @@
             // 
             // buttonExportLog
             // 
-            buttonExportLog.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonExportLog.Anchor =     AnchorStyles.Top  |  AnchorStyles.Right ;
             buttonExportLog.Location = new Point(711, 76);
             buttonExportLog.Name = "buttonExportLog";
             buttonExportLog.Size = new Size(85, 28);
@@ -198,9 +198,9 @@
             // 
             // smallTextBoxSelectFile
             // 
-            smallTextBoxSelectFile.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            smallTextBoxSelectFile.Anchor =     AnchorStyles.Left  |  AnchorStyles.Right ;
             smallTextBoxSelectFile.BackColor = Color.Transparent;
-            smallTextBoxSelectFile.BorderColor = Color.FromArgb(180, 180, 180);
+            smallTextBoxSelectFile.BorderColor = Color.FromArgb(      180,       180,       180);
             smallTextBoxSelectFile.CustomBGColor = Color.White;
             smallTextBoxSelectFile.Font = new Font("Tahoma", 11F);
             smallTextBoxSelectFile.ForeColor = Color.DimGray;
@@ -218,8 +218,8 @@
             // 
             // buttonImport
             // 
-            buttonImport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonImport.BackColor = Color.FromArgb(0, 122, 255);
+            buttonImport.Anchor =     AnchorStyles.Top  |  AnchorStyles.Right ;
+            buttonImport.BackColor = Color.FromArgb(      0,       122,       255);
             buttonImport.FlatStyle = FlatStyle.Flat;
             buttonImport.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             buttonImport.ForeColor = Color.White;
@@ -230,11 +230,11 @@
             buttonImport.Text = "▶ Importar";
             toolTipMain.SetToolTip(buttonImport, "Iniciar importação do arquivo selecionado");
             buttonImport.UseVisualStyleBackColor = false;
-            buttonImport.Click += buttonImport_Click;
+            buttonImport.Click +=  buttonImport_Click ;
             // 
             // buttonSelect
             // 
-            buttonSelect.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonSelect.Anchor =     AnchorStyles.Top  |  AnchorStyles.Right ;
             buttonSelect.Font = new Font("Segoe UI", 9F);
             buttonSelect.Location = new Point(416, 41);
             buttonSelect.Name = "buttonSelect";
@@ -243,7 +243,7 @@
             buttonSelect.Text = "📁 Selecionar Arquivo";
             toolTipMain.SetToolTip(buttonSelect, "Clique para selecionar um arquivo para importação");
             buttonSelect.UseVisualStyleBackColor = true;
-            buttonSelect.Click += buttonSelect_Click;
+            buttonSelect.Click +=  buttonSelect_Click ;
             // 
             // panelBottonMain
             // 
@@ -273,7 +273,7 @@
             // 
             // panelFilters
             // 
-            panelFilters.BackColor = Color.FromArgb(248, 249, 250);
+            panelFilters.BackColor = Color.FromArgb(      248,       249,       250);
             panelFilters.BorderStyle = BorderStyle.FixedSingle;
             panelFilters.Controls.Add(btnDatails);
             panelFilters.Controls.Add(buttonClearFilter);
@@ -295,7 +295,7 @@
             // 
             // btnDatails
             // 
-            btnDatails.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnDatails.Anchor =     AnchorStyles.Top  |  AnchorStyles.Right ;
             btnDatails.BackColor = Color.Green;
             btnDatails.FlatStyle = FlatStyle.Flat;
             btnDatails.ForeColor = Color.White;
@@ -305,11 +305,11 @@
             btnDatails.TabIndex = 10;
             btnDatails.Text = "Detalhes";
             btnDatails.UseVisualStyleBackColor = false;
-            btnDatails.Click += btnDatails_Click;
+            btnDatails.Click +=  btnDatails_Click ;
             // 
             // buttonClearFilter
             // 
-            buttonClearFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonClearFilter.Anchor =     AnchorStyles.Top  |  AnchorStyles.Right ;
             buttonClearFilter.Location = new Point(663, 21);
             buttonClearFilter.Name = "buttonClearFilter";
             buttonClearFilter.Size = new Size(77, 23);
@@ -319,8 +319,8 @@
             // 
             // buttonApplyFilter
             // 
-            buttonApplyFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonApplyFilter.BackColor = Color.FromArgb(40, 167, 69);
+            buttonApplyFilter.Anchor =     AnchorStyles.Top  |  AnchorStyles.Right ;
+            buttonApplyFilter.BackColor = Color.FromArgb(      40,       167,       69);
             buttonApplyFilter.FlatStyle = FlatStyle.Flat;
             buttonApplyFilter.ForeColor = Color.White;
             buttonApplyFilter.Location = new Point(577, 21);
@@ -329,7 +329,7 @@
             buttonApplyFilter.TabIndex = 8;
             buttonApplyFilter.Text = "🔍 Filtrar";
             buttonApplyFilter.UseVisualStyleBackColor = false;
-            buttonApplyFilter.Click += buttonApplyFilter_Click;
+            buttonApplyFilter.Click +=  buttonApplyFilter_Click ;
             // 
             // textBoxUserFilter
             // 
@@ -419,20 +419,20 @@
             dataGridViewDataImport.AllowUserToAddRows = false;
             dataGridViewDataImport.AllowUserToDeleteRows = false;
             dataGridViewDataImport.AllowUserToOrderColumns = true;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 249, 250);
-            dataGridViewDataImport.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.BackColor = Color.FromArgb(      248,       249,       250);
+            dataGridViewDataImport.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
             dataGridViewDataImport.BackgroundColor = SystemColors.Control;
             dataGridViewDataImport.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewDataImport.Columns.AddRange(new DataGridViewColumn[] { ColumnFile, ColumnDate, ColumnStatus, ColumnUser, ColumnRecordsCount, ColumnErrorCount, ColumnDuplicatesCount, ColumnFileSize, ColumnDetalhesErros, ColumnDetalhesDuplicidades });
             dataGridViewDataImport.ContextMenuStrip = contextMenuStripGrid;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8.25F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(0, 123, 255);
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dataGridViewDataImport.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 8.25F);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(      0,       123,       255);
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            dataGridViewDataImport.DefaultCellStyle = dataGridViewCellStyle4;
             dataGridViewDataImport.Dock = DockStyle.Fill;
             dataGridViewDataImport.Font = new Font("Segoe UI", 8.25F);
             dataGridViewDataImport.GridColor = Color.WhiteSmoke;
@@ -541,14 +541,13 @@
             toolStripMenuItemCopyPath.Size = new Size(197, 22);
             toolStripMenuItemCopyPath.Text = "📋 Copiar Caminho";
             // 
-            // statusStripMain
+            // errorProviderMain
             // 
-            statusStripMain.Items.AddRange(new ToolStripItem[] { toolStripStatusLabelRecords, toolStripStatusLabelLastUpdate, toolStripProgressBarImport });
-            statusStripMain.Location = new Point(0, 522);
-            statusStripMain.Name = "statusStripMain";
-            statusStripMain.Size = new Size(860, 22);
-            statusStripMain.TabIndex = 2;
-            statusStripMain.Text = "statusStrip1";
+            errorProviderMain.ContainerControl = this;
+            // 
+            // timerAutoRefresh
+            // 
+            timerAutoRefresh.Interval = 30000;
             // 
             // toolStripStatusLabelRecords
             // 
@@ -570,13 +569,14 @@
             toolStripProgressBarImport.Size = new Size(100, 19);
             toolStripProgressBarImport.Visible = false;
             // 
-            // errorProviderMain
+            // statusStripMain
             // 
-            errorProviderMain.ContainerControl = this;
-            // 
-            // timerAutoRefresh
-            // 
-            timerAutoRefresh.Interval = 30000;
+            statusStripMain.Items.AddRange(new ToolStripItem[] { toolStripStatusLabelRecords, toolStripStatusLabelLastUpdate, toolStripProgressBarImport });
+            statusStripMain.Location = new Point(0, 522);
+            statusStripMain.Name = "statusStripMain";
+            statusStripMain.Size = new Size(860, 22);
+            statusStripMain.TabIndex = 2;
+            statusStripMain.Text = "statusStrip1";
             // 
             // FormImport
             // 
@@ -598,11 +598,11 @@
             panelFilters.ResumeLayout(false);
             panelFilters.PerformLayout();
             groupBoxImportHistory.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridViewDataImport).EndInit();
+            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewDataImport ).EndInit();
             contextMenuStripGrid.ResumeLayout(false);
+            ( ( System.ComponentModel.ISupportInitialize ) errorProviderMain ).EndInit();
             statusStripMain.ResumeLayout(false);
             statusStripMain.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)errorProviderMain).EndInit();
             ResumeLayout(false);
         }
 
@@ -626,12 +626,6 @@
         // Bottom panel controls
         private Panel panelBottonMain;
         private TableLayoutPanel tableLayoutPanelBottom;
-
-        // Status and context menu
-        private StatusStrip statusStripMain;
-        private ToolStripStatusLabel toolStripStatusLabelRecords;
-        private ToolStripStatusLabel toolStripStatusLabelLastUpdate;
-        private ToolStripProgressBar toolStripProgressBarImport;
         private ContextMenuStrip contextMenuStripGrid;
         private ToolStripMenuItem toolStripMenuItemReprocess;
         private ToolStripMenuItem toolStripMenuItemViewError;
@@ -667,5 +661,9 @@
         private DataGridViewTextBoxColumn ColumnDetalhesDuplicidades;
         private Button btnDatails;
         private Button btnDelete;
+        private StatusStrip statusStripMain;
+        private ToolStripStatusLabel toolStripStatusLabelRecords;
+        private ToolStripStatusLabel toolStripStatusLabelLastUpdate;
+        private ToolStripProgressBar toolStripProgressBarImport;
     }
 }

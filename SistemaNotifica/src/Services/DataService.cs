@@ -18,10 +18,10 @@ namespace SistemaNotifica.src.Services
             _apiService = apiService;
         }
 
-        public async Task<List<Protesto>> SearchDistAsync()
-        {
+        //public async Task<List<Protesto>> SearchDistAsync()
+        //{
 
-        }
+        //}
 
 
 

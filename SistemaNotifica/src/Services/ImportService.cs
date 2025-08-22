@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using SistemaNotifica.src.Models;
 using SistemaNotifica.src.Services;
 
@@ -67,6 +68,31 @@ public class ImportService
         }
     }
 
+
+    public async Task<string> SearhLogImportsAsync(int id)
+    {
+        try
+        {
+            Debug.WriteLine("Buscando SearhLogImportsAsync...........................");
+            var response = await _apiService.GetJsonAsync($"log-arquivo-import/status/{id}");
+            return response;
+        }
+        catch ( HttpRequestException ex )
+        {
+            Debug.WriteLine($"Erro HTTP: {ex.Message}");
+            throw new Exception($"Erro durante o processo de busca de Importações com usuário::::Erro de conexão com o servidor. Verifique sua rede ou a URL da API. Detalhes: {ex.Message}");
+        }
+        catch ( JsonException ex )
+        {
+            Debug.WriteLine($"Erro JSON: {ex.Message}");
+            throw new Exception($"Erro ao processar resposta da API: {ex.Message}");
+        }
+        catch ( Exception ex )
+        {
+            Debug.WriteLine($"Erro geral: {ex.Message}");
+            throw;
+        }
+    }
 
 
 }

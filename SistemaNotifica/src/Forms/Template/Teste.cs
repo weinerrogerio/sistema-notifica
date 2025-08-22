@@ -1,7 +1,9 @@
-﻿using System;
+﻿using SistemaNotifica.src.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -19,19 +21,46 @@ namespace SistemaNotifica.src.Forms.Template
         private bool isAnimating = false; // Controle de animação
         private bool isFormLoaded = false; // Controle de carregamento do formulário
 
+        private readonly ImportService _importService;
+
+        //private readonly ProtestoService _protestoService;
+        //private readonly ImportService _importService;
+
+        //public event Action OnNavigateToImport;
+
+        //public FormHome()
+        //{
+        //    InitializeComponent();
+        //    _protestoService = Program.ProtestoService;
+        //    _importService = Program.ImportService;
+
+
         public Teste()
         {
             InitializeComponent();
+            _importService = Program.ImportService;
+            teste();
         }
+
+
+        //SearhLogImportsAsync
+
+        private async void teste()
+        {
+            Debug.WriteLine("Teste::::::::::::::::::::::::::::::::::::......................");
+            var result = await _importService.SearhLogImportsAsync(9);
+            Debug.WriteLine(result);
+        }
+
 
         private void btnEdit_Click_1(object sender, EventArgs e)
         {
             // Prevenir múltiplos cliques durante animação
-            if (isAnimating)
+            if ( isAnimating )
                 return;
 
             // Se já existe um formulário expandido, contrair primeiro
-            if (pnlFormExpanded && pnlForm != null)
+            if ( pnlFormExpanded && pnlForm != null )
             {
                 ContractPanel();
                 return;
@@ -55,7 +84,7 @@ namespace SistemaNotifica.src.Forms.Template
 
         private void CleanupForm()
         {
-            if (pnlForm != null && !pnlForm.IsDisposed)
+            if ( pnlForm != null && !pnlForm.IsDisposed )
             {
                 pnlForm.Close();
                 pnlForm.Dispose();
@@ -98,7 +127,7 @@ namespace SistemaNotifica.src.Forms.Template
 
                 isFormLoaded = true;
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 MessageBox.Show($"Erro ao criar formulário: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -129,7 +158,7 @@ namespace SistemaNotifica.src.Forms.Template
             const int step = 20;
             const int minStep = 3;
 
-            if (!pnlFormExpanded) // Expandindo
+            if ( !pnlFormExpanded ) // Expandindo
             {
                 int remainingWidth = targetWidth - panelAux.Width;
                 int currentStep = Math.Max(minStep, Math.Min(step, remainingWidth / 8));
@@ -137,7 +166,7 @@ namespace SistemaNotifica.src.Forms.Template
                 panelAux.Width += currentStep;
 
                 // Atualizar tamanho do formulário para acompanhar o painel
-                if (pnlForm != null && !pnlForm.IsDisposed && isFormLoaded)
+                if ( pnlForm != null && !pnlForm.IsDisposed && isFormLoaded )
                 {
                     try
                     {
@@ -145,13 +174,13 @@ namespace SistemaNotifica.src.Forms.Template
                         pnlForm.Height = panelAux.Height;
                         pnlForm.Refresh(); // Forçar redesenho
                     }
-                    catch (Exception ex)
+                    catch ( Exception ex )
                     {
                         Console.WriteLine($"Erro ao redimensionar: {ex.Message}");
                     }
                 }
 
-                if (panelAux.Width >= targetWidth)
+                if ( panelAux.Width >= targetWidth )
                 {
                     // Animação de expansão concluída
                     panelAux.Width = targetWidth;
@@ -160,14 +189,14 @@ namespace SistemaNotifica.src.Forms.Template
                     timerTransition.Stop();
 
                     // Agora sim, aplicar Dock.Fill para responsividade
-                    if (pnlForm != null && !pnlForm.IsDisposed && isFormLoaded)
+                    if ( pnlForm != null && !pnlForm.IsDisposed && isFormLoaded )
                     {
                         try
                         {
                             pnlForm.Dock = DockStyle.Fill;
                             pnlForm.Refresh();
                         }
-                        catch (Exception ex)
+                        catch ( Exception ex )
                         {
                             Console.WriteLine($"Erro ao aplicar Dock.Fill: {ex.Message}");
                         }
@@ -180,7 +209,7 @@ namespace SistemaNotifica.src.Forms.Template
                 panelAux.Width -= currentStep;
 
                 // Atualizar tamanho do formulário durante contração
-                if (pnlForm != null && !pnlForm.IsDisposed)
+                if ( pnlForm != null && !pnlForm.IsDisposed )
                 {
                     try
                     {
@@ -188,13 +217,13 @@ namespace SistemaNotifica.src.Forms.Template
                         pnlForm.Width = panelAux.Width;
                         pnlForm.Height = panelAux.Height;
                     }
-                    catch (Exception ex)
+                    catch ( Exception ex )
                     {
                         Console.WriteLine($"Erro ao redimensionar na contração: {ex.Message}");
                     }
                 }
 
-                if (panelAux.Width <= 0)
+                if ( panelAux.Width <= 0 )
                 {
                     // Animação de contração concluída
                     panelAux.Width = 0;
@@ -211,7 +240,7 @@ namespace SistemaNotifica.src.Forms.Template
         // Método público para contrair o painel
         public void ContractPanel()
         {
-            if (panelAux.Width > 0 && !isAnimating)
+            if ( panelAux.Width > 0 && !isAnimating )
             {
                 isAnimating = true;
                 pnlFormExpanded = true; // Definir como true para iniciar contração
@@ -225,7 +254,7 @@ namespace SistemaNotifica.src.Forms.Template
             base.OnResize(e);
 
             // Se o painel estiver totalmente expandido, ajustar largura
-            if (pnlFormExpanded && !isAnimating && panelAux.Width > 0)
+            if ( pnlFormExpanded && !isAnimating && panelAux.Width > 0 )
             {
                 targetWidth = this.ClientSize.Width;
                 panelAux.Width = targetWidth;
@@ -242,8 +271,8 @@ namespace SistemaNotifica.src.Forms.Template
             base.OnFormClosing(e);
         }
 
-        
 
-        
+
+
     }
 }

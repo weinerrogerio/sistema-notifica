@@ -133,7 +133,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
                 Debug.WriteLine("Iniciando LoadDistribData...");
 
-                JObject response = await .FindByPagination(currentPage, pageSize);
+                JObject response = await _protestoService.GetAsJObjectAsync(currentPage.ToString(), pageSize.ToString());
                 Debug.WriteLine("RESPONSE LoadData:::::::::::::::" + response);
 
                 var dados = response["data"] as JArray;
@@ -180,7 +180,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
                 Debug.WriteLine($"Carregando página {currentPage} de {totalPages}");
 
-                JObject response = await _protestoService.FindByPagination(currentPage, pageSize);
+                JObject response = await _protestoService.GetAsJObjectAsync(currentPage.ToString(), pageSize.ToString());
                 var dados = response["data"] as JArray;
 
                 if (dados != null && dados.Count > 0)

@@ -36,19 +36,20 @@ namespace SistemaNotifica
             // see https://aka.ms/applicationconfiguration.            
             //ApplicationConfiguration.Initialize();
             //List<ErroDetalhado> erros = new List<ErroDetalhado>();
-            //Application.Run(new FormLogin());
-            using (FormLogin loginForm = new FormLogin())
-            {
-                if (loginForm.ShowDialog() == DialogResult.OK)
-                {
-                    // Login bem-sucedido, agora inicie o formulário principal da aplicação
-                    Application.Run(new FormOrigin()); // Assumindo que FormOrigin é o seu formulário principal
-                }
-                else
-                {
-                    Debug.WriteLine("ERRO EM PROGRAM.CS --> LOGIN");
-                }
-            }
+            Application.Run(new FormImportTeste());
+
+            //using (FormLogin loginForm = new FormLogin())
+            //{
+            //    if (loginForm.ShowDialog() == DialogResult.OK)
+            //    {
+            //        // Login bem-sucedido, agora inicie o formulário principal da aplicação
+            //        Application.Run(new FormOrigin()); // Assumindo que FormOrigin é o seu formulário principal
+            //    }
+            //    else
+            //    {
+            //        Debug.WriteLine("ERRO EM PROGRAM.CS --> LOGIN");
+            //    }
+            //}
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SistemaNotifica.src.Models;
 using System;
 using System;
@@ -68,6 +69,24 @@ namespace SistemaNotifica.src.Services
             Debug.WriteLine($"URL chamada: {url}");
             Debug.WriteLine($"JSON retornado: {json}");
             return JsonConvert.DeserializeObject<T>(json);
+        }
+
+        // Método que retorna JSON cru
+        public async Task<string> GetJsonAsync(string endpoint, Dictionary<string, string> queryParams = null)
+        {   
+            Debug.WriteLine($"Chamando GET /{endpoint}");
+            var url = BuildUrlWithQueryParams(endpoint, queryParams);
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            Debug.WriteLine($"JSON retornado: {response}");
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        // Método que retorna JObject para manipulação dinâmica
+        public async Task<JObject> GetAsJObjectAsync(string endpoint, Dictionary<string, string> queryParams = null)
+        {
+            var json = await GetJsonAsync(endpoint, queryParams);
+            return JObject.Parse(json);
         }
 
 

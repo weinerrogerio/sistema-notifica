@@ -252,6 +252,9 @@ namespace SistemaNotifica.src.Forms.Principal
 
                 // Chamar o serviço de importação para enviar o arquivo
                 ImportResponse response = await _importService.UploadFileAsync(fileBytes, fileName);
+                int loId = response.LogImportId;
+                //pollingTimer.Interval = 1000; // a cada 1 segundo
+                //pollingTimer.Start();
                 //processedCount
                 MessageBox.Show($"Arquivo importado com sucesso!\e Registros: {response.processedCount}\n Erros encontrados: {response.errorCount}", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 // Aqui você pode atualizar seu DataGridView com base na resposta ou buscar os dados novamente

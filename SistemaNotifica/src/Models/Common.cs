@@ -189,6 +189,7 @@ namespace SistemaNotifica.src.Models
     public class ImportResponse
     {
         //return { processedCount, errorCount, skippedCount, errors };
+        public int LogImportId { get; set; }
         public string? processedCount { get; }
         public object? errorCount { get; }
         public object? skippedCount { get; }

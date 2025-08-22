@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using SistemaNotifica.src.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using SistemaNotifica.src.Models;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace SistemaNotifica.src.Services
 {
@@ -65,6 +67,36 @@ namespace SistemaNotifica.src.Services
             catch (Exception ex)
             {
                 Debug.WriteLine($"Erro: {ex.Message}");
+                throw;
+            }
+        }
+
+
+        public async Task<JObject> GetAsJObjectAsync(string currentPage, string pageSize)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, string>
+                {
+                    { "currentPage", currentPage },
+                    { "pageSize", pageSize }
+                };
+                var response = await _apiService.GetAsJObjectAsync("doc-protesto/date-range", parameters);
+                return response;
+            }
+            catch ( HttpRequestException ex )
+            {
+                Debug.WriteLine($"Erro HTTP: {ex.Message}");
+                throw new Exception($"Erro durante o processo de busca de distribuições::::Erro de conexão com o servidor. Verifique sua rede ou a URL da API. Detalhes: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                Debug.WriteLine($"Erro JSON: {ex.Message}");
+                throw new Exception($"Erro ao processar resposta da API: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro geral: {ex.Message}");
                 throw;
             }
         }
