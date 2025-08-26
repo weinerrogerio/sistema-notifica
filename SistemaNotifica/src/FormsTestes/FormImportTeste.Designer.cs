@@ -1,6 +1,6 @@
 ﻿namespace SistemaNotifica.src.Forms.Principal
 {
-    partial class FormImport
+    partial class FormImportTeste
     {
         /// <summary>
         /// Required designer variable.
@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             tableLayoutPanelFormImportMain = new TableLayoutPanel();
             panelTop = new Panel();
             groupBoxFileSelection = new GroupBox();
@@ -57,9 +57,9 @@
             comboBoxStatusFilter = new ComboBox();
             labelFilterBy = new Label();
             groupBoxImportHistory = new GroupBox();
-            overlayUploadPanel = new Panel();
-            labelUploadPercent = new Label();
-            labelStatusUpload = new Label();
+            overlayPanel = new Panel();
+            labelPercent = new Label();
+            labelProgress = new Label();
             progressBar = new ProgressBar();
             dataGridViewDataImport = new DataGridView();
             ColumnFile = new DataGridViewTextBoxColumn();
@@ -84,7 +84,10 @@
             errorProviderMain = new ErrorProvider(components);
             toolTipMain = new ToolTip(components);
             timerAutoRefresh = new System.Windows.Forms.Timer(components);
-            timerProgressBar = new System.Windows.Forms.Timer(components);
+            pnlProgressOverlay = new Panel();
+            pnlProgressUpload = new Panel();
+            labelStatusUpload = new Label();
+            progressBarUpload = new ProgressBar();
             tableLayoutPanelFormImportMain.SuspendLayout();
             panelTop.SuspendLayout();
             groupBoxFileSelection.SuspendLayout();
@@ -92,11 +95,13 @@
             tableLayoutPanelBottom.SuspendLayout();
             panelFilters.SuspendLayout();
             groupBoxImportHistory.SuspendLayout();
-            overlayUploadPanel.SuspendLayout();
+            overlayPanel.SuspendLayout();
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewDataImport ).BeginInit();
             contextMenuStripGrid.SuspendLayout();
             statusStripMain.SuspendLayout();
             ( ( System.ComponentModel.ISupportInitialize ) errorProviderMain ).BeginInit();
+            pnlProgressOverlay.SuspendLayout();
+            pnlProgressUpload.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanelFormImportMain
@@ -409,7 +414,7 @@
             // 
             // groupBoxImportHistory
             // 
-            groupBoxImportHistory.Controls.Add(overlayUploadPanel);
+            groupBoxImportHistory.Controls.Add(overlayPanel);
             groupBoxImportHistory.Controls.Add(dataGridViewDataImport);
             groupBoxImportHistory.Dock = DockStyle.Fill;
             groupBoxImportHistory.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
@@ -421,41 +426,41 @@
             groupBoxImportHistory.TabStop = false;
             groupBoxImportHistory.Text = "Histórico de Importações";
             // 
-            // overlayUploadPanel
+            // overlayPanel
             // 
-            overlayUploadPanel.BorderStyle = BorderStyle.FixedSingle;
-            overlayUploadPanel.Controls.Add(labelUploadPercent);
-            overlayUploadPanel.Controls.Add(labelStatusUpload);
-            overlayUploadPanel.Controls.Add(progressBar);
-            overlayUploadPanel.Location = new Point(14, 190);
-            overlayUploadPanel.Name = "overlayUploadPanel";
-            overlayUploadPanel.Size = new Size(450, 109);
-            overlayUploadPanel.TabIndex = 9;
-            overlayUploadPanel.Visible = false;
+            overlayPanel.BackColor = SystemColors.ActiveCaption;
+            overlayPanel.BorderStyle = BorderStyle.FixedSingle;
+            overlayPanel.Controls.Add(labelPercent);
+            overlayPanel.Controls.Add(labelProgress);
+            overlayPanel.Controls.Add(progressBar);
+            overlayPanel.Location = new Point(14, 44);
+            overlayPanel.Name = "overlayPanel";
+            overlayPanel.Size = new Size(477, 235);
+            overlayPanel.TabIndex = 1;
             // 
-            // labelUploadPercent
+            // labelPercent
             // 
-            labelUploadPercent.AutoSize = true;
-            labelUploadPercent.Location = new Point(261, 23);
-            labelUploadPercent.Name = "labelUploadPercent";
-            labelUploadPercent.Size = new Size(38, 15);
-            labelUploadPercent.TabIndex = 2;
-            labelUploadPercent.Text = "100%";
+            labelPercent.AutoSize = true;
+            labelPercent.Location = new Point(314, 27);
+            labelPercent.Name = "labelPercent";
+            labelPercent.Size = new Size(38, 15);
+            labelPercent.TabIndex = 2;
+            labelPercent.Text = "100%";
             // 
-            // labelStatusUpload
+            // labelProgress
             // 
-            labelStatusUpload.AutoSize = true;
-            labelStatusUpload.Location = new Point(125, 23);
-            labelStatusUpload.Name = "labelStatusUpload";
-            labelStatusUpload.Size = new Size(40, 15);
-            labelStatusUpload.TabIndex = 1;
-            labelStatusUpload.Text = "label1";
+            labelProgress.AutoSize = true;
+            labelProgress.Location = new Point(21, 27);
+            labelProgress.Name = "labelProgress";
+            labelProgress.Size = new Size(40, 15);
+            labelProgress.TabIndex = 1;
+            labelProgress.Text = "label1";
             // 
             // progressBar
             // 
-            progressBar.Location = new Point(22, 55);
+            progressBar.Location = new Point(21, 54);
             progressBar.Name = "progressBar";
-            progressBar.Size = new Size(400, 33);
+            progressBar.Size = new Size(331, 23);
             progressBar.TabIndex = 0;
             // 
             // dataGridViewDataImport
@@ -463,20 +468,20 @@
             dataGridViewDataImport.AllowUserToAddRows = false;
             dataGridViewDataImport.AllowUserToDeleteRows = false;
             dataGridViewDataImport.AllowUserToOrderColumns = true;
-            dataGridViewCellStyle3.BackColor = Color.FromArgb(      248,       249,       250);
-            dataGridViewDataImport.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(      248,       249,       250);
+            dataGridViewDataImport.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dataGridViewDataImport.BackgroundColor = SystemColors.Control;
             dataGridViewDataImport.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewDataImport.Columns.AddRange(new DataGridViewColumn[] { ColumnFile, ColumnDate, ColumnStatus, ColumnUser, ColumnRecordsCount, ColumnErrorCount, ColumnDuplicatesCount, ColumnFileSize, ColumnDetalhesErros, ColumnDetalhesDuplicidades });
             dataGridViewDataImport.ContextMenuStrip = contextMenuStripGrid;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = SystemColors.Window;
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 8.25F);
-            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(      0,       123,       255);
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
-            dataGridViewDataImport.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8.25F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(      0,       123,       255);
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dataGridViewDataImport.DefaultCellStyle = dataGridViewCellStyle2;
             dataGridViewDataImport.Dock = DockStyle.Fill;
             dataGridViewDataImport.Font = new Font("Segoe UI", 8.25F);
             dataGridViewDataImport.GridColor = Color.WhiteSmoke;
@@ -486,6 +491,7 @@
             dataGridViewDataImport.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewDataImport.Size = new Size(834, 307);
             dataGridViewDataImport.TabIndex = 0;
+            dataGridViewDataImport.Visible = false;
             // 
             // ColumnFile
             // 
@@ -622,20 +628,55 @@
             // 
             timerAutoRefresh.Interval = 30000;
             // 
-            // timerProgressBar
+            // pnlProgressOverlay
             // 
-            timerProgressBar.Interval = 300;
-            timerProgressBar.Tick +=  timerProgressBar_Tick ;
+            pnlProgressOverlay.BackColor = Color.Transparent;
+            pnlProgressOverlay.Controls.Add(pnlProgressUpload);
+            pnlProgressOverlay.Dock = DockStyle.Fill;
+            pnlProgressOverlay.Location = new Point(0, 0);
+            pnlProgressOverlay.Name = "pnlProgressOverlay";
+            pnlProgressOverlay.Size = new Size(860, 544);
+            pnlProgressOverlay.TabIndex = 999;
+            pnlProgressOverlay.Visible = false;
             // 
-            // FormImport
+            // pnlProgressUpload
+            // 
+            pnlProgressUpload.Anchor = AnchorStyles.None;
+            pnlProgressUpload.BackColor = Color.White;
+            pnlProgressUpload.BorderStyle = BorderStyle.FixedSingle;
+            pnlProgressUpload.Controls.Add(labelStatusUpload);
+            pnlProgressUpload.Controls.Add(progressBarUpload);
+            pnlProgressUpload.Location = new Point(530, 372);
+            pnlProgressUpload.Name = "pnlProgressUpload";
+            pnlProgressUpload.Size = new Size(400, 120);
+            pnlProgressUpload.TabIndex = 0;
+            // 
+            // labelStatusUpload
+            // 
+            labelStatusUpload.AutoSize = true;
+            labelStatusUpload.Font = new Font("Segoe UI", 10F);
+            labelStatusUpload.Location = new Point(15, 20);
+            labelStatusUpload.Name = "labelStatusUpload";
+            labelStatusUpload.Size = new Size(145, 19);
+            labelStatusUpload.TabIndex = 0;
+            labelStatusUpload.Text = "Processando arquivo...";
+            // 
+            // progressBarUpload
+            // 
+            progressBarUpload.Location = new Point(15, 55);
+            progressBarUpload.Name = "progressBarUpload";
+            progressBarUpload.Size = new Size(370, 25);
+            progressBarUpload.TabIndex = 1;
+            // 
+            // FormImportTeste
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(860, 544);
             Controls.Add(tableLayoutPanelFormImportMain);
+            Controls.Add(pnlProgressOverlay);
             Font = new Font("Segoe UI", 9F);
-            FormBorderStyle = FormBorderStyle.None;
-            Name = "FormImport";
+            Name = "FormImportTeste";
             Text = "Sistema de Importação de Arquivos";
             tableLayoutPanelFormImportMain.ResumeLayout(false);
             tableLayoutPanelFormImportMain.PerformLayout();
@@ -647,17 +688,22 @@
             panelFilters.ResumeLayout(false);
             panelFilters.PerformLayout();
             groupBoxImportHistory.ResumeLayout(false);
-            overlayUploadPanel.ResumeLayout(false);
-            overlayUploadPanel.PerformLayout();
+            overlayPanel.ResumeLayout(false);
+            overlayPanel.PerformLayout();
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewDataImport ).EndInit();
             contextMenuStripGrid.ResumeLayout(false);
             statusStripMain.ResumeLayout(false);
             statusStripMain.PerformLayout();
             ( ( System.ComponentModel.ISupportInitialize ) errorProviderMain ).EndInit();
+            pnlProgressOverlay.ResumeLayout(false);
+            pnlProgressUpload.ResumeLayout(false);
+            pnlProgressUpload.PerformLayout();
             ResumeLayout(false);
+
         }
 
         #endregion
+
 
         // Main layout controls
         private TableLayoutPanel tableLayoutPanelFormImportMain;
@@ -716,10 +762,14 @@
         private ToolStripStatusLabel toolStripStatusLabelRecords;
         private ToolStripStatusLabel toolStripStatusLabelLastUpdate;
         private ToolStripProgressBar toolStripProgressBarImport;
-        private Panel overlayUploadPanel;
-        private Label labelUploadPercent;
+
+        private Panel pnlProgressOverlay;
+        private Panel pnlProgressUpload;
         private Label labelStatusUpload;
+        private ProgressBar progressBarUpload;
+        private Panel overlayPanel;
+        private Label labelPercent;
+        private Label labelProgress;
         private ProgressBar progressBar;
-        private System.Windows.Forms.Timer timerProgressBar;
     }
 }

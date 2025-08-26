@@ -69,12 +69,12 @@ public class ImportService
     }
 
 
-    public async Task<string> SearhLogImportsAsync(int id)
+    public async Task<JObject> SearhLogImportsAsync(int id)
     {
         try
         {
             Debug.WriteLine("Buscando SearhLogImportsAsync...........................");
-            var response = await _apiService.GetJsonAsync($"log-arquivo-import/status/{id}");
+            var response = await _apiService.GetAsJObjectAsync($"log-arquivo-import/status/{id}");
             return response;
         }
         catch ( HttpRequestException ex )
