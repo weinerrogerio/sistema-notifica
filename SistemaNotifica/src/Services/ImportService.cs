@@ -19,29 +19,35 @@ public class ImportService
         _apiService = apiService;
     }
 
-    public async Task<ImportResponse> UploadFileAsync(byte[] fileBytes, string fileName) // Defina ImportResponse ou o tipo de retorno correto
+    public async Task<ImportResponse> UploadFileAsync(byte[] fileBytes, string fileName, bool allowPartialImport = false)
     {
-        Debug.WriteLine("Iniciando upload.......");
+        Debug.WriteLine($"Iniciando upload com allowPartialImport: {allowPartialImport}");
         try
         {
+            // Preparar campos adicionais para enviar allowPartialImport
+            var additionalFields = new Dictionary<string, string>();
+            if ( allowPartialImport )
+            {
+                additionalFields.Add("allowPartialImport", "true");
+            }
 
-            // O endpoint é "import/upload"
-            var response = await _apiService.PostFileAsync<ImportResponse>("import/upload", fileBytes, fileName);
+            // O endpoint é "import/upload" com campos adicionais
+            var response = await _apiService.PostFileAsync<ImportResponse>("import/upload", fileBytes, fileName, additionalFields);
+            Debug.WriteLine($"Response em ImportService: {response}");
             return response;
         }
-        catch (HttpRequestException ex)
+        catch ( HttpRequestException ex )
         {
             // Trate erros HTTP específicos (ex: 400 Bad Request, 401 Unauthorized)
             Console.WriteLine($"Erro HTTP ao fazer upload: {ex.Message}");
             throw; // Re-lança a exceção para ser tratada em FormImport
         }
-        catch (Exception ex)
+        catch ( Exception ex )
         {
             Console.WriteLine($"Erro inesperado ao fazer upload: {ex.Message}");
             throw; // Re-lança a exceção
         }
     }
-
 
     public async Task<List<DataImportsUser>> SearchImportsAsync()
     {
@@ -51,23 +57,22 @@ public class ImportService
             var response = await _apiService.GetAsync<List<DataImportsUser>>("log-arquivo-import/all-and-user/");
             return response;
         }
-        catch (HttpRequestException ex)
+        catch ( HttpRequestException ex )
         {
             Debug.WriteLine($"Erro HTTP: {ex.Message}");
             throw new Exception($"Erro durante o processo de busca de Importações com usuário::::Erro de conexão com o servidor. Verifique sua rede ou a URL da API. Detalhes: {ex.Message}");
         }
-        catch (JsonException ex)
+        catch ( JsonException ex )
         {
             Debug.WriteLine($"Erro JSON: {ex.Message}");
             throw new Exception($"Erro ao processar resposta da API: {ex.Message}");
         }
-        catch (Exception ex)
+        catch ( Exception ex )
         {
             Debug.WriteLine($"Erro geral: {ex.Message}");
             throw;
         }
     }
-
 
     public async Task<JObject> SearhLogImportsAsync(int id)
     {
@@ -93,8 +98,4 @@ public class ImportService
             throw;
         }
     }
-
-
 }
-
-

@@ -37,6 +37,7 @@ namespace SistemaNotifica
             // see https://aka.ms/applicationconfiguration.            
             //ApplicationConfiguration.Initialize();
             //List<ErroDetalhado> erros = new List<ErroDetalhado>();
+
             //Application.Run(new FormImport());
 
             using ( FormLogin loginForm = new FormLogin() )

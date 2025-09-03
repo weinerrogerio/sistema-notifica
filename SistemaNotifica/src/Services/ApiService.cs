@@ -291,7 +291,7 @@ namespace SistemaNotifica.src.Services
                 var response = await _httpClient.PostAsync(url, multipartContent);
                 response.EnsureSuccessStatusCode();
                 var responseJson = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine($"[API Service] Resposta (File): {responseJson}");
+                Debug.WriteLine($"[API Service] Resposta (File) em ApiService: {responseJson}");
                 return JsonConvert.DeserializeObject<TResponse>(responseJson);
             }
         }

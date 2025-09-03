@@ -186,14 +186,23 @@ namespace SistemaNotifica.src.Models
 
     /*-------------------------------------     CLASSE MODELO  PARA RESPOSTA DO UPLOAD  ---------------------------------------                   -*/
     // Exemplo de classe de resposta da API de upload, se ela retornar algo simples
+    //public class ImportResponse
+    //{
+    //    //return { processedCount, errorCount, skippedCount, errors };
+    //    public int LogImportId { get; set; }
+    //    public string? processedCount { get; }
+    //    public object? errorCount { get; }
+    //    public object? skippedCount { get; }
+    //    public object? errors { get; }
+    //}
+
     public class ImportResponse
     {
         //return { processedCount, errorCount, skippedCount, errors };
-        public int LogImportId { get; set; }
-        public string? processedCount { get; }
-        public object? errorCount { get; }
-        public object? skippedCount { get; }
-        public object? errors { get; }
+        public string message { get; set; }
+        public int logId { get; set; }
+        public string? statusUrl { get; }
+        
     }
 
 
