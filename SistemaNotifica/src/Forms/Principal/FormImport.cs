@@ -53,10 +53,18 @@ namespace SistemaNotifica.src.Forms.Principal
             dataGridViewDataImport.AllowUserToOrderColumns = false;
             dataGridViewDataImport.AllowUserToResizeRows = false;
             dataGridViewDataImport.AllowUserToResizeColumns = true;
+            
+            var id = new DataGridViewTextBoxColumn
+            {
+                Name = "id",
+                Visible = false // Torna a coluna invisível
+            };
+            dataGridViewDataImport.Columns.Add(id);
         }
 
         private async Task LoadDataImport()
         {
+            dataGridViewDataImport.Rows.Clear();
             try
             {
                 if ( _importService == null )
@@ -108,6 +116,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 int rowIndex = dataGridViewDataImport.Rows.Add();
                 DataGridViewRow row = dataGridViewDataImport.Rows[rowIndex];
 
+                row.Cells["id"].Value = data.id;
                 row.Cells["ColumnFile"].Value = data.nome_arquivo;
                 row.Cells["ColumnDate"].Value = data.data_importacao;
                 row.Cells["ColumnStatus"].Value = data.status;
@@ -116,10 +125,8 @@ namespace SistemaNotifica.src.Forms.Principal
                 row.Cells["ColumnErrorCount"].Value = data.registros_com_erro;
                 row.Cells["ColumnDuplicatesCount"].Value = data.registros_duplicados;
                 row.Cells["ColumnFileSize"].Value = data.tamanho_arquivo;
-
                 row.Cells["ColumnDetalhesErros"].Value = data.detalhes_erro;
                 row.Cells["ColumnDetalhesDuplicidades"].Value = data.detalhes_duplicidade;
-
                 row.Tag = status;
 
                 Debug.WriteLine($"Linha de importação adicionada: {data.nome_arquivo} - Status: {status}");
@@ -141,11 +148,11 @@ namespace SistemaNotifica.src.Forms.Principal
                     switch ( status )
                     {
                         case "sucesso":
-                            row.DefaultCellStyle.BackColor = Color.Green;
+                            row.DefaultCellStyle.BackColor = Color.LightGreen;
                             row.DefaultCellStyle.ForeColor = Color.Black;
                             break;
                         case "parcial":
-                            row.DefaultCellStyle.BackColor = Color.LightYellow;
+                            row.DefaultCellStyle.BackColor = Color.LightGray;
                             row.DefaultCellStyle.ForeColor = Color.Black;
                             break;
                         case "falha":
@@ -211,7 +218,6 @@ namespace SistemaNotifica.src.Forms.Principal
             dialogImport();
         }
 
-        // Lógica de importação separada para reuso
         private async Task<bool> ExecuteImportAsync(byte[] fileBytes, string fileName, bool allowPartialImport = false)
         {
             try
@@ -236,14 +242,12 @@ namespace SistemaNotifica.src.Forms.Principal
             }
             catch ( HttpRequestException httpEx )
             {
-                // Erros específicos de requisição HTTP (ex: 4xx, 5xx)
                 MessageBox.Show($"Erro na requisição à API: {httpEx.Message}\nVerifique o console para mais detalhes.", "Erro de Comunicação", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CloseLoadingOverlay();
                 return false;
             }
             catch ( Exception ex )
             {
-                // Outros erros
                 MessageBox.Show($"Ocorreu um erro: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CloseLoadingOverlay();
                 return false;
@@ -254,7 +258,6 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-        // MODIFICAÇÃO: Lógica para iniciar a importação.
         private async void buttonImport_Click(object sender, EventArgs e)
         {
             string filePath = smallTextBoxSelectFile.Text;
@@ -273,12 +276,15 @@ namespace SistemaNotifica.src.Forms.Principal
                 _lastFileBytes = fileBytes;
                 _lastFileName = fileName;
 
-                // Executar importação sem allowPartialImport
                 await ExecuteImportAsync(fileBytes, fileName, false);
             }
             catch ( Exception ex )
             {
                 MessageBox.Show($"Erro ao ler o arquivo: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                await LoadDataImport();
             }
         }
 
@@ -314,7 +320,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 _lastFileBytes = null;
                 _lastFileName = null;
                 CloseLoadingOverlay();
-                await LoadDataImport(); // Recarrega os dados para mostrar o status "falha"
+                await LoadDataImport();
             }
 
             _awaitingUserDecision = false;
@@ -327,10 +333,38 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private void btnDatails_Click(object sender, EventArgs e)
         {
-            // Lógica para exibir detalhes
+            if ( dataGridViewDataImport.SelectedRows.Count == 0 )
+            {
+                MessageBox.Show("Por favor, selecione uma linha para ver os detalhes.", "Nenhuma linha selecionada",
+                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            DataGridViewRow linhaSelecionada = dataGridViewDataImport.SelectedRows[0];
+
+            string detalhesErros = linhaSelecionada.Cells["ColumnDetalhesErros"]?.Value?.ToString() ?? "";
+            string detalhesDuplicidades = linhaSelecionada.Cells["ColumnDetalhesDuplicidades"]?.Value?.ToString() ?? "";
+            string nomeArquivo = linhaSelecionada.Cells["ColumnFile"]?.Value?.ToString() ?? "Arquivo";
+
+            bool temErros = !string.IsNullOrEmpty(detalhesErros) && detalhesErros != "[null]";
+            bool temDuplicidades = !string.IsNullOrEmpty(detalhesDuplicidades) && detalhesDuplicidades != "[null]";
+
+            if ( !temErros && !temDuplicidades )
+            {
+                MessageBox.Show("Esse Arquivo não possui detalhes de erros ou duplicidades.", "Sem detalhes",
+                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using ( FormDetalhesErros formDetalhes = new FormDetalhesErros() )
+            {
+                formDetalhes.Text = $"Detalhes dos Erros - {nomeArquivo}";
+                formDetalhes.ExibirDetalhes(detalhesErros, detalhesDuplicidades);
+                formDetalhes.ShowDialog(this);
+            }
         }
 
-        //-------------------------------------- FUNÇÕES DO PANEL PROGRESS BAR -------------------------------
+        //-------------------------------------- FUNÇÕES DO PPANEL PROGRESS BAR -------------------------------
 
         private void DisableMainControls(bool disable)
         {
@@ -372,6 +406,8 @@ namespace SistemaNotifica.src.Forms.Principal
             overlayUploadPanel.BringToFront();
             DisableMainControls(true);
             progressBar.Value = 0;
+            labelUploadPercent.Text = "0%";
+            labelStatusUpload.Text = "Iniciando...";
 
             this.Refresh();
             Application.DoEvents();
@@ -396,23 +432,28 @@ namespace SistemaNotifica.src.Forms.Principal
             DisableMainControls(false);
         }
 
-        private void SetProgressBarValue(int value)
+        // MODIFICAÇÃO: Método para setar o valor da barra de progresso e atualizar os labels
+        private void SetProgressBarValue(int value, string statusText)
         {
             if ( progressBar.InvokeRequired )
             {
-                progressBar.Invoke(new Action(() => SetProgressBarValue(value)));
+                progressBar.Invoke(new Action(() => SetProgressBarValue(value, statusText)));
                 return;
             }
 
-            if ( value >= progressBar.Minimum && value <= progressBar.Maximum )
-            {
-                Debug.WriteLine($"Set ProgressBar: {value}");
-                progressBar.Value = value;
-            }
+            // Garante que o valor da barra esteja entre 0 e 100
+            value = Math.Max(0, Math.Min(100, value));
+
+            progressBar.Value = value;
+            labelUploadPercent.Text = $"{value}%";
+            labelStatusUpload.Text = statusText;
+
+            Debug.WriteLine($"Set ProgressBar: {value}% - Status: {statusText}");
 
             if ( value >= 100 )
             {
-                progressBar.Value = 100;
+                Debug.WriteLine("Processamento concluído, exibindo 100%...");
+                // Aguarda um momento para o usuário ver o 100%
                 System.Threading.Tasks.Task.Delay(1000).ContinueWith(_ =>
                 {
                     if ( this.InvokeRequired )
@@ -439,7 +480,6 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-        // MODIFICAÇÃO: Lógica do timer com tratamento de decisão do usuário
         private async void timerProgressBar_Tick(object sender, EventArgs e)
         {
             Debug.WriteLine($"Timer tick executado - LogId: {_currentLogId}");
@@ -462,16 +502,27 @@ namespace SistemaNotifica.src.Forms.Principal
                     return;
                 }
 
-                // Verifica o status final do processamento
                 string status = data["status"].ToString();
+                int total = ( int ) ( data["total_registros"] ?? 0 );
+                int processado = ( int ) ( data["registros_processados"] ?? 0 );
+                string detalhesProgresso = data["detalhes_progresso"]?.ToString() ?? "Processando...";
 
-                if ( status == "falha" || status == "parcial" )
+                int progresso = 0;
+                if ( total > 0 )
+                {
+                    progresso = ( processado * 100 ) / total;
+                }
+
+                // Atualiza a barra e os labels
+                SetProgressBarValue(progresso, detalhesProgresso);
+
+                // Se o processo de importação terminou
+                if ( status == "sucesso" || status == "falha" || status == "parcial" && detalhesProgresso == "concluido" )
                 {
                     CloseLoadingOverlay();
                     timerProgressBar.Stop();
+                    Debug.WriteLine("Processamento finalizado. Recarregando dados.");
 
-                    // Se a falha ocorreu na primeira tentativa (sem allowPartialImport)
-                    // e houver erros/duplicidades, perguntar ao usuário.
                     if ( status == "falha" && data["detalhes_erro"] != null && data["detalhes_erro"].ToString().Contains("Arquivo contém registro(s) com erro(s) ou duplicados.") )
                     {
                         _awaitingUserDecision = true;
@@ -485,38 +536,66 @@ namespace SistemaNotifica.src.Forms.Principal
                         }
                         return;
                     }
-                    else if ( status == "parcial" || status == "falha" )
-                    {
-                        // Se o status é parcial, a segunda importação foi concluída.
-                        // Ou se a falha é de outro tipo (não por erro/duplicado).
-                        MessageBox.Show("Importação finalizada com status: " + status, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        await LoadDataImport();
-                        return;
-                    }
-                }
 
-                // Se não houve falha, continua a checagem de progresso
-                int total = ( int ) ( data["total_registros"] ?? 0 );
-                int processado = ( int ) ( data["registros_processados"] ?? 0 );
-
-                if ( total > 0 )
-                {
-                    int progresso = ( processado * 100 ) / total;
-                    SetProgressBarValue(progresso);
-
-                    if ( processado >= total )
-                    {
-                        Debug.WriteLine("Processamento concluído!");
-                        SetProgressBarValue(100);
-
-                        await LoadDataImport();
-                    }
+                    await LoadDataImport();
+                    string message = data["message"]?.ToString() ?? "Importação finalizada.";
+                    MessageBox.Show(message, "Status da Importação", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
                 }
             }
             catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao verificar progresso: {ex.Message}");
                 CloseLoadingOverlay();
+            }
+        }
+
+        private async void btnDelete_Click(object sender, EventArgs e)
+        {
+            // 1. Verifique se alguma linha está selecionada
+            if ( dataGridViewDataImport.SelectedRows.Count == 0 )
+            {
+                MessageBox.Show("Por favor, selecione um arquivo para excluir.", "Nenhum Arquivo Selecionado",
+                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // 2. Obtenha a linha selecionada
+            var selectedRow = dataGridViewDataImport.SelectedRows[0];
+
+            // Obtenha o ID do registro (necessário para a requisição de exclusão)
+            var logId = selectedRow.Cells["id"].Value;
+
+            // Obtenha o nome do arquivo para a mensagem de confirmação
+            var fileName = selectedRow.Cells["ColumnFile"].Value?.ToString() ?? "Arquivo selecionado";
+
+            // 3. Exiba a mensagem de confirmação
+            var result = MessageBox.Show(
+                $"Ao prosseguir o arquivo {fileName} e seus registros importados anteriormente serão PERMANENTEMENTE EXCLUÍDOS.\n\n" +
+                "Tem certeza que deseja excluir o arquivo selecionado?\n\n" +
+                "• ATENÇÃO: Essa operação NÃO pode ser revertida",
+                "ALERTA",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Error
+            );
+
+            // 4. Se o usuário confirmar, chame o método de exclusão
+            if ( result == DialogResult.Yes )
+            {
+                // Certifique-se de que o ID não é nulo ou inválido
+                if ( logId != null && int.TryParse(logId.ToString(), out int idToDelete) )
+                {
+                    // Chame sua função de serviço para excluir o arquivo
+                    //DeleteFileAsync(idToDelete);
+                    Debug.WriteLine($"Excluindo arquivo com ID: {idToDelete}");
+                    await _importService.DeleteFileAsync(idToDelete);
+                    await LoadDataImport();
+                }
+                else
+                {
+                    MessageBox.Show("Não foi possível obter o ID do arquivo para exclusão.", "Erro",
+                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
     }

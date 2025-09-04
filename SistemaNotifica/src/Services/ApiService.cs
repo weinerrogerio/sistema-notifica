@@ -89,6 +89,23 @@ namespace SistemaNotifica.src.Services
             return JObject.Parse(json);
         }
 
+        // DELETE /:id - Exclui Arq
+        public async Task DeleteAsync(string endpoint)
+        {
+            try
+            {
+                Debug.WriteLine($"Excluindo arquivo no endpoint: {endpoint}");                
+                var url = BuildUrlWithQueryParams(endpoint);
+                var response = await _httpClient.DeleteAsync(url);
+                response.EnsureSuccessStatusCode();
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro ao excluir: {ex}");
+                throw new Exception($"Erro ao excluir: {ex.Message}");
+            }
+        }
+
 
         // POST /:endpoint
         //public async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)

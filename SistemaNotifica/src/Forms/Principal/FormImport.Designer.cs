@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             tableLayoutPanelFormImportMain = new TableLayoutPanel();
             panelTop = new Panel();
             groupBoxFileSelection = new GroupBox();
@@ -62,16 +62,6 @@
             labelStatusUpload = new Label();
             progressBar = new ProgressBar();
             dataGridViewDataImport = new DataGridView();
-            ColumnFile = new DataGridViewTextBoxColumn();
-            ColumnDate = new DataGridViewTextBoxColumn();
-            ColumnStatus = new DataGridViewTextBoxColumn();
-            ColumnUser = new DataGridViewTextBoxColumn();
-            ColumnRecordsCount = new DataGridViewTextBoxColumn();
-            ColumnErrorCount = new DataGridViewTextBoxColumn();
-            ColumnDuplicatesCount = new DataGridViewTextBoxColumn();
-            ColumnFileSize = new DataGridViewTextBoxColumn();
-            ColumnDetalhesErros = new DataGridViewTextBoxColumn();
-            ColumnDetalhesDuplicidades = new DataGridViewTextBoxColumn();
             contextMenuStripGrid = new ContextMenuStrip(components);
             toolStripMenuItemReprocess = new ToolStripMenuItem();
             toolStripMenuItemViewError = new ToolStripMenuItem();
@@ -85,6 +75,17 @@
             toolTipMain = new ToolTip(components);
             timerAutoRefresh = new System.Windows.Forms.Timer(components);
             timerProgressBar = new System.Windows.Forms.Timer(components);
+            id = new DataGridViewTextBoxColumn();
+            ColumnFile = new DataGridViewTextBoxColumn();
+            ColumnDate = new DataGridViewTextBoxColumn();
+            ColumnStatus = new DataGridViewTextBoxColumn();
+            ColumnUser = new DataGridViewTextBoxColumn();
+            ColumnRecordsCount = new DataGridViewTextBoxColumn();
+            ColumnErrorCount = new DataGridViewTextBoxColumn();
+            ColumnDuplicatesCount = new DataGridViewTextBoxColumn();
+            ColumnFileSize = new DataGridViewTextBoxColumn();
+            ColumnDetalhesErros = new DataGridViewTextBoxColumn();
+            ColumnDetalhesDuplicidades = new DataGridViewTextBoxColumn();
             tableLayoutPanelFormImportMain.SuspendLayout();
             panelTop.SuspendLayout();
             groupBoxFileSelection.SuspendLayout();
@@ -159,6 +160,7 @@
             btnDelete.Text = "🗑 Excluir arquivo";
             toolTipMain.SetToolTip(btnDelete, "Iniciar importação do arquivo selecionado");
             btnDelete.UseVisualStyleBackColor = false;
+            btnDelete.Click +=  btnDelete_Click ;
             // 
             // buttonRefresh
             // 
@@ -463,20 +465,20 @@
             dataGridViewDataImport.AllowUserToAddRows = false;
             dataGridViewDataImport.AllowUserToDeleteRows = false;
             dataGridViewDataImport.AllowUserToOrderColumns = true;
-            dataGridViewCellStyle3.BackColor = Color.FromArgb(      248,       249,       250);
-            dataGridViewDataImport.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(      248,       249,       250);
+            dataGridViewDataImport.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dataGridViewDataImport.BackgroundColor = SystemColors.Control;
             dataGridViewDataImport.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewDataImport.Columns.AddRange(new DataGridViewColumn[] { ColumnFile, ColumnDate, ColumnStatus, ColumnUser, ColumnRecordsCount, ColumnErrorCount, ColumnDuplicatesCount, ColumnFileSize, ColumnDetalhesErros, ColumnDetalhesDuplicidades });
+            dataGridViewDataImport.Columns.AddRange(new DataGridViewColumn[] { id, ColumnFile, ColumnDate, ColumnStatus, ColumnUser, ColumnRecordsCount, ColumnErrorCount, ColumnDuplicatesCount, ColumnFileSize, ColumnDetalhesErros, ColumnDetalhesDuplicidades });
             dataGridViewDataImport.ContextMenuStrip = contextMenuStripGrid;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = SystemColors.Window;
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 8.25F);
-            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(      0,       123,       255);
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
-            dataGridViewDataImport.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8.25F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(      0,       123,       255);
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dataGridViewDataImport.DefaultCellStyle = dataGridViewCellStyle2;
             dataGridViewDataImport.Dock = DockStyle.Fill;
             dataGridViewDataImport.Font = new Font("Segoe UI", 8.25F);
             dataGridViewDataImport.GridColor = Color.WhiteSmoke;
@@ -486,74 +488,6 @@
             dataGridViewDataImport.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewDataImport.Size = new Size(834, 307);
             dataGridViewDataImport.TabIndex = 0;
-            // 
-            // ColumnFile
-            // 
-            ColumnFile.HeaderText = "Arquivo";
-            ColumnFile.Name = "ColumnFile";
-            ColumnFile.ReadOnly = true;
-            ColumnFile.Width = 200;
-            // 
-            // ColumnDate
-            // 
-            ColumnDate.HeaderText = "Data/Hora";
-            ColumnDate.Name = "ColumnDate";
-            ColumnDate.ReadOnly = true;
-            ColumnDate.Width = 120;
-            // 
-            // ColumnStatus
-            // 
-            ColumnStatus.HeaderText = "Status";
-            ColumnStatus.Name = "ColumnStatus";
-            ColumnStatus.ReadOnly = true;
-            ColumnStatus.Width = 80;
-            // 
-            // ColumnUser
-            // 
-            ColumnUser.HeaderText = "Usuário";
-            ColumnUser.Name = "ColumnUser";
-            ColumnUser.ReadOnly = true;
-            // 
-            // ColumnRecordsCount
-            // 
-            ColumnRecordsCount.HeaderText = "Registros";
-            ColumnRecordsCount.Name = "ColumnRecordsCount";
-            ColumnRecordsCount.ReadOnly = true;
-            ColumnRecordsCount.Width = 70;
-            // 
-            // ColumnErrorCount
-            // 
-            ColumnErrorCount.HeaderText = "Erros";
-            ColumnErrorCount.Name = "ColumnErrorCount";
-            ColumnErrorCount.ReadOnly = true;
-            ColumnErrorCount.Width = 150;
-            // 
-            // ColumnDuplicatesCount
-            // 
-            ColumnDuplicatesCount.HeaderText = "Duplicidades";
-            ColumnDuplicatesCount.Name = "ColumnDuplicatesCount";
-            ColumnDuplicatesCount.ReadOnly = true;
-            // 
-            // ColumnFileSize
-            // 
-            ColumnFileSize.HeaderText = "Tamanho";
-            ColumnFileSize.Name = "ColumnFileSize";
-            ColumnFileSize.ReadOnly = true;
-            ColumnFileSize.Width = 80;
-            // 
-            // ColumnDetalhesErros
-            // 
-            ColumnDetalhesErros.HeaderText = "DetalhesErros";
-            ColumnDetalhesErros.Name = "ColumnDetalhesErros";
-            ColumnDetalhesErros.ReadOnly = true;
-            ColumnDetalhesErros.Visible = false;
-            // 
-            // ColumnDetalhesDuplicidades
-            // 
-            ColumnDetalhesDuplicidades.HeaderText = "DetalhesDuplicidades";
-            ColumnDetalhesDuplicidades.Name = "ColumnDetalhesDuplicidades";
-            ColumnDetalhesDuplicidades.ReadOnly = true;
-            ColumnDetalhesDuplicidades.Visible = false;
             // 
             // contextMenuStripGrid
             // 
@@ -626,6 +560,81 @@
             // 
             timerProgressBar.Interval = 300;
             timerProgressBar.Tick +=  timerProgressBar_Tick ;
+            // 
+            // id
+            // 
+            id.HeaderText = "id";
+            id.Name = "id";
+            id.ReadOnly = true;
+            id.Visible = false;
+            // 
+            // ColumnFile
+            // 
+            ColumnFile.HeaderText = "Arquivo";
+            ColumnFile.Name = "ColumnFile";
+            ColumnFile.ReadOnly = true;
+            ColumnFile.Width = 200;
+            // 
+            // ColumnDate
+            // 
+            ColumnDate.HeaderText = "Data/Hora";
+            ColumnDate.Name = "ColumnDate";
+            ColumnDate.ReadOnly = true;
+            ColumnDate.Width = 120;
+            // 
+            // ColumnStatus
+            // 
+            ColumnStatus.HeaderText = "Status";
+            ColumnStatus.Name = "ColumnStatus";
+            ColumnStatus.ReadOnly = true;
+            ColumnStatus.Width = 80;
+            // 
+            // ColumnUser
+            // 
+            ColumnUser.HeaderText = "Usuário";
+            ColumnUser.Name = "ColumnUser";
+            ColumnUser.ReadOnly = true;
+            // 
+            // ColumnRecordsCount
+            // 
+            ColumnRecordsCount.HeaderText = "Registros";
+            ColumnRecordsCount.Name = "ColumnRecordsCount";
+            ColumnRecordsCount.ReadOnly = true;
+            ColumnRecordsCount.Width = 70;
+            // 
+            // ColumnErrorCount
+            // 
+            ColumnErrorCount.HeaderText = "Erros";
+            ColumnErrorCount.Name = "ColumnErrorCount";
+            ColumnErrorCount.ReadOnly = true;
+            ColumnErrorCount.Width = 150;
+            // 
+            // ColumnDuplicatesCount
+            // 
+            ColumnDuplicatesCount.HeaderText = "Duplicidades";
+            ColumnDuplicatesCount.Name = "ColumnDuplicatesCount";
+            ColumnDuplicatesCount.ReadOnly = true;
+            // 
+            // ColumnFileSize
+            // 
+            ColumnFileSize.HeaderText = "Tamanho";
+            ColumnFileSize.Name = "ColumnFileSize";
+            ColumnFileSize.ReadOnly = true;
+            ColumnFileSize.Width = 80;
+            // 
+            // ColumnDetalhesErros
+            // 
+            ColumnDetalhesErros.HeaderText = "DetalhesErros";
+            ColumnDetalhesErros.Name = "ColumnDetalhesErros";
+            ColumnDetalhesErros.ReadOnly = true;
+            ColumnDetalhesErros.Visible = false;
+            // 
+            // ColumnDetalhesDuplicidades
+            // 
+            ColumnDetalhesDuplicidades.HeaderText = "DetalhesDuplicidades";
+            ColumnDetalhesDuplicidades.Name = "ColumnDetalhesDuplicidades";
+            ColumnDetalhesDuplicidades.ReadOnly = true;
+            ColumnDetalhesDuplicidades.Visible = false;
             // 
             // FormImport
             // 
@@ -700,16 +709,6 @@
         private Label labelFilterBy;
         private GroupBox groupBoxImportHistory;
         private DataGridView dataGridViewDataImport;
-        private DataGridViewTextBoxColumn ColumnFile;
-        private DataGridViewTextBoxColumn ColumnDate;
-        private DataGridViewTextBoxColumn ColumnStatus;
-        private DataGridViewTextBoxColumn ColumnUser;
-        private DataGridViewTextBoxColumn ColumnRecordsCount;
-        private DataGridViewTextBoxColumn ColumnErrorCount;
-        private DataGridViewTextBoxColumn ColumnDuplicatesCount;
-        private DataGridViewTextBoxColumn ColumnFileSize;
-        private DataGridViewTextBoxColumn ColumnDetalhesErros;
-        private DataGridViewTextBoxColumn ColumnDetalhesDuplicidades;
         private Button btnDatails;
         private Button btnDelete;
         private StatusStrip statusStripMain;
@@ -721,5 +720,16 @@
         private Label labelStatusUpload;
         private ProgressBar progressBar;
         private System.Windows.Forms.Timer timerProgressBar;
+        private DataGridViewTextBoxColumn id;
+        private DataGridViewTextBoxColumn ColumnFile;
+        private DataGridViewTextBoxColumn ColumnDate;
+        private DataGridViewTextBoxColumn ColumnStatus;
+        private DataGridViewTextBoxColumn ColumnUser;
+        private DataGridViewTextBoxColumn ColumnRecordsCount;
+        private DataGridViewTextBoxColumn ColumnErrorCount;
+        private DataGridViewTextBoxColumn ColumnDuplicatesCount;
+        private DataGridViewTextBoxColumn ColumnFileSize;
+        private DataGridViewTextBoxColumn ColumnDetalhesErros;
+        private DataGridViewTextBoxColumn ColumnDetalhesDuplicidades;
     }
 }

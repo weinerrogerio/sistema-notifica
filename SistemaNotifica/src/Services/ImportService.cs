@@ -98,4 +98,34 @@ public class ImportService
             throw;
         }
     }
+
+    //DeleteFileAsync
+    public async Task DeleteFileAsync(int id)
+    {
+        try
+        {
+            Debug.WriteLine("Chamando DeleteFileAsync...........................");
+
+            // A URL agora é construída aqui, incluindo o ID
+            var endpoint = $"log-arquivo-import/{id}";
+
+            // O método DeleteAsync agora recebe apenas o endpoint
+            await _apiService.DeleteAsync(endpoint);
+        }
+        catch ( HttpRequestException ex )
+        {
+            Debug.WriteLine($"Erro HTTP: {ex.Message}");
+            throw new Exception($"Erro de conexão com o servidor. Verifique sua rede ou a URL da API. Detalhes: {ex.Message}");
+        }
+        catch ( JsonException ex )
+        {
+            Debug.WriteLine($"Erro JSON: {ex.Message}");
+            throw new Exception($"Erro ao processar resposta da API: {ex.Message}");
+        }
+        catch ( Exception ex )
+        {
+            Debug.WriteLine($"Erro geral: {ex.Message}");
+            throw;
+        }
+    }
 }
