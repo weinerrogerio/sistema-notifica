@@ -37,7 +37,103 @@ namespace SistemaNotifica
             sidebarMenu.Width = SIDEBAR_MIN_WIDTH;
             tableLayoutNotificacao.Height = SUBMENU_MIN_HEIGHT;
             openHomeDefaultForm();
+
+            // ADICIONAR EVENTOS DE CLICK PARA RECOLHER SIDEBAR
+            SetupClickOutsideHandlers();
         }
+
+        private void SetupClickOutsideHandlers()
+        {
+            // Adiciona evento de click para o form principal
+            this.Click += FormOrigin_Click;
+
+            // Adiciona evento de click para o painel principal
+            pnlMain.Click += PnlMain_Click;
+
+            // Se você tiver um topPanel, adicione também
+            // topPanel.Click += TopPanel_Click;
+
+            // Adiciona recursivamente para todos os controles filhos do pnlMain
+            AddClickHandlerToControls(pnlMain);
+        }
+
+        private void AddClickHandlerToControls(Control parent)
+        {
+            foreach ( Control control in parent.Controls )
+            {
+                // Não adiciona evento para controles da sidebar
+                if ( IsControlInSidebar(control) )
+                    continue;
+
+                control.Click += Control_Click;
+
+                // Recursivamente adiciona para controles filhos
+                if ( control.HasChildren )
+                {
+                    AddClickHandlerToControls(control);
+                }
+            }
+        }
+
+        private bool IsControlInSidebar(Control control)
+        {
+            Control current = control;
+            while ( current != null )
+            {
+                if ( current == sidebarMenu )
+                    return true;
+                current = current.Parent;
+            }
+            return false;
+        }
+
+        private void FormOrigin_Click(object sender, EventArgs e)
+        {
+            CollapseSidebar();
+        }
+
+        private void PnlMain_Click(object sender, EventArgs e)
+        {
+            CollapseSidebar();
+        }
+
+        private void Control_Click(object sender, EventArgs e)
+        {
+            CollapseSidebar();
+        }
+
+        private void CollapseSidebar()
+        {
+            // Só recolhe se a sidebar estiver expandida
+            if ( sidebarMenu.Width > SIDEBAR_MIN_WIDTH )
+            {
+                StartSidebarCollapseAnimation();
+            }
+        }
+
+        private void StartSidebarCollapseAnimation()
+        {
+            startWidth = sidebarMenu.Width;
+            targetWidth = SIDEBAR_MIN_WIDTH;
+
+            // Se o submenu estiver expandido, recolhe também
+            if ( menuTargetHeight == SUBMENU_MAX_HEIGHT || tableLayoutNotificacao.Height > SUBMENU_MIN_HEIGHT )
+            {
+                StartSubmenuCollapseAnimation();
+            }
+
+            animationProgress = 0f;
+            sidebarTransition.Start();
+        }
+
+        private void StartSubmenuCollapseAnimation()
+        {
+            menuStartHeight = tableLayoutNotificacao.Height;
+            menuTargetHeight = SUBMENU_MIN_HEIGHT;
+            menuAnimationProgress = 0f;
+            menuTransition.Start();
+        }
+
         private void FormOrigin_Load(object sender, EventArgs e)
         {
 
@@ -56,7 +152,11 @@ namespace SistemaNotifica
             objForm = formHome;
             pnlMain.Controls.Add(objForm);
             objForm.Show();
+
+            // Reconfigurar handlers após adicionar novo form
+            AddClickHandlerToControls(pnlMain);
         }
+
         private void ApplyPerformanceOptimizations()
         {
             // CONFIGURAÇÕES CRÍTICAS DE PERFORMANCE DO FORM
@@ -267,6 +367,9 @@ namespace SistemaNotifica
             TelaAtual = "FormHome";
             pnlMain.Controls.Add(objForm);
             objForm.Show();
+
+            // Reconfigurar handlers após adicionar novo form
+            AddClickHandlerToControls(pnlMain);
         }
         private void HandleNavigateToImport()
         {
@@ -293,6 +396,9 @@ namespace SistemaNotifica
                 TelaAtual = "FormImport";
                 pnlMain.Controls.Add(objForm);
                 objForm.Show();
+
+                // Reconfigurar handlers após adicionar novo form
+                AddClickHandlerToControls(pnlMain);
             }
             return;
         }
@@ -313,9 +419,12 @@ namespace SistemaNotifica
                     Dock = DockStyle.Fill
                 };
 
-                TelaAtual = "FormImport";
+                TelaAtual = "FormNotification"; // Corrigido
                 pnlMain.Controls.Add(objForm);
                 objForm.Show();
+
+                // Reconfigurar handlers após adicionar novo form
+                AddClickHandlerToControls(pnlMain);
             }
             return;
         }
@@ -334,11 +443,14 @@ namespace SistemaNotifica
                     Dock = DockStyle.Fill
                 };
 
-                TelaAtual = "FormImport";
+                TelaAtual = "TemplateManagerForm"; // Corrigido
                 pnlMain.Controls.Add(objForm);
                 objForm.Show();
+
+                // Reconfigurar handlers após adicionar novo form
+                AddClickHandlerToControls(pnlMain);
             }
             return;
-        }        
+        }
     }
 }
