@@ -24,13 +24,13 @@ namespace SistemaNotifica
 
         private const int SUBMENU_MIN_HEIGHT = 42;
         private const int SUBMENU_MAX_HEIGHT = 125;
-        
+
         public FormOrigin()
         {
             InitializeComponent();
-            this.Text = $"Sistema de Notificações - Versão 1.0       Usuário: {Sessao.UsuarioLogado}";        
+            this.Text = $"Sistema de Notificações - Versão 1.0       Usuário: {Sessao.UsuarioLogado}";
             string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "src/icons", "Logo_transp_pb.ico");
-            if (File.Exists(iconPath)) this.Icon = new Icon(iconPath);
+            if ( File.Exists(iconPath) ) this.Icon = new Icon(iconPath);
             //this.EnableDragByControl(this.topPanel);
             objForm = new Form();
             ApplyPerformanceOptimizations();
@@ -68,11 +68,11 @@ namespace SistemaNotifica
             this.UpdateStyles();
 
             // APLICAR DOUBLEBUFFERED A TODOS OS PAINÉIS USANDO REFLECTION
-            Panel[] panels = { topPanel, panel5, panelHome, panelImportar, panelData, panelSettings,
+            Panel[] panels = { panel5, panelHome, panelImportar, panelData, panelSettings,
                               panelNotificação, panelSubMenu1, panelSubMenu2, panelUser,
                               panelSobre, panelLogOut, pnlMain };
 
-            foreach (Panel panel in panels)
+            foreach ( Panel panel in panels )
             {
                 // CONFIGURAÇÃO CRÍTICA: Evita flickering durante animações
                 typeof(Panel).InvokeMember("DoubleBuffered",
@@ -85,7 +85,7 @@ namespace SistemaNotifica
                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
                null, btnHam, new object[] { true });
 
-           
+
 
             // CONFIGURAÇÃO ULTRA CRÍTICA - GARANTE ANIMAÇÕES A 60 FPS
             typeof(FlowLayoutPanel).InvokeMember("DoubleBuffered",
@@ -114,14 +114,14 @@ namespace SistemaNotifica
         private void StartSidebarAnimation()
         {
             startWidth = sidebarMenu.Width;
-            if (startWidth == SIDEBAR_MIN_WIDTH)
+            if ( startWidth == SIDEBAR_MIN_WIDTH )
             {
                 targetWidth = SIDEBAR_MAX_WIDTH;
             }
             else
             {
                 targetWidth = SIDEBAR_MIN_WIDTH;
-                if (menuTargetHeight == SUBMENU_MAX_HEIGHT)
+                if ( menuTargetHeight == SUBMENU_MAX_HEIGHT )
                 {
                     StartSubmenuAnimation();
                 }
@@ -138,14 +138,14 @@ namespace SistemaNotifica
         {
             animationProgress += 0.05f;
 
-            if (animationProgress >= 1f)
+            if ( animationProgress >= 1f )
             {
                 animationProgress = 1f;
                 sidebarTransition.Stop();
             }
 
-            float easedProgress = 1f - (float)Math.Pow(1 - animationProgress, 3);
-            int newWidth = (int)(startWidth + (targetWidth - startWidth) * easedProgress);
+            float easedProgress = 1f - ( float ) Math.Pow(1 - animationProgress, 3);
+            int newWidth = ( int ) ( startWidth + ( targetWidth - startWidth ) * easedProgress );
 
             newWidth = Math.Max(50, Math.Min(190, newWidth));
 
@@ -162,10 +162,10 @@ namespace SistemaNotifica
             menuStartHeight = tableLayoutNotificacao.Height; // Altura atual do submenu
 
             // Determina a altura alvo com base na altura atual
-            if (menuStartHeight == SUBMENU_MIN_HEIGHT)
+            if ( menuStartHeight == SUBMENU_MIN_HEIGHT )
             {
                 menuTargetHeight = SUBMENU_MAX_HEIGHT;
-                if (sidebarMenu.Width == SIDEBAR_MIN_WIDTH)
+                if ( sidebarMenu.Width == SIDEBAR_MIN_WIDTH )
                 {
                     StartSidebarAnimation();
                 }
@@ -183,14 +183,14 @@ namespace SistemaNotifica
         {
             menuAnimationProgress += 0.05f; // Velocidade da animação (ajuste conforme necessário)
 
-            if (menuAnimationProgress >= 1f)
+            if ( menuAnimationProgress >= 1f )
             {
                 menuAnimationProgress = 1f; // Garante que o progresso não passe de 1
                 menuTransition.Stop(); // Para a animação
             }
 
-            float easedProgress = 1f - (float)Math.Pow(1 - menuAnimationProgress, 3);
-            int newHeight = (int)(menuStartHeight + (menuTargetHeight - menuStartHeight) * easedProgress);
+            float easedProgress = 1f - ( float ) Math.Pow(1 - menuAnimationProgress, 3);
+            int newHeight = ( int ) ( menuStartHeight + ( menuTargetHeight - menuStartHeight ) * easedProgress );
 
             newHeight = Math.Max(SUBMENU_MIN_HEIGHT, Math.Min(SUBMENU_MAX_HEIGHT, newHeight));
 
@@ -229,8 +229,8 @@ namespace SistemaNotifica
         private void btnHam_Click(object sender, EventArgs e)
         {
             StartSidebarAnimation();
-
         }
+
         private void btnNotificacao_Click(object sender, EventArgs e)
         {
             StartSubmenuAnimation();
@@ -239,7 +239,7 @@ namespace SistemaNotifica
         private void btnHome_Click(object sender, EventArgs e)
         {
 
-            if (!(TelaAtual == "FormHome"))
+            if ( !( TelaAtual == "FormHome" ) )
             {
                 openHomeDefaultForm();
                 ResetSidebarButtons();
@@ -278,7 +278,7 @@ namespace SistemaNotifica
         private void btnImportarDoc_Click(object sender, EventArgs e)
         {
 
-            if (!(TelaAtual == "FormImport"))
+            if ( !( TelaAtual == "FormImport" ) )
             {
                 ResetSidebarButtons();
                 btnImportarDoc.BackColor = Color.FromArgb(60, 60, 60);
@@ -298,15 +298,10 @@ namespace SistemaNotifica
         }
 
 
-        // A PRIMEIRA TELA A SER APRESENTADA PRECISA SER A HOME --> fazer depois 
-        private void pnlMain_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
 
         private void btnEnviarNotificacao_Click(object sender, EventArgs e)
         {
-            if (!(TelaAtual == "FormNotification"))
+            if ( !( TelaAtual == "FormNotification" ) )
             {
                 ResetSidebarButtons();
                 btnEnviarNotificacao.BackColor = Color.FromArgb(60, 60, 60);
@@ -327,7 +322,7 @@ namespace SistemaNotifica
 
         private void btnConfigNotificacao_Click(object sender, EventArgs e)
         {
-            if (!(TelaAtual == "TemplateManagerForm"))
+            if ( !( TelaAtual == "TemplateManagerForm" ) )
             {
                 ResetSidebarButtons();
                 btnConfigNotificacao.BackColor = Color.FromArgb(60, 60, 60);
@@ -344,6 +339,6 @@ namespace SistemaNotifica
                 objForm.Show();
             }
             return;
-        }
+        }        
     }
 }
