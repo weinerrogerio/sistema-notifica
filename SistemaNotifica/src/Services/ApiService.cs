@@ -85,6 +85,7 @@ namespace SistemaNotifica.src.Services
         // Método que retorna JObject para manipulação dinâmica
         public async Task<JObject> GetAsJObjectAsync(string endpoint, Dictionary<string, string> queryParams = null)
         {
+            Debug.WriteLine($"Chamando GET /{endpoint} com parâmetros: {queryParams?.Count ?? 0}");
             var json = await GetJsonAsync(endpoint, queryParams);
             return JObject.Parse(json);
         }

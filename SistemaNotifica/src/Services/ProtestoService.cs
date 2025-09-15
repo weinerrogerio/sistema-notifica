@@ -74,6 +74,7 @@ namespace SistemaNotifica.src.Services
 
         public async Task<JObject> GetAsJObjectAsync(string currentPage, string pageSize)
         {
+            Debug.WriteLine("chamando GetAsJObjectAsync de ProtestoService...........................");
             try
             {
                 var parameters = new Dictionary<string, string>
@@ -81,7 +82,9 @@ namespace SistemaNotifica.src.Services
                     { "currentPage", currentPage },
                     { "pageSize", pageSize }
                 };
-                var response = await _apiService.GetAsJObjectAsync("doc-protesto/date-range", parameters);
+                var response = await _apiService.GetAsJObjectAsync("doc-protesto/find-all-pagination", parameters);
+                Debug.WriteLine(response);
+                Debug.WriteLine("Resposta Service em GetAsJObjectAsync:"+response.ToString());
                 return response;
             }
             catch ( HttpRequestException ex )

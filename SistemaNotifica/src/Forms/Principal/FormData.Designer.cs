@@ -42,14 +42,16 @@
             ColumNomeDevedor = new DataGridViewTextBoxColumn();
             ColumnDocDevedor = new DataGridViewTextBoxColumn();
             ColumnNomeApresentante = new DataGridViewTextBoxColumn();
+            ColumnCodApresentante = new DataGridViewTextBoxColumn();
             ColumnSacador = new DataGridViewTextBoxColumn();
             ColumnCedente = new DataGridViewTextBoxColumn();
+            ColumnDocCredor = new DataGridViewTextBoxColumn();
             ColumnEmailEnviado = new DataGridViewTextBoxColumn();
             ColumnDataEnvio = new DataGridViewTextBoxColumn();
             nome_arquivo = new DataGridViewTextBoxColumn();
             file_data_importacao = new DataGridViewTextBoxColumn();
             tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).BeginInit();
+            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewProtesto ).BeginInit();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -71,7 +73,7 @@
             dataGridViewProtesto.AllowUserToAddRows = false;
             dataGridViewProtesto.AllowUserToDeleteRows = false;
             dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewProtesto.Columns.AddRange(new DataGridViewColumn[] { ColumnId, ColumnDataApresentacao, ColumnDataDistribuicao, ColumnNumDistribuicao, ColumnCartProtesto, ColumnNumTitulo, ColumnValor, ColumnSaldo, ColumnVencimento, ColumNomeDevedor, ColumnDocDevedor, ColumnNomeApresentante, ColumnSacador, ColumnCedente, ColumnEmailEnviado, ColumnDataEnvio, nome_arquivo, file_data_importacao });
+            dataGridViewProtesto.Columns.AddRange(new DataGridViewColumn[] { ColumnId, ColumnDataApresentacao, ColumnDataDistribuicao, ColumnNumDistribuicao, ColumnCartProtesto, ColumnNumTitulo, ColumnValor, ColumnSaldo, ColumnVencimento, ColumNomeDevedor, ColumnDocDevedor, ColumnNomeApresentante, ColumnCodApresentante, ColumnSacador, ColumnCedente, ColumnDocCredor, ColumnEmailEnviado, ColumnDataEnvio, nome_arquivo, file_data_importacao });
             dataGridViewProtesto.Dock = DockStyle.Fill;
             dataGridViewProtesto.Location = new Point(3, 70);
             dataGridViewProtesto.Name = "dataGridViewProtesto";
@@ -139,6 +141,12 @@
             ColumnNomeApresentante.HeaderText = "Apresentante";
             ColumnNomeApresentante.Name = "ColumnNomeApresentante";
             // 
+            // ColumnCodApresentante
+            // 
+            ColumnCodApresentante.HeaderText = "Cod. Apresentante";
+            ColumnCodApresentante.Name = "ColumnCodApresentante";
+            ColumnCodApresentante.ReadOnly = true;
+            // 
             // ColumnSacador
             // 
             ColumnSacador.HeaderText = "Sacador";
@@ -148,6 +156,12 @@
             // 
             ColumnCedente.HeaderText = "Cedente";
             ColumnCedente.Name = "ColumnCedente";
+            // 
+            // ColumnDocCredor
+            // 
+            ColumnDocCredor.HeaderText = "Doc. Credor";
+            ColumnDocCredor.Name = "ColumnDocCredor";
+            ColumnDocCredor.ReadOnly = true;
             // 
             // ColumnEmailEnviado
             // 
@@ -177,9 +191,9 @@
             Controls.Add(tableLayoutPanel1);
             Name = "FormData";
             Text = "FormData";
-            Load += FormData_Load;
+            Load +=  FormData_Load ;
             tableLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).EndInit();
+            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewProtesto ).EndInit();
             ResumeLayout(false);
         }
 
@@ -199,8 +213,10 @@
         private DataGridViewTextBoxColumn ColumNomeDevedor;
         private DataGridViewTextBoxColumn ColumnDocDevedor;
         private DataGridViewTextBoxColumn ColumnNomeApresentante;
+        private DataGridViewTextBoxColumn ColumnCodApresentante;
         private DataGridViewTextBoxColumn ColumnSacador;
         private DataGridViewTextBoxColumn ColumnCedente;
+        private DataGridViewTextBoxColumn ColumnDocCredor;
         private DataGridViewTextBoxColumn ColumnEmailEnviado;
         private DataGridViewTextBoxColumn ColumnDataEnvio;
         private DataGridViewTextBoxColumn nome_arquivo;

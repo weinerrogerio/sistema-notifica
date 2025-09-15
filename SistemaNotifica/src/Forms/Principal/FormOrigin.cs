@@ -403,8 +403,6 @@ namespace SistemaNotifica
             return;
         }
 
-
-
         private void btnEnviarNotificacao_Click(object sender, EventArgs e)
         {
             if ( !( TelaAtual == "FormNotification" ) )
@@ -444,6 +442,31 @@ namespace SistemaNotifica
                 };
 
                 TelaAtual = "TemplateManagerForm"; // Corrigido
+                pnlMain.Controls.Add(objForm);
+                objForm.Show();
+
+                // Reconfigurar handlers após adicionar novo form
+                AddClickHandlerToControls(pnlMain);
+            }
+            return;
+        }
+
+        private void btnDados_Click(object sender, EventArgs e)
+        {
+            //FormData
+            if ( !( TelaAtual == "FormData" ) )
+            {
+                ResetSidebarButtons();
+                btnConfigNotificacao.BackColor = Color.FromArgb(60, 60, 60);
+                objForm?.Close();
+                objForm = new FormData
+                {
+                    TopLevel = false,
+                    FormBorderStyle = FormBorderStyle.None,
+                    Dock = DockStyle.Fill
+                };
+
+                TelaAtual = "FormData"; 
                 pnlMain.Controls.Add(objForm);
                 objForm.Show();
 

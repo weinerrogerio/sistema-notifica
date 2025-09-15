@@ -161,6 +161,7 @@ namespace SistemaNotifica
             btnDados.TabIndex = 2;
             btnDados.Text = " Dados";
             btnDados.UseVisualStyleBackColor = false;
+            btnDados.Click +=  btnDados_Click ;
             // 
             // panelImportar
             // 
