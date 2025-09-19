@@ -24,6 +24,8 @@ namespace SistemaNotifica.src.Forms.Principal
         private string _lastFileName;
         private bool _awaitingUserDecision = false;
 
+        private bool _cacheUpdateInProgress = false;
+
         public FormImport()
         {
             InitializeComponent();
@@ -270,6 +272,10 @@ namespace SistemaNotifica.src.Forms.Principal
 
             try
             {
+                // NOVO: Limpa o cache antes de iniciar o upload
+                Debug.WriteLine("FormImport: Limpando cache antes do upload");
+                ProtestoDataCache.Clear();
+
                 byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
                 string fileName = System.IO.Path.GetFileName(filePath);
 
@@ -309,6 +315,11 @@ namespace SistemaNotifica.src.Forms.Principal
             if ( result == DialogResult.Yes )
             {
                 Debug.WriteLine("Usuário escolheu prosseguir com importação parcial");
+
+                // NOVO: Limpa o cache antes da importação parcial
+                Debug.WriteLine("FormImport: Limpando cache antes da importação parcial");
+                ProtestoDataCache.Clear();
+
                 await ExecuteImportAsync(_lastFileBytes, _lastFileName, true);
             }
             else
@@ -513,7 +524,6 @@ namespace SistemaNotifica.src.Forms.Principal
                     progresso = ( processado * 100 ) / total;
                 }
 
-                // Atualiza a barra e os labels
                 SetProgressBarValue(progresso, detalhesProgresso);
 
                 // Se o processo de importação terminou
@@ -537,8 +547,44 @@ namespace SistemaNotifica.src.Forms.Principal
                         return;
                     }
 
+                    // NOVO: Atualizar o cache em background após upload bem-sucedido
+                    if ( status == "sucesso" || status == "parcial" )
+                    {
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                if ( !_cacheUpdateInProgress )
+                                {
+                                    _cacheUpdateInProgress = true;
+                                    Debug.WriteLine("FormImport: Iniciando atualização do cache após upload");
+
+                                    // Atualiza o cache em background
+                                    await FormData.RefreshCacheAfterUpload(Program.ProtestoService);
+
+                                    Debug.WriteLine("FormImport: Cache atualizado com sucesso após upload");
+                                }
+                            }
+                            catch ( Exception ex )
+                            {
+                                Debug.WriteLine($"FormImport: Erro ao atualizar cache: {ex.Message}");
+                            }
+                            finally
+                            {
+                                _cacheUpdateInProgress = false;
+                            }
+                        });
+                    }
+
                     await LoadDataImport();
                     string message = data["message"]?.ToString() ?? "Importação finalizada.";
+
+                    // NOVO: Mensagem adicional sobre atualização do cache
+                    if ( status == "sucesso" || status == "parcial" )
+                    {
+                        message += "\n\nOs dados foram atualizados em segundo plano.";
+                    }
+
                     MessageBox.Show(message, "Status da Importação", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
@@ -552,7 +598,6 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private async void btnDelete_Click(object sender, EventArgs e)
         {
-            // 1. Verifique se alguma linha está selecionada
             if ( dataGridViewDataImport.SelectedRows.Count == 0 )
             {
                 MessageBox.Show("Por favor, selecione um arquivo para excluir.", "Nenhum Arquivo Selecionado",
@@ -560,16 +605,10 @@ namespace SistemaNotifica.src.Forms.Principal
                 return;
             }
 
-            // 2. Obtenha a linha selecionada
             var selectedRow = dataGridViewDataImport.SelectedRows[0];
-
-            // Obtenha o ID do registro (necessário para a requisição de exclusão)
             var logId = selectedRow.Cells["id"].Value;
-
-            // Obtenha o nome do arquivo para a mensagem de confirmação
             var fileName = selectedRow.Cells["ColumnFile"].Value?.ToString() ?? "Arquivo selecionado";
 
-            // 3. Exiba a mensagem de confirmação
             var result = MessageBox.Show(
                 $"Ao prosseguir o arquivo {fileName} e seus registros importados anteriormente serão PERMANENTEMENTE EXCLUÍDOS.\n\n" +
                 "Tem certeza que deseja excluir o arquivo selecionado?\n\n" +
@@ -579,17 +618,44 @@ namespace SistemaNotifica.src.Forms.Principal
                 MessageBoxIcon.Error
             );
 
-            // 4. Se o usuário confirmar, chame o método de exclusão
             if ( result == DialogResult.Yes )
             {
-                // Certifique-se de que o ID não é nulo ou inválido
                 if ( logId != null && int.TryParse(logId.ToString(), out int idToDelete) )
                 {
-                    // Chame sua função de serviço para excluir o arquivo
-                    //DeleteFileAsync(idToDelete);
-                    Debug.WriteLine($"Excluindo arquivo com ID: {idToDelete}");
-                    await _importService.DeleteFileAsync(idToDelete);
-                    await LoadDataImport();
+                    try
+                    {
+                        Debug.WriteLine($"Excluindo arquivo com ID: {idToDelete}");
+                        await _importService.DeleteFileAsync(idToDelete);
+
+                        // NOVO: Limpa o cache após exclusão
+                        Debug.WriteLine("FormImport: Limpando cache após exclusão de arquivo"); 
+                        ProtestoDataCache.Clear();
+
+                        await LoadDataImport();
+
+                        // NOVO: Atualiza o cache em background após exclusão
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                Debug.WriteLine("FormImport: Atualizando cache após exclusão");
+                                await FormData.RefreshCacheAfterUpload(Program.ProtestoService);
+
+                                // Notifica outros formulários
+                                this.Invoke(new Action(NotifyFormsAboutCacheUpdate));
+                            }
+                            catch ( Exception ex )
+                            {
+                                Debug.WriteLine($"FormImport: Erro ao atualizar cache após exclusão: {ex.Message}");
+                            }
+                        });
+
+                        MessageBox.Show("Arquivo excluído com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch ( Exception ex )
+                    {
+                        MessageBox.Show($"Erro ao excluir arquivo: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 else
                 {
@@ -598,5 +664,63 @@ namespace SistemaNotifica.src.Forms.Principal
                 }
             }
         }
+
+
+        private void NotifyFormsAboutCacheUpdate()
+        {
+            try
+            {
+                // Procura por formulários FormData abertos e os notifica sobre a atualização
+                foreach ( Form form in Application.OpenForms )
+                {
+                    if ( form is FormData formData && form != this )
+                    {
+                        Debug.WriteLine("FormImport: Notificando FormData sobre atualização do cache");
+
+                        // O FormData já está inscrito nos eventos do cache, então a atualização será automática
+                        // Mas podemos forçar uma verificação se necessário
+                        Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await Task.Delay(2000); // Aguarda um pouco para o cache ser atualizado
+
+                                if ( form.InvokeRequired )
+                                {
+                                    form.Invoke(new Action(() => form.Text = "Sistema Notifica - Dados atualizados"));
+                                }
+                                else
+                                {
+                                    form.Text = "Sistema Notifica - Dados atualizados";
+                                }
+
+                                await Task.Delay(3000); // Mostra a mensagem por 3 segundos
+
+                                if ( form.InvokeRequired )
+                                {
+                                    form.Invoke(new Action(() => form.Text = "Sistema Notifica"));
+                                }
+                                else
+                                {
+                                    form.Text = "Sistema Notifica";
+                                }
+                            }
+                            catch ( Exception ex )
+                            {
+                                Debug.WriteLine($"FormImport: Erro ao notificar FormData: {ex.Message}");
+                            }
+                        });
+                    }
+                }
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"FormImport: Erro ao procurar formulários: {ex.Message}");
+            }
+        }
+
+
+
+
     }
 }

@@ -33,25 +33,57 @@ namespace SistemaNotifica
             ProtestoService = new ProtestoService(ApiService);
             ImportService = new ImportService(ApiService);
             NotificationService = new NotificationService(ApiService);
+
+
+            ConfigureCacheHandlers();
+
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.            
             //ApplicationConfiguration.Initialize();
             //List<ErroDetalhado> erros = new List<ErroDetalhado>();
 
-           // Application.Run(new FormOrigin());
+            Application.Run(new FormNotification());
 
-            using ( FormLogin loginForm = new FormLogin() )
-            {
-                if ( loginForm.ShowDialog() == DialogResult.OK )
-                {
-                    // Login bem-sucedido, agora inicie o formulário principal da aplicação
-                    Application.Run(new FormOrigin()); // Assumindo que FormOrigin é o seu formulário principal
-                }
-                else
-                {
-                    Debug.WriteLine("ERRO EM PROGRAM.CS --> LOGIN");
-                }
-            }
+            //using ( FormLogin loginForm = new FormLogin() )
+            //{
+            //    if ( loginForm.ShowDialog() == DialogResult.OK )
+            //    {
+            //        // Login bem-sucedido, agora inicie o formulário principal da aplicação
+            //        Application.Run(new FormOrigin()); // Assumindo que FormOrigin é o seu formulário principal
+            //    }
+            //    else
+            //    {
+            //        Debug.WriteLine("ERRO EM PROGRAM.CS --> LOGIN");
+            //    }
+            //}
         }
+
+
+        private static void ConfigureCacheHandlers()
+        {
+            // Configura handlers globais para logging do cache
+            ProtestoDataCache.OnDataUpdated += (newData) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"Program: Cache atualizado com {newData.Count} novos registros");
+            };
+
+            ProtestoDataCache.OnLoadingStateChanged += (isLoading) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"Program: Estado do cache mudou - Carregando: {isLoading}");
+            };
+
+            // Handler para erros não tratados relacionados ao cache
+            Application.ThreadException += (sender, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"Program: Erro na thread da aplicação: {e.Exception.Message}");
+                if ( e.Exception.Message.Contains("Cache") )
+                {
+                    // Log específico para erros de cache
+                    System.Diagnostics.Debug.WriteLine($"Program: Erro relacionado ao cache detectado, limpando cache");
+                    ProtestoDataCache.Clear();
+                }
+            };
+        }
+
     }
 }

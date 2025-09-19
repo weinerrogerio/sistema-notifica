@@ -18,33 +18,43 @@ namespace SistemaNotifica.src.Forms.Principal
     public partial class FormData : Form
     {
         private readonly ProtestoService _protestoService;
-
-        // Variáveis para controle de paginação otimizada
-        private int currentPage = 1;
-        private int pageSize = 50; // Aumentado para balance entre performance e memória
-        private int totalPages = 1;
-        private bool isLoadingData = false;
-
-        // Controle de carregamento progressivo otimizado
         private CancellationTokenSource _cancellationTokenSource;
-        private const int BATCH_DELAY_MS = 100; // Delay entre batches para não travar UI
-        private const int VIRTUAL_MODE_THRESHOLD = 1000; // Limite para ativar modo virtual
+        private bool _isInitializing = false;
+        private int _lastAddedRowCount = 0;
 
-        // Cache para modo virtual (se necessário)
-        private List<JObject> _dataCache = new List<JObject>();
-        private bool _isVirtualMode = false;
+        // Configurações de cache
+        private const int CACHE_PAGE_SIZE = 50;
+        private const int UI_UPDATE_BATCH_SIZE = 10;
+        private const int UI_UPDATE_DELAY_MS = 50;
 
         public FormData()
         {
             InitializeComponent();
             _protestoService = Program.ProtestoService;
+            tableLayoutPanel.Dock = DockStyle.Fill;
+            this.Resize += FormData_Resize;
             ConfigDataGridView();
-            LoadDistribData();
+            
+            // Inscreve nos eventos do cache
+            ProtestoDataCache.OnDataUpdated += OnCacheDataUpdated;
+            ProtestoDataCache.OnLoadingStateChanged += OnCacheLoadingStateChanged;
+
+            LoadDataWithCache();
+            
+        }
+
+        private void FormData_Resize(object sender, EventArgs e)
+        {
+            // Força atualização do layout do DataGridView
+            if ( dataGridViewProtesto != null )
+            {
+                dataGridViewProtesto.Invalidate();
+                dataGridViewProtesto.Update();
+            }
         }
 
         private void ConfigDataGridView()
         {
-            // Suspender layout para melhor performance
             dataGridViewProtesto.SuspendLayout();
 
             dataGridViewProtesto.Rows.Clear();
@@ -54,35 +64,32 @@ namespace SistemaNotifica.src.Forms.Principal
             dataGridViewProtesto.MultiSelect = false;
             dataGridViewProtesto.ReadOnly = true;
             dataGridViewProtesto.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridViewProtesto.Dock = DockStyle.Fill;
 
-            // OTIMIZAÇÕES DE PERFORMANCE
-            dataGridViewProtesto.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            // Otimizações de performance
+            dataGridViewProtesto.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewProtesto.ScrollBars = ScrollBars.Both;
             dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dataGridViewProtesto.AllowUserToResizeRows = false;
             dataGridViewProtesto.AllowUserToResizeColumns = true;
+            dataGridViewProtesto.Rows.Clear();
+            dataGridViewProtesto.RowHeadersVisible = false;
 
-            // CONFIGURAÇÕES CRÍTICAS PARA PERFORMANCE
-            // Reduz flickering
+            // Configurações críticas para performance
             typeof(DataGridView).InvokeMember("DoubleBuffered",
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
                     null, dataGridViewProtesto, new object[] { true });
-            dataGridViewProtesto.EnableHeadersVisualStyles = false; // Melhora performance
-            dataGridViewProtesto.CellPainting += DataGridViewProtesto_CellPainting; // Pintura customizada se necessário
+            dataGridViewProtesto.EnableHeadersVisualStyles = false;
 
             ConfigurarLargurasColunas();
-
             dataGridViewProtesto.ResumeLayout();
-        }
-
-        private void DataGridViewProtesto_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-        {
-            // Otimização de pintura - implementar apenas se necessário
-            // Para grandes volumes de dados, pode ser útil customizar a pintura
         }
 
         private void ConfigurarLargurasColunas()
         {
+            int larguraDisponivel = dataGridViewProtesto.ClientSize.Width - 20; // 20px para scroll
+            int totalColunas = dataGridViewProtesto.Columns.Count;
+
             var configColunas = new Dictionary<string, int>
             {
                 {"ColumnId", 50},
@@ -112,12 +119,21 @@ namespace SistemaNotifica.src.Forms.Principal
                 if ( configColunas.ContainsKey(coluna.Name) )
                 {
                     coluna.Width = configColunas[coluna.Name];
-                    coluna.MinimumWidth = configColunas[coluna.Name] - 20;
+                    coluna.MinimumWidth = Math.Max(50, configColunas[coluna.Name] - 20);
+
+                    // ADICIONE: Permitir redimensionamento automático da última coluna
+                    if ( coluna == dataGridViewProtesto.Columns[dataGridViewProtesto.Columns.Count - 1] )
+                    {
+                        coluna.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    }
                 }
             }
         }
 
-        private async Task LoadDistribData()
+
+        /// Carrega dados usando o sistema de cache
+
+        private async Task LoadDataWithCache()
         {
             try
             {
@@ -129,165 +145,232 @@ namespace SistemaNotifica.src.Forms.Principal
                     return;
                 }
 
-                // Cancela qualquer carregamento anterior
                 _cancellationTokenSource?.Cancel();
                 _cancellationTokenSource = new CancellationTokenSource();
+                _isInitializing = true;
 
-                isLoadingData = true;
-                currentPage = 1;
-                totalPages = 1;
-                _dataCache.Clear();
+                Debug.WriteLine("FormData: Iniciando carregamento com cache");
+                Debug.WriteLine($"Cache Stats: {ProtestoDataCache.GetCacheStats()}");
 
-                // Limpa a grade e suspende atualizações para melhor performance
-                dataGridViewProtesto.SuspendLayout();
-                dataGridViewProtesto.Rows.Clear();
-                dataGridViewProtesto.ResumeLayout();
+                // Verifica se o cache já tem dados
+                if ( ProtestoDataCache.Count > 0 )
+                {
+                    Debug.WriteLine("FormData: Carregando dados existentes do cache");
+                    await LoadDataFromCache();
+                }
+                else
+                {
+                    Debug.WriteLine("FormData: Cache vazio, iniciando carregamento da API");
+                    ShowLoadingIndicator(true, "Carregando dados...");
 
-                ShowLoadingIndicator(true);
-
-                Debug.WriteLine("Iniciando LoadDistribData otimizado...");
-
-                // Verifica se deve usar modo virtual baseado no total estimado
-                await LoadAllPagesProgressively(_cancellationTokenSource.Token);
-
-                Debug.WriteLine($"LoadDistribData concluído. Total de registros: {dataGridViewProtesto.Rows.Count}");
-            }
-            catch ( OperationCanceledException )
-            {
-                Debug.WriteLine("Carregamento cancelado pelo usuário");
+                    // Inicia o carregamento do cache em background
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await ProtestoDataCache.LoadCacheAsync(LoadPageFromApi, CACHE_PAGE_SIZE, _cancellationTokenSource.Token);
+                        }
+                        catch ( OperationCanceledException )
+                        {
+                            Debug.WriteLine("FormData: Carregamento cancelado");
+                        }
+                        catch ( Exception ex )
+                        {
+                            Debug.WriteLine($"FormData: Erro no carregamento: {ex.Message}");
+                            this.Invoke(new Action(() =>
+                            {
+                                MessageBox.Show($"Erro ao carregar dados: {ex.Message}", "Erro",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }));
+                        }
+                    });
+                }
             }
             catch ( Exception ex )
             {
-                Debug.WriteLine($"Erro em LoadDistribData: {ex.Message}");
-                MessageBox.Show($"Erro ao carregar dados da API: {ex.Message}", "Erro",
+                Debug.WriteLine($"FormData: Erro em LoadDataWithCache: {ex.Message}");
+                MessageBox.Show($"Erro ao inicializar carregamento: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                isLoadingData = false;
-                ShowLoadingIndicator(false);
+                _isInitializing = false;
             }
         }
 
-        private async Task LoadAllPagesProgressively(CancellationToken cancellationToken)
+
+        /// Carrega uma página da API (usado pelo cache)
+
+        private async Task<JObject> LoadPageFromApi(int page, int pageSize)
         {
-            currentPage = 1;
-            var batchRows = new List<DataGridViewRow>();
-            const int BATCH_SIZE = 100; // Processa em lotes de 100 registros
+            Debug.WriteLine($"FormData: Carregando página {page} da API");
+            return await _protestoService.GetAsJObjectAsync(page.ToString(), pageSize.ToString());
+        }
 
-            do
+
+        /// Carrega dados existentes do cache para o grid
+
+        private async Task LoadDataFromCache()
+        {
+            try
             {
-                cancellationToken.ThrowIfCancellationRequested();
+                var cachedData = ProtestoDataCache.GetAllData();
 
-                Debug.WriteLine($"Carregando página {currentPage}...");
-
-                JObject response = await _protestoService.GetAsJObjectAsync(currentPage.ToString(), pageSize.ToString());
-                var dados = response["data"] as JArray;
-
-                if ( dados != null && dados.Count > 0 )
+                if ( cachedData.Count == 0 )
                 {
-                    // Atualizar informações de paginação na primeira execução
-                    if ( currentPage == 1 )
-                    {
-                        totalPages = response["lastPage"]?.Value<int>() ?? 1;
-                        var totalRecords = response["total"]?.Value<int>() ?? 0;
+                    Debug.WriteLine("FormData: Cache não contém dados");
+                    return;
+                }
 
-                        Debug.WriteLine($"Total de páginas: {totalPages}, Total registros: {totalRecords}");
+                Debug.WriteLine($"FormData: Carregando {cachedData.Count} registros do cache");
 
-                        // Decide se usar modo virtual para grandes volumes
-                        if ( totalRecords > VIRTUAL_MODE_THRESHOLD )
-                        {
-                            _isVirtualMode = true;
-                            Debug.WriteLine("Ativando modo virtual para grande volume de dados");
-                        }
-                    }
+                dataGridViewProtesto.SuspendLayout();
+                dataGridViewProtesto.Rows.Clear();
+                _lastAddedRowCount = 0;
 
-                    // Processar dados em batch para não travar a UI
-                    await ProcessDataInBatches(dados, cancellationToken);
+                // Adiciona os dados em lotes para não travar a UI
+                await AddDataToGridInBatches(cachedData);
 
-                    Debug.WriteLine($"Página {currentPage} processada. Total no grid: {dataGridViewProtesto.Rows.Count}");
+                dataGridViewProtesto.ResumeLayout();
 
-                    // Atualiza a UI para mostrar progresso
-                    UpdateProgressStatus(currentPage, totalPages);
+                Debug.WriteLine($"FormData: {cachedData.Count} registros carregados do cache para o grid");
+                UpdateStatusLabel($"{cachedData.Count} registros carregados do cache");
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"FormData: Erro ao carregar dados do cache: {ex.Message}");
+            }
+        }
 
-                    // Delay controlado entre páginas para não sobrecarregar a UI
-                    await Task.Delay(BATCH_DELAY_MS, cancellationToken);
+
+        /// Evento chamado quando novos dados são adicionados ao cache
+
+        private async void OnCacheDataUpdated(List<JObject> newData)
+        {
+            if ( newData.Count == 0 ) return;
+
+            try
+            {
+                if ( this.InvokeRequired )
+                {
+                    this.Invoke(new Action(async () => await OnCacheDataUpdated_Internal(newData)));
                 }
                 else
                 {
-                    Debug.WriteLine($"Página {currentPage} retornou dados vazios");
-                    break;
+                    await OnCacheDataUpdated_Internal(newData);
                 }
-
-                currentPage++;
-
-                // Força garbage collection periodicamente para grandes volumes
-                if ( currentPage % 10 == 0 )
-                {
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                }
-
-            } while ( currentPage <= totalPages && !cancellationToken.IsCancellationRequested );
-
-            Debug.WriteLine($"Carregamento concluído. Páginas: {currentPage - 1}/{totalPages}");
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"FormData: Erro em OnCacheDataUpdated: {ex.Message}");
+            }
         }
 
-        private async Task ProcessDataInBatches(JArray data, CancellationToken cancellationToken)
+        private async Task OnCacheDataUpdated_Internal(List<JObject> newData)
+        {
+            Debug.WriteLine($"FormData: Adicionando {newData.Count} novos registros ao grid");
+
+            // Remove a chamada recursiva de AddDataToGridInBatches
+            // Apenas adicione as linhas ao grid diretamente
+            AddDataBatch(newData);
+
+            int totalRecords = dataGridViewProtesto.Rows.Count;
+            UpdateStatusLabel($"{totalRecords} registros carregados");
+
+            Debug.WriteLine($"FormData: Grid agora tem {totalRecords} registros");
+        }
+                
+        private void AddDataBatch(List<JObject> data)
         {
             dataGridViewProtesto.SuspendLayout();
+            foreach ( var item in data )
+            {
+                AdicionarLinhaApiTabela(item);
+            }
+            dataGridViewProtesto.ResumeLayout();
+        }
 
+        private void OnCacheLoadingStateChanged(bool isLoading)
+        {
             try
             {
-                foreach ( JObject item in data )
+                if ( this.InvokeRequired )
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
+                    this.Invoke(new Action(() => OnCacheLoadingStateChanged_Internal(isLoading)));
+                }
+                else
+                {
+                    OnCacheLoadingStateChanged_Internal(isLoading);
+                }
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"FormData: Erro em OnCacheLoadingStateChanged: {ex.Message}");
+            }
+        }
 
-                    // Adiciona linha diretamente no grid
+        private void OnCacheLoadingStateChanged_Internal(bool isLoading)
+        {
+            if ( !isLoading )
+            {
+                ShowLoadingIndicator(false);
+                Debug.WriteLine("FormData: Carregamento do cache finalizado");
+
+                int totalRecords = dataGridViewProtesto.Rows.Count;
+                UpdateStatusLabel($"{totalRecords} registros carregados");
+            }
+        }
+
+
+        /// Adiciona dados ao grid em lotes para não travar a UI
+        private async Task AddDataToGridInBatches(List<JObject> data, bool clearGrid = true)
+        {
+            if ( data.Count == 0 ) return;
+
+            if ( clearGrid )
+            {
+                dataGridViewProtesto.Rows.Clear();
+                _lastAddedRowCount = 0;
+            }
+
+            int currentIndex = 0;
+
+            while ( currentIndex < data.Count )
+            {
+                int batchSize = Math.Min(UI_UPDATE_BATCH_SIZE, data.Count - currentIndex);
+                var batch = data.Skip(currentIndex).Take(batchSize).ToList();
+
+                dataGridViewProtesto.SuspendLayout();
+
+                foreach ( var item in batch )
+                {
                     AdicionarLinhaApiTabela(item);
+                }
 
-                    // A cada 10 registros, permite que a UI se atualize
-                    if ( dataGridViewProtesto.Rows.Count % 10 == 0 )
-                    {
-                        dataGridViewProtesto.ResumeLayout();
-                        await Task.Delay(5, cancellationToken); // Delay mínimo
-                        dataGridViewProtesto.SuspendLayout();
-                    }
+                dataGridViewProtesto.ResumeLayout();
+
+                currentIndex += batchSize;
+                _lastAddedRowCount += batchSize;
+
+                // Permite que a UI se atualize
+                await Task.Delay(UI_UPDATE_DELAY_MS);
+                Application.DoEvents();
+
+                // Atualiza o status periodicamente
+                if ( currentIndex % ( UI_UPDATE_BATCH_SIZE * 5 ) == 0 )
+                {
+                    UpdateStatusLabel($"Carregando... {currentIndex}/{data.Count} registros");
                 }
             }
-            finally
-            {
-                dataGridViewProtesto.ResumeLayout();
-            }
         }
 
-        private async Task AdicionarLinhasEmLote(List<DataGridViewRow> rows)
-        {
-            if ( rows.Count == 0 ) return;
 
-            // Suspende o layout durante a adição em lote
-            dataGridViewProtesto.SuspendLayout();
-
-            try
-            {
-                // Adiciona todas as rows de uma vez
-                DataGridViewRow[] rowArray = rows.ToArray();
-                dataGridViewProtesto.Rows.AddRange(rowArray);
-            }
-            finally
-            {
-                dataGridViewProtesto.ResumeLayout();
-            }
-
-            // Permite que a UI se atualize
-            await Task.Yield();
-        }
+        /// Adiciona uma linha individual ao grid (método existente otimizado)
 
         private void AdicionarLinhaApiTabela(JObject protesto)
         {
             try
             {
-                // Adicionar nova linha diretamente no grid
                 int rowIndex = dataGridViewProtesto.Rows.Add();
                 DataGridViewRow row = dataGridViewProtesto.Rows[rowIndex];
 
@@ -310,7 +393,7 @@ namespace SistemaNotifica.src.Forms.Principal
                     row.Cells["ColumnCodApresentante"].Value = apresentante["cod_apresentante"]?.ToString() ?? string.Empty;
                 }
 
-                // Dados do credor (primeiro credor da lista)
+                // Dados do credor
                 var credores = protesto["credores"] as JArray;
                 if ( credores != null && credores.Count > 0 )
                 {
@@ -323,6 +406,7 @@ namespace SistemaNotifica.src.Forms.Principal
                     }
                 }
 
+                // Dados das notificações
                 var notificacoes = protesto["notificacao"] as JArray;
                 if ( notificacoes != null && notificacoes.Count > 0 )
                 {
@@ -341,6 +425,7 @@ namespace SistemaNotifica.src.Forms.Principal
                     }
                 }
 
+                // Dados do arquivo
                 var file = protesto["file"] as JObject;
                 if ( file != null )
                 {
@@ -350,49 +435,66 @@ namespace SistemaNotifica.src.Forms.Principal
             }
             catch ( Exception ex )
             {
-                Debug.WriteLine($"Erro ao adicionar linha da API: {ex.Message}");
-                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                Debug.WriteLine($"FormData: Erro ao adicionar linha: {ex.Message}");
             }
         }
-
-        // Cache dos índices das colunas para performance
-        private Dictionary<string, int> _columnIndicesCache;
-
-        private Dictionary<string, int> GetColumnIndices()
+        /// Atualiza o cache em background após upload
+        public static async Task RefreshCacheAfterUpload(ProtestoService protestoService)
         {
-            if ( _columnIndicesCache == null )
+            try
             {
-                _columnIndicesCache = new Dictionary<string, int>();
-                for ( int i = 0; i < dataGridViewProtesto.Columns.Count; i++ )
-                {
-                    _columnIndicesCache[dataGridViewProtesto.Columns[i].Name] = i;
-                }
-            }
-            return _columnIndicesCache;
-        }
+                Debug.WriteLine("FormData: Iniciando atualização do cache após upload");
 
-        // Método otimizado para atualizar status do progresso
-        private void UpdateProgressStatus(int currentPage, int totalPages)
-        {
-            if ( totalPages > 0 )
+                await ProtestoDataCache.RefreshCacheInBackground(
+                    async (page, pageSize) => await protestoService.GetAsJObjectAsync(page.ToString(), pageSize.ToString()),
+                    CACHE_PAGE_SIZE
+                );
+
+                Debug.WriteLine("FormData: Cache atualizado com sucesso após upload");
+            }
+            catch ( Exception ex )
             {
-                int percentual = ( int ) ( ( double ) currentPage / totalPages * 100 );
-                int registrosCarregados = dataGridViewProtesto.Rows.Count;
+                Debug.WriteLine($"FormData: Erro ao atualizar cache após upload: {ex.Message}");
+            }
+        }
+        /// Método público para atualizar dados
+        public async Task RefreshData()
+        {
+            Debug.WriteLine("FormData: Solicitação de refresh de dados");
+            await LoadDataWithCache();
+        }
 
-                this.Text = $"Sistema Notifica - Carregando... {percentual}% ({registrosCarregados} registros)";
+        /// Força uma atualização completa do cache
+        public async Task ForceRefreshCache()
+        {
+            Debug.WriteLine("FormData: Forçando atualização completa do cache");
 
-                // Força atualização da UI sem travar
-                Application.DoEvents();
+            ProtestoDataCache.Clear();
+            await LoadDataWithCache();
+        }
+
+        /// Mostra/oculta indicador de carregamento
+        private void ShowLoadingIndicator(bool show, string message = "Carregando...")
+        {
+            this.Cursor = show ? Cursors.WaitCursor : Cursors.Default;
+
+            if ( show )
+            {
+                this.Text = $"Sistema Notifica - {message}";
+            }
+            else
+            {
+                this.Text = "Sistema Notifica";
             }
         }
 
-        // Método para cancelar o carregamento
-        public void CancelLoading()
+        /// Atualiza label de status
+        private void UpdateStatusLabel(string message)
         {
-            _cancellationTokenSource?.Cancel();
+            this.Text = $"Sistema Notifica - {message}";
         }
 
-        // Métodos auxiliares para formatação (otimizados)
+        // Cache de formatação (métodos existentes mantidos)
         private readonly Dictionary<string, string> _dataCache_formatted = new Dictionary<string, string>();
 
         private string FormatarData(string dataString)
@@ -400,7 +502,6 @@ namespace SistemaNotifica.src.Forms.Principal
             if ( string.IsNullOrEmpty(dataString) )
                 return string.Empty;
 
-            // Cache para datas já formatadas
             if ( _dataCache_formatted.ContainsKey(dataString) )
                 return _dataCache_formatted[dataString];
 
@@ -459,66 +560,23 @@ namespace SistemaNotifica.src.Forms.Principal
             return documento;
         }
 
-        // Método público para atualizar dados
-        public async Task RefreshData()
-        {
-            await LoadDistribData();
-        }
-
-        // Método para mostrar indicador de carregamento
-        private void ShowLoadingIndicator(bool show)
-        {
-            this.Cursor = show ? Cursors.WaitCursor : Cursors.Default;
-
-            if ( !show )
-            {
-                this.Text = "Sistema Notifica";
-
-                // Limpa cache de formatação periodicamente
-                if ( _dataCache_formatted.Count > 1000 )
-                {
-                    _dataCache_formatted.Clear();
-                }
-            }
-        }
-
         private void FormData_Load(object sender, EventArgs e)
         {
             // Configurações adicionais de performance se necessário
         }
 
-        // Limpar recursos ao fechar o form
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
+            // Limpa recursos e cancela operações
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
-            _dataCache?.Clear();
+
+            // Remove os event handlers do cache
+            ProtestoDataCache.OnDataUpdated -= OnCacheDataUpdated;
+            ProtestoDataCache.OnLoadingStateChanged -= OnCacheLoadingStateChanged;
+
             _dataCache_formatted?.Clear();
             base.OnFormClosed(e);
-        }
-
-        // Método para implementar scroll infinito se necessário
-        public void EnableInfiniteScroll()
-        {
-            dataGridViewProtesto.Scroll += async (sender, e) =>
-            {
-                if ( e.ScrollOrientation == ScrollOrientation.VerticalScroll && !isLoadingData )
-                {
-                    var grid = sender as DataGridView;
-                    if ( grid != null )
-                    {
-                        int visibleRows = grid.DisplayedRowCount(false);
-                        int firstDisplayedRowIndex = grid.FirstDisplayedScrollingRowIndex;
-                        int totalRows = grid.RowCount;
-
-                        // Carrega mais dados quando próximo do final
-                        if ( firstDisplayedRowIndex + visibleRows >= totalRows - 50 )
-                        {
-                            // Implementar carregamento de mais páginas se necessário
-                        }
-                    }
-                }
-            };
         }
     }
 }

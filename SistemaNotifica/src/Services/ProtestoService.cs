@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SistemaNotifica.src.Services
 {
-    internal class ProtestoService
+    public class ProtestoService
     {
         private readonly ApiService _apiService;
 
@@ -79,12 +79,14 @@ namespace SistemaNotifica.src.Services
             {
                 var parameters = new Dictionary<string, string>
                 {
-                    { "currentPage", currentPage },
-                    { "pageSize", pageSize }
+                    { "page", currentPage },     
+                    { "limit", pageSize }
                 };
+
+                Debug.WriteLine($"Enviando parâmetros: page={currentPage}, limit={pageSize}");
+
                 var response = await _apiService.GetAsJObjectAsync("doc-protesto/find-all-pagination", parameters);
-                Debug.WriteLine(response);
-                Debug.WriteLine("Resposta Service em GetAsJObjectAsync:"+response.ToString());
+                Debug.WriteLine("Resposta Service em GetAsJObjectAsync:" + response.ToString());
                 return response;
             }
             catch ( HttpRequestException ex )

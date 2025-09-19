@@ -33,6 +33,14 @@ namespace SistemaNotifica.src.Forms.Principal
             _common = new Common();
             _notificationService = Program.NotificationService;
             LoadDistribData();
+
+            // Adicionar o panelLogSearch ao FormNotification - movendo para nivel mais alto da hirearquia
+            panelGrid.Controls.Remove(panelLogSearch);
+            this.Controls.Add(panelLogSearch);
+            CloseOverlay();
+
+            dataGridViewDataNotification.SendToBack();
+            panelLogSearch.BringToFront();
         }
 
 
@@ -55,9 +63,9 @@ namespace SistemaNotifica.src.Forms.Principal
         private void ConfigurarColunas()
         {
             // Tornar todas as colunas ReadOnly exceto a de checkbox
-            foreach (DataGridViewColumn column in dataGridViewDataNotification.Columns)
+            foreach ( DataGridViewColumn column in dataGridViewDataNotification.Columns )
             {
-                if (column.Name == "ColumnSelect")
+                if ( column.Name == "ColumnSelect" )
                 {
                     column.ReadOnly = false; // Permitir edição do checkbox
                 }
@@ -117,7 +125,7 @@ namespace SistemaNotifica.src.Forms.Principal
         // Eventos para sincronizar MaskedTextBox com DateTimePicker
         private void MaskedTextBoxInitialDate_Leave(object sender, EventArgs e)
         {
-            if (TryParseDateWithDefaults(maskedTextBoxInitialDate.Text, out DateTime date))
+            if ( TryParseDateWithDefaults(maskedTextBoxInitialDate.Text, out DateTime date) )
             {
                 dateTimePickerInitialDate.Value = date;
                 maskedTextBoxInitialDate.Text = date.ToString("dd/MM/yyyy");
@@ -127,7 +135,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private void MaskedTextBoxFinalDate_Leave(object sender, EventArgs e)
         {
-            if (TryParseDateWithDefaults(maskedTextBoxFinalDate.Text, out DateTime date))
+            if ( TryParseDateWithDefaults(maskedTextBoxFinalDate.Text, out DateTime date) )
             {
                 dateTimePickerFinalDate.Value = date;
                 maskedTextBoxFinalDate.Text = date.ToString("dd/MM/yyyy");
@@ -167,13 +175,13 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             result = DateTime.MinValue;
 
-            if (string.IsNullOrWhiteSpace(dateText))
+            if ( string.IsNullOrWhiteSpace(dateText) )
                 return false;
 
             // Remover caracteres de máscara
             string cleanDate = dateText.Replace("/", "").Replace("_", "");
 
-            if (cleanDate.Length < 2)
+            if ( cleanDate.Length < 2 )
                 return false;
 
             try
@@ -181,34 +189,34 @@ namespace SistemaNotifica.src.Forms.Principal
                 int day = 1, month = 1, year = DateTime.Now.Year;
 
                 // Extrair dia
-                if (cleanDate.Length >= 2)
+                if ( cleanDate.Length >= 2 )
                 {
-                    if (int.TryParse(cleanDate.Substring(0, 2), out int d) && d >= 1 && d <= 31)
+                    if ( int.TryParse(cleanDate.Substring(0, 2), out int d) && d >= 1 && d <= 31 )
                         day = d;
                 }
 
                 // Extrair mês
-                if (cleanDate.Length >= 4)
+                if ( cleanDate.Length >= 4 )
                 {
-                    if (int.TryParse(cleanDate.Substring(2, 2), out int m) && m >= 1 && m <= 12)
+                    if ( int.TryParse(cleanDate.Substring(2, 2), out int m) && m >= 1 && m <= 12 )
                         month = m;
                 }
 
                 // Extrair ano
-                if (cleanDate.Length >= 8)
+                if ( cleanDate.Length >= 8 )
                 {
-                    if (int.TryParse(cleanDate.Substring(4, 4), out int y) && y >= 1900)
+                    if ( int.TryParse(cleanDate.Substring(4, 4), out int y) && y >= 1900 )
                         year = y;
                 }
-                else if (cleanDate.Length >= 6)
+                else if ( cleanDate.Length >= 6 )
                 {
                     // Se só tem 2 dígitos do ano, assumir 20XX
-                    if (int.TryParse(cleanDate.Substring(4, 2), out int y2))
+                    if ( int.TryParse(cleanDate.Substring(4, 2), out int y2) )
                         year = 2000 + y2;
                 }
 
                 // Validar se a data é válida
-                if (day > DateTime.DaysInMonth(year, month))
+                if ( day > DateTime.DaysInMonth(year, month) )
                     day = DateTime.DaysInMonth(year, month);
 
                 result = new DateTime(year, month, day);
@@ -229,7 +237,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 Debug.WriteLine($"LoadDistribData - Sucesso: {dados.Count} registros encontrados {dados}");
                 ApplyFilters();
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro em LoadDistribData: {ex.Message}");
                 Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
@@ -249,7 +257,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 List<Notificacao> dadosFiltrados = FilterData();
 
                 // Adicionar dados filtrados ao grid
-                foreach (var item in dadosFiltrados)
+                foreach ( var item in dadosFiltrados )
                 {
                     AdicionarLinhaApiTabela(item);
                 }
@@ -257,7 +265,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 // Atualizar status na interface (opcional)
                 // lblTotalRegistros.Text = $"Total: {dadosFiltrados.Count} registros";
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao aplicar filtros: {ex.Message}");
                 MessageBox.Show($"Erro ao aplicar filtros: {ex.Message}", "Erro",
@@ -267,7 +275,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private List<Notificacao> FilterData()
         {
-            if (dados == null || dados.Count == 0)
+            if ( dados == null || dados.Count == 0 )
                 return new List<Notificacao>();
 
             var resultado = dados.AsEnumerable();
@@ -276,23 +284,23 @@ namespace SistemaNotifica.src.Forms.Principal
             bool mostrarEnviados = chkBoxSended.Checked;
 
             // Se ambos os checkboxes estiverem desmarcados, retornar uma lista vazia
-            if (!mostrarNaoEnviados && !mostrarEnviados)
+            if ( !mostrarNaoEnviados && !mostrarEnviados )
             {
                 return new List<Notificacao>();
             }
             // Se ambos estiverem marcados, não aplicar filtro por status (mostrar todos)
-            else if (mostrarNaoEnviados && mostrarEnviados)
+            else if ( mostrarNaoEnviados && mostrarEnviados )
             {
                 // Não faz nada, resultado já contém todos os dados.
                 // O filtro de data será aplicado em seguida.
             }
             // Se apenas 'Não Enviados' estiver marcado
-            else if (mostrarNaoEnviados)
+            else if ( mostrarNaoEnviados )
             {
                 resultado = resultado.Where(n => !n.emailEnviado);
             }
             // Se apenas 'Enviados' estiver marcado
-            else if (mostrarEnviados)
+            else if ( mostrarEnviados )
             {
                 resultado = resultado.Where(n => n.emailEnviado);
             }
@@ -301,14 +309,14 @@ namespace SistemaNotifica.src.Forms.Principal
             DateTime? dataInicial = null;
             DateTime? dataFinal = null;
 
-            if (TryParseDateWithDefaults(maskedTextBoxInitialDate.Text, out DateTime dtInicial))
+            if ( TryParseDateWithDefaults(maskedTextBoxInitialDate.Text, out DateTime dtInicial) )
                 dataInicial = dtInicial.Date; // Assegura que é apenas a data, sem hora
 
-            if (TryParseDateWithDefaults(maskedTextBoxFinalDate.Text, out DateTime dtFinal))
+            if ( TryParseDateWithDefaults(maskedTextBoxFinalDate.Text, out DateTime dtFinal) )
                 dataFinal = dtFinal.Date.AddDays(1).AddTicks(-1); // Incluir todo o dia final
 
             // Aplicar filtro de data se pelo menos uma data for válida
-            if (dataInicial.HasValue || dataFinal.HasValue)
+            if ( dataInicial.HasValue || dataFinal.HasValue )
             {
                 resultado = resultado.Where(n =>
                 {
@@ -317,10 +325,10 @@ namespace SistemaNotifica.src.Forms.Principal
 
                     bool dentroIntervalo = true;
 
-                    if (dataInicial.HasValue)
+                    if ( dataInicial.HasValue )
                         dentroIntervalo = dentroIntervalo && createdAtDate >= dataInicial.Value;
 
-                    if (dataFinal.HasValue)
+                    if ( dataFinal.HasValue )
                         dentroIntervalo = dentroIntervalo && createdAtDate <= dataFinal.Value.Date;
 
                     return dentroIntervalo;
@@ -359,12 +367,12 @@ namespace SistemaNotifica.src.Forms.Principal
                 row.Cells["ColumnTabelionato"].Value = dado.tabelionato;
                 row.Cells["ColumnPortador"].Value = dado.portador;
                 row.Cells["ColumnCreatedAt"].Value = dado.createdAt;
-                if (dado.emailEnviado)
+                if ( dado.emailEnviado )
                 {
                     row.DefaultCellStyle.BackColor = Color.Green;
                 }
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao adicionar linha da API: {ex.Message}");
             }
@@ -372,18 +380,18 @@ namespace SistemaNotifica.src.Forms.Principal
 
 
 
-        
+
 
 
 
         // Selecionar/Deselecionar todas
         private void SelecionarTodas()
         {
-            foreach (DataGridViewRow row in dataGridViewDataNotification.Rows)
+            foreach ( DataGridViewRow row in dataGridViewDataNotification.Rows )
             {
                 row.Cells["ColumnSelect"].Value = true;
             }
-        }       
+        }
 
         private void btnSend_Click(object sender, EventArgs e)
         {
@@ -399,7 +407,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 // 1. Validar se há registros selecionados
                 var registrosSelecionados = ObterRegistrosSelecionados();
 
-                if (registrosSelecionados.Count == 0)
+                if ( registrosSelecionados.Count == 0 )
                 {
                     MessageBox.Show("Nenhuma notificação foi selecionada. Por favor, selecione pelo menos uma notificação para enviar.",
                                   "Nenhum registro selecionado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -409,15 +417,15 @@ namespace SistemaNotifica.src.Forms.Principal
                 // 2. Verificar se algum registro já foi enviado
                 var registrosJaEnviados = registrosSelecionados.Where(r => r.emailEnviado).ToList();
 
-                if (registrosJaEnviados.Any())
-                {       
+                if ( registrosJaEnviados.Any() )
+                {
                     DialogResult resultJaEnviados = MessageBox.Show("\n Existem registros selecionados que ja foram enviados anteriormente.\n  " +
                         "Ao continuar os registros ja enviados serao ignorados.\n\n" +
                         "Deseja continuar enviando apenas as notificações que ainda nao foram enviadas?\n",
                         "Registros ja enviados detectados",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-                    if (resultJaEnviados == DialogResult.No)
+                    if ( resultJaEnviados == DialogResult.No )
                     {
                         return;
                     }
@@ -426,7 +434,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 }
 
                 // 3. Verificar se ainda restam registros para enviar
-                if (registrosSelecionados.Count == 0)
+                if ( registrosSelecionados.Count == 0 )
                 {
                     MessageBox.Show("Todos os registros selecionados já foram enviados anteriormente.",
                                   "Nenhum registro para enviar", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -445,13 +453,13 @@ namespace SistemaNotifica.src.Forms.Principal
                                                           MessageBoxButtons.YesNo,
                                                           MessageBoxIcon.Question);
 
-                if (resultFinal == DialogResult.Yes)
+                if ( resultFinal == DialogResult.Yes )
                 {
                     // TODO: Implementar envio das notificações
                     EnviarNotificacoes(registrosSelecionados);
                 }
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 MessageBox.Show($"Erro ao processar envio de notificações: {ex.Message}",
                                "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -463,16 +471,16 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             List<Notificacao> registrosSelecionados = new List<Notificacao>();
 
-            foreach (DataGridViewRow row in dataGridViewDataNotification.Rows)
+            foreach ( DataGridViewRow row in dataGridViewDataNotification.Rows )
             {
-                if (row.Cells["ColumnSelect"].Value != null &&
-                    Convert.ToBoolean(row.Cells["ColumnSelect"].Value) == true)
+                if ( row.Cells["ColumnSelect"].Value != null &&
+                    Convert.ToBoolean(row.Cells["ColumnSelect"].Value) == true )
                 {
-                    if (row.Tag != null)
+                    if ( row.Tag != null )
                     {
                         var registro = new Notificacao
                         {
-                            logNotificacaoId = (int)row.Tag,
+                            logNotificacaoId = ( int ) row.Tag,
                             nomeDevedor = row.Cells["ColumnDev"].Value?.ToString() ?? "",
                             devedorEmail = row.Cells["ColumnDevEmail"].Value?.ToString() ?? "",
                             distribuicao = row.Cells["ColumnDist"].Value?.ToString() ?? "",
@@ -511,13 +519,13 @@ namespace SistemaNotifica.src.Forms.Principal
                     $"Data/Hora: {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n" +
                     $"Total de registros: {registros.Count}\n\n");
 
-                foreach (var registro in registros)
+                foreach ( var registro in registros )
                 {
                     try
                     {
                         var response = await _notificationService.SendNotification(registro.logNotificacaoId);
 
-                        if (response.success)
+                        if ( response.success )
                         {
                             sucessos++;
                             AtualizarLinhaComoEnviada(registro.logNotificacaoId);
@@ -545,7 +553,7 @@ namespace SistemaNotifica.src.Forms.Principal
                                 $"   Erro: {response.message}\n\n");
                         }
                     }
-                    catch (Exception ex)
+                    catch ( Exception ex )
                     {
                         falhas++;
                         var erro = new ErroDetalhado
@@ -578,7 +586,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 // Exibir resultado
                 ExibirResultado(sucessos, falhas, errosDetalhados, caminhoLog);
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 MessageBox.Show($"Erro crítico durante o envio: {ex.Message}",
                                "Erro Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -591,7 +599,7 @@ namespace SistemaNotifica.src.Forms.Principal
             mensagemResultado += $"✅ Sucessos: {sucessos}\n";
             mensagemResultado += $"❌ Falhas: {falhas}";
 
-            if (falhas == 0)
+            if ( falhas == 0 )
             {
                 MessageBox.Show(mensagemResultado, "Resultado do Envio",
                                MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -607,7 +615,7 @@ namespace SistemaNotifica.src.Forms.Principal
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Yes)
+                if ( result == DialogResult.Yes )
                 {
                     // Abrir form com detalhes dos erros
                     var formErros = new FormDetalhesErrosNotification(errosDetalhados, caminhoLog);
@@ -618,9 +626,9 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private void AtualizarLinhaComoEnviada(int logNotificacaoId)
         {
-            foreach (DataGridViewRow row in dataGridViewDataNotification.Rows)
+            foreach ( DataGridViewRow row in dataGridViewDataNotification.Rows )
             {
-                if (row.Tag != null && (int)row.Tag == logNotificacaoId)
+                if ( row.Tag != null && ( int ) row.Tag == logNotificacaoId )
                 {
                     row.Cells["ColumnSended"].Value = "Sim";
                     row.Cells["ColumnDateSend"].Value = DateTime.Now;
@@ -630,6 +638,54 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
+
+        private void DisableMainControls(bool disable)
+        {
+            maskedTextBoxFinalDate.Enabled = !disable;
+            dateTimePickerFinalDate.Enabled = !disable;
+            dateTimePickerInitialDate.Enabled = !disable;
+            maskedTextBoxInitialDate.Enabled = !disable;
+            chkBoxSended.Enabled = !disable;
+            chkBoxNotSended.Enabled = !disable;
+            btnSearchEmails.Enabled = !disable;
+            btnSendAll.Enabled = !disable;
+            btnSendSelected.Enabled = !disable;
+        }
+
+
+        // --------------- AÇOES DE BUSCA DE EMAILS ---------------
+
+        private void CenterOverlayPanel()
+        {
+            int x = ( this.ClientSize.Width - panelLogSearch.Width ) / 2;
+            int y = ( this.ClientSize.Height - panelLogSearch.Height ) / 2;
+            panelLogSearch.Location = new Point(x, y);
+        }
+
+        public void ShowOverlay(string message = "Processando arquivo...")
+        {           
+
+            CenterOverlayPanel();
+            panelLogSearch.Visible = true;
+            panelLogSearch.BringToFront();
+            DisableMainControls(true);
+            this.Refresh();
+            Application.DoEvents();           
+
+        }
+
+        private void CloseOverlay()
+        {
+            Debug.WriteLine("Fechando overlay e parando timer");
+            //timerProgressBar.Stop();
+            panelLogSearch.Visible = false;
+            DisableMainControls(false);
+        }
+
+        private void btnSearchEmails_Click(object sender, EventArgs e)
+        {
+            ShowOverlay();
+        }
 
     }
 }

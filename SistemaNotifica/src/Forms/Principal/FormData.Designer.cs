@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            tableLayoutPanel1 = new TableLayoutPanel();
+            tableLayoutPanel = new TableLayoutPanel();
             dataGridViewProtesto = new DataGridView();
             ColumnId = new DataGridViewTextBoxColumn();
             ColumnDataApresentacao = new DataGridViewTextBoxColumn();
@@ -50,23 +50,23 @@
             ColumnDataEnvio = new DataGridViewTextBoxColumn();
             nome_arquivo = new DataGridViewTextBoxColumn();
             file_data_importacao = new DataGridViewTextBoxColumn();
-            tableLayoutPanel1.SuspendLayout();
+            tableLayoutPanel.SuspendLayout();
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewProtesto ).BeginInit();
             SuspendLayout();
             // 
-            // tableLayoutPanel1
+            // tableLayoutPanel
             // 
-            tableLayoutPanel1.ColumnCount = 1;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(dataGridViewProtesto, 0, 1);
-            tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 2;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.8888893F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 85.1111145F));
-            tableLayoutPanel1.Size = new Size(800, 450);
-            tableLayoutPanel1.TabIndex = 0;
+            tableLayoutPanel.ColumnCount = 1;
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel.Controls.Add(dataGridViewProtesto, 0, 1);
+            tableLayoutPanel.Dock = DockStyle.Fill;
+            tableLayoutPanel.Location = new Point(0, 0);
+            tableLayoutPanel.Name = "tableLayoutPanel";
+            tableLayoutPanel.RowCount = 2;
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 14.8888893F));
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 85.1111145F));
+            tableLayoutPanel.Size = new Size(800, 450);
+            tableLayoutPanel.TabIndex = 0;
             // 
             // dataGridViewProtesto
             // 
@@ -188,18 +188,17 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(tableLayoutPanel1);
+            Controls.Add(tableLayoutPanel);
             Name = "FormData";
             Text = "FormData";
-            Load +=  FormData_Load ;
-            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel.ResumeLayout(false);
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewProtesto ).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel tableLayoutPanel;
         private DataGridView dataGridViewProtesto;
         private DataGridViewTextBoxColumn ColumnId;
         private DataGridViewTextBoxColumn ColumnDataApresentacao;
