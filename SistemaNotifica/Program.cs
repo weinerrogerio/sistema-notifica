@@ -18,6 +18,8 @@ namespace SistemaNotifica
         public static ProtestoService ProtestoService { get; private set; }
         public static ImportService ImportService { get; private set; }
         public static NotificationService NotificationService { get; private set; }
+        public static DevedorService DevedorService { get; private set; }
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -33,6 +35,7 @@ namespace SistemaNotifica
             ProtestoService = new ProtestoService(ApiService);
             ImportService = new ImportService(ApiService);
             NotificationService = new NotificationService(ApiService);
+            DevedorService = new DevedorService(ApiService); 
 
 
             ConfigureCacheHandlers();
@@ -42,20 +45,20 @@ namespace SistemaNotifica
             //ApplicationConfiguration.Initialize();
             //List<ErroDetalhado> erros = new List<ErroDetalhado>();
 
-            Application.Run(new FormNotification());
+            //Application.Run(new FormNotification());
 
-            //using ( FormLogin loginForm = new FormLogin() )
-            //{
-            //    if ( loginForm.ShowDialog() == DialogResult.OK )
-            //    {
-            //        // Login bem-sucedido, agora inicie o formulário principal da aplicação
-            //        Application.Run(new FormOrigin()); // Assumindo que FormOrigin é o seu formulário principal
-            //    }
-            //    else
-            //    {
-            //        Debug.WriteLine("ERRO EM PROGRAM.CS --> LOGIN");
-            //    }
-            //}
+            using ( FormLogin loginForm = new FormLogin() )
+            {
+                if ( loginForm.ShowDialog() == DialogResult.OK )
+                {
+                    // Login bem-sucedido, agora inicie o formulário principal da aplicação
+                    Application.Run(new FormOrigin()); // Assumindo que FormOrigin é o seu formulário principal
+                }
+                else
+                {
+                    Debug.WriteLine("ERRO EM PROGRAM.CS --> LOGIN");
+                }
+            }
         }
 
 

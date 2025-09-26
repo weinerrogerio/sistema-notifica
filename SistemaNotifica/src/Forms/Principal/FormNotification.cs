@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Newtonsoft.Json.Linq;
 
 namespace SistemaNotifica.src.Forms.Principal
 {
@@ -22,6 +23,12 @@ namespace SistemaNotifica.src.Forms.Principal
         private Common _common;
         private List<Notificacao> dados = [];
         private NotificationService _notificationService;
+        private DevedorService _devedorService;
+        private string currentSessionId = null;
+
+        // Variáveis para manter a referência da conexão SSE
+        private CancellationTokenSource sseCancelToken;
+        private HttpResponseMessage sseResponse;
 
         public FormNotification()
         {
@@ -32,13 +39,17 @@ namespace SistemaNotifica.src.Forms.Principal
             ConfigCheckBoxes();
             _common = new Common();
             _notificationService = Program.NotificationService;
+            _devedorService = Program.DevedorService;
+
+            // Se inscreve no evento de log do DevedorService
+            _devedorService.OnLogReceived += HandleLogReceived;
+
             LoadDistribData();
 
-            // Adicionar o panelLogSearch ao FormNotification - movendo para nivel mais alto da hirearquia
+            // Configuração do overlay (mantida)
             panelGrid.Controls.Remove(panelLogSearch);
             this.Controls.Add(panelLogSearch);
             CloseOverlay();
-
             dataGridViewDataNotification.SendToBack();
             panelLogSearch.BringToFront();
         }
@@ -663,29 +674,209 @@ namespace SistemaNotifica.src.Forms.Principal
         }
 
         public void ShowOverlay(string message = "Processando arquivo...")
-        {           
-
+        {
             CenterOverlayPanel();
             panelLogSearch.Visible = true;
             panelLogSearch.BringToFront();
             DisableMainControls(true);
             this.Refresh();
-            Application.DoEvents();           
+            Application.DoEvents();
 
         }
 
         private void CloseOverlay()
         {
-            Debug.WriteLine("Fechando overlay e parando timer");
+            Debug.WriteLine("Fechando overlay...");
             //timerProgressBar.Stop();
             panelLogSearch.Visible = false;
             DisableMainControls(false);
         }
 
-        private void btnSearchEmails_Click(object sender, EventArgs e)
+        private async void btnSearchEmails_Click(object sender, EventArgs e)
         {
             ShowOverlay();
+            richTextBoxLogs.Clear(); // Limpa logs anteriores
+
+            // 1. Criar sessão
+            bool sessionCreated = await CreateEmailSearchSession();
+            if ( !sessionCreated )
+            {
+                CloseOverlay();
+                return;
+            }
+
+            // 2. Conectar ao SSE
+            if ( !await ConnectToSSE() )
+            {
+                CloseOverlay();
+                return;
+            }
+
+            // 3. Aguardar um pouco e iniciar busca
+            await Task.Delay(2000); // Aguarda conexão estabilizar
+            await StartEmailSearch();
         }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //Novo método de cancelamento que chama o serviço
+                _devedorService.CancelSSE();
+                CloseOverlay(); // Fecha o overlay imediatamente no clique
+            }
+            catch ( Exception ex )
+            {
+                MessageBox.Show($"Erro ao cancelar o envio: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                MessageBox.Show("Busca de emails cancelada!", "Busca cancelada ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+        }
+
+
+        private void AddLogToRichTextBox(string logLevel, string message, DateTime timestamp, string cnpj = null, string email = null)
+        {
+            // Definir cores por tipo de log
+            Color logColor = logLevel.ToLower() switch
+            {
+                "log" => Color.Green,
+                "warn" => Color.Orange,
+                "error" => Color.Red,
+                "connection" => Color.Blue,
+                "ready" => Color.Blue,
+                "session_ended" => Color.Magenta,
+                _ => Color.White
+            };
+
+            // Formatar mensagem
+            string formattedMessage = $"[{timestamp:HH:mm:ss}] {message}";
+
+            if ( !string.IsNullOrEmpty(cnpj) )
+                formattedMessage += $" CNPJ: {cnpj}";
+
+            if ( !string.IsNullOrEmpty(email) )
+                formattedMessage += $" Email: {email}";
+
+            // Adicionar ao RichTextBox
+            richTextBoxLogs.SelectionStart = richTextBoxLogs.TextLength;
+            richTextBoxLogs.SelectionLength = 0;
+            richTextBoxLogs.SelectionColor = logColor;
+            richTextBoxLogs.AppendText(formattedMessage + Environment.NewLine);
+            richTextBoxLogs.SelectionColor = richTextBoxLogs.ForeColor; // Resetar cor
+
+            // Auto scroll
+            richTextBoxLogs.ScrollToCaret();
+        }
+
+
+        // -------------------------- FUNÇÕES PARA COMUNICAÇÃO COM A API - PARA BUSCA DE EMAILS ---------------------------
+
+
+        //Handler para receber os logs do DevedorService
+        private void HandleLogReceived(string logLevel, string message, DateTime timestamp, string cnpj = null, string email = null)
+        {
+            // O Invoke é fundamental, pois este evento será disparado pela thread do SSE
+            this.Invoke(( Action ) ( () =>
+            {
+                AddLogToRichTextBox(logLevel, message, timestamp, cnpj, email);
+
+                // Lógica para fechar overlay quando a sessão termina ou dá erro fatal
+                if ( logLevel == "session_ended" || logLevel == "error" )
+                {
+                    CloseOverlay();
+                }
+            } ));
+        }
+        public async Task<bool> CreateEmailSearchSession()
+        {
+            try
+            {
+                AddLogToRichTextBox("connection", "Criando sessão...", DateTime.Now);
+
+                // Chama o Service, que agora tem a responsabilidade do endpoint
+                var response = await _devedorService.CreateEmailSearchSession();
+
+                if ( response["success"]?.Value<bool>() == true )
+                {
+                    currentSessionId = response["sessionId"]?.Value<string>();
+                    AddLogToRichTextBox("connection", $"Sessão criada: {currentSessionId}", DateTime.Now);
+                    return true;
+                }
+
+                AddLogToRichTextBox("error", $"Erro ao criar sessão: {response["message"]}", DateTime.Now);
+                return false;
+            }
+            catch ( Exception ex )
+            {
+                AddLogToRichTextBox("error", $"Erro ao criar sessão: {ex.Message}", DateTime.Now);
+                return false;
+            }
+        }
+
+        public async Task<bool> ConnectToSSE()
+        {
+            try
+            {
+                AddLogToRichTextBox("connection", "Conectando aos logs...", DateTime.Now);
+
+                // Chama o Service para obter a resposta e o token
+                var result = await _devedorService.ConnectToSSE(currentSessionId);
+                sseResponse = result.Response;
+                sseCancelToken = result.CancelSource;
+
+                if ( sseResponse != null && sseResponse.IsSuccessStatusCode )
+                {
+                    // ⭐️ Dispara o Processamento do Stream em background, mas dentro do DevedorService
+                    _ = Task.Run(() => _devedorService.ProcessSSEStream(sseResponse, sseCancelToken.Token));
+                    return true;
+                }
+
+                // O log de erro já é tratado dentro do DevedorService em caso de falha HTTP
+                return false;
+            }
+            catch ( Exception )
+            {
+                // Erros aqui já foram logados via HandleLogReceived. Apenas retorna false.
+                return false;
+            }
+        }
+
+        public async Task StartEmailSearch()
+        {
+            if ( string.IsNullOrEmpty(currentSessionId) )
+            {
+                MessageBox.Show("Primeiro, crie uma sessão!");
+                return;
+            }
+
+            try
+            {
+                AddLogToRichTextBox("connection", "Iniciando busca de emails...", DateTime.Now);
+
+                // Chama o Service, que tem a responsabilidade do endpoint
+                var response = await _devedorService.StartEmailSearch(currentSessionId);
+
+                if ( response["success"]?.Value<bool>() == true )
+                {
+                    AddLogToRichTextBox("connection", "Busca iniciada com sucesso", DateTime.Now);
+                }
+                else
+                {
+                    AddLogToRichTextBox("error", $"Erro ao iniciar busca: {response["message"]}", DateTime.Now);
+                }
+            }
+            catch ( Exception ex )
+            {
+                AddLogToRichTextBox("error", $"Erro ao iniciar busca: {ex.Message}", DateTime.Now);
+            }
+        }
+
+
+
+
 
     }
 }

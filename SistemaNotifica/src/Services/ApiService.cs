@@ -56,6 +56,12 @@ namespace SistemaNotifica.src.Services
             return url;
         }
 
+        // Método para expor o HttpClient para usos específicos (como SSE)
+        public HttpClient GetHttpClient()
+        {
+            return _httpClient;
+        }
+
 
         // ------------- MÉTODOS PARA FAZER REQUISIÇÕES HTTP ------------- //
         // GET /:endpoint
@@ -90,6 +96,7 @@ namespace SistemaNotifica.src.Services
             return JObject.Parse(json);
         }
 
+
         // DELETE /:id - Exclui Arq
         public async Task DeleteAsync(string endpoint)
         {
@@ -108,21 +115,7 @@ namespace SistemaNotifica.src.Services
         }
 
 
-        // POST /:endpoint
-        //public async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
-        //{
-        //    var json = JsonConvert.SerializeObject(data);
-        //    var content = new StringContent(json, Encoding.UTF8, "application/json");
-        //    var response = await _httpClient.PostAsync($"{_baseUrl}/{endpoint}", content);
-
-        //    string fullUrl = $"{_baseUrl}/{endpoint}"; // A URL completa 
-        //    Debug.WriteLine($"[API Service] Enviando POST para: {fullUrl}");
-        //    Debug.WriteLine($"[API Service] Corpo da requisição: {json}");
-
-        //    response.EnsureSuccessStatusCode();
-        //    var responseJson = await response.Content.ReadAsStringAsync();
-        //    return JsonConvert.DeserializeObject<TResponse>(responseJson);
-        //}
+        // POST /:endpoint        
         public async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
         {
             try
@@ -196,6 +189,12 @@ namespace SistemaNotifica.src.Services
                 Debug.WriteLine($"[API Service] Erro inesperado: {ex.Message}");
                 throw new HttpRequestException($"Erro na comunicação com o servidor: {ex.Message}");
             }
+        }
+
+        public void Dispose()
+        {
+            _httpClient?.Dispose();
+            GC.SuppressFinalize(this);
         }
 
 
@@ -489,10 +488,6 @@ namespace SistemaNotifica.src.Services
                 return conteudoHtml; // Retorna original em caso de erro
             }
         }
-
-        public void Dispose()
-        {
-            _httpClient?.Dispose();
-        }
+                
     }
 }

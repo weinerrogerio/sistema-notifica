@@ -36,6 +36,10 @@
             btnSendAll = new Button();
             panelGrid = new Panel();
             panelLogSearch = new Panel();
+            tableLayoutPanelSearch = new TableLayoutPanel();
+            richTextBoxLogs = new RichTextBox();
+            pnlSearchBotton = new Panel();
+            btnCancel = new Button();
             dataGridViewDataNotification = new DataGridView();
             ColumnSelect = new DataGridViewCheckBoxColumn();
             ColumnId = new DataGridViewTextBoxColumn();
@@ -66,6 +70,9 @@
             tableLayoutPanelData.SuspendLayout();
             panelTop.SuspendLayout();
             panelGrid.SuspendLayout();
+            panelLogSearch.SuspendLayout();
+            tableLayoutPanelSearch.SuspendLayout();
+            pnlSearchBotton.SuspendLayout();
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewDataNotification ).BeginInit();
             panelFilters.SuspendLayout();
             SuspendLayout();
@@ -151,11 +158,59 @@
             // 
             panelLogSearch.BackColor = SystemColors.Control;
             panelLogSearch.BorderStyle = BorderStyle.FixedSingle;
-            panelLogSearch.Location = new Point(282, 40);
+            panelLogSearch.Controls.Add(tableLayoutPanelSearch);
+            panelLogSearch.Location = new Point(241, -99);
             panelLogSearch.Name = "panelLogSearch";
-            panelLogSearch.Size = new Size(353, 308);
+            panelLogSearch.Size = new Size(413, 447);
             panelLogSearch.TabIndex = 4;
             panelLogSearch.Visible = false;
+            // 
+            // tableLayoutPanelSearch
+            // 
+            tableLayoutPanelSearch.ColumnCount = 1;
+            tableLayoutPanelSearch.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanelSearch.Controls.Add(richTextBoxLogs, 0, 0);
+            tableLayoutPanelSearch.Controls.Add(pnlSearchBotton, 0, 1);
+            tableLayoutPanelSearch.Dock = DockStyle.Fill;
+            tableLayoutPanelSearch.Location = new Point(0, 0);
+            tableLayoutPanelSearch.Name = "tableLayoutPanelSearch";
+            tableLayoutPanelSearch.RowCount = 2;
+            tableLayoutPanelSearch.RowStyles.Add(new RowStyle(SizeType.Percent, 91.46067F));
+            tableLayoutPanelSearch.RowStyles.Add(new RowStyle(SizeType.Percent, 8.539326F));
+            tableLayoutPanelSearch.Size = new Size(411, 445);
+            tableLayoutPanelSearch.TabIndex = 2;
+            // 
+            // richTextBoxLogs
+            // 
+            richTextBoxLogs.Dock = DockStyle.Fill;
+            richTextBoxLogs.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point,    0);
+            richTextBoxLogs.Location = new Point(3, 3);
+            richTextBoxLogs.Name = "richTextBoxLogs";
+            richTextBoxLogs.ReadOnly = true;
+            richTextBoxLogs.ScrollBars = RichTextBoxScrollBars.Vertical;
+            richTextBoxLogs.Size = new Size(405, 401);
+            richTextBoxLogs.TabIndex = 1;
+            richTextBoxLogs.Text = "";
+            // 
+            // pnlSearchBotton
+            // 
+            pnlSearchBotton.Controls.Add(btnCancel);
+            pnlSearchBotton.Dock = DockStyle.Fill;
+            pnlSearchBotton.Location = new Point(3, 410);
+            pnlSearchBotton.Name = "pnlSearchBotton";
+            pnlSearchBotton.Size = new Size(405, 32);
+            pnlSearchBotton.TabIndex = 2;
+            // 
+            // btnCancel
+            // 
+            btnCancel.Anchor =      AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            btnCancel.Location = new Point(127, 3);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(144, 26);
+            btnCancel.TabIndex = 0;
+            btnCancel.Text = "Cancelar";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click +=  btnCancel_Click ;
             // 
             // dataGridViewDataNotification
             // 
@@ -382,6 +437,9 @@
             tableLayoutPanelData.ResumeLayout(false);
             panelTop.ResumeLayout(false);
             panelGrid.ResumeLayout(false);
+            panelLogSearch.ResumeLayout(false);
+            tableLayoutPanelSearch.ResumeLayout(false);
+            pnlSearchBotton.ResumeLayout(false);
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewDataNotification ).EndInit();
             panelFilters.ResumeLayout(false);
             panelFilters.PerformLayout();
@@ -424,5 +482,9 @@
         private DataGridViewTextBoxColumn ColumnPortador;
         private DataGridViewTextBoxColumn ColumnCreatedAt;
         private Button btnSearchEmails;
+        private Button btnCancel;
+        private RichTextBox richTextBoxLogs;
+        private TableLayoutPanel tableLayoutPanelSearch;
+        private Panel pnlSearchBotton;
     }
 }
