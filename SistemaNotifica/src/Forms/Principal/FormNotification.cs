@@ -717,23 +717,23 @@ namespace SistemaNotifica.src.Forms.Principal
             await StartEmailSearch();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        
+        private async void btnCancel_Click(object sender, EventArgs e)
         {
             try
             {
-                //Novo método de cancelamento que chama o serviço
-                _devedorService.CancelSSE();
-                CloseOverlay(); // Fecha o overlay imediatamente no clique
+                AddLogToRichTextBox("warn", "Cancelando busca...", DateTime.Now);
+
+                // ⭐ CORRIGIDO: Agora passa o sessionId
+                await _devedorService.CancelSSE(currentSessionId);
+
+                CloseOverlay();
+                MessageBox.Show("Busca de emails cancelada!", "Busca cancelada", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch ( Exception ex )
             {
                 MessageBox.Show($"Erro ao cancelar o envio: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally
-            {
-                MessageBox.Show("Busca de emails cancelada!", "Busca cancelada ", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-
         }
 
 

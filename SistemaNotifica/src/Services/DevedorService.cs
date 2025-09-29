@@ -109,6 +109,37 @@ namespace SistemaNotifica.src.Services
             _sseCancel?.Cancel();
         }
 
+        public async Task<JObject> CancelEmailSearch(string sessionId)
+        {
+            try
+            {
+                return await _apiService.PostAsync<object, JObject>($"devedor/email-search/cancel/{sessionId}", new { });
+            }
+            catch ( Exception ex )
+            {
+                throw new Exception($"Erro ao cancelar busca de emails: {ex.Message}");
+            }
+        }
+
+        public async Task CancelSSE(string sessionId)
+        {
+            try
+            {
+                // 1. Cancela o token da conexão SSE (para de receber eventos)
+                _sseCancel?.Cancel();
+
+                // 2. Notifica o backend para parar o processamento
+                if ( !string.IsNullOrEmpty(sessionId) )
+                {
+                    await CancelEmailSearch(sessionId);
+                }
+            }
+            catch ( Exception ex )
+            {
+                OnLogReceived?.Invoke("error", $"Erro ao cancelar busca: {ex.Message}", DateTime.Now);
+            }
+        }
+
         // Método que processa a stream do SSE
         public async Task ProcessSSEStream(HttpResponseMessage response, CancellationToken cancellationToken)
         {
