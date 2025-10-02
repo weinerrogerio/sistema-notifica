@@ -35,12 +35,21 @@
             btnSendSelected = new Button();
             btnSendAll = new Button();
             panelGrid = new Panel();
-            panelLogSearch = new Panel();
+            mainPanelLogSearch = new Panel();
             tableLayoutPanelSearch = new TableLayoutPanel();
             richTextBoxLogs = new RichTextBox();
             pnlSearchBotton = new Panel();
             btnCancel = new Button();
             dataGridViewDataNotification = new DataGridView();
+            panelFilters = new Panel();
+            maskedTextBoxFinalDate = new MaskedTextBox();
+            maskedTextBoxInitialDate = new MaskedTextBox();
+            labelFinalDate = new Label();
+            labelInitialDate = new Label();
+            dateTimePickerFinalDate = new DateTimePicker();
+            dateTimePickerInitialDate = new DateTimePicker();
+            chkBoxNotSended = new CheckBox();
+            chkBoxSended = new CheckBox();
             ColumnSelect = new DataGridViewCheckBoxColumn();
             ColumnId = new DataGridViewTextBoxColumn();
             ColumnDate = new DataGridViewTextBoxColumn();
@@ -57,20 +66,11 @@
             ColumnTabelionato = new DataGridViewTextBoxColumn();
             ColumnPortador = new DataGridViewTextBoxColumn();
             ColumnCreatedAt = new DataGridViewTextBoxColumn();
-            panelFilters = new Panel();
-            maskedTextBoxFinalDate = new MaskedTextBox();
-            maskedTextBoxInitialDate = new MaskedTextBox();
-            labelFinalDate = new Label();
-            labelInitialDate = new Label();
-            dateTimePickerFinalDate = new DateTimePicker();
-            dateTimePickerInitialDate = new DateTimePicker();
-            chkBoxNotSended = new CheckBox();
-            chkBoxSended = new CheckBox();
             pnlMain.SuspendLayout();
             tableLayoutPanelData.SuspendLayout();
             panelTop.SuspendLayout();
             panelGrid.SuspendLayout();
-            panelLogSearch.SuspendLayout();
+            mainPanelLogSearch.SuspendLayout();
             tableLayoutPanelSearch.SuspendLayout();
             pnlSearchBotton.SuspendLayout();
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewDataNotification ).BeginInit();
@@ -146,7 +146,7 @@
             // 
             // panelGrid
             // 
-            panelGrid.Controls.Add(panelLogSearch);
+            panelGrid.Controls.Add(mainPanelLogSearch);
             panelGrid.Controls.Add(dataGridViewDataNotification);
             panelGrid.Dock = DockStyle.Fill;
             panelGrid.Location = new Point(3, 111);
@@ -154,16 +154,16 @@
             panelGrid.Size = new Size(881, 357);
             panelGrid.TabIndex = 2;
             // 
-            // panelLogSearch
+            // mainPanelLogSearch
             // 
-            panelLogSearch.BackColor = SystemColors.Control;
-            panelLogSearch.BorderStyle = BorderStyle.FixedSingle;
-            panelLogSearch.Controls.Add(tableLayoutPanelSearch);
-            panelLogSearch.Location = new Point(241, -99);
-            panelLogSearch.Name = "panelLogSearch";
-            panelLogSearch.Size = new Size(413, 447);
-            panelLogSearch.TabIndex = 4;
-            panelLogSearch.Visible = false;
+            mainPanelLogSearch.BackColor = SystemColors.Control;
+            mainPanelLogSearch.BorderStyle = BorderStyle.FixedSingle;
+            mainPanelLogSearch.Controls.Add(tableLayoutPanelSearch);
+            mainPanelLogSearch.Location = new Point(176, -99);
+            mainPanelLogSearch.Name = "mainPanelLogSearch";
+            mainPanelLogSearch.Size = new Size(547, 447);
+            mainPanelLogSearch.TabIndex = 4;
+            mainPanelLogSearch.Visible = false;
             // 
             // tableLayoutPanelSearch
             // 
@@ -177,7 +177,7 @@
             tableLayoutPanelSearch.RowCount = 2;
             tableLayoutPanelSearch.RowStyles.Add(new RowStyle(SizeType.Percent, 91.46067F));
             tableLayoutPanelSearch.RowStyles.Add(new RowStyle(SizeType.Percent, 8.539326F));
-            tableLayoutPanelSearch.Size = new Size(411, 445);
+            tableLayoutPanelSearch.Size = new Size(545, 445);
             tableLayoutPanelSearch.TabIndex = 2;
             // 
             // richTextBoxLogs
@@ -188,7 +188,7 @@
             richTextBoxLogs.Name = "richTextBoxLogs";
             richTextBoxLogs.ReadOnly = true;
             richTextBoxLogs.ScrollBars = RichTextBoxScrollBars.Vertical;
-            richTextBoxLogs.Size = new Size(405, 401);
+            richTextBoxLogs.Size = new Size(539, 401);
             richTextBoxLogs.TabIndex = 1;
             richTextBoxLogs.Text = "";
             // 
@@ -198,7 +198,7 @@
             pnlSearchBotton.Dock = DockStyle.Fill;
             pnlSearchBotton.Location = new Point(3, 410);
             pnlSearchBotton.Name = "pnlSearchBotton";
-            pnlSearchBotton.Size = new Size(405, 32);
+            pnlSearchBotton.Size = new Size(539, 32);
             pnlSearchBotton.TabIndex = 2;
             // 
             // btnCancel
@@ -206,7 +206,7 @@
             btnCancel.Anchor =      AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
             btnCancel.Location = new Point(127, 3);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(144, 26);
+            btnCancel.Size = new Size(278, 26);
             btnCancel.TabIndex = 0;
             btnCancel.Text = "Cancelar";
             btnCancel.UseVisualStyleBackColor = true;
@@ -226,108 +226,6 @@
             dataGridViewDataNotification.ReadOnly = true;
             dataGridViewDataNotification.Size = new Size(881, 357);
             dataGridViewDataNotification.TabIndex = 3;
-            // 
-            // ColumnSelect
-            // 
-            ColumnSelect.FillWeight = 45F;
-            ColumnSelect.HeaderText = "Sel.";
-            ColumnSelect.Name = "ColumnSelect";
-            ColumnSelect.ReadOnly = true;
-            ColumnSelect.Width = 45;
-            // 
-            // ColumnId
-            // 
-            ColumnId.HeaderText = "Id";
-            ColumnId.Name = "ColumnId";
-            ColumnId.ReadOnly = true;
-            ColumnId.Visible = false;
-            // 
-            // ColumnDate
-            // 
-            ColumnDate.HeaderText = "Data";
-            ColumnDate.Name = "ColumnDate";
-            ColumnDate.ReadOnly = true;
-            // 
-            // ColumnDist
-            // 
-            ColumnDist.HeaderText = "Distribuição";
-            ColumnDist.Name = "ColumnDist";
-            ColumnDist.ReadOnly = true;
-            // 
-            // ColumnNumTitulo
-            // 
-            ColumnNumTitulo.HeaderText = "Num. Titulo";
-            ColumnNumTitulo.Name = "ColumnNumTitulo";
-            ColumnNumTitulo.ReadOnly = true;
-            // 
-            // ColumnTotal
-            // 
-            ColumnTotal.HeaderText = "Total";
-            ColumnTotal.Name = "ColumnTotal";
-            ColumnTotal.ReadOnly = true;
-            ColumnTotal.Visible = false;
-            // 
-            // ColumnDev
-            // 
-            ColumnDev.HeaderText = "Devedor";
-            ColumnDev.Name = "ColumnDev";
-            ColumnDev.ReadOnly = true;
-            // 
-            // ColumnDocDev
-            // 
-            ColumnDocDev.HeaderText = "Doc. Devedor";
-            ColumnDocDev.Name = "ColumnDocDev";
-            ColumnDocDev.ReadOnly = true;
-            // 
-            // ColumnDevEmail
-            // 
-            ColumnDevEmail.HeaderText = "Email";
-            ColumnDevEmail.Name = "ColumnDevEmail";
-            ColumnDevEmail.ReadOnly = true;
-            // 
-            // ColumnCred
-            // 
-            ColumnCred.HeaderText = "Credor";
-            ColumnCred.Name = "ColumnCred";
-            ColumnCred.ReadOnly = true;
-            // 
-            // ColumnSended
-            // 
-            ColumnSended.HeaderText = "Enviado";
-            ColumnSended.Name = "ColumnSended";
-            ColumnSended.ReadOnly = true;
-            // 
-            // ColumnDateSend
-            // 
-            ColumnDateSend.HeaderText = "Data do envio";
-            ColumnDateSend.Name = "ColumnDateSend";
-            ColumnDateSend.ReadOnly = true;
-            // 
-            // ColumnLido
-            // 
-            ColumnLido.HeaderText = "Lido";
-            ColumnLido.Name = "ColumnLido";
-            ColumnLido.ReadOnly = true;
-            // 
-            // ColumnTabelionato
-            // 
-            ColumnTabelionato.HeaderText = "Tabelionato";
-            ColumnTabelionato.Name = "ColumnTabelionato";
-            ColumnTabelionato.ReadOnly = true;
-            ColumnTabelionato.Visible = false;
-            // 
-            // ColumnPortador
-            // 
-            ColumnPortador.HeaderText = "Portador";
-            ColumnPortador.Name = "ColumnPortador";
-            ColumnPortador.ReadOnly = true;
-            ColumnPortador.Visible = false;
-            // 
-            // ColumnCreatedAt
-            // 
-            ColumnCreatedAt.HeaderText = "Criado Em";
-            ColumnCreatedAt.Name = "ColumnCreatedAt";
-            ColumnCreatedAt.ReadOnly = true;
             // 
             // panelFilters
             // 
@@ -424,6 +322,124 @@
             chkBoxSended.UseVisualStyleBackColor = true;
             chkBoxSended.CheckedChanged +=  chkBoxSended_CheckedChanged ;
             // 
+            // ColumnSelect
+            // 
+            ColumnSelect.FillWeight = 45F;
+            ColumnSelect.HeaderText = "Sel.";
+            ColumnSelect.Name = "ColumnSelect";
+            ColumnSelect.ReadOnly = true;
+            ColumnSelect.Width = 45;
+            // 
+            // ColumnId
+            // 
+            ColumnId.HeaderText = "Id";
+            ColumnId.Name = "ColumnId";
+            ColumnId.ReadOnly = true;
+            ColumnId.Visible = false;
+            // 
+            // ColumnDate
+            // 
+            ColumnDate.FillWeight = 95F;
+            ColumnDate.HeaderText = "Data";
+            ColumnDate.Name = "ColumnDate";
+            ColumnDate.ReadOnly = true;
+            ColumnDate.Width = 95;
+            // 
+            // ColumnDist
+            // 
+            ColumnDist.FillWeight = 70F;
+            ColumnDist.HeaderText = "Distribuição";
+            ColumnDist.Name = "ColumnDist";
+            ColumnDist.ReadOnly = true;
+            ColumnDist.Width = 70;
+            // 
+            // ColumnNumTitulo
+            // 
+            ColumnNumTitulo.HeaderText = "Num. Titulo";
+            ColumnNumTitulo.Name = "ColumnNumTitulo";
+            ColumnNumTitulo.ReadOnly = true;
+            // 
+            // ColumnTotal
+            // 
+            ColumnTotal.HeaderText = "Total";
+            ColumnTotal.Name = "ColumnTotal";
+            ColumnTotal.ReadOnly = true;
+            ColumnTotal.Visible = false;
+            // 
+            // ColumnDev
+            // 
+            ColumnDev.FillWeight = 150F;
+            ColumnDev.HeaderText = "Devedor";
+            ColumnDev.Name = "ColumnDev";
+            ColumnDev.ReadOnly = true;
+            ColumnDev.Width = 150;
+            // 
+            // ColumnDocDev
+            // 
+            ColumnDocDev.HeaderText = "Doc. Devedor";
+            ColumnDocDev.Name = "ColumnDocDev";
+            ColumnDocDev.ReadOnly = true;
+            // 
+            // ColumnDevEmail
+            // 
+            ColumnDevEmail.FillWeight = 120F;
+            ColumnDevEmail.HeaderText = "Email";
+            ColumnDevEmail.Name = "ColumnDevEmail";
+            ColumnDevEmail.ReadOnly = true;
+            ColumnDevEmail.Width = 120;
+            // 
+            // ColumnCred
+            // 
+            ColumnCred.FillWeight = 120F;
+            ColumnCred.HeaderText = "Credor";
+            ColumnCred.Name = "ColumnCred";
+            ColumnCred.ReadOnly = true;
+            ColumnCred.Width = 120;
+            // 
+            // ColumnSended
+            // 
+            ColumnSended.FillWeight = 35F;
+            ColumnSended.HeaderText = "Enviado";
+            ColumnSended.Name = "ColumnSended";
+            ColumnSended.ReadOnly = true;
+            ColumnSended.Width = 35;
+            // 
+            // ColumnDateSend
+            // 
+            ColumnDateSend.FillWeight = 95F;
+            ColumnDateSend.HeaderText = "Data do envio";
+            ColumnDateSend.Name = "ColumnDateSend";
+            ColumnDateSend.ReadOnly = true;
+            ColumnDateSend.Width = 95;
+            // 
+            // ColumnLido
+            // 
+            ColumnLido.FillWeight = 35F;
+            ColumnLido.HeaderText = "Lido";
+            ColumnLido.Name = "ColumnLido";
+            ColumnLido.ReadOnly = true;
+            ColumnLido.Width = 35;
+            // 
+            // ColumnTabelionato
+            // 
+            ColumnTabelionato.HeaderText = "Tabelionato";
+            ColumnTabelionato.Name = "ColumnTabelionato";
+            ColumnTabelionato.ReadOnly = true;
+            ColumnTabelionato.Visible = false;
+            // 
+            // ColumnPortador
+            // 
+            ColumnPortador.HeaderText = "Portador";
+            ColumnPortador.Name = "ColumnPortador";
+            ColumnPortador.ReadOnly = true;
+            ColumnPortador.Visible = false;
+            // 
+            // ColumnCreatedAt
+            // 
+            ColumnCreatedAt.HeaderText = "Criado Em";
+            ColumnCreatedAt.Name = "ColumnCreatedAt";
+            ColumnCreatedAt.ReadOnly = true;
+            // 
             // FormNotification
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -437,7 +453,7 @@
             tableLayoutPanelData.ResumeLayout(false);
             panelTop.ResumeLayout(false);
             panelGrid.ResumeLayout(false);
-            panelLogSearch.ResumeLayout(false);
+            mainPanelLogSearch.ResumeLayout(false);
             tableLayoutPanelSearch.ResumeLayout(false);
             pnlSearchBotton.ResumeLayout(false);
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewDataNotification ).EndInit();
@@ -463,8 +479,13 @@
         private MaskedTextBox maskedTextBoxInitialDate;
         private MaskedTextBox maskedTextBoxFinalDate;
         private Panel panelGrid;
-        private Panel panelLogSearch;
+        private Panel mainPanelLogSearch;
         private DataGridView dataGridViewDataNotification;
+        private Button btnSearchEmails;
+        private Button btnCancel;
+        private RichTextBox richTextBoxLogs;
+        private TableLayoutPanel tableLayoutPanelSearch;
+        private Panel pnlSearchBotton;
         private DataGridViewCheckBoxColumn ColumnSelect;
         private DataGridViewTextBoxColumn ColumnId;
         private DataGridViewTextBoxColumn ColumnDate;
@@ -481,10 +502,5 @@
         private DataGridViewTextBoxColumn ColumnTabelionato;
         private DataGridViewTextBoxColumn ColumnPortador;
         private DataGridViewTextBoxColumn ColumnCreatedAt;
-        private Button btnSearchEmails;
-        private Button btnCancel;
-        private RichTextBox richTextBoxLogs;
-        private TableLayoutPanel tableLayoutPanelSearch;
-        private Panel pnlSearchBotton;
     }
 }

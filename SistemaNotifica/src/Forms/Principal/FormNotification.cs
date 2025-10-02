@@ -34,24 +34,51 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             InitializeComponent();
             ConfigDataGridView();
-            ConfigmaskedTextBox();
+            ConfigMaskedTextBox();
             ConfigDateTimePickers();
             ConfigCheckBoxes();
             _common = new Common();
             _notificationService = Program.NotificationService;
             _devedorService = Program.DevedorService;
 
-            // Se inscreve no evento de log do DevedorService
             _devedorService.OnLogReceived += HandleLogReceived;
 
-            LoadDistribData();
+            LoadDistribData();                       
+            
+            mainPanelLogSearchConfig();
+            this.Resize += FormNotification_Resize;
+            this.SizeChanged += FormNotification_Resize;
+        }
 
-            // Configuração do overlay (mantida)
-            panelGrid.Controls.Remove(panelLogSearch);
-            this.Controls.Add(panelLogSearch);
+
+        private void FormNotification_Resize(object sender, EventArgs e)
+        {
+            if ( mainPanelLogSearch.Visible )
+            {
+                CenterOverlayPanel();
+            }
+        }
+
+        private void mainPanelLogSearchConfig()
+        {
+            panelGrid.Controls.Remove(mainPanelLogSearch);
+            this.Controls.Add(mainPanelLogSearch);
             CloseOverlay();
             dataGridViewDataNotification.SendToBack();
-            panelLogSearch.BringToFront();
+            mainPanelLogSearch.BringToFront();
+
+            //mainPanelLogSearch.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+            mainPanelLogSearch.Anchor = AnchorStyles.None;
+            mainPanelLogSearch.Height = this.ClientSize.Height; 
+            CenterOverlayHorizontally(); 
+
+        }
+
+        private void CenterOverlayHorizontally()
+        {
+            int x = ( this.ClientSize.Width - mainPanelLogSearch.Width ) / 2;
+            mainPanelLogSearch.Location = new Point(x, 0); // Y sempre em 0
+            mainPanelLogSearch.Height = this.ClientSize.Height; // Altura total da janela
         }
 
 
@@ -87,10 +114,12 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-        private void ConfigmaskedTextBox()
+        private void ConfigMaskedTextBox()
         {
             // Configurar data inicial (início do mês atual)
             DateTime inicioMes = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            // NÃO ESQUECER DE AJUSTAR A DATA INICIAL - AddYeas, AddMonths, AddDays - agora->5 anos
+            inicioMes = inicioMes.AddYears(-5);
             maskedTextBoxInitialDate.Mask = "00/00/0000";
             maskedTextBoxInitialDate.ValidatingType = typeof(DateTime);
             maskedTextBoxInitialDate.Text = inicioMes.ToString("dd/MM/yyyy");
@@ -243,14 +272,13 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             try
             {
-
                 dados = await _notificationService.SearchNotAsync();
                 Debug.WriteLine($"LoadDistribData - Sucesso: {dados.Count} registros encontrados {dados}");
                 ApplyFilters();
             }
             catch ( Exception ex )
             {
-                Debug.WriteLine($"Erro em LoadDistribData: {ex.Message}");
+                Debug.WriteLine($"Erro em LoadDistribData {ex.Message}");
                 Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
                 MessageBox.Show($"Erro ao carregar dados da API: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -267,9 +295,12 @@ namespace SistemaNotifica.src.Forms.Principal
                 // Obter dados filtrados
                 List<Notificacao> dadosFiltrados = FilterData();
 
+                Debug.WriteLine($"ApplyFilters - {dadosFiltrados.Count} registros encontrados {dadosFiltrados}");
+
                 // Adicionar dados filtrados ao grid
                 foreach ( var item in dadosFiltrados )
                 {
+                    Debug.WriteLine($"AdicionarLinhaApiTabela - Sucesso: {item}");
                     AdicionarLinhaApiTabela(item);
                 }
 
@@ -289,8 +320,12 @@ namespace SistemaNotifica.src.Forms.Principal
             if ( dados == null || dados.Count == 0 )
                 return new List<Notificacao>();
 
+            Debug.WriteLine($"FilterData dados - {dados.Count} registros encontrados {dados}");
+
             var resultado = dados.AsEnumerable();
 
+            Debug.WriteLine($"FilterData resultado - {resultado.Count()} registros encontrados {resultado}");
+            
             bool mostrarNaoEnviados = chkBoxNotSended.Checked;
             bool mostrarEnviados = chkBoxSended.Checked;
 
@@ -345,7 +380,8 @@ namespace SistemaNotifica.src.Forms.Principal
                     return dentroIntervalo;
                 });
             }
-
+            //Por que não funciona?
+            Debug.WriteLine($"FilterData resultado.tolist - {resultado.Count()} registros encontrados {resultado}");
             return resultado.ToList();
         }
 
@@ -388,12 +424,6 @@ namespace SistemaNotifica.src.Forms.Principal
                 Debug.WriteLine($"Erro ao adicionar linha da API: {ex.Message}");
             }
         }
-
-
-
-
-
-
 
         // Selecionar/Deselecionar todas
         private void SelecionarTodas()
@@ -668,27 +698,28 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private void CenterOverlayPanel()
         {
-            int x = ( this.ClientSize.Width - panelLogSearch.Width ) / 2;
-            int y = ( this.ClientSize.Height - panelLogSearch.Height ) / 2;
-            panelLogSearch.Location = new Point(x, y);
+            int x = ( this.ClientSize.Width - mainPanelLogSearch.Width ) / 2;
+            int y = ( this.ClientSize.Height - mainPanelLogSearch.Height ) / 2;
+            mainPanelLogSearch.Location = new Point(x, y);
         }
 
         public void ShowOverlay(string message = "Processando arquivo...")
         {
-            CenterOverlayPanel();
-            panelLogSearch.Visible = true;
-            panelLogSearch.BringToFront();
+            mainPanelLogSearch.Visible = true;
+            mainPanelLogSearch.BringToFront();
             DisableMainControls(true);
+            CenterOverlayPanel(); // Centralizar ao mostrar
             this.Refresh();
             Application.DoEvents();
-
         }
+
+
 
         private void CloseOverlay()
         {
             Debug.WriteLine("Fechando overlay...");
             //timerProgressBar.Stop();
-            panelLogSearch.Visible = false;
+            mainPanelLogSearch.Visible = false;
             DisableMainControls(false);
         }
 
@@ -726,9 +757,9 @@ namespace SistemaNotifica.src.Forms.Principal
 
                 // ⭐ CORRIGIDO: Agora passa o sessionId
                 await _devedorService.CancelSSE(currentSessionId);
+                MessageBox.Show("Busca de emails cancelada!", "Busca cancelada", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 CloseOverlay();
-                MessageBox.Show("Busca de emails cancelada!", "Busca cancelada", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch ( Exception ex )
             {
@@ -747,8 +778,8 @@ namespace SistemaNotifica.src.Forms.Principal
                 "error" => Color.Red,
                 "connection" => Color.Blue,
                 "ready" => Color.Blue,
-                "session_ended" => Color.Magenta,
-                _ => Color.White
+                "session_ended" => Color.DarkBlue,
+                _ => Color.Black
             };
 
             // Formatar mensagem

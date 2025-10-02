@@ -9,40 +9,38 @@ using System.Threading.Tasks;
 
 namespace SistemaNotifica.src.Services
 {
-
-
     internal class DevedorService
     {
         private readonly ApiService _apiService;
 
+        // HttpClient separado para SSE
+        private readonly HttpClient _sseClient;
+
         // Variáveis de estado da conexão SSE
         private CancellationTokenSource _sseCancel;
-        private HttpClient _sseClient;
+
         // Evento para o Form se inscrever
         public event LogHandler OnLogReceived;
+
         //Delegate para logs (para comunicação limpa com o Form)
         public delegate void LogHandler(string logLevel, string message, DateTime timestamp, string cnpj = null, string email = null);
 
         public DevedorService(ApiService apiService)
         {
             _apiService = apiService;
-            // O serviço de notificação agora lida com o seu próprio HttpClient para SSE
-            // para evitar conflitos com o HttpClient principal do ApiService
-            _sseClient = _apiService.GetHttpClient();
+            // ✅ Usa o HttpClient específico para SSE (separado do HttpClient principal)
+            _sseClient = _apiService.GetSSEHttpClient();
         }
-
 
         // ROTA: devedor/email-search/start - Cria a sessão
         public async Task<JObject> CreateEmailSearchSession()
         {
             try
             {
-                // Responsabilidade: Definir o endpoint
                 return await _apiService.GetAsJObjectAsync("devedor/email-search/start");
             }
             catch ( Exception ex )
             {
-                // Tratamento de erros encapsulado e mais limpo
                 throw new Exception($"Erro ao criar sessão de busca de emails: {ex.Message}");
             }
         }
@@ -52,7 +50,6 @@ namespace SistemaNotifica.src.Services
         {
             try
             {
-                // Responsabilidade: Definir o endpoint e o corpo da requisição
                 return await _apiService.PostAsync<object, JObject>($"devedor/email-search/start/{sessionId}", new { });
             }
             catch ( Exception ex )
@@ -70,24 +67,26 @@ namespace SistemaNotifica.src.Services
                 return (null, null);
             }
 
-            // Cria um novo token de cancelamento a cada conexão
+            // ✅ Cria um novo token de cancelamento a cada conexão
             _sseCancel = new CancellationTokenSource();
 
             try
             {
-                // Responsabilidade: Construir a URL do SSE
                 var fullUrl = _apiService.BuildUrlWithQueryParams($"devedor/email-search/logs/{currentSessionId}");
 
                 var request = new HttpRequestMessage(HttpMethod.Get, fullUrl);
-                // Headers específicos para SSE
+
+                // ✅ Headers específicos para SSE
                 request.Headers.Add("Accept", "text/event-stream");
                 request.Headers.Add("Cache-Control", "no-cache");
+                request.Headers.Add("Connection", "keep-alive");
 
+                // ✅ Usa o HttpClient específico para SSE
                 var response = await _sseClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _sseCancel.Token);
 
                 if ( response.IsSuccessStatusCode )
                 {
-                    // Retorna a resposta e o token de cancelamento para o Form gerenciar o loop do stream
+                    Debug.WriteLine($"[DevedorService] Conexão SSE estabelecida para sessão {currentSessionId}");
                     return (response, _sseCancel);
                 }
                 else
@@ -97,22 +96,33 @@ namespace SistemaNotifica.src.Services
             }
             catch ( Exception ex )
             {
-                // Dispara o evento para o Form registrar o erro
                 OnLogReceived?.Invoke("error", $"Erro na conexão SSE: {ex.Message}", DateTime.Now);
                 return (null, null);
             }
         }
 
-        // Novo método para o FormNotification cancelar o SSE
-        public void CancelSSE()
+        // ✅ Cancela apenas a conexão SSE (não afeta o HttpClient principal)
+        public void CancelSSEConnection()
         {
-            _sseCancel?.Cancel();
+            try
+            {
+                Debug.WriteLine("[DevedorService] Cancelando conexão SSE...");
+                _sseCancel?.Cancel();
+                _sseCancel?.Dispose();
+                _sseCancel = null;
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"[DevedorService] Erro ao cancelar SSE: {ex.Message}");
+            }
         }
 
+        // Cancela a busca no backend
         public async Task<JObject> CancelEmailSearch(string sessionId)
         {
             try
             {
+                Debug.WriteLine($"[DevedorService] Cancelando busca para sessão {sessionId}");
                 return await _apiService.PostAsync<object, JObject>($"devedor/email-search/cancel/{sessionId}", new { });
             }
             catch ( Exception ex )
@@ -121,18 +131,21 @@ namespace SistemaNotifica.src.Services
             }
         }
 
+        // ✅ Método completo para cancelar tanto a conexão quanto o processamento
         public async Task CancelSSE(string sessionId)
         {
             try
             {
                 // 1. Cancela o token da conexão SSE (para de receber eventos)
-                _sseCancel?.Cancel();
+                CancelSSEConnection();
 
                 // 2. Notifica o backend para parar o processamento
                 if ( !string.IsNullOrEmpty(sessionId) )
                 {
                     await CancelEmailSearch(sessionId);
                 }
+
+                OnLogReceived?.Invoke("info", "Busca cancelada com sucesso.", DateTime.Now);
             }
             catch ( Exception ex )
             {
@@ -152,6 +165,8 @@ namespace SistemaNotifica.src.Services
 
             try
             {
+                Debug.WriteLine("[DevedorService] Iniciando leitura do stream SSE...");
+
                 while ( !cancellationToken.IsCancellationRequested && ( line = await reader.ReadLineAsync() ) != null )
                 {
                     if ( line.StartsWith("event:") )
@@ -166,23 +181,30 @@ namespace SistemaNotifica.src.Services
                     {
                         if ( !string.IsNullOrEmpty(eventType) && data.Length > 0 )
                         {
-                            // Processa o evento e dispara o delegate para o Form
                             ProcessSSEEvent(eventType, data.ToString().Trim());
                         }
                         eventType = null;
                         data.Clear();
                     }
                 }
+
+                Debug.WriteLine("[DevedorService] Stream SSE encerrado.");
             }
             catch ( OperationCanceledException )
             {
-                // Cancelamento esperado
+                Debug.WriteLine("[DevedorService] Stream SSE cancelado pelo usuário.");
                 OnLogReceived?.Invoke("session_ended", "Busca de emails cancelada pelo usuário.", DateTime.Now);
             }
             catch ( Exception ex )
             {
-                // Erro inesperado
+                Debug.WriteLine($"[DevedorService] Erro fatal ao ler stream SSE: {ex}");
                 OnLogReceived?.Invoke("error", $"Erro fatal ao ler stream SSE: {ex.Message}", DateTime.Now);
+            }
+            finally
+            {
+                // ✅ Limpa recursos da stream
+                reader?.Dispose();
+                stream?.Dispose();
             }
         }
 
@@ -191,10 +213,8 @@ namespace SistemaNotifica.src.Services
         {
             try
             {
-                // Usando Newtonsoft.Json para compatibilidade com JObject
                 var eventData = JObject.Parse(jsonData);
 
-                // Disparar o evento para o FormNotification com os dados tratados
                 if ( OnLogReceived == null ) return;
 
                 switch ( eventType )
@@ -203,8 +223,11 @@ namespace SistemaNotifica.src.Services
                     case "ready":
                     case "session_ended":
                     case "error":
-                        OnLogReceived.Invoke(eventType, eventData["message"].ToString(),
-                            DateTime.Parse(eventData["timestamp"].ToString()));
+                        OnLogReceived.Invoke(
+                            eventType,
+                            eventData["message"].ToString(),
+                            DateTime.Parse(eventData["timestamp"].ToString())
+                        );
                         break;
 
                     case "log":

@@ -517,7 +517,7 @@ namespace SistemaNotifica.src.Forms.Template
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
-            _apiService?.Dispose();
+            //_apiService?.Dispose();
             base.OnFormClosed(e);
         }
 
