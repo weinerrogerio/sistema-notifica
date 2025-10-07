@@ -758,7 +758,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 // ⭐ CORRIGIDO: Agora passa o sessionId
                 await _devedorService.CancelSSE(currentSessionId);
                 MessageBox.Show("Busca de emails cancelada!", "Busca cancelada", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                LoadDistribData();
                 CloseOverlay();
             }
             catch ( Exception ex )
