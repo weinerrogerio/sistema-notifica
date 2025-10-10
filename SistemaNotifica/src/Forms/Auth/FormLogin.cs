@@ -75,7 +75,9 @@ namespace SistemaNotifica
                 // Chama a API para autenticação
                 // var loginResponse = await _apiService.LoginAsync(nome, senha);
                 LoginResponse response = await _authService.LoginAsync(username, password);
-
+                Debug.WriteLine(" " );
+                Debug.WriteLine("Response::::::::::::::::: " + response);
+                Debug.WriteLine(" " );
 
                 if (response != null && !string.IsNullOrEmpty(response.AccessToken)) // Ou response.IsSuccess == true 
                 {

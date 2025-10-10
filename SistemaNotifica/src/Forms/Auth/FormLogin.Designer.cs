@@ -42,7 +42,6 @@
             // 
             // panelLogin
             // 
-            panelLogin.Anchor = AnchorStyles.None;
             panelLogin.BackColor = SystemColors.Window;
             panelLogin.Controls.Add(lblErrorMessage);
             panelLogin.Controls.Add(btnLogin);
@@ -50,7 +49,7 @@
             panelLogin.Controls.Add(textBoxName);
             panelLogin.Controls.Add(lblTituloLogin);
             panelLogin.Controls.Add(lblInstrucaoLogin);
-            panelLogin.Location = new Point(235, 60);
+            panelLogin.Location = new Point(240, 49);
             panelLogin.Name = "panelLogin";
             panelLogin.Size = new Size(460, 380);
             panelLogin.TabIndex = 6;
@@ -58,16 +57,17 @@
             // lblErrorMessage
             // 
             lblErrorMessage.ForeColor = Color.Red;
-            lblErrorMessage.Location = new Point(0, 142); 
-            lblErrorMessage.Size = new Size(panelLogin.Width, 15); 
+            lblErrorMessage.Location = new Point(0, 142);
+            lblErrorMessage.Name = "lblErrorMessage";
+            lblErrorMessage.Size = new Size(200, 15);
             lblErrorMessage.TabIndex = 8;
-            lblErrorMessage.Text = "labelError"; 
-            lblErrorMessage.TextAlign = ContentAlignment.MiddleCenter; 
+            lblErrorMessage.Text = "labelError";
+            lblErrorMessage.TextAlign = ContentAlignment.MiddleCenter;
             lblErrorMessage.Visible = false;
             // 
             // btnLogin
             // 
-            btnLogin.BackColor = Color.FromArgb(0, 122, 204);
+            btnLogin.BackColor = Color.FromArgb(      0,       122,       204);
             btnLogin.FlatAppearance.BorderSize = 0;
             btnLogin.FlatStyle = FlatStyle.Flat;
             btnLogin.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
@@ -78,7 +78,7 @@
             btnLogin.TabIndex = 5;
             btnLogin.Text = "Entrar";
             btnLogin.UseVisualStyleBackColor = false;
-            btnLogin.Click += btnLogin_Click;
+            btnLogin.Click +=  btnLogin_Click ;
             // 
             // textBoxPassword
             // 
@@ -105,7 +105,7 @@
             // 
             lblTituloLogin.AutoSize = true;
             lblTituloLogin.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblTituloLogin.ForeColor = Color.FromArgb(64, 64, 64);
+            lblTituloLogin.ForeColor = Color.FromArgb(      64,       64,       64);
             lblTituloLogin.Location = new Point(50, 40);
             lblTituloLogin.Name = "lblTituloLogin";
             lblTituloLogin.Size = new Size(351, 32);
@@ -117,7 +117,7 @@
             // 
             lblInstrucaoLogin.AutoSize = true;
             lblInstrucaoLogin.Font = new Font("Segoe UI", 9.5F);
-            lblInstrucaoLogin.ForeColor = Color.FromArgb(100, 100, 100);
+            lblInstrucaoLogin.ForeColor = Color.FromArgb(      100,       100,       100);
             lblInstrucaoLogin.Location = new Point(80, 90);
             lblInstrucaoLogin.Name = "lblInstrucaoLogin";
             lblInstrucaoLogin.Size = new Size(270, 17);
@@ -134,11 +134,11 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(230, 230, 230);
+            BackColor = Color.FromArgb(      230,       230,       230);
             ClientSize = new Size(934, 461);
             Controls.Add(panelLogin);
             Name = "FormLogin";
-            Load += FormLogin_Load;
+            Load +=  FormLogin_Load ;
             panelLogin.ResumeLayout(false);
             panelLogin.PerformLayout();
             ResumeLayout(false);
