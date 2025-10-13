@@ -14,6 +14,7 @@ using SistemaNotifica.src.Models;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Diagnostics;
 using SistemaNotifica.src.Utils;
+using static SistemaNotifica.src.Models.Auth;
 
 namespace SistemaNotifica
 {
@@ -21,8 +22,6 @@ namespace SistemaNotifica
     {
         private readonly AuthService _authService;
 
-        //private Point mouseLocation; // Para armazenar a posição do mouse
-        //private bool isDragging = false;
         private Thread? nt;
 
         public FormLogin()

@@ -230,7 +230,7 @@ namespace SistemaNotifica.src.Forms.Principal
                     currentPage++;
 
                     // Pequeno delay para não sobrecarregar a API
-                    await Task.Delay(100, cancellationToken); // Aumentei o delay
+                    await Task.Delay(100, cancellationToken); // 100ms
 
                 } while ( currentPage <= totalPagesToLoad && !cancellationToken.IsCancellationRequested );
 

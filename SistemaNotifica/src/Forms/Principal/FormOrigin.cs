@@ -28,7 +28,7 @@ namespace SistemaNotifica
         public FormOrigin()
         {
             InitializeComponent();
-            this.Text = $"Sistema de Notificações - Versão 1.0       Usuário: {Sessao.UsuarioLogado}";
+            this.Text = $"Sistema de Notificações - Versão 1.0       Usuário: {Session.UsuarioLogado}";
             string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "src/icons", "Logo_transp_pb.ico");
             if ( File.Exists(iconPath) ) this.Icon = new Icon(iconPath);
             //this.EnableDragByControl(this.topPanel);
@@ -466,7 +466,32 @@ namespace SistemaNotifica
                     Dock = DockStyle.Fill
                 };
 
-                TelaAtual = "FormData"; 
+                TelaAtual = "FormData";
+                pnlMain.Controls.Add(objForm);
+                objForm.Show();
+
+                // Reconfigurar handlers após adicionar novo form
+                AddClickHandlerToControls(pnlMain);
+            }
+            return;
+        }
+
+        private void btnUser_Click(object sender, EventArgs e)
+        {
+            //FormUser
+            if ( !( TelaAtual == "FormUser" ) )
+            {
+                ResetSidebarButtons();
+                btnConfigNotificacao.BackColor = Color.FromArgb(60, 60, 60);
+                objForm?.Close();
+                objForm = new FormUser
+                {
+                    TopLevel = false,
+                    FormBorderStyle = FormBorderStyle.None,
+                    Dock = DockStyle.Fill
+                };
+
+                TelaAtual = "FormUser";
                 pnlMain.Controls.Add(objForm);
                 objForm.Show();
 

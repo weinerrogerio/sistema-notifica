@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using SistemaNotifica.src.Models;// Para LoginRequest e LoginResponse
+using System;
 using System.Collections.Generic;
+using System.Diagnostics; // Para HttpRequestException
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using SistemaNotifica.src.Models;// Para LoginRequest e LoginResponse
-using System.Net.Http;
-using System.Diagnostics; // Para HttpRequestException
+
+using static SistemaNotifica.src.Models.Auth;
 
 namespace SistemaNotifica.src.Services
 {
@@ -24,46 +26,47 @@ namespace SistemaNotifica.src.Services
         {
             try
             {
-                var loginData = new LoginRequest // Cria uma instância da classe LoginRequest
+                var loginData = new LoginRequest
                 {
-                    Nome = username, // Sua API espera 'nome', então mapeie 'username' para 'Nome'
+                    Nome = username,
                     Password = password
                 };
-                
+
                 LoginResponse response = await _apiService.PostAsync<LoginRequest, LoginResponse>("auth/login", loginData);
 
-                if (response != null && !string.IsNullOrEmpty(response.AccessToken))
+                if ( response != null && !string.IsNullOrEmpty(response.AccessToken) )
                 {
-                    // Armazena o token na sua classe estática Sessao
-                    Sessao.AccessToken = response.AccessToken;
-                    Sessao.RefreshToken = response.RefreshToken;
-                    Sessao.SessionId = response.SessionId;
-                    Sessao.UserId = response.UserData.Id;
-                    Sessao.UsuarioLogado = response.UserData?.Nome ?? username; // Tenta pegar do UserData ou usa o nome de usuário
-                    Sessao.TipoUsuario = response.UserData?.Role ?? "Unknown"; // Tenta pegar do UserData
-                       
+                    // ✅ Armazena TODOS os dados da sessão
+                    Session.AccessToken = response.AccessToken;
+                    Session.RefreshToken = response.RefreshToken;
+                    Session.SessionId = response.SessionId;
+                    Session.UserId = response.UserData?.Id;
+                    Session.UsuarioLogado = response.UserData?.Nome ?? username;
+                    Session.Email = response.UserData?.Email; // ✅ Novo: armazena email
+                    Session.TipoUsuario = response.UserData?.Role ?? "user";
+
                     _apiService.SetAuthorizationHeader(response.AccessToken);
-                    Debug.WriteLine($"Login::::::::    . {response}");
+
+                    Debug.WriteLine("========== LOGIN BEM-SUCEDIDO ==========");
+                    Debug.WriteLine(Session.GetInfoSession());
+                    Debug.WriteLine("========================================");
+
                     return response;
                 }
                 else
                 {
-                    // Se a API não retornar um token válido ou indicar falha, lance uma exceção ou retorne uma resposta de erro.
-                    // Você pode melhorar esta lógica para retornar mensagens de erro mais específicas da API.
                     throw new Exception(response?.Message ?? "Credenciais inválidas ou erro desconhecido.");
                 }
             }
-            // Captura exceções de comunicação HTTP (rede, servidor indisponível)
-            catch (HttpRequestException ex)
+            catch ( HttpRequestException ex )
             {
                 Debug.WriteLine($"Erro HttpRequestException em LoginAsync: {ex.Message}");
                 throw new Exception($"Erro de conexão com o servidor. Verifique sua rede ou a URL da API. Detalhes: {ex.Message}");
             }
-            // Captura outras exceções gerais
-            catch (Exception ex)
+            catch ( Exception ex )
             {
-                // Inclui a mensagem da exceção interna para depuração
-                throw new Exception($"{ex.Message}");
+                Debug.WriteLine($"Erro ao fazer login: {ex.Message}");
+                throw;
             }
         }
 
@@ -96,10 +99,10 @@ namespace SistemaNotifica.src.Services
         // Método para fazer logout (limpar tokens)
         public void Logout()
         {
-            Sessao.AccessToken = null;
-            Sessao.RefreshToken = null;
-            Sessao.UsuarioLogado = null;
-            Sessao.TipoUsuario = null;
+            Session.AccessToken = null;
+            Session.RefreshToken = null;
+            Session.UsuarioLogado = null;
+            Session.TipoUsuario = null;
             // Sessao.RefreshToken = null; // Limpa também o refresh token
             _apiService.ClearAuthorizationHeader(); // Limpa o cabeçalho de autorização do HttpClient
         }

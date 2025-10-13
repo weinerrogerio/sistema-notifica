@@ -31,28 +31,8 @@
             panelMain = new Panel();
             tableLayoutPanel = new TableLayoutPanel();
             panelMainData = new Panel();
-            panelNewUser = new Panel();
-            panelNewUserTextBoxes = new Panel();
-            labelPasswordConfirm = new Label();
-            textBox1 = new TextBox();
-            labelPassword = new Label();
-            textBoxPassword = new TextBox();
-            labelInfoNewUser = new Label();
-            buttonSave = new Button();
-            checkBox2 = new CheckBox();
-            buttonCancel = new Button();
-            label2 = new Label();
-            textBox2 = new TextBox();
-            label3 = new Label();
-            textBox3 = new TextBox();
-            label4 = new Label();
-            textBox4 = new TextBox();
-            label5 = new Label();
-            textBox5 = new TextBox();
             panelUserData = new Panel();
             panelUserDataTextBoxes = new Panel();
-            checkBoxActive = new CheckBox();
-            checkBoxAdmin = new CheckBox();
             buttonEditMyData = new Button();
             labelActive = new Label();
             textBoxActive = new TextBox();
@@ -79,19 +59,35 @@
             ColumnEmail = new DataGridViewTextBoxColumn();
             ColumnFone = new DataGridViewTextBoxColumn();
             ColumnAdmin = new DataGridViewTextBoxColumn();
+            panelNewUser = new Panel();
+            panelNewUserTextBoxes = new Panel();
+            checkBox1 = new CheckBox();
+            label1 = new Label();
+            textBox6 = new TextBox();
+            labelPasswordConfirm = new Label();
+            textBox1 = new TextBox();
+            labelPassword = new Label();
+            textBoxPassword = new TextBox();
+            labelInfoNewUser = new Label();
+            buttonSave = new Button();
+            checkBox2 = new CheckBox();
+            buttonCancel = new Button();
+            label2 = new Label();
+            textBox2 = new TextBox();
+            label3 = new Label();
+            textBox3 = new TextBox();
+            label4 = new Label();
+            textBox4 = new TextBox();
+            label5 = new Label();
+            textBox5 = new TextBox();
             tableLayoutPanelTop = new TableLayoutPanel();
             panelBtn2 = new Panel();
             btnUsers = new Button();
             panelBtn1 = new Panel();
             btnMyData = new Button();
-            checkBox1 = new CheckBox();
-            label1 = new Label();
-            textBox6 = new TextBox();
             panelMain.SuspendLayout();
             tableLayoutPanel.SuspendLayout();
             panelMainData.SuspendLayout();
-            panelNewUser.SuspendLayout();
-            panelNewUserTextBoxes.SuspendLayout();
             panelUserData.SuspendLayout();
             panelUserDataTextBoxes.SuspendLayout();
             panelAllUsersData.SuspendLayout();
@@ -101,6 +97,8 @@
             panelDataUsersTop.SuspendLayout();
             panelDataUsersMiddle.SuspendLayout();
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewDataGrid ).BeginInit();
+            panelNewUser.SuspendLayout();
+            panelNewUserTextBoxes.SuspendLayout();
             tableLayoutPanelTop.SuspendLayout();
             panelBtn2.SuspendLayout();
             panelBtn1.SuspendLayout();
@@ -132,14 +130,298 @@
             // 
             // panelMainData
             // 
+            panelMainData.Controls.Add(panelAllUsersData);
             panelMainData.Controls.Add(panelNewUser);
             panelMainData.Controls.Add(panelUserData);
-            panelMainData.Controls.Add(panelAllUsersData);
             panelMainData.Dock = DockStyle.Fill;
             panelMainData.Location = new Point(3, 51);
             panelMainData.Name = "panelMainData";
             panelMainData.Size = new Size(794, 396);
             panelMainData.TabIndex = 1;
+            // 
+            // panelUserData
+            // 
+            panelUserData.Controls.Add(panelUserDataTextBoxes);
+            panelUserData.Dock = DockStyle.Fill;
+            panelUserData.Location = new Point(0, 0);
+            panelUserData.Name = "panelUserData";
+            panelUserData.Size = new Size(794, 396);
+            panelUserData.TabIndex = 8;
+            // 
+            // panelUserDataTextBoxes
+            // 
+            panelUserDataTextBoxes.Controls.Add(buttonEditMyData);
+            panelUserDataTextBoxes.Controls.Add(labelActive);
+            panelUserDataTextBoxes.Controls.Add(textBoxActive);
+            panelUserDataTextBoxes.Controls.Add(labelIsAdmin);
+            panelUserDataTextBoxes.Controls.Add(textBoxAdmin);
+            panelUserDataTextBoxes.Controls.Add(labelFone);
+            panelUserDataTextBoxes.Controls.Add(textBoxFone);
+            panelUserDataTextBoxes.Controls.Add(labelEmail);
+            panelUserDataTextBoxes.Controls.Add(textBoxEmail);
+            panelUserDataTextBoxes.Controls.Add(labelName);
+            panelUserDataTextBoxes.Controls.Add(textBoxName);
+            panelUserDataTextBoxes.Location = new Point(203, 1);
+            panelUserDataTextBoxes.Margin = new Padding(0);
+            panelUserDataTextBoxes.Name = "panelUserDataTextBoxes";
+            panelUserDataTextBoxes.Size = new Size(388, 395);
+            panelUserDataTextBoxes.TabIndex = 2;
+            // 
+            // buttonEditMyData
+            // 
+            buttonEditMyData.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            buttonEditMyData.Location = new Point(159, 347);
+            buttonEditMyData.Name = "buttonEditMyData";
+            buttonEditMyData.Size = new Size(92, 36);
+            buttonEditMyData.TabIndex = 10;
+            buttonEditMyData.Text = "Editar";
+            buttonEditMyData.UseVisualStyleBackColor = true;
+            buttonEditMyData.Click +=  buttonEditMyData_Click ;
+            // 
+            // labelActive
+            // 
+            labelActive.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            labelActive.AutoSize = true;
+            labelActive.Location = new Point(124, 292);
+            labelActive.Name = "labelActive";
+            labelActive.Size = new Size(87, 15);
+            labelActive.TabIndex = 9;
+            labelActive.Text = "Usuário ativo?  ";
+            // 
+            // textBoxActive
+            // 
+            textBoxActive.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            textBoxActive.Enabled = false;
+            textBoxActive.Location = new Point(214, 286);
+            textBoxActive.Name = "textBoxActive";
+            textBoxActive.ReadOnly = true;
+            textBoxActive.Size = new Size(45, 23);
+            textBoxActive.TabIndex = 8;
+            // 
+            // labelIsAdmin
+            // 
+            labelIsAdmin.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            labelIsAdmin.AutoSize = true;
+            labelIsAdmin.Location = new Point(121, 230);
+            labelIsAdmin.Name = "labelIsAdmin";
+            labelIsAdmin.Size = new Size(91, 15);
+            labelIsAdmin.TabIndex = 7;
+            labelIsAdmin.Text = "Administrador? ";
+            // 
+            // textBoxAdmin
+            // 
+            textBoxAdmin.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            textBoxAdmin.Enabled = false;
+            textBoxAdmin.Location = new Point(214, 227);
+            textBoxAdmin.Name = "textBoxAdmin";
+            textBoxAdmin.ReadOnly = true;
+            textBoxAdmin.Size = new Size(45, 23);
+            textBoxAdmin.TabIndex = 6;
+            // 
+            // labelFone
+            // 
+            labelFone.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            labelFone.AutoSize = true;
+            labelFone.Location = new Point(80, 163);
+            labelFone.Name = "labelFone";
+            labelFone.Size = new Size(56, 15);
+            labelFone.TabIndex = 5;
+            labelFone.Text = "Contato: ";
+            // 
+            // textBoxFone
+            // 
+            textBoxFone.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            textBoxFone.Location = new Point(136, 157);
+            textBoxFone.Name = "textBoxFone";
+            textBoxFone.ReadOnly = true;
+            textBoxFone.Size = new Size(175, 23);
+            textBoxFone.TabIndex = 4;
+            // 
+            // labelEmail
+            // 
+            labelEmail.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            labelEmail.AutoSize = true;
+            labelEmail.Location = new Point(35, 99);
+            labelEmail.Name = "labelEmail";
+            labelEmail.Size = new Size(42, 15);
+            labelEmail.TabIndex = 3;
+            labelEmail.Text = "Email: ";
+            // 
+            // textBoxEmail
+            // 
+            textBoxEmail.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            textBoxEmail.Location = new Point(95, 93);
+            textBoxEmail.Name = "textBoxEmail";
+            textBoxEmail.ReadOnly = true;
+            textBoxEmail.Size = new Size(251, 23);
+            textBoxEmail.TabIndex = 2;
+            // 
+            // labelName
+            // 
+            labelName.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            labelName.AutoSize = true;
+            labelName.Location = new Point(36, 33);
+            labelName.Name = "labelName";
+            labelName.Size = new Size(46, 15);
+            labelName.TabIndex = 1;
+            labelName.Text = "Nome: ";
+            // 
+            // textBoxName
+            // 
+            textBoxName.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            textBoxName.Location = new Point(96, 27);
+            textBoxName.Name = "textBoxName";
+            textBoxName.ReadOnly = true;
+            textBoxName.Size = new Size(250, 23);
+            textBoxName.TabIndex = 0;
+            // 
+            // panelAllUsersData
+            // 
+            panelAllUsersData.Controls.Add(tableLayoutPanelUsers);
+            panelAllUsersData.Dock = DockStyle.Fill;
+            panelAllUsersData.Location = new Point(0, 0);
+            panelAllUsersData.Name = "panelAllUsersData";
+            panelAllUsersData.Size = new Size(794, 396);
+            panelAllUsersData.TabIndex = 10;
+            // 
+            // tableLayoutPanelUsers
+            // 
+            tableLayoutPanelUsers.ColumnCount = 1;
+            tableLayoutPanelUsers.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanelUsers.Controls.Add(panelDataUsersBotton, 0, 2);
+            tableLayoutPanelUsers.Controls.Add(panelDataUsersTop, 0, 0);
+            tableLayoutPanelUsers.Controls.Add(panelDataUsersMiddle, 0, 1);
+            tableLayoutPanelUsers.Dock = DockStyle.Fill;
+            tableLayoutPanelUsers.Location = new Point(0, 0);
+            tableLayoutPanelUsers.Margin = new Padding(0);
+            tableLayoutPanelUsers.Name = "tableLayoutPanelUsers";
+            tableLayoutPanelUsers.RowCount = 3;
+            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Percent, 6.4F));
+            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Percent, 93.6F));
+            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
+            tableLayoutPanelUsers.Size = new Size(794, 396);
+            tableLayoutPanelUsers.TabIndex = 9;
+            // 
+            // panelDataUsersBotton
+            // 
+            panelDataUsersBotton.Controls.Add(flowLayoutPanelButtonsUsers);
+            panelDataUsersBotton.Dock = DockStyle.Fill;
+            panelDataUsersBotton.Location = new Point(3, 351);
+            panelDataUsersBotton.Name = "panelDataUsersBotton";
+            panelDataUsersBotton.Size = new Size(788, 42);
+            panelDataUsersBotton.TabIndex = 3;
+            // 
+            // flowLayoutPanelButtonsUsers
+            // 
+            flowLayoutPanelButtonsUsers.Anchor = AnchorStyles.None;
+            flowLayoutPanelButtonsUsers.Controls.Add(buttonNewUser);
+            flowLayoutPanelButtonsUsers.Controls.Add(buttonEditSelectedUser);
+            flowLayoutPanelButtonsUsers.Location = new Point(290, -3);
+            flowLayoutPanelButtonsUsers.Name = "flowLayoutPanelButtonsUsers";
+            flowLayoutPanelButtonsUsers.Size = new Size(245, 44);
+            flowLayoutPanelButtonsUsers.TabIndex = 0;
+            // 
+            // buttonNewUser
+            // 
+            buttonNewUser.Location = new Point(3, 3);
+            buttonNewUser.Name = "buttonNewUser";
+            buttonNewUser.Size = new Size(115, 39);
+            buttonNewUser.TabIndex = 5;
+            buttonNewUser.Text = "Novo Usuário ";
+            buttonNewUser.UseVisualStyleBackColor = true;
+            buttonNewUser.Click +=  buttonNewUser_Click ;
+            // 
+            // buttonEditSelectedUser
+            // 
+            buttonEditSelectedUser.Location = new Point(124, 3);
+            buttonEditSelectedUser.Name = "buttonEditSelectedUser";
+            buttonEditSelectedUser.Size = new Size(115, 39);
+            buttonEditSelectedUser.TabIndex = 4;
+            buttonEditSelectedUser.Text = "Atualizar Usuário selecionado";
+            buttonEditSelectedUser.UseVisualStyleBackColor = true;
+            buttonEditSelectedUser.Click +=  buttonEditSelectedUser_Click ;
+            // 
+            // panelDataUsersTop
+            // 
+            panelDataUsersTop.Controls.Add(labelUsers);
+            panelDataUsersTop.Dock = DockStyle.Fill;
+            panelDataUsersTop.Location = new Point(0, 0);
+            panelDataUsersTop.Margin = new Padding(0);
+            panelDataUsersTop.Name = "panelDataUsersTop";
+            panelDataUsersTop.Size = new Size(794, 22);
+            panelDataUsersTop.TabIndex = 0;
+            // 
+            // labelUsers
+            // 
+            labelUsers.AutoSize = true;
+            labelUsers.Location = new Point(321, 4);
+            labelUsers.Name = "labelUsers";
+            labelUsers.Size = new Size(151, 15);
+            labelUsers.TabIndex = 0;
+            labelUsers.Text = "USUÁRIOS CADASTRADOS:";
+            // 
+            // panelDataUsersMiddle
+            // 
+            panelDataUsersMiddle.Controls.Add(dataGridViewDataGrid);
+            panelDataUsersMiddle.Dock = DockStyle.Fill;
+            panelDataUsersMiddle.Location = new Point(3, 25);
+            panelDataUsersMiddle.Name = "panelDataUsersMiddle";
+            panelDataUsersMiddle.Padding = new Padding(90, 0, 90, 0);
+            panelDataUsersMiddle.Size = new Size(788, 320);
+            panelDataUsersMiddle.TabIndex = 2;
+            // 
+            // dataGridViewDataGrid
+            // 
+            dataGridViewDataGrid.AllowUserToAddRows = false;
+            dataGridViewDataGrid.AllowUserToOrderColumns = true;
+            dataGridViewDataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewDataGrid.Columns.AddRange(new DataGridViewColumn[] { ColumnId, ColumnUserName, ColumnEmail, ColumnFone, ColumnAdmin });
+            dataGridViewDataGrid.Dock = DockStyle.Fill;
+            dataGridViewDataGrid.Location = new Point(90, 0);
+            dataGridViewDataGrid.Name = "dataGridViewDataGrid";
+            dataGridViewDataGrid.ReadOnly = true;
+            dataGridViewDataGrid.Size = new Size(608, 320);
+            dataGridViewDataGrid.TabIndex = 3;
+            // 
+            // ColumnId
+            // 
+            ColumnId.FillWeight = 40F;
+            ColumnId.HeaderText = " ID";
+            ColumnId.Name = "ColumnId";
+            ColumnId.ReadOnly = true;
+            ColumnId.Width = 40;
+            // 
+            // ColumnUserName
+            // 
+            ColumnUserName.FillWeight = 120F;
+            ColumnUserName.HeaderText = "Nome";
+            ColumnUserName.Name = "ColumnUserName";
+            ColumnUserName.ReadOnly = true;
+            ColumnUserName.Width = 120;
+            // 
+            // ColumnEmail
+            // 
+            ColumnEmail.FillWeight = 190F;
+            ColumnEmail.HeaderText = "Email";
+            ColumnEmail.Name = "ColumnEmail";
+            ColumnEmail.ReadOnly = true;
+            ColumnEmail.Width = 190;
+            // 
+            // ColumnFone
+            // 
+            ColumnFone.FillWeight = 120F;
+            ColumnFone.HeaderText = "Contato";
+            ColumnFone.Name = "ColumnFone";
+            ColumnFone.ReadOnly = true;
+            ColumnFone.Width = 120;
+            // 
+            // ColumnAdmin
+            // 
+            ColumnAdmin.HeaderText = "Administrador";
+            ColumnAdmin.Name = "ColumnAdmin";
+            ColumnAdmin.ReadOnly = true;
+            ColumnAdmin.Resizable = DataGridViewTriState.True;
+            ColumnAdmin.SortMode = DataGridViewColumnSortMode.NotSortable;
             // 
             // panelNewUser
             // 
@@ -175,7 +457,36 @@
             panelNewUserTextBoxes.Margin = new Padding(0);
             panelNewUserTextBoxes.Name = "panelNewUserTextBoxes";
             panelNewUserTextBoxes.Size = new Size(398, 395);
-            panelNewUserTextBoxes.TabIndex = 3;
+            panelNewUserTextBoxes.TabIndex = 2;
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(204, 327);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(15, 14);
+            checkBox1.TabIndex = 21;
+            checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            label1.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
+            label1.AutoSize = true;
+            label1.Location = new Point(112, 326);
+            label1.Name = "label1";
+            label1.Size = new Size(87, 15);
+            label1.TabIndex = 20;
+            label1.Text = "Usuário ativo?  ";
+            // 
+            // textBox6
+            // 
+            textBox6.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
+            textBox6.Enabled = false;
+            textBox6.Location = new Point(227, 321);
+            textBox6.Name = "textBox6";
+            textBox6.ReadOnly = true;
+            textBox6.Size = new Size(45, 23);
+            textBox6.TabIndex = 19;
             // 
             // labelPasswordConfirm
             // 
@@ -322,302 +633,6 @@
             textBox5.Size = new Size(250, 23);
             textBox5.TabIndex = 0;
             // 
-            // panelUserData
-            // 
-            panelUserData.Controls.Add(panelUserDataTextBoxes);
-            panelUserData.Dock = DockStyle.Fill;
-            panelUserData.Location = new Point(0, 0);
-            panelUserData.Name = "panelUserData";
-            panelUserData.Size = new Size(794, 396);
-            panelUserData.TabIndex = 8;
-            // 
-            // panelUserDataTextBoxes
-            // 
-            panelUserDataTextBoxes.Controls.Add(checkBoxActive);
-            panelUserDataTextBoxes.Controls.Add(checkBoxAdmin);
-            panelUserDataTextBoxes.Controls.Add(buttonEditMyData);
-            panelUserDataTextBoxes.Controls.Add(labelActive);
-            panelUserDataTextBoxes.Controls.Add(textBoxActive);
-            panelUserDataTextBoxes.Controls.Add(labelIsAdmin);
-            panelUserDataTextBoxes.Controls.Add(textBoxAdmin);
-            panelUserDataTextBoxes.Controls.Add(labelFone);
-            panelUserDataTextBoxes.Controls.Add(textBoxFone);
-            panelUserDataTextBoxes.Controls.Add(labelEmail);
-            panelUserDataTextBoxes.Controls.Add(textBoxEmail);
-            panelUserDataTextBoxes.Controls.Add(labelName);
-            panelUserDataTextBoxes.Controls.Add(textBoxName);
-            panelUserDataTextBoxes.Location = new Point(203, 4);
-            panelUserDataTextBoxes.Margin = new Padding(0);
-            panelUserDataTextBoxes.Name = "panelUserDataTextBoxes";
-            panelUserDataTextBoxes.Size = new Size(388, 395);
-            panelUserDataTextBoxes.TabIndex = 2;
-            // 
-            // checkBoxActive
-            // 
-            checkBoxActive.AutoSize = true;
-            checkBoxActive.Location = new Point(196, 291);
-            checkBoxActive.Name = "checkBoxActive";
-            checkBoxActive.Size = new Size(15, 14);
-            checkBoxActive.TabIndex = 12;
-            checkBoxActive.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxAdmin
-            // 
-            checkBoxAdmin.AutoSize = true;
-            checkBoxAdmin.Location = new Point(196, 230);
-            checkBoxAdmin.Name = "checkBoxAdmin";
-            checkBoxAdmin.Size = new Size(15, 14);
-            checkBoxAdmin.TabIndex = 11;
-            checkBoxAdmin.UseVisualStyleBackColor = true;
-            // 
-            // buttonEditMyData
-            // 
-            buttonEditMyData.Location = new Point(163, 347);
-            buttonEditMyData.Name = "buttonEditMyData";
-            buttonEditMyData.Size = new Size(92, 36);
-            buttonEditMyData.TabIndex = 10;
-            buttonEditMyData.Text = "Editar";
-            buttonEditMyData.UseVisualStyleBackColor = true;
-            // 
-            // labelActive
-            // 
-            labelActive.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            labelActive.AutoSize = true;
-            labelActive.Location = new Point(104, 290);
-            labelActive.Name = "labelActive";
-            labelActive.Size = new Size(87, 15);
-            labelActive.TabIndex = 9;
-            labelActive.Text = "Usuário ativo?  ";
-            // 
-            // textBoxActive
-            // 
-            textBoxActive.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            textBoxActive.Enabled = false;
-            textBoxActive.Location = new Point(219, 284);
-            textBoxActive.Name = "textBoxActive";
-            textBoxActive.ReadOnly = true;
-            textBoxActive.Size = new Size(45, 23);
-            textBoxActive.TabIndex = 8;
-            // 
-            // labelIsAdmin
-            // 
-            labelIsAdmin.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            labelIsAdmin.AutoSize = true;
-            labelIsAdmin.Location = new Point(101, 228);
-            labelIsAdmin.Name = "labelIsAdmin";
-            labelIsAdmin.Size = new Size(91, 15);
-            labelIsAdmin.TabIndex = 7;
-            labelIsAdmin.Text = "Administrador? ";
-            // 
-            // textBoxAdmin
-            // 
-            textBoxAdmin.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            textBoxAdmin.Location = new Point(219, 224);
-            textBoxAdmin.Name = "textBoxAdmin";
-            textBoxAdmin.ReadOnly = true;
-            textBoxAdmin.Size = new Size(45, 23);
-            textBoxAdmin.TabIndex = 6;
-            // 
-            // labelFone
-            // 
-            labelFone.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            labelFone.AutoSize = true;
-            labelFone.Location = new Point(80, 163);
-            labelFone.Name = "labelFone";
-            labelFone.Size = new Size(56, 15);
-            labelFone.TabIndex = 5;
-            labelFone.Text = "Contato: ";
-            // 
-            // textBoxFone
-            // 
-            textBoxFone.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            textBoxFone.Location = new Point(136, 157);
-            textBoxFone.Name = "textBoxFone";
-            textBoxFone.Size = new Size(175, 23);
-            textBoxFone.TabIndex = 4;
-            // 
-            // labelEmail
-            // 
-            labelEmail.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            labelEmail.AutoSize = true;
-            labelEmail.Location = new Point(35, 99);
-            labelEmail.Name = "labelEmail";
-            labelEmail.Size = new Size(42, 15);
-            labelEmail.TabIndex = 3;
-            labelEmail.Text = "Email: ";
-            // 
-            // textBoxEmail
-            // 
-            textBoxEmail.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            textBoxEmail.Location = new Point(95, 93);
-            textBoxEmail.Name = "textBoxEmail";
-            textBoxEmail.Size = new Size(251, 23);
-            textBoxEmail.TabIndex = 2;
-            // 
-            // labelName
-            // 
-            labelName.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            labelName.AutoSize = true;
-            labelName.Location = new Point(36, 33);
-            labelName.Name = "labelName";
-            labelName.Size = new Size(46, 15);
-            labelName.TabIndex = 1;
-            labelName.Text = "Nome: ";
-            // 
-            // textBoxName
-            // 
-            textBoxName.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            textBoxName.Location = new Point(96, 27);
-            textBoxName.Name = "textBoxName";
-            textBoxName.Size = new Size(250, 23);
-            textBoxName.TabIndex = 0;
-            // 
-            // panelAllUsersData
-            // 
-            panelAllUsersData.Controls.Add(tableLayoutPanelUsers);
-            panelAllUsersData.Dock = DockStyle.Fill;
-            panelAllUsersData.Location = new Point(0, 0);
-            panelAllUsersData.Name = "panelAllUsersData";
-            panelAllUsersData.Size = new Size(794, 396);
-            panelAllUsersData.TabIndex = 10;
-            // 
-            // tableLayoutPanelUsers
-            // 
-            tableLayoutPanelUsers.ColumnCount = 1;
-            tableLayoutPanelUsers.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanelUsers.Controls.Add(panelDataUsersBotton, 0, 2);
-            tableLayoutPanelUsers.Controls.Add(panelDataUsersTop, 0, 0);
-            tableLayoutPanelUsers.Controls.Add(panelDataUsersMiddle, 0, 1);
-            tableLayoutPanelUsers.Dock = DockStyle.Fill;
-            tableLayoutPanelUsers.Location = new Point(0, 0);
-            tableLayoutPanelUsers.Margin = new Padding(0);
-            tableLayoutPanelUsers.Name = "tableLayoutPanelUsers";
-            tableLayoutPanelUsers.RowCount = 3;
-            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Percent, 6.4F));
-            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Percent, 93.6F));
-            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
-            tableLayoutPanelUsers.Size = new Size(794, 396);
-            tableLayoutPanelUsers.TabIndex = 9;
-            // 
-            // panelDataUsersBotton
-            // 
-            panelDataUsersBotton.Controls.Add(flowLayoutPanelButtonsUsers);
-            panelDataUsersBotton.Dock = DockStyle.Fill;
-            panelDataUsersBotton.Location = new Point(3, 351);
-            panelDataUsersBotton.Name = "panelDataUsersBotton";
-            panelDataUsersBotton.Size = new Size(788, 42);
-            panelDataUsersBotton.TabIndex = 3;
-            // 
-            // flowLayoutPanelButtonsUsers
-            // 
-            flowLayoutPanelButtonsUsers.Anchor = AnchorStyles.None;
-            flowLayoutPanelButtonsUsers.Controls.Add(buttonNewUser);
-            flowLayoutPanelButtonsUsers.Controls.Add(buttonEditSelectedUser);
-            flowLayoutPanelButtonsUsers.Location = new Point(290, -3);
-            flowLayoutPanelButtonsUsers.Name = "flowLayoutPanelButtonsUsers";
-            flowLayoutPanelButtonsUsers.Size = new Size(245, 44);
-            flowLayoutPanelButtonsUsers.TabIndex = 0;
-            // 
-            // buttonNewUser
-            // 
-            buttonNewUser.Location = new Point(3, 3);
-            buttonNewUser.Name = "buttonNewUser";
-            buttonNewUser.Size = new Size(115, 39);
-            buttonNewUser.TabIndex = 5;
-            buttonNewUser.Text = "Novo Usuário ";
-            buttonNewUser.UseVisualStyleBackColor = true;
-            // 
-            // buttonEditSelectedUser
-            // 
-            buttonEditSelectedUser.Location = new Point(124, 3);
-            buttonEditSelectedUser.Name = "buttonEditSelectedUser";
-            buttonEditSelectedUser.Size = new Size(115, 39);
-            buttonEditSelectedUser.TabIndex = 4;
-            buttonEditSelectedUser.Text = "Atualizar Usuário selecionado";
-            buttonEditSelectedUser.UseVisualStyleBackColor = true;
-            // 
-            // panelDataUsersTop
-            // 
-            panelDataUsersTop.Controls.Add(labelUsers);
-            panelDataUsersTop.Dock = DockStyle.Fill;
-            panelDataUsersTop.Location = new Point(0, 0);
-            panelDataUsersTop.Margin = new Padding(0);
-            panelDataUsersTop.Name = "panelDataUsersTop";
-            panelDataUsersTop.Size = new Size(794, 22);
-            panelDataUsersTop.TabIndex = 0;
-            // 
-            // labelUsers
-            // 
-            labelUsers.AutoSize = true;
-            labelUsers.Location = new Point(321, 4);
-            labelUsers.Name = "labelUsers";
-            labelUsers.Size = new Size(151, 15);
-            labelUsers.TabIndex = 0;
-            labelUsers.Text = "USUÁRIOS CADASTRADOS:";
-            // 
-            // panelDataUsersMiddle
-            // 
-            panelDataUsersMiddle.Controls.Add(dataGridViewDataGrid);
-            panelDataUsersMiddle.Dock = DockStyle.Fill;
-            panelDataUsersMiddle.Location = new Point(3, 25);
-            panelDataUsersMiddle.Name = "panelDataUsersMiddle";
-            panelDataUsersMiddle.Padding = new Padding(90, 0, 90, 0);
-            panelDataUsersMiddle.Size = new Size(788, 320);
-            panelDataUsersMiddle.TabIndex = 2;
-            // 
-            // dataGridViewDataGrid
-            // 
-            dataGridViewDataGrid.AllowUserToAddRows = false;
-            dataGridViewDataGrid.AllowUserToOrderColumns = true;
-            dataGridViewDataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewDataGrid.Columns.AddRange(new DataGridViewColumn[] { ColumnId, ColumnUserName, ColumnEmail, ColumnFone, ColumnAdmin });
-            dataGridViewDataGrid.Dock = DockStyle.Fill;
-            dataGridViewDataGrid.Location = new Point(90, 0);
-            dataGridViewDataGrid.Name = "dataGridViewDataGrid";
-            dataGridViewDataGrid.ReadOnly = true;
-            dataGridViewDataGrid.Size = new Size(608, 320);
-            dataGridViewDataGrid.TabIndex = 3;
-            // 
-            // ColumnId
-            // 
-            ColumnId.FillWeight = 40F;
-            ColumnId.HeaderText = " ID";
-            ColumnId.Name = "ColumnId";
-            ColumnId.ReadOnly = true;
-            ColumnId.Width = 40;
-            // 
-            // ColumnUserName
-            // 
-            ColumnUserName.FillWeight = 120F;
-            ColumnUserName.HeaderText = "Nome";
-            ColumnUserName.Name = "ColumnUserName";
-            ColumnUserName.ReadOnly = true;
-            ColumnUserName.Width = 120;
-            // 
-            // ColumnEmail
-            // 
-            ColumnEmail.FillWeight = 190F;
-            ColumnEmail.HeaderText = "Email";
-            ColumnEmail.Name = "ColumnEmail";
-            ColumnEmail.ReadOnly = true;
-            ColumnEmail.Width = 190;
-            // 
-            // ColumnFone
-            // 
-            ColumnFone.FillWeight = 120F;
-            ColumnFone.HeaderText = "Contato";
-            ColumnFone.Name = "ColumnFone";
-            ColumnFone.ReadOnly = true;
-            ColumnFone.Width = 120;
-            // 
-            // ColumnAdmin
-            // 
-            ColumnAdmin.HeaderText = "Administrador";
-            ColumnAdmin.Name = "ColumnAdmin";
-            ColumnAdmin.ReadOnly = true;
-            ColumnAdmin.Resizable = DataGridViewTriState.True;
-            ColumnAdmin.SortMode = DataGridViewColumnSortMode.NotSortable;
-            // 
             // tableLayoutPanelTop
             // 
             tableLayoutPanelTop.ColumnCount = 2;
@@ -654,6 +669,7 @@
             btnUsers.TabIndex = 2;
             btnUsers.Text = "GERENCIAR USUÁRIOS";
             btnUsers.UseVisualStyleBackColor = false;
+            btnUsers.Click +=  btnUsers_Click ;
             // 
             // panelBtn1
             // 
@@ -676,35 +692,7 @@
             btnMyData.TabIndex = 1;
             btnMyData.Text = "MEUS DADOS";
             btnMyData.UseVisualStyleBackColor = false;
-            // 
-            // checkBox1
-            // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(204, 328);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(15, 14);
-            checkBox1.TabIndex = 21;
-            checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            label1.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            label1.AutoSize = true;
-            label1.Location = new Point(112, 327);
-            label1.Name = "label1";
-            label1.Size = new Size(87, 15);
-            label1.TabIndex = 20;
-            label1.Text = "Usuário ativo?  ";
-            // 
-            // textBox6
-            // 
-            textBox6.Anchor =     AnchorStyles.Top  |  AnchorStyles.Bottom ;
-            textBox6.Enabled = false;
-            textBox6.Location = new Point(227, 321);
-            textBox6.Name = "textBox6";
-            textBox6.ReadOnly = true;
-            textBox6.Size = new Size(45, 23);
-            textBox6.TabIndex = 19;
+            btnMyData.Click +=  btnMyData_Click ;
             // 
             // FormUser
             // 
@@ -718,9 +706,6 @@
             panelMain.ResumeLayout(false);
             tableLayoutPanel.ResumeLayout(false);
             panelMainData.ResumeLayout(false);
-            panelNewUser.ResumeLayout(false);
-            panelNewUserTextBoxes.ResumeLayout(false);
-            panelNewUserTextBoxes.PerformLayout();
             panelUserData.ResumeLayout(false);
             panelUserDataTextBoxes.ResumeLayout(false);
             panelUserDataTextBoxes.PerformLayout();
@@ -732,6 +717,9 @@
             panelDataUsersTop.PerformLayout();
             panelDataUsersMiddle.ResumeLayout(false);
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewDataGrid ).EndInit();
+            panelNewUser.ResumeLayout(false);
+            panelNewUserTextBoxes.ResumeLayout(false);
+            panelNewUserTextBoxes.PerformLayout();
             tableLayoutPanelTop.ResumeLayout(false);
             panelBtn2.ResumeLayout(false);
             panelBtn1.ResumeLayout(false);
@@ -765,8 +753,6 @@
         private DataGridViewTextBoxColumn ColumnAdmin;
         private Panel panelAllUsersData;
         private Panel panelUserDataTextBoxes;
-        private CheckBox checkBoxActive;
-        private CheckBox checkBoxAdmin;
         private Button buttonEditMyData;
         private Label labelActive;
         private TextBox textBoxActive;
