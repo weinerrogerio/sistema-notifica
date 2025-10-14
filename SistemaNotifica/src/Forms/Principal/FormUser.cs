@@ -1,4 +1,5 @@
-﻿using SistemaNotifica.src.Models;
+﻿using Newtonsoft.Json.Linq;
+using SistemaNotifica.src.Models;
 using SistemaNotifica.src.Services;
 using System;
 using System.Diagnostics;
@@ -14,6 +15,8 @@ namespace SistemaNotifica.src.Forms.Principal
         // panelUserData --> Dados do Usuário (meus dados)
         // panelAllUsersData --> Dados de todos os Usuários (gerenciar usuários) - SOMENTE ADMIN
         // panelNewUser --> campos para novo user
+
+        private JArray dados = [];
 
         private readonly bool _isAdmin;
         private readonly bool _isViewingOwnProfile;
@@ -37,9 +40,10 @@ namespace SistemaNotifica.src.Forms.Principal
                 Application.Run(new FormLogin());
                 return;
             }
-
+            _userService = Program.UserService;
             _isAdmin = Session.IsAdmin();
-            //_isViewingOwnProfile = true; // Por padrão, abre visualizando próprio perfil
+
+            checkBoxAllUsers.Checked = false;
 
             ConfigDataGridView();
             ConfigurarAcessoPorRole();
@@ -47,8 +51,14 @@ namespace SistemaNotifica.src.Forms.Principal
             CentralizeAllElements();
             SendPanelsToBack();
 
-            LoadUserDataToGrid();
+            
+
+            _ = LoadDataToGridAsync();
+
         }
+
+
+        
 
         private void FormUser_Load(object sender, EventArgs e)
         {
@@ -70,14 +80,12 @@ namespace SistemaNotifica.src.Forms.Principal
             CentralizeAllElements();
         }
 
-        /// <summary>
         /// Configura a visibilidade e habilitação dos controles baseado no role do usuário
-        /// </summary>
         private void ConfigurarAcessoPorRole()
         {
             if ( _isAdmin )
             {
-                // ✅ Administrador vê TUDO
+                // Administrador vê TUDO
                 panelBtn2.Visible = true;
                 panelBtn2.Enabled = true;
                 btnUsers.Visible = true;
@@ -90,7 +98,7 @@ namespace SistemaNotifica.src.Forms.Principal
             }
             else
             {
-                // ❌ Usuário comum NÃO vê grid de usuários
+                // Usuário comum NÃO TEM ACESSO ao grid de usuários
                 panelBtn2.Visible = false;
                 panelBtn2.Enabled = false;
                 btnUsers.Visible = false;
@@ -112,9 +120,7 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-        /// <summary>
         /// Carrega os dados do usuário logado nos campos do formulário
-        /// </summary>
         private void CarregarDadosUsuario()
         {
             try
@@ -130,9 +136,9 @@ namespace SistemaNotifica.src.Forms.Principal
                     textBoxAdmin.Text = _isAdmin ? "Sim" : "Não";
 
                 if ( textBoxActive != null )
-                    textBoxActive.Text = "Ativo"; // Assumindo que usuário logado está ativo
+                    textBoxActive.Text = "Ativo"; 
 
-                // ✅ Campos que usuário comum NÃO deve editar
+                // Campos que usuário comum NÃO deve editar
                 if ( !_isAdmin )
                 {
                     if ( textBoxAdmin != null )
@@ -155,18 +161,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 );
             }
         }
-
-        private async Task LoadUserDataToGrid()
-        {
-            // TODO: Implementar chamada à API para buscar dados de todos os usuários
-            //var dataUsers = await _userService.GetUsersAsync();
-            //Debug.WriteLine($"Carregando dados de todos os usuários:>>>>>>>>>>>>>> {dataUsers}");
-        }
-
-        /// <summary>
-        /// Carrega os dados de um usuário específico (usado por admin ao editar outro usuário)
-        /// </summary>
-        /// <param name="userId">ID do usuário a ser carregado</param>
+        
         public async void CarregarDadosUsuarioEspecifico(int userId)
         {
             if ( !_isAdmin )
@@ -203,18 +198,18 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private void ConfigDataGridView()
         {
-            dataGridViewDataGrid.Rows.Clear();
-            dataGridViewDataGrid.RowHeadersVisible = false;
-            dataGridViewDataGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewDataGrid.AllowUserToAddRows = false;
-            dataGridViewDataGrid.MultiSelect = false;
-            dataGridViewDataGrid.ReadOnly = true;
-            dataGridViewDataGrid.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridViewDataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewDataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewDataGrid.AllowUserToOrderColumns = false;
-            dataGridViewDataGrid.AllowUserToResizeRows = false;
-            dataGridViewDataGrid.AllowUserToResizeColumns = true;
+            dataGridViewUsersData.Rows.Clear();
+            dataGridViewUsersData.RowHeadersVisible = false;
+            dataGridViewUsersData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewUsersData.AllowUserToAddRows = false;
+            dataGridViewUsersData.MultiSelect = false;
+            dataGridViewUsersData.ReadOnly = true;
+            dataGridViewUsersData.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridViewUsersData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewUsersData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridViewUsersData.AllowUserToOrderColumns = false;
+            dataGridViewUsersData.AllowUserToResizeRows = false;
+            dataGridViewUsersData.AllowUserToResizeColumns = true;
         }
 
         private void CentralizeAllElements()
@@ -252,6 +247,8 @@ namespace SistemaNotifica.src.Forms.Principal
             SendPanelsToBack();
         }
 
+
+        // -------------------------------- AÇOES DE ADMINISTRADOR --------------------------------
         private void btnUsers_Click(object sender, EventArgs e)
         {
             panelNewUser.SendToBack();
@@ -259,6 +256,151 @@ namespace SistemaNotifica.src.Forms.Principal
             panelAllUsersData.BringToFront();
         }
 
+        private void checkBoxAllUsers_CheckedChanged(object sender, EventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        private async Task GetUserDataAsync()
+        {
+            if ( _isAdmin )
+            {
+                try
+                {
+                    dados = await _userService.GetUsersAsync();
+                    Debug.WriteLine($"Carregando dados de todos os usuários: {dados}");
+                }
+                catch ( Exception ex )
+                {
+                    MessageBox.Show(
+                        $"Erro ao carregar usuários: {ex.Message}",
+                        "Erro",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                    dados = new JArray();
+                }
+            }
+        }
+
+        private async Task LoadDataToGridAsync()
+        {
+            if ( _isAdmin )
+            {
+                // Mostra loading (opcional)
+                //dataGridViewUsersData.Enabled = false;
+                Cursor = Cursors.WaitCursor;
+
+                await GetUserDataAsync();
+                ApplyFilters();
+
+                // Remove loading
+                dataGridViewUsersData.Enabled = true;
+                Cursor = Cursors.Default;
+            }
+        }
+
+        // ✅ Filtra dados baseado no checkbox
+        private JArray FilterData(JArray data)
+        {
+            if ( data == null || data.Count == 0 )
+                return new JArray();
+
+            JArray resultado = new JArray();
+
+            foreach ( JObject item in data )
+            {
+                bool isActive = item["is_active"]?.Value<bool>() ?? false;
+
+                // ✅ Se checkbox DESMARCADO: mostra apenas usuários ativos
+                if ( !checkBoxAllUsers.Checked )
+                {
+                    if ( isActive )
+                    {
+                        resultado.Add(item);
+                    }
+                }
+                // ✅ Se checkbox MARCADO: mostra TODOS os usuários (ativos e inativos)
+                else
+                {
+                    resultado.Add(item);
+                }
+            }
+
+            Debug.WriteLine($"Checkbox marcado: {checkBoxAllUsers.Checked}");
+            Debug.WriteLine($"Total de usuários após filtro: {resultado.Count} de {data.Count}");
+
+            return resultado;
+        }
+
+        private void ApplyFilters()
+        {
+            dataGridViewUsersData.Rows.Clear();
+
+            JArray dadosFiltrados = FilterData(dados);
+
+            if ( dadosFiltrados.Count == 0 )
+            {
+                Debug.WriteLine("Nenhum dado para exibir após filtragem");
+                return;
+            }
+
+            foreach ( JObject item in dadosFiltrados )
+            {
+                AddItemToGrid(item);
+            }
+
+            Debug.WriteLine($"Total de linhas adicionadas: {dataGridViewUsersData.Rows.Count}");
+        }
+
+        private void AddItemToGrid(JObject item)
+        {
+            try
+            {
+                int rowIndex = dataGridViewUsersData.Rows.Add();
+                DataGridViewRow row = dataGridViewUsersData.Rows[rowIndex];
+
+                // Preenche as células
+                row.Cells["ColumnId"].Value = item["id"]?.Value<int>();
+                row.Cells["ColumnUserName"].Value = item["nome"]?.Value<string>();
+                row.Cells["ColumnEmail"].Value = item["email"]?.Value<string>();
+                row.Cells["ColumnFone"].Value = item["contato"]?.Value<string>();
+                row.Cells["ColumnAdmin"].Value = item["role"]?.Value<string>();
+
+                bool isActive = item["is_active"]?.Value<bool>() ?? false;
+                row.Cells["ColumnIsActive"].Value = isActive;
+
+                // Formata datas
+                DateTime? createdAt = item["createdAt"]?.Value<DateTime>();
+                row.Cells["ColumnCreatedAt"].Value = createdAt?.ToString("dd/MM/yyyy");
+
+                // ✅ Opcional: Destacar usuários inativos visualmente
+                if ( !isActive )
+                {
+                    row.DefaultCellStyle.ForeColor = Color.Gray;
+                    row.DefaultCellStyle.Font = new Font(dataGridViewUsersData.Font, FontStyle.Italic);
+                }
+                // Armazena o objeto completo na Tag
+                row.Tag = item;
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro ao adicionar item ao grid: {ex.Message}");
+                MessageBox.Show(
+                    $"Erro ao adicionar usuário: {ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+        }
+        private void buttonNewUser_Click(object sender, EventArgs e)
+        {
+            panelUserData.SendToBack();
+            panelAllUsersData.SendToBack();
+            panelNewUser.BringToFront();
+        }
+        // -------------------------------- AÇOES DE USUARIO COMUM --------------------------------
         private void buttonEditMyData_Click(object sender, EventArgs e)
         {
             panelUserData.SendToBack();
@@ -266,12 +408,7 @@ namespace SistemaNotifica.src.Forms.Principal
             panelNewUser.BringToFront();
         }
 
-        private void buttonNewUser_Click(object sender, EventArgs e)
-        {
-            panelUserData.SendToBack();
-            panelAllUsersData.SendToBack();
-            panelNewUser.BringToFront();
-        }
+        
 
         private void buttonEditSelectedUser_Click(object sender, EventArgs e)
         {
@@ -280,5 +417,7 @@ namespace SistemaNotifica.src.Forms.Principal
             panelNewUser.BringToFront();
 
         }
+
+      
     }
 }

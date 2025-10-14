@@ -93,20 +93,39 @@ namespace SistemaNotifica.src.Services
 
         public async Task<string> GetJsonAsync(string endpoint, Dictionary<string, string> queryParams = null)
         {
-            Debug.WriteLine($"Chamando GET /{endpoint}");
+            //Debug.WriteLine($"Chamando GET /{endpoint}");
             var url = BuildUrlWithQueryParams(endpoint, queryParams);
+            Debug.WriteLine($"Chamando GET /{url}");
             var response = await _sharedHttpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             Debug.WriteLine($"JSON retornado: {response}");
             return await response.Content.ReadAsStringAsync();
         }
 
+
+        // Usar com: JToken {}
+        public async Task<JToken> GetAsJTokenAsync(string endpoint, Dictionary<string, string> queryParams = null)
+        {
+            var json = await GetJsonAsync(endpoint, queryParams);
+            return JToken.Parse(json); // ✅ Genérico para objeto/array
+        }
+
+
+        // Usar com: objeto {}
         public async Task<JObject> GetAsJObjectAsync(string endpoint, Dictionary<string, string> queryParams = null)
         {
-            Debug.WriteLine($"Chamando GET /{endpoint} com parâmetros: {queryParams?.Count ?? 0}");
             var json = await GetJsonAsync(endpoint, queryParams);
             return JObject.Parse(json);
+        }        
+
+        // Usar com: array []
+        public async Task<JArray> GetAsJArrayAsync(string endpoint, Dictionary<string, string> queryParams = null)
+        {
+            var json = await GetJsonAsync(endpoint, queryParams);
+            return JArray.Parse(json); 
         }
+        // --------------------------------------------------------------------------------------------------//
+
 
         public async Task DeleteAsync(string endpoint)
         {

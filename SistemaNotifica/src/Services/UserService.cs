@@ -21,11 +21,11 @@ namespace SistemaNotifica.src.Services
             _apiService = apiService;
         }
 
-        public async Task<JObject> GetUsersAsync()
+        public async Task<JArray> GetUsersAsync()
         {
             try
             {
-                var response = await _apiService.GetAsJObjectAsync("user/");
+                var response = await _apiService.GetAsJArrayAsync("user/");
                 return response;
             }
             catch ( HttpRequestException ex )
@@ -35,7 +35,7 @@ namespace SistemaNotifica.src.Services
             }
             catch ( JsonException ex )
             {
-                Debug.WriteLine($"Erro JSON: {ex.Message}");
+                Debug.WriteLine($"Erro JSON em UserService: {ex.Message}");
                 throw new Exception($"Erro ao processar resposta da API: {ex.Message}");
             }
             catch ( Exception ex )
