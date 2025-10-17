@@ -36,20 +36,21 @@ namespace SistemaNotifica.src.Services
 
                 if ( response != null && !string.IsNullOrEmpty(response.AccessToken) )
                 {
-                    // ✅ Armazena TODOS os dados da sessão
                     Session.AccessToken = response.AccessToken;
                     Session.RefreshToken = response.RefreshToken;
                     Session.SessionId = response.SessionId;
                     Session.UserId = response.UserData?.Id;
                     Session.UsuarioLogado = response.UserData?.Nome ?? username;
-                    Session.Email = response.UserData?.Email; // ✅ Novo: armazena email
+                    Session.Email = response.UserData?.Email;
                     Session.TipoUsuario = response.UserData?.Role ?? "user";
 
+                    // ✅ IMPORTANTE: Configurar o header IMEDIATAMENTE após o login
                     _apiService.SetAuthorizationHeader(response.AccessToken);
 
-                    Debug.WriteLine("========== LOGIN BEM-SUCEDIDO ==========");
-                    Debug.WriteLine(Session.GetInfoSession());
-                    Debug.WriteLine("========================================");
+                    // ✅ DEBUG: Verificar se salvou
+                    Debug.WriteLine($"[AuthService] Token salvo: {Session.AccessToken?.Substring(0, 50)}...");
+                    Debug.WriteLine($"[AuthService] UserId: {Session.UserId}");
+                    Debug.WriteLine($"[AuthService] Role: {Session.TipoUsuario}");
 
                     return response;
                 }

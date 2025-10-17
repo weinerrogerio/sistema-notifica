@@ -6,15 +6,17 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static SistemaNotifica.src.Models.User;
+
+// PANEL DAS TELAS:
+// panelUserData --> Dados do Usuário (meus dados)
+// panelAllUsersData --> Dados de todos os Usuários (gerenciar usuários) - SOMENTE ADMIN
+// panelNewUser --> campos para novo user
 
 namespace SistemaNotifica.src.Forms.Principal
 {
     public partial class FormUser : Form
     {
-        // PANEL DAS TELAS:
-        // panelUserData --> Dados do Usuário (meus dados)
-        // panelAllUsersData --> Dados de todos os Usuários (gerenciar usuários) - SOMENTE ADMIN
-        // panelNewUser --> campos para novo user
 
         private JArray dados = [];
 
@@ -50,15 +52,9 @@ namespace SistemaNotifica.src.Forms.Principal
             CarregarDadosUsuario();
             CentralizeAllElements();
             SendPanelsToBack();
-
-            
-
             _ = LoadDataToGridAsync();
-
         }
 
-
-        
 
         private void FormUser_Load(object sender, EventArgs e)
         {
@@ -136,7 +132,7 @@ namespace SistemaNotifica.src.Forms.Principal
                     textBoxAdmin.Text = _isAdmin ? "Sim" : "Não";
 
                 if ( textBoxActive != null )
-                    textBoxActive.Text = "Ativo"; 
+                    textBoxActive.Text = "Ativo";
 
                 // Campos que usuário comum NÃO deve editar
                 if ( !_isAdmin )
@@ -161,7 +157,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 );
             }
         }
-        
+
         public async void CarregarDadosUsuarioEspecifico(int userId)
         {
             if ( !_isAdmin )
@@ -247,6 +243,13 @@ namespace SistemaNotifica.src.Forms.Principal
             SendPanelsToBack();
         }
 
+        // -------------------------------- AÇOES DE USUARIO COMUM E ADMIN --------------------------------
+        private void buttonEditMyData_Click(object sender, EventArgs e)
+        {
+            panelUserData.SendToBack();
+            panelAllUsersData.SendToBack();
+            panelNewUser.BringToFront();
+        }
 
         // -------------------------------- AÇOES DE ADMINISTRADOR --------------------------------
         private void btnUsers_Click(object sender, EventArgs e)
@@ -377,7 +380,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 // ✅ Opcional: Destacar usuários inativos visualmente
                 if ( !isActive )
                 {
-                    row.DefaultCellStyle.ForeColor = Color.Gray;
+                    row.DefaultCellStyle.ForeColor = Color.IndianRed;
                     row.DefaultCellStyle.Font = new Font(dataGridViewUsersData.Font, FontStyle.Italic);
                 }
                 // Armazena o objeto completo na Tag
@@ -396,28 +399,146 @@ namespace SistemaNotifica.src.Forms.Principal
         }
         private void buttonNewUser_Click(object sender, EventArgs e)
         {
-            panelUserData.SendToBack();
-            panelAllUsersData.SendToBack();
-            panelNewUser.BringToFront();
-        }
-        // -------------------------------- AÇOES DE USUARIO COMUM --------------------------------
-        private void buttonEditMyData_Click(object sender, EventArgs e)
-        {
+            labelInfoNewUser.Text = "Insira abaixo os dados do novo usuário:";
             panelUserData.SendToBack();
             panelAllUsersData.SendToBack();
             panelNewUser.BringToFront();
         }
 
-        
 
+
+        // 
         private void buttonEditSelectedUser_Click(object sender, EventArgs e)
         {
+            labelInfoNewUser.Text = "Edite abaixo os dados do usuário:";
             panelUserData.SendToBack();
             panelAllUsersData.SendToBack();
             panelNewUser.BringToFront();
 
         }
 
-      
+        // Criação de usuários
+        private async void buttonSave_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Validações básicas
+                if ( string.IsNullOrWhiteSpace(textBoxEditName.Text) )
+                {
+                    MessageBox.Show("O nome é obrigatório.", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    textBoxEditName.Focus();
+                    return;
+                }
+
+                if ( string.IsNullOrWhiteSpace(textBoxEditEmail.Text) )
+                {
+                    MessageBox.Show("O email é obrigatório.", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    textBoxEditEmail.Focus();
+                    return;
+                }
+
+                if ( string.IsNullOrWhiteSpace(textBoxPassword.Text) )
+                {
+                    MessageBox.Show("A senha é obrigatória.", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    textBoxPassword.Focus();
+                    return;
+                }
+
+                if ( textBoxPassword.Text.Length < 4 || textBoxPassword.Text.Length > 20 )
+                {
+                    MessageBox.Show("A senha deve ter entre 4 e 20 caracteres.", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    textBoxPassword.Focus();
+                    return;
+                }
+
+                if ( textBoxPassword.Text != textBoxConfirmPassword.Text )
+                {
+                    MessageBox.Show("As senhas não coincidem.", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    textBoxConfirmPassword.Focus();
+                    return;
+                }
+
+
+                // ARRUMAR!!! PRECISA PASSAR TAMBÉM OS DADOS DE QUEM ESTA CRIANDO --> ADMIN
+                // Criar o DTO
+
+                var createUserDto = new CreateUserDto
+                {
+                    nome = textBoxEditName.Text.Trim(),
+                    email = textBoxEditEmail.Text.Trim(),
+                    contato = textBoxEditFone.Text.Trim(),
+                    password = textBoxPassword.Text,
+                    role = checkBoxIsAdmin.Checked ? "admin" : "user"
+                };
+
+
+
+                // Desabilitar botão para evitar cliques múltiplos
+                buttonSave.Enabled = false;
+                buttonSave.Text = "Salvando...";
+
+                // Enviar requisição
+                var response = await _userService.PostUserAsync(createUserDto);
+
+                MessageBox.Show(
+                    "Usuário criado com sucesso!",
+                    "Sucesso",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+
+                // Limpar formulário
+                LimparFormulario();
+
+                // Recarregar dados na grid
+                await LoadDataToGridAsync();
+            }
+            catch ( Exception ex )
+            {
+                MessageBox.Show(
+                    $"Erro ao criar usuário: {ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+            finally
+            {
+                // Reabilitar botão
+                buttonSave.Enabled = true;
+                buttonSave.Text = "Salvar";
+            }
+        }
+
+        // Método auxiliar para limpar o formulário
+        private void LimparFormulario()
+        {
+            textBoxEditName.Clear();
+            textBoxEditEmail.Clear();
+            textBoxEditFone.Clear();
+            textBoxPassword.Clear();
+            textBoxConfirmPassword.Clear();
+            checkBoxIsAdmin.Checked = false;
+        }
+
+        private void buttonCancel_Click(object sender, EventArgs e)
+        {
+            // 1. Limpa o formulário de Novo/Edição
+            LimparFormulario();
+
+            // 2. Define o painel de destino com base no papel do usuário
+            // O painel ativo (panelNewUser) será enviado para trás pelo método de destino.
+            if ( _isAdmin )
+            {
+                // Se for Admin, retorna para a tela de Gerenciar Usuários
+                // Isso simula o clique no btnUsers, que traz o panelAllUsersData para frente.
+                btnUsers_Click(sender, e);
+            }
+            else
+            {
+                // Se for Usuário Comum, retorna para a tela de Meus Dados               
+                btnMyData_Click(sender, e);
+            }
+        }
     }
 }

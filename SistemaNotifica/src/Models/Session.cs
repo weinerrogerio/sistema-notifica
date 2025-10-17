@@ -12,33 +12,28 @@ namespace SistemaNotifica.src.Models
         public static string AccessToken { get; set; }
         public static string RefreshToken { get; set; }
         public static int? SessionId { get; set; }
-
         // Dados do usuário
         public static int? UserId { get; set; }
         public static string UsuarioLogado { get; set; }
         public static string Email { get; set; }
         public static string TipoUsuario { get; set; } // "admin" ou "user"
 
-        /// <summary>
-        /// Verifica se existe uma sessão ativa válida
-        /// </summary>
+        
+        /// Verifica se existe uma sessão ativa válida        
         public static bool IsAutenticated()
         {
             return !string.IsNullOrEmpty(AccessToken) && UserId.HasValue;
         }
 
-        /// <summary>
         /// Verifica se o usuário logado é administrador
-        /// </summary>
         public static bool IsAdmin()
         {
             return IsAutenticated() &&
                    TipoUsuario?.Equals("admin", StringComparison.OrdinalIgnoreCase) == true;
         }
 
-        /// <summary>
-        /// Limpa todos os dados da sessão (útil no logout)
-        /// </summary>
+        
+        /// Limpa todos os dados da sessão (útil no logout)        
         public static void ClearSession()
         {
             AccessToken = null;
@@ -50,9 +45,8 @@ namespace SistemaNotifica.src.Models
             TipoUsuario = null;
         }
 
-        /// <summary>
-        /// Obtém informações resumidas da sessão para debug
-        /// </summary>
+        
+        /// Obtém informações resumidas da sessão para debug        
         public static string GetInfoSession()
         {
             if ( !IsAutenticated() )

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static SistemaNotifica.src.Models.User;
 
 namespace SistemaNotifica.src.Models
 {
@@ -77,21 +78,21 @@ namespace SistemaNotifica.src.Models
     //    public User UserData { get; set; }
     //}
 
-    // Exemplo de classe User (se a API retornar dados do usuário no login)
-    public class User
-    {
-        [JsonProperty("id")]
-        public int Id { get; set; } // int
+    //// Classe UserLoginData para receber os dados do usuário no login
+    //public class UserLoginData
+    //{
+    //    [JsonProperty("id")]
+    //    public int Id { get; set; } // int
 
-        [JsonProperty("nome")]
-        public string Nome { get; set; }
+    //    [JsonProperty("nome")]
+    //    public string Nome { get; set; }
 
-        [JsonProperty("email")]
-        public string Email { get; set; }
+    //    [JsonProperty("email")]
+    //    public string Email { get; set; }
 
-        [JsonProperty("role")]
-        public string Role { get; set; }
-    }
+    //    [JsonProperty("role")]
+    //    public string Role { get; set; }
+    //}
 
 
 
@@ -176,7 +177,7 @@ namespace SistemaNotifica.src.Models
         public int registros_duplicados { get; set; }
         public string detalhes_duplicidade { get; set; }
         public DateTime data_importacao { get; set; }
-        public required User usuario { get; set; }
+        public required UserLoginData usuario { get; set; }
     }
 
     //classe extendida de importações e user

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SistemaNotifica.src.Services
 {
-    // ✅ REMOVIDO IDisposable - HttpClient deve viver durante toda a aplicação
+    // HttpClient deve viver durante toda a aplicação
     public class ApiService
     {
         // HttpClient principal para requisições REST normais
@@ -37,13 +37,27 @@ namespace SistemaNotifica.src.Services
         }
 
         // Método para definir o token de autorização em AMBOS os clientes
+        //public void SetAuthorizationHeader(string token)
+        //{
+        //    _sharedHttpClient.DefaultRequestHeaders.Authorization =
+        //        new AuthenticationHeaderValue("Bearer", token);
+
+        //    _sseHttpClient.DefaultRequestHeaders.Authorization =
+        //        new AuthenticationHeaderValue("Bearer", token);
+        //}
+
         public void SetAuthorizationHeader(string token)
         {
-            _sharedHttpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
-
-            _sseHttpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
+            if ( !string.IsNullOrEmpty(token) )
+            {
+                _sharedHttpClient.DefaultRequestHeaders.Remove("Authorization");
+                _sharedHttpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+                Debug.WriteLine($"[API Service] ✅ SetAuthorizationHeader chamado com token: {token.Substring(0, Math.Min(50, token.Length))}...");
+            }
+            else
+            {
+                Debug.WriteLine($"[API Service] ❌ SetAuthorizationHeader chamado com token vazio/nulo");
+            }
         }
 
         // Método para remover o token de autorização de AMBOS os clientes
@@ -142,7 +156,7 @@ namespace SistemaNotifica.src.Services
                 throw new Exception($"Erro ao excluir: {ex.Message}");
             }
         }
-
+        // --------------------------------------------------------------------------------------------------//
         public async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
         {
             try
@@ -150,6 +164,32 @@ namespace SistemaNotifica.src.Services
                 var json = JsonConvert.SerializeObject(data);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 string fullUrl = $"{_baseUrl}/{endpoint}";
+
+                // ✅ DEBUG: Verificar se o token existe
+                Debug.WriteLine($"[API Service] Session.AccessToken existe? {!string.IsNullOrEmpty(Session.AccessToken)}");
+                Debug.WriteLine($"[API Service] Session.AccessToken: {Session.AccessToken?.Substring(0, Math.Min(50, Session.AccessToken?.Length ?? 0))}...");
+
+                // Adiciona token se disponível
+                if ( !string.IsNullOrEmpty(Session.AccessToken) )
+                {
+                    _sharedHttpClient.DefaultRequestHeaders.Remove("Authorization");
+                    _sharedHttpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {Session.AccessToken}");
+                    Debug.WriteLine($"[API Service] ✅ Authorization Header adicionado");
+                }
+                else
+                {
+                    Debug.WriteLine($"[API Service] ❌ SEM TOKEN - Authorization Header NÃO adicionado");
+                }
+
+                // ✅ DEBUG: Verificar se o header foi adicionado
+                var hasAuthHeader = _sharedHttpClient.DefaultRequestHeaders.Contains("Authorization");
+                Debug.WriteLine($"[API Service] Header Authorization presente? {hasAuthHeader}");
+
+                if ( hasAuthHeader )
+                {
+                    var authValue = _sharedHttpClient.DefaultRequestHeaders.GetValues("Authorization").FirstOrDefault();
+                    Debug.WriteLine($"[API Service] Valor do Authorization: {authValue?.Substring(0, Math.Min(60, authValue?.Length ?? 0))}...");
+                }
 
                 Debug.WriteLine($"[API Service] Enviando POST para: {fullUrl}");
                 Debug.WriteLine($"[API Service] Corpo da requisição: {json}");

@@ -6,14 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using static SistemaNotifica.src.Models.User;
+
 
 namespace SistemaNotifica.src.Models
 {
     internal class Auth
     {
-
-
-
         // Classe para enviar os dados de login
         public class LoginRequest
         {
@@ -38,7 +37,7 @@ namespace SistemaNotifica.src.Models
             public int SessionId { get; set; } // id da sessão --> LogUser
 
             [JsonProperty("user")]
-            public User UserData { get; set; }
+            public UserLoginData UserData { get; set; }
         }
         
 
