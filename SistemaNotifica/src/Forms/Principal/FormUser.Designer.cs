@@ -31,6 +31,17 @@
             panelMain = new Panel();
             tableLayoutPanel = new TableLayoutPanel();
             panelMainData = new Panel();
+            panelAllUsersData = new Panel();
+            tableLayoutPanelUsers = new TableLayoutPanel();
+            panelDataUsersBotton = new Panel();
+            flowLayoutPanelButtonsUsers = new FlowLayoutPanel();
+            buttonNewUser = new Button();
+            buttonEditSelectedUser = new Button();
+            panelDataUsersTop = new Panel();
+            checkBoxAllUsers = new CheckBox();
+            labelUsers = new Label();
+            panelDataUsersMiddle = new Panel();
+            dataGridViewUsersData = new DataGridView();
             panelNewUser = new Panel();
             panelNewUserTextBoxes = new Panel();
             textBoxConfirmPassword = new TextBox();
@@ -62,36 +73,22 @@
             textBoxEmail = new TextBox();
             labelName = new Label();
             textBoxName = new TextBox();
-            panelAllUsersData = new Panel();
-            tableLayoutPanelUsers = new TableLayoutPanel();
-            panelDataUsersBotton = new Panel();
-            flowLayoutPanelButtonsUsers = new FlowLayoutPanel();
-            buttonNewUser = new Button();
-            buttonEditSelectedUser = new Button();
-            panelDataUsersTop = new Panel();
-            checkBoxAllUsers = new CheckBox();
-            labelUsers = new Label();
-            panelDataUsersMiddle = new Panel();
-            dataGridViewUsersData = new DataGridView();
-            ColumnId = new DataGridViewCheckBoxColumn();
+            tableLayoutPanelTop = new TableLayoutPanel();
+            panelBtn2 = new Panel();
+            btnUsers = new Button();
+            panelBtn1 = new Panel();
+            btnMyData = new Button();
+            ColumnSelect = new DataGridViewCheckBoxColumn();
+            ColumnId = new DataGridViewTextBoxColumn();
             ColumnUserName = new DataGridViewTextBoxColumn();
             ColumnEmail = new DataGridViewTextBoxColumn();
             ColumnFone = new DataGridViewTextBoxColumn();
             ColumnAdmin = new DataGridViewTextBoxColumn();
             ColumnCreatedAt = new DataGridViewTextBoxColumn();
             ColumnIsActive = new DataGridViewTextBoxColumn();
-            tableLayoutPanelTop = new TableLayoutPanel();
-            panelBtn2 = new Panel();
-            btnUsers = new Button();
-            panelBtn1 = new Panel();
-            btnMyData = new Button();
             panelMain.SuspendLayout();
             tableLayoutPanel.SuspendLayout();
             panelMainData.SuspendLayout();
-            panelNewUser.SuspendLayout();
-            panelNewUserTextBoxes.SuspendLayout();
-            panelUserData.SuspendLayout();
-            panelUserDataTextBoxes.SuspendLayout();
             panelAllUsersData.SuspendLayout();
             tableLayoutPanelUsers.SuspendLayout();
             panelDataUsersBotton.SuspendLayout();
@@ -99,6 +96,10 @@
             panelDataUsersTop.SuspendLayout();
             panelDataUsersMiddle.SuspendLayout();
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewUsersData ).BeginInit();
+            panelNewUser.SuspendLayout();
+            panelNewUserTextBoxes.SuspendLayout();
+            panelUserData.SuspendLayout();
+            panelUserDataTextBoxes.SuspendLayout();
             tableLayoutPanelTop.SuspendLayout();
             panelBtn2.SuspendLayout();
             panelBtn1.SuspendLayout();
@@ -138,6 +139,126 @@
             panelMainData.Name = "panelMainData";
             panelMainData.Size = new Size(794, 396);
             panelMainData.TabIndex = 1;
+            // 
+            // panelAllUsersData
+            // 
+            panelAllUsersData.Controls.Add(tableLayoutPanelUsers);
+            panelAllUsersData.Dock = DockStyle.Fill;
+            panelAllUsersData.Location = new Point(0, 0);
+            panelAllUsersData.Name = "panelAllUsersData";
+            panelAllUsersData.Size = new Size(794, 396);
+            panelAllUsersData.TabIndex = 10;
+            // 
+            // tableLayoutPanelUsers
+            // 
+            tableLayoutPanelUsers.ColumnCount = 1;
+            tableLayoutPanelUsers.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanelUsers.Controls.Add(panelDataUsersBotton, 0, 2);
+            tableLayoutPanelUsers.Controls.Add(panelDataUsersTop, 0, 0);
+            tableLayoutPanelUsers.Controls.Add(panelDataUsersMiddle, 0, 1);
+            tableLayoutPanelUsers.Dock = DockStyle.Fill;
+            tableLayoutPanelUsers.Location = new Point(0, 0);
+            tableLayoutPanelUsers.Margin = new Padding(0);
+            tableLayoutPanelUsers.Name = "tableLayoutPanelUsers";
+            tableLayoutPanelUsers.RowCount = 3;
+            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Percent, 6.4F));
+            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Percent, 93.6F));
+            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
+            tableLayoutPanelUsers.Size = new Size(794, 396);
+            tableLayoutPanelUsers.TabIndex = 9;
+            // 
+            // panelDataUsersBotton
+            // 
+            panelDataUsersBotton.Controls.Add(flowLayoutPanelButtonsUsers);
+            panelDataUsersBotton.Dock = DockStyle.Fill;
+            panelDataUsersBotton.Location = new Point(3, 351);
+            panelDataUsersBotton.Name = "panelDataUsersBotton";
+            panelDataUsersBotton.Size = new Size(788, 42);
+            panelDataUsersBotton.TabIndex = 3;
+            // 
+            // flowLayoutPanelButtonsUsers
+            // 
+            flowLayoutPanelButtonsUsers.Anchor = AnchorStyles.None;
+            flowLayoutPanelButtonsUsers.Controls.Add(buttonNewUser);
+            flowLayoutPanelButtonsUsers.Controls.Add(buttonEditSelectedUser);
+            flowLayoutPanelButtonsUsers.Location = new Point(290, -3);
+            flowLayoutPanelButtonsUsers.Name = "flowLayoutPanelButtonsUsers";
+            flowLayoutPanelButtonsUsers.Size = new Size(245, 44);
+            flowLayoutPanelButtonsUsers.TabIndex = 0;
+            // 
+            // buttonNewUser
+            // 
+            buttonNewUser.Location = new Point(3, 3);
+            buttonNewUser.Name = "buttonNewUser";
+            buttonNewUser.Size = new Size(115, 39);
+            buttonNewUser.TabIndex = 5;
+            buttonNewUser.Text = "Novo Usuário ";
+            buttonNewUser.UseVisualStyleBackColor = true;
+            buttonNewUser.Click +=  buttonNewUser_Click ;
+            // 
+            // buttonEditSelectedUser
+            // 
+            buttonEditSelectedUser.Location = new Point(124, 3);
+            buttonEditSelectedUser.Name = "buttonEditSelectedUser";
+            buttonEditSelectedUser.Size = new Size(115, 39);
+            buttonEditSelectedUser.TabIndex = 4;
+            buttonEditSelectedUser.Text = "Atualizar Usuário selecionado";
+            buttonEditSelectedUser.UseVisualStyleBackColor = true;
+            buttonEditSelectedUser.Click +=  buttonEditSelectedUser_Click ;
+            // 
+            // panelDataUsersTop
+            // 
+            panelDataUsersTop.Controls.Add(checkBoxAllUsers);
+            panelDataUsersTop.Controls.Add(labelUsers);
+            panelDataUsersTop.Dock = DockStyle.Fill;
+            panelDataUsersTop.Location = new Point(0, 0);
+            panelDataUsersTop.Margin = new Padding(0);
+            panelDataUsersTop.Name = "panelDataUsersTop";
+            panelDataUsersTop.Size = new Size(794, 22);
+            panelDataUsersTop.TabIndex = 0;
+            // 
+            // checkBoxAllUsers
+            // 
+            checkBoxAllUsers.Anchor =     AnchorStyles.Top  |  AnchorStyles.Right ;
+            checkBoxAllUsers.AutoSize = true;
+            checkBoxAllUsers.Location = new Point(361, 3);
+            checkBoxAllUsers.Name = "checkBoxAllUsers";
+            checkBoxAllUsers.Size = new Size(251, 19);
+            checkBoxAllUsers.TabIndex = 1;
+            checkBoxAllUsers.Text = "Mostrar usuários Deletados ou desativados";
+            checkBoxAllUsers.UseVisualStyleBackColor = true;
+            checkBoxAllUsers.CheckedChanged +=  checkBoxAllUsers_CheckedChanged ;
+            // 
+            // labelUsers
+            // 
+            labelUsers.AutoSize = true;
+            labelUsers.Location = new Point(196, 4);
+            labelUsers.Name = "labelUsers";
+            labelUsers.Size = new Size(151, 15);
+            labelUsers.TabIndex = 0;
+            labelUsers.Text = "USUÁRIOS CADASTRADOS:";
+            // 
+            // panelDataUsersMiddle
+            // 
+            panelDataUsersMiddle.Controls.Add(dataGridViewUsersData);
+            panelDataUsersMiddle.Dock = DockStyle.Fill;
+            panelDataUsersMiddle.Location = new Point(3, 25);
+            panelDataUsersMiddle.Name = "panelDataUsersMiddle";
+            panelDataUsersMiddle.Padding = new Padding(80, 0, 80, 0);
+            panelDataUsersMiddle.Size = new Size(788, 320);
+            panelDataUsersMiddle.TabIndex = 2;
+            // 
+            // dataGridViewUsersData
+            // 
+            dataGridViewUsersData.AllowUserToAddRows = false;
+            dataGridViewUsersData.AllowUserToOrderColumns = true;
+            dataGridViewUsersData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewUsersData.Columns.AddRange(new DataGridViewColumn[] { ColumnSelect, ColumnId, ColumnUserName, ColumnEmail, ColumnFone, ColumnAdmin, ColumnCreatedAt, ColumnIsActive });
+            dataGridViewUsersData.Dock = DockStyle.Fill;
+            dataGridViewUsersData.Location = new Point(80, 0);
+            dataGridViewUsersData.Name = "dataGridViewUsersData";
+            dataGridViewUsersData.Size = new Size(628, 320);
+            dataGridViewUsersData.TabIndex = 3;
             // 
             // panelNewUser
             // 
@@ -459,171 +580,6 @@
             textBoxName.Size = new Size(250, 23);
             textBoxName.TabIndex = 0;
             // 
-            // panelAllUsersData
-            // 
-            panelAllUsersData.Controls.Add(tableLayoutPanelUsers);
-            panelAllUsersData.Dock = DockStyle.Fill;
-            panelAllUsersData.Location = new Point(0, 0);
-            panelAllUsersData.Name = "panelAllUsersData";
-            panelAllUsersData.Size = new Size(794, 396);
-            panelAllUsersData.TabIndex = 10;
-            // 
-            // tableLayoutPanelUsers
-            // 
-            tableLayoutPanelUsers.ColumnCount = 1;
-            tableLayoutPanelUsers.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanelUsers.Controls.Add(panelDataUsersBotton, 0, 2);
-            tableLayoutPanelUsers.Controls.Add(panelDataUsersTop, 0, 0);
-            tableLayoutPanelUsers.Controls.Add(panelDataUsersMiddle, 0, 1);
-            tableLayoutPanelUsers.Dock = DockStyle.Fill;
-            tableLayoutPanelUsers.Location = new Point(0, 0);
-            tableLayoutPanelUsers.Margin = new Padding(0);
-            tableLayoutPanelUsers.Name = "tableLayoutPanelUsers";
-            tableLayoutPanelUsers.RowCount = 3;
-            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Percent, 6.4F));
-            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Percent, 93.6F));
-            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
-            tableLayoutPanelUsers.Size = new Size(794, 396);
-            tableLayoutPanelUsers.TabIndex = 9;
-            // 
-            // panelDataUsersBotton
-            // 
-            panelDataUsersBotton.Controls.Add(flowLayoutPanelButtonsUsers);
-            panelDataUsersBotton.Dock = DockStyle.Fill;
-            panelDataUsersBotton.Location = new Point(3, 351);
-            panelDataUsersBotton.Name = "panelDataUsersBotton";
-            panelDataUsersBotton.Size = new Size(788, 42);
-            panelDataUsersBotton.TabIndex = 3;
-            // 
-            // flowLayoutPanelButtonsUsers
-            // 
-            flowLayoutPanelButtonsUsers.Anchor = AnchorStyles.None;
-            flowLayoutPanelButtonsUsers.Controls.Add(buttonNewUser);
-            flowLayoutPanelButtonsUsers.Controls.Add(buttonEditSelectedUser);
-            flowLayoutPanelButtonsUsers.Location = new Point(290, -3);
-            flowLayoutPanelButtonsUsers.Name = "flowLayoutPanelButtonsUsers";
-            flowLayoutPanelButtonsUsers.Size = new Size(245, 44);
-            flowLayoutPanelButtonsUsers.TabIndex = 0;
-            // 
-            // buttonNewUser
-            // 
-            buttonNewUser.Location = new Point(3, 3);
-            buttonNewUser.Name = "buttonNewUser";
-            buttonNewUser.Size = new Size(115, 39);
-            buttonNewUser.TabIndex = 5;
-            buttonNewUser.Text = "Novo Usuário ";
-            buttonNewUser.UseVisualStyleBackColor = true;
-            buttonNewUser.Click +=  buttonNewUser_Click ;
-            // 
-            // buttonEditSelectedUser
-            // 
-            buttonEditSelectedUser.Location = new Point(124, 3);
-            buttonEditSelectedUser.Name = "buttonEditSelectedUser";
-            buttonEditSelectedUser.Size = new Size(115, 39);
-            buttonEditSelectedUser.TabIndex = 4;
-            buttonEditSelectedUser.Text = "Atualizar Usuário selecionado";
-            buttonEditSelectedUser.UseVisualStyleBackColor = true;
-            buttonEditSelectedUser.Click +=  buttonEditSelectedUser_Click ;
-            // 
-            // panelDataUsersTop
-            // 
-            panelDataUsersTop.Controls.Add(checkBoxAllUsers);
-            panelDataUsersTop.Controls.Add(labelUsers);
-            panelDataUsersTop.Dock = DockStyle.Fill;
-            panelDataUsersTop.Location = new Point(0, 0);
-            panelDataUsersTop.Margin = new Padding(0);
-            panelDataUsersTop.Name = "panelDataUsersTop";
-            panelDataUsersTop.Size = new Size(794, 22);
-            panelDataUsersTop.TabIndex = 0;
-            // 
-            // checkBoxAllUsers
-            // 
-            checkBoxAllUsers.AutoSize = true;
-            checkBoxAllUsers.Location = new Point(361, 3);
-            checkBoxAllUsers.Name = "checkBoxAllUsers";
-            checkBoxAllUsers.Size = new Size(251, 19);
-            checkBoxAllUsers.TabIndex = 1;
-            checkBoxAllUsers.Text = "Mostrar usuários Deletados ou desativados";
-            checkBoxAllUsers.UseVisualStyleBackColor = true;
-            checkBoxAllUsers.CheckedChanged +=  checkBoxAllUsers_CheckedChanged ;
-            // 
-            // labelUsers
-            // 
-            labelUsers.AutoSize = true;
-            labelUsers.Location = new Point(196, 4);
-            labelUsers.Name = "labelUsers";
-            labelUsers.Size = new Size(151, 15);
-            labelUsers.TabIndex = 0;
-            labelUsers.Text = "USUÁRIOS CADASTRADOS:";
-            // 
-            // panelDataUsersMiddle
-            // 
-            panelDataUsersMiddle.Controls.Add(dataGridViewUsersData);
-            panelDataUsersMiddle.Dock = DockStyle.Fill;
-            panelDataUsersMiddle.Location = new Point(3, 25);
-            panelDataUsersMiddle.Name = "panelDataUsersMiddle";
-            panelDataUsersMiddle.Padding = new Padding(80, 0, 80, 0);
-            panelDataUsersMiddle.Size = new Size(788, 320);
-            panelDataUsersMiddle.TabIndex = 2;
-            // 
-            // dataGridViewUsersData
-            // 
-            dataGridViewUsersData.AllowUserToAddRows = false;
-            dataGridViewUsersData.AllowUserToOrderColumns = true;
-            dataGridViewUsersData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewUsersData.Columns.AddRange(new DataGridViewColumn[] { ColumnId, ColumnUserName, ColumnEmail, ColumnFone, ColumnAdmin, ColumnCreatedAt, ColumnIsActive });
-            dataGridViewUsersData.Dock = DockStyle.Fill;
-            dataGridViewUsersData.Location = new Point(80, 0);
-            dataGridViewUsersData.Name = "dataGridViewUsersData";
-            dataGridViewUsersData.Size = new Size(628, 320);
-            dataGridViewUsersData.TabIndex = 3;
-            // 
-            // ColumnId
-            // 
-            ColumnId.FillWeight = 40F;
-            ColumnId.HeaderText = " ID";
-            ColumnId.Name = "ColumnId";
-            ColumnId.Width = 40;
-            // 
-            // ColumnUserName
-            // 
-            ColumnUserName.FillWeight = 120F;
-            ColumnUserName.HeaderText = "Nome";
-            ColumnUserName.Name = "ColumnUserName";
-            ColumnUserName.Width = 120;
-            // 
-            // ColumnEmail
-            // 
-            ColumnEmail.FillWeight = 190F;
-            ColumnEmail.HeaderText = "Email";
-            ColumnEmail.Name = "ColumnEmail";
-            ColumnEmail.Width = 190;
-            // 
-            // ColumnFone
-            // 
-            ColumnFone.FillWeight = 120F;
-            ColumnFone.HeaderText = "Contato";
-            ColumnFone.Name = "ColumnFone";
-            ColumnFone.Width = 120;
-            // 
-            // ColumnAdmin
-            // 
-            ColumnAdmin.HeaderText = "Administrador";
-            ColumnAdmin.Name = "ColumnAdmin";
-            ColumnAdmin.Resizable = DataGridViewTriState.True;
-            ColumnAdmin.SortMode = DataGridViewColumnSortMode.NotSortable;
-            // 
-            // ColumnCreatedAt
-            // 
-            ColumnCreatedAt.HeaderText = "Data Criação";
-            ColumnCreatedAt.Name = "ColumnCreatedAt";
-            // 
-            // ColumnIsActive
-            // 
-            ColumnIsActive.HeaderText = "IsActive";
-            ColumnIsActive.Name = "ColumnIsActive";
-            ColumnIsActive.Visible = false;
-            // 
             // tableLayoutPanelTop
             // 
             tableLayoutPanelTop.ColumnCount = 2;
@@ -685,6 +641,60 @@
             btnMyData.UseVisualStyleBackColor = false;
             btnMyData.Click +=  btnMyData_Click ;
             // 
+            // ColumnSelect
+            // 
+            ColumnSelect.HeaderText = "ColumnSelect";
+            ColumnSelect.Name = "ColumnSelect";
+            ColumnSelect.Resizable = DataGridViewTriState.True;
+            ColumnSelect.SortMode = DataGridViewColumnSortMode.Automatic;
+            // 
+            // ColumnId
+            // 
+            ColumnId.FillWeight = 40F;
+            ColumnId.HeaderText = " ID";
+            ColumnId.Name = "ColumnId";
+            ColumnId.Resizable = DataGridViewTriState.True;
+            ColumnId.Width = 40;
+            // 
+            // ColumnUserName
+            // 
+            ColumnUserName.FillWeight = 120F;
+            ColumnUserName.HeaderText = "Nome";
+            ColumnUserName.Name = "ColumnUserName";
+            ColumnUserName.Width = 120;
+            // 
+            // ColumnEmail
+            // 
+            ColumnEmail.FillWeight = 190F;
+            ColumnEmail.HeaderText = "Email";
+            ColumnEmail.Name = "ColumnEmail";
+            ColumnEmail.Width = 190;
+            // 
+            // ColumnFone
+            // 
+            ColumnFone.FillWeight = 120F;
+            ColumnFone.HeaderText = "Contato";
+            ColumnFone.Name = "ColumnFone";
+            ColumnFone.Width = 120;
+            // 
+            // ColumnAdmin
+            // 
+            ColumnAdmin.HeaderText = "Administrador";
+            ColumnAdmin.Name = "ColumnAdmin";
+            ColumnAdmin.Resizable = DataGridViewTriState.True;
+            ColumnAdmin.SortMode = DataGridViewColumnSortMode.NotSortable;
+            // 
+            // ColumnCreatedAt
+            // 
+            ColumnCreatedAt.HeaderText = "Data Criação";
+            ColumnCreatedAt.Name = "ColumnCreatedAt";
+            // 
+            // ColumnIsActive
+            // 
+            ColumnIsActive.HeaderText = "IsActive";
+            ColumnIsActive.Name = "ColumnIsActive";
+            ColumnIsActive.Visible = false;
+            // 
             // FormUser
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -697,12 +707,6 @@
             panelMain.ResumeLayout(false);
             tableLayoutPanel.ResumeLayout(false);
             panelMainData.ResumeLayout(false);
-            panelNewUser.ResumeLayout(false);
-            panelNewUserTextBoxes.ResumeLayout(false);
-            panelNewUserTextBoxes.PerformLayout();
-            panelUserData.ResumeLayout(false);
-            panelUserDataTextBoxes.ResumeLayout(false);
-            panelUserDataTextBoxes.PerformLayout();
             panelAllUsersData.ResumeLayout(false);
             tableLayoutPanelUsers.ResumeLayout(false);
             panelDataUsersBotton.ResumeLayout(false);
@@ -711,6 +715,12 @@
             panelDataUsersTop.PerformLayout();
             panelDataUsersMiddle.ResumeLayout(false);
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewUsersData ).EndInit();
+            panelNewUser.ResumeLayout(false);
+            panelNewUserTextBoxes.ResumeLayout(false);
+            panelNewUserTextBoxes.PerformLayout();
+            panelUserData.ResumeLayout(false);
+            panelUserDataTextBoxes.ResumeLayout(false);
+            panelUserDataTextBoxes.PerformLayout();
             tableLayoutPanelTop.ResumeLayout(false);
             panelBtn2.ResumeLayout(false);
             panelBtn1.ResumeLayout(false);
@@ -767,14 +777,15 @@
         private Label labelPasswordConfirm;
         private Label labelPassword;
         private CheckBox checkBoxAllUsers;
-        private DataGridViewCheckBoxColumn ColumnId;
+        private TextBox textBoxConfirmPassword;
+        private TextBox textBoxPassword;
+        private DataGridViewCheckBoxColumn ColumnSelect;
+        private DataGridViewTextBoxColumn ColumnId;
         private DataGridViewTextBoxColumn ColumnUserName;
         private DataGridViewTextBoxColumn ColumnEmail;
         private DataGridViewTextBoxColumn ColumnFone;
         private DataGridViewTextBoxColumn ColumnAdmin;
         private DataGridViewTextBoxColumn ColumnCreatedAt;
         private DataGridViewTextBoxColumn ColumnIsActive;
-        private TextBox textBoxConfirmPassword;
-        private TextBox textBoxPassword;
     }
 }

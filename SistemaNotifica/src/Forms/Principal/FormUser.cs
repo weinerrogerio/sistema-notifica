@@ -199,13 +199,12 @@ namespace SistemaNotifica.src.Forms.Principal
             dataGridViewUsersData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewUsersData.AllowUserToAddRows = false;
             dataGridViewUsersData.MultiSelect = false;
-            dataGridViewUsersData.ReadOnly = true;
+            dataGridViewUsersData.ReadOnly = false;
             dataGridViewUsersData.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dataGridViewUsersData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewUsersData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dataGridViewUsersData.AllowUserToOrderColumns = false;
             dataGridViewUsersData.AllowUserToResizeRows = false;
-            dataGridViewUsersData.AllowUserToResizeColumns = true;
         }
 
         private void CentralizeAllElements()
@@ -353,7 +352,29 @@ namespace SistemaNotifica.src.Forms.Principal
                 AddItemToGrid(item);
             }
 
+            if ( dataGridViewUsersData.Rows.Count > 0 )
+            {
+                dataGridViewUsersData.Rows[0].Selected = false;
+                dataGridViewUsersData.ClearSelection();
+            }
+            ConfigurarColunas();
             Debug.WriteLine($"Total de linhas adicionadas: {dataGridViewUsersData.Rows.Count}");
+        }
+
+        private void ConfigurarColunas()
+        {
+            // Tornar todas as colunas ReadOnly exceto a de checkbox
+            foreach ( DataGridViewColumn column in dataGridViewUsersData.Columns )
+            {
+                if ( column.Name == "ColumnSelect" )
+                {
+                    column.ReadOnly = false; // Permitir edição do checkbox
+                }
+                else
+                {
+                    column.ReadOnly = true; // Bloquear edição das outras colunas
+                }
+            }
         }
 
         private void AddItemToGrid(JObject item)
@@ -362,6 +383,9 @@ namespace SistemaNotifica.src.Forms.Principal
             {
                 int rowIndex = dataGridViewUsersData.Rows.Add();
                 DataGridViewRow row = dataGridViewUsersData.Rows[rowIndex];
+
+
+                row.Cells["ColumnSelect"].Value = false;
 
                 // Preenche as células
                 row.Cells["ColumnId"].Value = item["id"]?.Value<int>();
