@@ -23,13 +23,16 @@ namespace SistemaNotifica.src.Forms.Principal
         private readonly bool _isAdmin;
         private readonly bool _isViewingOwnProfile;
 
+        private bool _isEditMode = false;
+        private int? _userIdBeingEdited = null;
+
+
         private readonly UserService _userService;
 
         public FormUser()
         {
             InitializeComponent();
-
-            // ✅ Verifica autenticação ANTES de qualquer configuração
+            // Verifica autenticação ANTES de qualquer configuração
             if ( !Session.IsAutenticated() )
             {
                 MessageBox.Show(
@@ -51,10 +54,11 @@ namespace SistemaNotifica.src.Forms.Principal
             ConfigurarAcessoPorRole();
             CarregarDadosUsuario();
             CentralizeAllElements();
+            //CentralizarTodosLabelsErro();
+            LimparErros();
             SendPanelsToBack();
             _ = LoadDataToGridAsync();
         }
-
 
         private void FormUser_Load(object sender, EventArgs e)
         {
@@ -116,7 +120,9 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-        /// Carrega os dados do usuário logado nos campos do formulário
+
+
+        // --------------------------- Carrega os dados do usuário logado nos campos do formulário ------------------
         private void CarregarDadosUsuario()
         {
             try
@@ -210,9 +216,11 @@ namespace SistemaNotifica.src.Forms.Principal
         private void CentralizeAllElements()
         {
             CentralizeElement(panelDataUsersTop, labelUsers);
-            CentralizeElement(panelDataUsersBotton, panelDataUsersBotton);
+            CentralizeElement(panelDataUsersBotton, flowLayoutPanelButtonsUsers);
             CentralizeElement(panelUserData, panelUserDataTextBoxes);
             CentralizeElement(panelAllUsersData, panelNewUserTextBoxes);
+            CentralizeElement(panelDataUsersTop, flowLayoutPanelTopInfoUsers);
+            CentralizarTodosLabelsErro();
         }
 
         private void CentralizeElement(Control parentPanel, Control controlToCenter)
@@ -235,19 +243,118 @@ namespace SistemaNotifica.src.Forms.Principal
             leftControl.Location = new Point(startX, centerY);
             rightControl.Location = new Point(startX + leftControl.Width + spacing, centerY);
         }
+        // ------------------------------- FUNÇOES PARA EDIÇÃO DE DADOS ------------------------------------
+
+        private void CarregarMeusDadosParaEdicao()
+        {
+            try
+            {
+                LimparFormulario();
+
+                _isEditMode = true;
+                _userIdBeingEdited = Session.UserId; // Define ID do usuário logado
+
+                // Carrega dados da Session
+                textBoxEditName.Text = Session.UsuarioLogado ?? "";
+                textBoxEditEmail.Text = Session.Email ?? "";
+                textBoxEditFone.Text = ""; // Não disponível na Session - ARRUMAR DEPOIS
+
+                textBoxPassword.Text = "";
+                textBoxConfirmPassword.Text = "";
+
+                bool isAdmin = Session.IsAdmin();
+                checkBoxIsAdmin.Checked = isAdmin;
+                textBoxIsAdmin.Text = isAdmin ? "SIM" : "NÃO";
+                
+
+                //labelInfoNewUser.Text = "Edite seus dados:";
+                //labelInfoNewUser.Font = new Font(labelInfoNewUser.Font, FontStyle.Bold);
+                //CentralizeElement(panelNewUserTextBoxes, labelInfoNewUser);
+                PersonalizeLabelUser("Edite seus dados:");
+
+                Debug.WriteLine($"Carregados dados do usuário logado para edição: {Session.UsuarioLogado}");
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro ao carregar dados para edição: {ex.Message}");
+                MessageBox.Show(
+                    "Erro ao carregar dados para edição.",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+        }
+        private void CarregarUsuarioDoGridParaEdicao(DataGridViewRow row)
+        {
+            try
+            {
+                if ( row == null ) return;
+
+                LimparFormulario();
+
+                _isEditMode = true;
+                _userIdBeingEdited = Convert.ToInt32(row.Cells["ColumnId"].Value); // ✅ ID do grid
+
+                // Carrega dados do grid
+                textBoxEditName.Text = row.Cells["ColumnUserName"].Value?.ToString() ?? "";
+                textBoxEditEmail.Text = row.Cells["ColumnEmail"].Value?.ToString() ?? "";
+                textBoxEditFone.Text = row.Cells["ColumnFone"].Value?.ToString() ?? "";
+
+                // Senha fica vazia
+                textBoxPassword.Text = "";
+                textBoxConfirmPassword.Text = "";
+
+                // Define se é admin
+                string role = row.Cells["ColumnAdmin"].Value?.ToString() ?? "user";
+                bool isAdmin = role.Equals("admin", StringComparison.OrdinalIgnoreCase);
+                checkBoxIsAdmin.Checked = isAdmin;
+                textBoxIsAdmin.Text = isAdmin ? "SIM" : "NÃO";
+
+                
+
+                //labelInfoNewUser.Text = "Edite os dados do usuário:";
+                PersonalizeLabelUser("Edite os dados do usuário:");
+
+                Debug.WriteLine($"Carregados dados do usuário ID {_userIdBeingEdited} do grid para edição");
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro ao carregar dados do grid: {ex.Message}");
+                MessageBox.Show(
+                    "Erro ao carregar dados do usuário.",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+        }
+
+        private void PersonalizeLabelUser(string text)
+        {
+            labelInfoNewUser.Text = text;
+            labelInfoNewUser.Font = new Font(labelInfoNewUser.Font, FontStyle.Bold);
+            CentralizeElement(panel1, labelInfoNewUser);
+        }
+
+
+        // -------------------------------------------------------------------------------------------------
 
         private void btnMyData_Click(object sender, EventArgs e)
         {
-
             SendPanelsToBack();
         }
 
         // -------------------------------- AÇOES DE USUARIO COMUM E ADMIN --------------------------------
         private void buttonEditMyData_Click(object sender, EventArgs e)
         {
+            CarregarMeusDadosParaEdicao();
             panelUserData.SendToBack();
             panelAllUsersData.SendToBack();
             panelNewUser.BringToFront();
+            buttonSave.Text = "Atualizar Cadastro";
+            buttonSave.Font = new Font(buttonSave.Font.FontFamily, 8F);
+            //CentralizeElement(panelNewUserTextBoxes, labelInfoNewUser);
         }
 
         // -------------------------------- AÇOES DE ADMINISTRADOR --------------------------------
@@ -256,6 +363,7 @@ namespace SistemaNotifica.src.Forms.Principal
             panelNewUser.SendToBack();
             panelUserData.SendToBack();
             panelAllUsersData.BringToFront();
+            textBoxIsAdmin.Text = "NÃO";
         }
 
         private void checkBoxAllUsers_CheckedChanged(object sender, EventArgs e)
@@ -421,117 +529,204 @@ namespace SistemaNotifica.src.Forms.Principal
                 );
             }
         }
+
+        // ---------------------------  BOTÃO DE NOVO USER -----------------------------------
         private void buttonNewUser_Click(object sender, EventArgs e)
-        {
-            labelInfoNewUser.Text = "Insira abaixo os dados do novo usuário:";
+        {            
+            PersonalizeLabelUser("Insira abaixo os dados do novo usuário:");
+            buttonSave.Text = "Salvar";
+            buttonSave.Font = new Font(buttonSave.Font.FontFamily, 9.75F);
             panelUserData.SendToBack();
             panelAllUsersData.SendToBack();
-            panelNewUser.BringToFront();
+            panelNewUser.BringToFront();  
         }
 
-
-
-        // 
+        // ---------------------------  BOTÃO DE EDIÇÃO USER DO GRID ---------------------------   
         private void buttonEditSelectedUser_Click(object sender, EventArgs e)
         {
-            labelInfoNewUser.Text = "Edite abaixo os dados do usuário:";
+            // Verifica se há linha selecionada no grid
+            if ( dataGridViewUsersData.SelectedRows.Count == 0 )
+            {
+                MessageBox.Show(
+                    "Selecione um usuário na tabela para editar.",
+                    "Aviso",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+
+            // Obtém a linha selecionada
+            DataGridViewRow selectedRow = dataGridViewUsersData.SelectedRows[0];
+
+            // Carrega dados do grid
+            CarregarUsuarioDoGridParaEdicao(selectedRow);
+
+            // Muda para tela de edição
+            panelUserData.SendToBack();
+            panelAllUsersData.SendToBack();
+            panelNewUser.BringToFront();
+            
+
+            //labelInfoNewUser.Text = "Edite abaixo os dados do usuário:";
+            PersonalizeLabelUser("Edite abaixo os dados do usuário:");
+            buttonSave.Text = "Atualizar Cadastro";
+            buttonSave.Font = new Font(buttonSave.Font.FontFamily, 8F);
             panelUserData.SendToBack();
             panelAllUsersData.SendToBack();
             panelNewUser.BringToFront();
 
         }
 
-        // Criação de usuários
+        // ---------------------------  BOTÃO DE SALVAR NOVO USER  --------------------------------
         private async void buttonSave_Click(object sender, EventArgs e)
         {
-            try
+            if ( !ValidaCamposNovoUsuario() ) return;
+
+            if( buttonSave.Text == "Atualizar Cadastro" )
             {
-                // Validações básicas
-                if ( string.IsNullOrWhiteSpace(textBoxEditName.Text) )
+                Debug.WriteLine($"ID do usuário sendo editado: {_userIdBeingEdited}");
+                if ( _userIdBeingEdited == null )
                 {
-                    MessageBox.Show("O nome é obrigatório.", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxEditName.Focus();
+                    MessageBox.Show(
+                        "Erro: ID do usuário não encontrado.",
+                        "Erro",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
                     return;
                 }
 
-                if ( string.IsNullOrWhiteSpace(textBoxEditEmail.Text) )
+                try
                 {
-                    MessageBox.Show("O email é obrigatório.", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxEditEmail.Focus();
-                    return;
+                    var updateUserDto = new UpdateUserDto
+                    {
+                        nome = textBoxEditName.Text.Trim(),
+                        email = textBoxEditEmail.Text.Trim(),
+                        contato = textBoxEditFone.Text.Trim(),
+                        password = textBoxPassword.Text.Trim(),
+                        role = _isAdmin ? "admin" : "user"
+                    };
+
+                    // Só envia senha se foi preenchida
+                    if ( !string.IsNullOrWhiteSpace(textBoxPassword.Text) )
+                    {
+                        updateUserDto.password = textBoxPassword.Text;
+                    }
+                    if ( _isAdmin )
+                    {
+                        updateUserDto.role = checkBoxIsAdmin.Checked ? "admin" : "user";
+                    }
+
+                    // Desabilitar botão
+                    buttonSave.Enabled = false;
+
+                    // Enviar requisição
+                    var response = await _userService.PatchUserAsync(_userIdBeingEdited.Value, updateUserDto);
+
+                    MessageBox.Show(
+                        "Usuário atualizado com sucesso!",
+                        "Sucesso",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+
+                    // ✅ Se atualizou o próprio usuário, atualiza a Session
+                    if ( _userIdBeingEdited == Session.UserId )
+                    {
+                        Session.UsuarioLogado = updateUserDto.nome;
+                        Debug.WriteLine($"Session atualizada com novo nome: {Session.UsuarioLogado}");
+                    }
+
+                    // Limpar formulário
+                    LimparFormulario();
+                    _isEditMode = false;
+                    _userIdBeingEdited = null;
+
+                    // Recarregar grid
+                    await LoadDataToGridAsync();
+
+                    // Voltar para tela apropriada
+                    if ( _isAdmin )
+                    {
+                        btnUsers_Click(sender, e);
+                    }
+                    else
+                    {
+                        btnMyData_Click(sender, e);
+                        // Recarrega os dados na tela "Meus Dados"
+                        CarregarDadosUsuario();
+                    }
                 }
-
-                if ( string.IsNullOrWhiteSpace(textBoxPassword.Text) )
+                catch ( Exception ex )
                 {
-                    MessageBox.Show("A senha é obrigatória.", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxPassword.Focus();
-                    return;
+                    MessageBox.Show(
+                        $"Erro ao atualizar usuário: {ex.Message}",
+                        "Erro",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
                 }
-
-                if ( textBoxPassword.Text.Length < 4 || textBoxPassword.Text.Length > 20 )
+                finally
                 {
-                    MessageBox.Show("A senha deve ter entre 4 e 20 caracteres.", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxPassword.Focus();
-                    return;
+                    buttonSave.Enabled = true;
+                    buttonSave.Text = "Atualizar Cadastro";
+                    buttonSave.Font = new Font(buttonSave.Font.FontFamily, 8F);
+
                 }
-
-                if ( textBoxPassword.Text != textBoxConfirmPassword.Text )
-                {
-                    MessageBox.Show("As senhas não coincidem.", "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    textBoxConfirmPassword.Focus();
-                    return;
-                }
-
-
-                // ARRUMAR!!! PRECISA PASSAR TAMBÉM OS DADOS DE QUEM ESTA CRIANDO --> ADMIN
-                // Criar o DTO
-
-                var createUserDto = new CreateUserDto
-                {
-                    nome = textBoxEditName.Text.Trim(),
-                    email = textBoxEditEmail.Text.Trim(),
-                    contato = textBoxEditFone.Text.Trim(),
-                    password = textBoxPassword.Text,
-                    role = checkBoxIsAdmin.Checked ? "admin" : "user"
-                };
-
-
-
-                // Desabilitar botão para evitar cliques múltiplos
-                buttonSave.Enabled = false;
-                buttonSave.Text = "Salvando...";
-
-                // Enviar requisição
-                var response = await _userService.PostUserAsync(createUserDto);
-
-                MessageBox.Show(
-                    "Usuário criado com sucesso!",
-                    "Sucesso",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
-
-                // Limpar formulário
-                LimparFormulario();
-
-                // Recarregar dados na grid
-                await LoadDataToGridAsync();
             }
-            catch ( Exception ex )
+            else if( buttonSave.Text == "Salvar" )
             {
-                MessageBox.Show(
-                    $"Erro ao criar usuário: {ex.Message}",
-                    "Erro",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
-            }
-            finally
-            {
-                // Reabilitar botão
-                buttonSave.Enabled = true;
-                buttonSave.Text = "Salvar";
-            }
+                try
+                {
+
+                    var createUserDto = new CreateUserDto
+                    {
+                        nome = textBoxEditName.Text.Trim(),
+                        email = textBoxEditEmail.Text.Trim(),
+                        contato = textBoxEditFone.Text.Trim(),
+                        password = textBoxPassword.Text,
+                        role = checkBoxIsAdmin.Checked ? "admin" : "user"
+                    };
+
+                    // Desabilitar botão para evitar cliques múltiplos
+                    buttonSave.Enabled = false;
+                    buttonSave.Text = "Salvando...";
+                    buttonSave.Font = new Font(buttonSave.Font.FontFamily, 9F);
+
+                    // Enviar requisição
+                    var response = await _userService.PostUserAsync(createUserDto);
+
+                    MessageBox.Show(
+                        "Usuário criado com sucesso!",
+                        "Sucesso",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+
+                    // Limpar formulário
+                    LimparFormulario();
+
+                    // Recarregar dados na grid
+                    await LoadDataToGridAsync();
+                }
+                catch ( Exception ex )
+                {
+                    MessageBox.Show(
+                        $"Erro ao criar usuário: {ex.Message}",
+                        "Erro",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                }
+                finally
+                {
+                    // Reabilitar botão
+                    buttonSave.Enabled = true;
+                    buttonSave.Text = "Salvar";
+                    buttonSave.Font = new Font(buttonSave.Font.FontFamily, 9.75F);
+                }
+            }                
         }
 
         // Método auxiliar para limpar o formulário
@@ -543,6 +738,26 @@ namespace SistemaNotifica.src.Forms.Principal
             textBoxPassword.Clear();
             textBoxConfirmPassword.Clear();
             checkBoxIsAdmin.Checked = false;
+
+            // Reabilitar campos
+            textBoxEditEmail.ReadOnly = false;
+            textBoxEditFone.ReadOnly = false;
+            checkBoxIsAdmin.Enabled = true;
+
+            // Resetar estado de edição
+            _isEditMode = false;
+            _userIdBeingEdited = null;
+
+            LimparErros();
+        }
+
+        private void LimparErros()
+        {
+            labelErrorName.Visible = false;
+            labelErrorEmail.Visible = false;
+            labelErrorFone.Visible = false;
+            labelErrorPassword.Visible = false;
+            labelErrorConfirmPassword.Visible = false;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -564,5 +779,154 @@ namespace SistemaNotifica.src.Forms.Principal
                 btnMyData_Click(sender, e);
             }
         }
+
+
+
+        // ---------------------------------------------- CONFIGURAÇÕES DE LABELS ERRORS ----------------------------------------
+        private void CentralizarLabelErro(TextBox textBox, Label errorLabel, int verticalSpacing = 2)
+        {
+            if ( textBox == null || errorLabel == null ) return;
+
+            // Calcula a posição X para centralizar o label em relação ao TextBox
+            int centeredX = textBox.Left + ( textBox.Width - errorLabel.Width ) / 2;
+
+            // Posiciona o label abaixo do TextBox
+            int posY = textBox.Bottom + verticalSpacing;
+
+            errorLabel.Location = new Point(centeredX, posY);
+        }
+
+        private void AtualizarLabelErro(TextBox textBox, Label errorLabel, string mensagem, int verticalSpacing = 2)
+        {
+            if ( errorLabel == null ) return;
+
+            errorLabel.Text = mensagem;
+
+            // Força o recálculo do tamanho do label baseado no novo texto
+            errorLabel.AutoSize = true;
+
+            // Aguarda o layout ser processado
+            errorLabel.Refresh();
+
+            // Centraliza o label
+            CentralizarLabelErro(textBox, errorLabel, verticalSpacing);
+        }
+
+        private void CentralizarTodosLabelsErro()
+        {
+            // Labels de erro do formulário de novo usuário
+            CentralizarLabelErro(textBoxEditName, labelErrorName);
+            CentralizarLabelErro(textBoxEditEmail, labelErrorEmail);
+            CentralizarLabelErro(textBoxEditFone, labelErrorFone);
+            CentralizarLabelErro(textBoxPassword, labelErrorPassword);
+            CentralizarLabelErro(textBoxConfirmPassword, labelErrorConfirmPassword);
+        }
+
+        private bool ValidarCampoNome()
+        {
+            if ( string.IsNullOrWhiteSpace(textBoxEditName.Text) )
+            {
+                AtualizarLabelErro(textBoxEditName, labelErrorName, "O nome é obrigatório");
+                labelErrorName.Visible = true;
+                return false;
+            }
+
+            labelErrorName.Visible = false;
+            return true;
+        }
+
+        private bool ValidarCampoEmail()
+        {
+            if ( string.IsNullOrWhiteSpace(textBoxEditEmail.Text) )
+            {
+                AtualizarLabelErro(textBoxEditEmail, labelErrorEmail, "O email é obrigatório");
+                labelErrorEmail.Visible = true;
+                return false;
+            }
+
+            // Validação básica de formato
+            if ( !textBoxEditEmail.Text.Contains("@") )
+            {
+                AtualizarLabelErro(textBoxEditEmail, labelErrorEmail, "Email inválido");
+                labelErrorEmail.Visible = true;
+                return false;
+            }
+
+            labelErrorEmail.Visible = false;
+            return true;
+        }
+
+        private bool ValidarCampoSenha()
+        {
+            if ( string.IsNullOrWhiteSpace(textBoxPassword.Text) )
+            {
+                AtualizarLabelErro(textBoxPassword, labelErrorPassword, "A senha é obrigatória");
+                labelErrorPassword.Visible = true;
+                return false;
+            }
+
+            if ( textBoxPassword.Text.Length < 4 || textBoxPassword.Text.Length > 20 )
+            {
+                AtualizarLabelErro(textBoxPassword, labelErrorPassword, "Senha deve ter entre 4 e 20 caracteres");
+                labelErrorPassword.Visible = true;
+                return false;
+            }
+
+            labelErrorPassword.Visible = false;
+            return true;
+        }
+
+        private bool ValidarConfirmacaoSenha()
+        {
+            if ( textBoxPassword.Text != textBoxConfirmPassword.Text )
+            {
+                AtualizarLabelErro(textBoxConfirmPassword, labelErrorConfirmPassword, "As senhas não coincidem");
+                labelErrorConfirmPassword.Visible = true;
+                return false;
+            }
+
+            labelErrorConfirmPassword.Visible = false;
+            return true;
+        }
+
+        private bool ValidaCamposNovoUsuario()
+        {
+            LimparErros();
+            bool nomeValido = ValidarCampoNome();
+            // Em modo edição, email e telefone não são necessários
+            bool emailValido = _isEditMode ? true : ValidarCampoEmail();
+            // Senha é obrigatória apenas na criação, opcional na edição
+            bool senhaValida = true;
+            bool confirmacaoValida = true;
+            if ( !_isEditMode )
+            {
+                // Modo criação: senha obrigatória
+                senhaValida = ValidarCampoSenha();
+                confirmacaoValida = ValidarConfirmacaoSenha();
+            }
+            else
+            {
+                // Modo edição: senha opcional, mas se preenchida deve ser válida
+                if ( !string.IsNullOrWhiteSpace(textBoxPassword.Text) )
+                {
+                    senhaValida = ValidarCampoSenha();
+                    confirmacaoValida = ValidarConfirmacaoSenha();
+                }
+            }
+            return nomeValido && emailValido && senhaValida && confirmacaoValida;
+        }
+
+        private void checkBoxIsAdmin_CheckedChanged(object sender, EventArgs e)
+        {
+            if ( checkBoxIsAdmin.Checked )
+            {
+                textBoxIsAdmin.Text = "SIM";
+            }
+            else
+            {
+                textBoxIsAdmin.Text = "NÂO";
+            }
+        }        
+        // ----------------------------------------------------------------------------------------------------------------------
     }
 }

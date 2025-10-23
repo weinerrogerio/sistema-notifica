@@ -101,6 +101,43 @@ using static SistemaNotifica.src.Models.User;
             }
         }
 
+        public async Task<JObject> PatchUserAsync(int userId, UpdateUserDto updateUserDto)
+        {
+            try
+            {
+                Debug.WriteLine($"Atualizando usuário ID {userId}: {JsonConvert.SerializeObject(updateUserDto)}");
+                var response = await _apiService.PatchAsync<UpdateUserDto, JObject>($"user/{userId}", updateUserDto);
+                return response;
+            }
+            catch ( UnauthorizedAccessException ex )
+            {
+                Debug.WriteLine($"Erro de autorização: {ex.Message}");
+                throw new Exception($"Você não tem permissão para atualizar usuários. Detalhes: {ex.Message}");
+            }
+            catch ( ArgumentException ex )
+            {
+                Debug.WriteLine($"Erro de validação: {ex.Message}");
+                throw new Exception($"Dados inválidos: {ex.Message}");
+            }
+            catch ( FileNotFoundException ex )
+            {
+                Debug.WriteLine($"Usuário não encontrado: {ex.Message}");
+                throw new Exception($"Usuário não encontrado: {ex.Message}");
+            }
+            catch ( HttpRequestException ex )
+            {
+                Debug.WriteLine($"Erro HTTP: {ex.Message}");
+                throw new Exception($"Erro de conexão com o servidor: {ex.Message}");
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro geral ao atualizar usuário: {ex.Message}");
+                throw;
+            }
+        }
+
+
+
     }
 
 }

@@ -33,14 +33,7 @@ namespace SistemaNotifica.src.Models
             public string contato { get; set; }
             public string password { get; set; }
             public string role { get; set; } // "ADMIN" ou "USER"            
-        }
-
-        //public class CreateUser
-        //{
-        //    public CreateUserDto createUserDto { get; set; }
-        //    public TokenPayloadDto tokenPayload { get; set; }   
-        //}
-
+        }      
 
         //Classe para receber a resposta da criação de um novo usuário
         public class CreateUserResponseDto
@@ -51,9 +44,18 @@ namespace SistemaNotifica.src.Models
             public string contato { get; set; }
             public string role { get; set; }
             public DateTime created_at { get; set; }
-            // Adicione outros campos que a API retorna
         }
 
+
+        public class UpdateUserDto
+        {
+            //public int id { get; set; }
+            public string nome { get; set; }
+            public string email { get; set; }
+            public string contato { get; set; }
+            public string password { get; set; }  
+            public string role { get; set; }
+        }
 
         // REVER UTILIDADE POIS ESSES DADOS SÃO SAVOS EM Session
         public class TokenPayloadDto
