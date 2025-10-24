@@ -347,6 +347,98 @@ namespace SistemaNotifica.src.Services
             }
         }
 
+        // -----------------------------------------  FUNÇÃO DELETE  - PatchAsync-----------------------------------------//
+       
+        public async Task<TResponse> DeleteAsync<TResponse>(string endpoint)
+        {
+            try
+            {
+                string fullUrl = $"{_baseUrl}/{endpoint}";
+
+                // ✅ DEBUG: Verificar se o token existe
+                Debug.WriteLine($"[API Service] Session.AccessToken existe? {!string.IsNullOrEmpty(Session.AccessToken)}");
+
+                // Adiciona token se disponível
+                if ( !string.IsNullOrEmpty(Session.AccessToken) )
+                {
+                    _sharedHttpClient.DefaultRequestHeaders.Remove("Authorization");
+                    _sharedHttpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {Session.AccessToken}");
+                    Debug.WriteLine($"[API Service] ✅ Authorization Header adicionado");
+                }
+                else
+                {
+                    Debug.WriteLine($"[API Service] ❌ SEM TOKEN - Authorization Header NÃO adicionado");
+                }
+
+                Debug.WriteLine($"[API Service] Enviando DELETE para: {fullUrl}");
+
+                var response = await _sharedHttpClient.DeleteAsync(fullUrl);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                Debug.WriteLine($"[API Service] Status: {response.StatusCode}");
+                Debug.WriteLine($"[API Service] Resposta: {responseContent}");
+
+                if ( response.IsSuccessStatusCode )
+                {
+                    return JsonConvert.DeserializeObject<TResponse>(responseContent);
+                }
+                else
+                {
+                    switch ( response.StatusCode )
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            string authErrorMessage = ExtractApiErrorMessage(responseContent) ?? "Credenciais inválidas.";
+                            throw new UnauthorizedAccessException(authErrorMessage);
+
+                        case HttpStatusCode.Forbidden:
+                            string forbiddenMessage = ExtractApiErrorMessage(responseContent) ?? "Acesso negado.";
+                            throw new UnauthorizedAccessException(forbiddenMessage);
+
+                        case HttpStatusCode.BadRequest:
+                            string badRequestMessage = ExtractApiErrorMessage(responseContent) ?? "Dados inválidos.";
+                            throw new ArgumentException(badRequestMessage);
+
+                        case HttpStatusCode.NotFound:
+                            string notFoundMessage = ExtractApiErrorMessage(responseContent) ?? "Recurso não encontrado.";
+                            throw new FileNotFoundException(notFoundMessage);
+
+                        case HttpStatusCode.InternalServerError:
+                            string serverErrorMessage = ExtractApiErrorMessage(responseContent) ?? "Erro interno do servidor.";
+                            throw new Exception($"Erro do servidor: {serverErrorMessage}");
+
+                        default:
+                            string generalErrorMessage = ExtractApiErrorMessage(responseContent) ?? response.ReasonPhrase;
+                            throw new HttpRequestException($"HTTP {( int ) response.StatusCode}: {generalErrorMessage}");
+                    }
+                }
+            }
+            catch ( UnauthorizedAccessException )
+            {
+                throw;
+            }
+            catch ( ArgumentException )
+            {
+                throw;
+            }
+            catch ( FileNotFoundException )
+            {
+                throw;
+            }
+            catch ( HttpRequestException )
+            {
+                throw;
+            }
+            catch ( TaskCanceledException ex ) when ( ex.InnerException is TimeoutException )
+            {
+                throw new TimeoutException("A requisição expirou. Verifique sua conexão.");
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"[API Service] Erro inesperado: {ex.Message}");
+                throw new HttpRequestException($"Erro na comunicação com o servidor: {ex.Message}");
+            }
+        }
+
         // --------------------------------------------------------------------------------------------------//
 
 

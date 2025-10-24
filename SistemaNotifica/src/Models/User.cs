@@ -50,11 +50,11 @@ namespace SistemaNotifica.src.Models
         public class UpdateUserDto
         {
             //public int id { get; set; }
-            public string nome { get; set; }
-            public string email { get; set; }
-            public string contato { get; set; }
-            public string password { get; set; }  
-            public string role { get; set; }
+            public string? nome { get; set; }
+            public string? email { get; set; }
+            public string? contato { get; set; }
+            public string? password { get; set; }  
+            public string? role { get; set; }
         }
 
         // REVER UTILIDADE POIS ESSES DADOS SÃO SAVOS EM Session

@@ -25,6 +25,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private bool _isEditMode = false;
         private int? _userIdBeingEdited = null;
+        private int _lastSelectedRowIndex = -1;
 
 
         private readonly UserService _userService;
@@ -213,6 +214,15 @@ namespace SistemaNotifica.src.Forms.Principal
             dataGridViewUsersData.AllowUserToResizeRows = false;
         }
 
+        private void UnselectAllRows()
+        {
+            foreach ( DataGridViewRow row in dataGridViewUsersData.Rows )
+            {
+                row.Selected = false;
+                row.Cells["ColumnSelect"].Value = false;
+            }
+        }
+
         private void CentralizeAllElements()
         {
             CentralizeElement(panelDataUsersTop, labelUsers);
@@ -265,7 +275,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 bool isAdmin = Session.IsAdmin();
                 checkBoxIsAdmin.Checked = isAdmin;
                 textBoxIsAdmin.Text = isAdmin ? "SIM" : "NÃO";
-                
+
 
                 //labelInfoNewUser.Text = "Edite seus dados:";
                 //labelInfoNewUser.Font = new Font(labelInfoNewUser.Font, FontStyle.Bold);
@@ -311,7 +321,7 @@ namespace SistemaNotifica.src.Forms.Principal
                 checkBoxIsAdmin.Checked = isAdmin;
                 textBoxIsAdmin.Text = isAdmin ? "SIM" : "NÃO";
 
-                
+
 
                 //labelInfoNewUser.Text = "Edite os dados do usuário:";
                 PersonalizeLabelUser("Edite os dados do usuário:");
@@ -364,6 +374,7 @@ namespace SistemaNotifica.src.Forms.Principal
             panelUserData.SendToBack();
             panelAllUsersData.BringToFront();
             textBoxIsAdmin.Text = "NÃO";
+            UnselectAllRows();
         }
 
         private void checkBoxAllUsers_CheckedChanged(object sender, EventArgs e)
@@ -532,13 +543,13 @@ namespace SistemaNotifica.src.Forms.Principal
 
         // ---------------------------  BOTÃO DE NOVO USER -----------------------------------
         private void buttonNewUser_Click(object sender, EventArgs e)
-        {            
+        {
             PersonalizeLabelUser("Insira abaixo os dados do novo usuário:");
             buttonSave.Text = "Salvar";
             buttonSave.Font = new Font(buttonSave.Font.FontFamily, 9.75F);
             panelUserData.SendToBack();
             panelAllUsersData.SendToBack();
-            panelNewUser.BringToFront();  
+            panelNewUser.BringToFront();
         }
 
         // ---------------------------  BOTÃO DE EDIÇÃO USER DO GRID ---------------------------   
@@ -555,6 +566,16 @@ namespace SistemaNotifica.src.Forms.Principal
                 );
                 return;
             }
+            if ( dataGridViewUsersData.SelectedRows.Count > 1 )
+            {
+                MessageBox.Show(
+                    "Selecione apenas um usuário para editar.",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
 
             // Obtém a linha selecionada
             DataGridViewRow selectedRow = dataGridViewUsersData.SelectedRows[0];
@@ -566,7 +587,7 @@ namespace SistemaNotifica.src.Forms.Principal
             panelUserData.SendToBack();
             panelAllUsersData.SendToBack();
             panelNewUser.BringToFront();
-            
+
 
             //labelInfoNewUser.Text = "Edite abaixo os dados do usuário:";
             PersonalizeLabelUser("Edite abaixo os dados do usuário:");
@@ -583,7 +604,7 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             if ( !ValidaCamposNovoUsuario() ) return;
 
-            if( buttonSave.Text == "Atualizar Cadastro" )
+            if ( buttonSave.Text == "Atualizar Cadastro" )
             {
                 Debug.WriteLine($"ID do usuário sendo editado: {_userIdBeingEdited}");
                 if ( _userIdBeingEdited == null )
@@ -599,27 +620,39 @@ namespace SistemaNotifica.src.Forms.Principal
 
                 try
                 {
-                    var updateUserDto = new UpdateUserDto
-                    {
-                        nome = textBoxEditName.Text.Trim(),
-                        email = textBoxEditEmail.Text.Trim(),
-                        contato = textBoxEditFone.Text.Trim(),
-                        password = textBoxPassword.Text.Trim(),
-                        role = _isAdmin ? "admin" : "user"
-                    };
+                    // ✅ Criar objeto com apenas campos preenchidos
+                    var updateUserDto = new UpdateUserDto();
 
-                    // Só envia senha se foi preenchida
+                    // ✅ Só adiciona se campo não estiver vazio
+                    if ( !string.IsNullOrWhiteSpace(textBoxEditName.Text) )
+                    {
+                        updateUserDto.nome = textBoxEditName.Text.Trim();
+                    }
+
+                    if ( !string.IsNullOrWhiteSpace(textBoxEditEmail.Text) )
+                    {
+                        updateUserDto.email = textBoxEditEmail.Text.Trim();
+                    }
+
+                    if ( !string.IsNullOrWhiteSpace(textBoxEditFone.Text) )
+                    {
+                        updateUserDto.contato = textBoxEditFone.Text.Trim();
+                    }
+
+                    // ✅ Senha: só envia se foi preenchida
                     if ( !string.IsNullOrWhiteSpace(textBoxPassword.Text) )
                     {
-                        updateUserDto.password = textBoxPassword.Text;
+                        updateUserDto.password = textBoxPassword.Text.Trim();
                     }
+
+                    // ✅ Role: só envia se for admin editando
                     if ( _isAdmin )
                     {
                         updateUserDto.role = checkBoxIsAdmin.Checked ? "admin" : "user";
                     }
-
                     // Desabilitar botão
                     buttonSave.Enabled = false;
+                    buttonCancel.Enabled = false;
 
                     // Enviar requisição
                     var response = await _userService.PatchUserAsync(_userIdBeingEdited.Value, updateUserDto);
@@ -670,12 +703,13 @@ namespace SistemaNotifica.src.Forms.Principal
                 finally
                 {
                     buttonSave.Enabled = true;
+                    buttonCancel.Enabled = true;
                     buttonSave.Text = "Atualizar Cadastro";
                     buttonSave.Font = new Font(buttonSave.Font.FontFamily, 8F);
 
                 }
             }
-            else if( buttonSave.Text == "Salvar" )
+            else if ( buttonSave.Text == "Salvar" )
             {
                 try
                 {
@@ -691,6 +725,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
                     // Desabilitar botão para evitar cliques múltiplos
                     buttonSave.Enabled = false;
+                    buttonCancel.Enabled = false;
                     buttonSave.Text = "Salvando...";
                     buttonSave.Font = new Font(buttonSave.Font.FontFamily, 9F);
 
@@ -723,12 +758,136 @@ namespace SistemaNotifica.src.Forms.Principal
                 {
                     // Reabilitar botão
                     buttonSave.Enabled = true;
+                    buttonCancel.Enabled = true;
                     buttonSave.Text = "Salvar";
                     buttonSave.Font = new Font(buttonSave.Font.FontFamily, 9.75F);
                 }
-            }                
+            }
         }
 
+        // ---------------------------  BOTÃO DELETAR USER - DESATIVA NÃO DELETA ---------------------------
+        private async void buttonDeleteUser_Click(object sender, EventArgs e)
+        {
+            Debug.WriteLine($"ID do usuário sendo EXCLUIDO: {_userIdBeingEdited}");
+            if ( _userIdBeingEdited == null )
+            {
+                MessageBox.Show(
+                    "Erro: ID do usuário não encontrado.",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+
+            var result = MessageBox.Show(
+                "Tem certeza que deseja **excluir** o usuário selecionado?\n\n" +
+                "• Esta operação pode ser revertida posteriormente através da opção 'Reativar Cadastro'",
+                "Confirmar Exclusão?",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            if ( result == DialogResult.Yes )
+            {
+                try
+                {
+                    // Desabilitar botão durante operação
+                    buttonDeleteUser.Enabled = false;
+
+                    await _userService.DeleteUserAsync(_userIdBeingEdited.Value);
+
+                    MessageBox.Show(
+                        "Usuário desativado com sucesso!\n\n" +
+                        "O usuário pode ser reativado no menu de Gerenciamento de Usuários.",
+                        "Sucesso",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+
+                    // Recarregar dados
+                    await LoadDataToGridAsync();
+                    LimparFormulario();
+                    btnUsers_Click(sender, e);
+                }
+                catch ( Exception ex )
+                {
+                    MessageBox.Show(
+                        $"Erro ao desativar usuário: {ex.Message}",
+                        "Erro",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                }
+                finally
+                {
+                    buttonDeleteUser.Enabled = true;
+                }
+            }
+        }
+
+        // ---------------------------------------  BOTÃO REATIVAR USER -------------------------------
+        private async void buttonReactivateUser_Click(object sender, EventArgs e)
+        {
+            Debug.WriteLine($"ID do usuário sendo REATIVADO: {_userIdBeingEdited}");
+
+            if ( _userIdBeingEdited == null )
+            {
+                MessageBox.Show(
+                    "Erro: ID do usuário não encontrado.",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+
+            var result = MessageBox.Show(
+                "Tem certeza que deseja reativar o usuário selecionado?\n\n" +
+                "• O usuário poderá fazer login novamente após a reativação",
+                "Confirmar Reativação",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if ( result == DialogResult.Yes )
+            {
+                try
+                {
+                    // Desabilitar botão durante operação
+                    buttonReactivateUser.Enabled = false;
+
+                    await _userService.ReactivateUserAsync(_userIdBeingEdited.Value);
+
+                    MessageBox.Show(
+                        "Usuário reativado com sucesso!\n\n" +
+                        "O usuário já pode fazer login no sistema.",
+                        "Sucesso",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+
+                    // Recarregar dados
+                    await LoadDataToGridAsync();
+                    LimparFormulario();
+                    btnUsers_Click(sender, e);
+                }
+                catch ( Exception ex )
+                {
+                    MessageBox.Show(
+                        $"Erro ao reativar usuário: {ex.Message}",
+                        "Erro",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                }
+                finally
+                {
+                    buttonReactivateUser.Enabled = true;
+                }
+            }
+        }
+        // --------------------------------------------------------------------------------------------------
         // Método auxiliar para limpar o formulário
         private void LimparFormulario()
         {
@@ -772,11 +931,13 @@ namespace SistemaNotifica.src.Forms.Principal
                 // Se for Admin, retorna para a tela de Gerenciar Usuários
                 // Isso simula o clique no btnUsers, que traz o panelAllUsersData para frente.
                 btnUsers_Click(sender, e);
+                UnselectAllRows();
             }
             else
             {
                 // Se for Usuário Comum, retorna para a tela de Meus Dados               
                 btnMyData_Click(sender, e);
+                UnselectAllRows();
             }
         }
 
@@ -926,7 +1087,61 @@ namespace SistemaNotifica.src.Forms.Principal
             {
                 textBoxIsAdmin.Text = "NÂO";
             }
-        }        
+        }
+
+        private void dataGridViewUsersData_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Debug.WriteLine($"Clique na linha {e.RowIndex} e coluna {e.ColumnIndex}");
+
+            if ( e.RowIndex < 0 )
+            {
+                return;
+            }
+
+            DataGridViewRow clickedRow = dataGridViewUsersData.Rows[e.RowIndex];
+
+            if ( clickedRow.Cells["ColumnId"].Value != null )
+            {
+                _userIdBeingEdited = Convert.ToInt32(clickedRow.Cells["ColumnId"].Value);
+            }
+            else
+            {
+                _userIdBeingEdited = null;
+            }
+
+            // Verificar se a linha clicada já está selecionada
+            bool isCurrentlyChecked = clickedRow.Cells["ColumnSelect"].Value != null
+                && ( bool ) clickedRow.Cells["ColumnSelect"].Value;
+
+            if ( isCurrentlyChecked && _lastSelectedRowIndex == e.RowIndex )
+            {
+                // Desmarcar se clicar na mesma linha novamente
+                clickedRow.Cells["ColumnSelect"].Value = false;
+                clickedRow.Selected = false;
+                _lastSelectedRowIndex = -1;
+            }
+            else
+            {
+                // Desmarcar a linha anterior
+                if ( _lastSelectedRowIndex != -1 && _lastSelectedRowIndex != e.RowIndex )
+                {
+                    DataGridViewRow lastRow = dataGridViewUsersData.Rows[_lastSelectedRowIndex];
+                    lastRow.Cells["ColumnSelect"].Value = false;
+                    lastRow.Selected = false;
+                }
+
+                // Marcar a nova linha
+                clickedRow.Cells["ColumnSelect"].Value = true;
+                clickedRow.Selected = true;
+                _lastSelectedRowIndex = e.RowIndex;
+            }
+        }
+
+
+
+
+
+
         // ----------------------------------------------------------------------------------------------------------------------
     }
 }
