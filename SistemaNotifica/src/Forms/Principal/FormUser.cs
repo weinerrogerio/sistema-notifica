@@ -57,7 +57,7 @@ namespace SistemaNotifica.src.Forms.Principal
             //CentralizarTodosLabelsErro();
             LimparErros();
             SendPanelsToBack();
-
+            ConfigurarPlaceholders();
             _ = LoadDataToGridAsync();
         }
 
@@ -242,10 +242,6 @@ namespace SistemaNotifica.src.Forms.Principal
                 checkBoxIsAdmin.Checked = isAdmin;
                 textBoxIsAdmin.Text = isAdmin ? "SIM" : "NÃO";
 
-
-                //labelInfoNewUser.Text = "Edite seus dados:";
-                //labelInfoNewUser.Font = new Font(labelInfoNewUser.Font, FontStyle.Bold);
-                //CentralizeElement(panelNewUserTextBoxes, labelInfoNewUser);
                 PersonalizeLabelUser("Edite seus dados:");
 
                 Debug.WriteLine($"Carregados dados do usuário logado para edição: {Session.UsuarioLogado}");
@@ -395,9 +391,10 @@ namespace SistemaNotifica.src.Forms.Principal
 
             JArray resultado = new JArray();
 
-            // ✅ Obter valores dos filtros
-            string userFilter = textBoxUserFilter.Text.Trim();
-            string emailFilter = textBoxEmailFilter.Text.Trim();
+            // Obter valores dos filtros
+            string userFilter = IsPlaceholder(textBoxUserFilter) ? "" : textBoxUserFilter.Text.Trim();
+            string emailFilter = IsPlaceholder(textBoxEmailFilter) ? "" : textBoxEmailFilter.Text.Trim();
+
 
             bool hasUserFilter = !string.IsNullOrWhiteSpace(userFilter);
             bool hasEmailFilter = !string.IsNullOrWhiteSpace(emailFilter);
@@ -516,48 +513,43 @@ namespace SistemaNotifica.src.Forms.Principal
             checkBoxAllUsers.Checked = false;
         }
 
-        private void ConfigurarPlaceholdersForFilters()
+        private void ConfigurarPlaceholders()
         {
-            // Se você estiver usando TextBoxes normais, pode fazer assim:
+            SetPlaceholder(textBoxUserFilter, "Buscar por nome...");
+            SetPlaceholder(textBoxEmailFilter, "Buscar por email...");
+        }
 
-            textBoxUserFilter.ForeColor = Color.Gray;
-            textBoxUserFilter.Text = "Buscar por nome...";
-            textBoxUserFilter.Enter += (s, e) =>
+        private void SetPlaceholder(TextBox textBox, string placeholderText)
+        {
+            textBox.ForeColor = Color.Gray;
+            textBox.Text = placeholderText;
+            textBox.Tag = "placeholder"; // ✅ Marca que está com placeholder
+
+            textBox.Enter += (s, e) =>
             {
-                if ( textBoxUserFilter.Text == "Buscar por nome..." )
+                if ( textBox.Tag?.ToString() == "placeholder" )
                 {
-                    textBoxUserFilter.Text = "";
-                    textBoxUserFilter.ForeColor = Color.Black;
-                }
-            };
-            textBoxUserFilter.Leave += (s, e) =>
-            {
-                if ( string.IsNullOrWhiteSpace(textBoxUserFilter.Text) )
-                {
-                    textBoxUserFilter.Text = "Buscar por nome...";
-                    textBoxUserFilter.ForeColor = Color.Gray;
+                    textBox.Text = "";
+                    textBox.ForeColor = Color.Black;
+                    textBox.Tag = null; // ✅ Remove a marca
                 }
             };
 
-            textBoxEmailFilter.ForeColor = Color.Gray;
-            textBoxEmailFilter.Text = "Buscar por email...";
-            textBoxEmailFilter.Enter += (s, e) =>
+            textBox.Leave += (s, e) =>
             {
-                if ( textBoxEmailFilter.Text == "Buscar por email..." )
+                if ( string.IsNullOrWhiteSpace(textBox.Text) )
                 {
-                    textBoxEmailFilter.Text = "";
-                    textBoxEmailFilter.ForeColor = Color.Black;
-                }
-            };
-            textBoxEmailFilter.Leave += (s, e) =>
-            {
-                if ( string.IsNullOrWhiteSpace(textBoxEmailFilter.Text) )
-                {
-                    textBoxEmailFilter.Text = "Buscar por email...";
-                    textBoxEmailFilter.ForeColor = Color.Gray;
+                    textBox.Text = placeholderText;
+                    textBox.ForeColor = Color.Gray;
+                    textBox.Tag = "placeholder"; // ✅ Marca novamente
                 }
             };
         }
+        private bool IsPlaceholder(TextBox textBox)
+        {
+            return textBox.Tag?.ToString() == "placeholder";
+        }
+
 
         // -------------------------------------------------------------------------------------------------
 
@@ -862,7 +854,7 @@ namespace SistemaNotifica.src.Forms.Principal
             }
 
             var result = MessageBox.Show(
-                "Tem certeza que deseja **excluir** o usuário selecionado?\n\n" +
+                "Tem certeza que deseja EXCLUIR o usuário selecionado?\n\n" +
                 "• Esta operação pode ser revertida posteriormente através da opção 'Reativar Cadastro'",
                 "Confirmar Exclusão?",
                 MessageBoxButtons.YesNo,
