@@ -26,7 +26,7 @@ namespace SistemaNotifica.src.Services
         {
             try
             {
-                var response = await _apiService.GetAsJArrayAsync("user/");
+                var response = await _apiService.GetAsJArrayAsync("user/all");
                 return response;
             }
             catch ( HttpRequestException ex )

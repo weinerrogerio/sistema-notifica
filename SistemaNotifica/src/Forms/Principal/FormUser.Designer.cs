@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             panelMain = new Panel();
             tableLayoutPanel = new TableLayoutPanel();
             panelMainData = new Panel();
@@ -42,7 +43,6 @@
             panelDataUsersTop = new Panel();
             flowLayoutPanelTopInfoUsers = new FlowLayoutPanel();
             labelUsers = new Label();
-            checkBoxAllUsers = new CheckBox();
             panelDataUsersMiddle = new Panel();
             dataGridViewUsersData = new DataGridView();
             ColumnSelect = new DataGridViewCheckBoxColumn();
@@ -53,6 +53,15 @@
             ColumnAdmin = new DataGridViewTextBoxColumn();
             ColumnCreatedAt = new DataGridViewTextBoxColumn();
             ColumnIsActive = new DataGridViewTextBoxColumn();
+            panelFilters = new Panel();
+            flowLayoutPanelFilters = new FlowLayoutPanel();
+            labelFilterName = new Label();
+            textBoxUserFilter = new TextBox();
+            labelEmailFilter = new Label();
+            textBoxEmailFilter = new TextBox();
+            checkBoxAllUsers = new CheckBox();
+            buttonRefresh = new Button();
+            buttonClearTextBoxes = new Button();
             panelNewUser = new Panel();
             panelNewUserTextBoxes = new Panel();
             labelErrorConfirmPassword = new Label();
@@ -95,6 +104,7 @@
             btnUsers = new Button();
             panelBtn1 = new Panel();
             btnMyData = new Button();
+            _filterTimer = new System.Windows.Forms.Timer(components);
             panelMain.SuspendLayout();
             tableLayoutPanel.SuspendLayout();
             panelMainData.SuspendLayout();
@@ -106,6 +116,8 @@
             flowLayoutPanelTopInfoUsers.SuspendLayout();
             panelDataUsersMiddle.SuspendLayout();
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewUsersData ).BeginInit();
+            panelFilters.SuspendLayout();
+            flowLayoutPanelFilters.SuspendLayout();
             panelNewUser.SuspendLayout();
             panelNewUserTextBoxes.SuspendLayout();
             panel1.SuspendLayout();
@@ -163,18 +175,20 @@
             // tableLayoutPanelUsers
             // 
             tableLayoutPanelUsers.ColumnCount = 1;
-            tableLayoutPanelUsers.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanelUsers.Controls.Add(panelDataUsersBotton, 0, 2);
+            tableLayoutPanelUsers.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanelUsers.Controls.Add(panelDataUsersBotton, 0, 3);
             tableLayoutPanelUsers.Controls.Add(panelDataUsersTop, 0, 0);
-            tableLayoutPanelUsers.Controls.Add(panelDataUsersMiddle, 0, 1);
+            tableLayoutPanelUsers.Controls.Add(panelDataUsersMiddle, 0, 2);
+            tableLayoutPanelUsers.Controls.Add(panelFilters, 0, 1);
             tableLayoutPanelUsers.Dock = DockStyle.Fill;
             tableLayoutPanelUsers.Location = new Point(0, 0);
             tableLayoutPanelUsers.Margin = new Padding(0);
             tableLayoutPanelUsers.Name = "tableLayoutPanelUsers";
-            tableLayoutPanelUsers.RowCount = 3;
-            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Percent, 6.4F));
-            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Percent, 93.6F));
-            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
+            tableLayoutPanelUsers.RowCount = 4;
+            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
+            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanelUsers.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
             tableLayoutPanelUsers.Size = new Size(794, 396);
             tableLayoutPanelUsers.TabIndex = 9;
             // 
@@ -182,9 +196,9 @@
             // 
             panelDataUsersBotton.Controls.Add(flowLayoutPanelButtonsUsers);
             panelDataUsersBotton.Dock = DockStyle.Fill;
-            panelDataUsersBotton.Location = new Point(3, 351);
+            panelDataUsersBotton.Location = new Point(3, 359);
             panelDataUsersBotton.Name = "panelDataUsersBotton";
-            panelDataUsersBotton.Size = new Size(788, 42);
+            panelDataUsersBotton.Size = new Size(788, 34);
             panelDataUsersBotton.TabIndex = 3;
             // 
             // flowLayoutPanelButtonsUsers
@@ -194,7 +208,7 @@
             flowLayoutPanelButtonsUsers.Controls.Add(buttonEditSelectedUser);
             flowLayoutPanelButtonsUsers.Controls.Add(buttonDeleteUser);
             flowLayoutPanelButtonsUsers.Controls.Add(buttonReactivateUser);
-            flowLayoutPanelButtonsUsers.Location = new Point(151, -3);
+            flowLayoutPanelButtonsUsers.Location = new Point(151, -7);
             flowLayoutPanelButtonsUsers.Name = "flowLayoutPanelButtonsUsers";
             flowLayoutPanelButtonsUsers.Size = new Size(486, 44);
             flowLayoutPanelButtonsUsers.TabIndex = 0;
@@ -246,50 +260,36 @@
             panelDataUsersTop.Location = new Point(0, 0);
             panelDataUsersTop.Margin = new Padding(0);
             panelDataUsersTop.Name = "panelDataUsersTop";
-            panelDataUsersTop.Size = new Size(794, 22);
+            panelDataUsersTop.Size = new Size(794, 20);
             panelDataUsersTop.TabIndex = 0;
             // 
             // flowLayoutPanelTopInfoUsers
             // 
             flowLayoutPanelTopInfoUsers.Controls.Add(labelUsers);
-            flowLayoutPanelTopInfoUsers.Controls.Add(checkBoxAllUsers);
-            flowLayoutPanelTopInfoUsers.Location = new Point(190, 3);
+            flowLayoutPanelTopInfoUsers.Location = new Point(310, 1);
             flowLayoutPanelTopInfoUsers.Margin = new Padding(0);
             flowLayoutPanelTopInfoUsers.Name = "flowLayoutPanelTopInfoUsers";
-            flowLayoutPanelTopInfoUsers.Size = new Size(425, 22);
+            flowLayoutPanelTopInfoUsers.Size = new Size(202, 18);
             flowLayoutPanelTopInfoUsers.TabIndex = 2;
             // 
             // labelUsers
             // 
             labelUsers.AutoSize = true;
+            labelUsers.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point,    0);
             labelUsers.Location = new Point(3, 0);
             labelUsers.Name = "labelUsers";
-            labelUsers.Padding = new Padding(0, 4, 0, 0);
-            labelUsers.Size = new Size(151, 19);
+            labelUsers.Size = new Size(191, 20);
             labelUsers.TabIndex = 0;
             labelUsers.Text = "USUÁRIOS CADASTRADOS:";
-            // 
-            // checkBoxAllUsers
-            // 
-            checkBoxAllUsers.Anchor =     AnchorStyles.Top  |  AnchorStyles.Right ;
-            checkBoxAllUsers.AutoSize = true;
-            checkBoxAllUsers.Location = new Point(162, 3);
-            checkBoxAllUsers.Margin = new Padding(5, 3, 0, 0);
-            checkBoxAllUsers.Name = "checkBoxAllUsers";
-            checkBoxAllUsers.Size = new Size(251, 19);
-            checkBoxAllUsers.TabIndex = 1;
-            checkBoxAllUsers.Text = "Mostrar usuários Deletados ou desativados";
-            checkBoxAllUsers.UseVisualStyleBackColor = true;
-            checkBoxAllUsers.CheckedChanged +=  checkBoxAllUsers_CheckedChanged ;
             // 
             // panelDataUsersMiddle
             // 
             panelDataUsersMiddle.Controls.Add(dataGridViewUsersData);
             panelDataUsersMiddle.Dock = DockStyle.Fill;
-            panelDataUsersMiddle.Location = new Point(3, 25);
+            panelDataUsersMiddle.Location = new Point(3, 51);
             panelDataUsersMiddle.Name = "panelDataUsersMiddle";
             panelDataUsersMiddle.Padding = new Padding(80, 0, 80, 0);
-            panelDataUsersMiddle.Size = new Size(788, 320);
+            panelDataUsersMiddle.Size = new Size(788, 302);
             panelDataUsersMiddle.TabIndex = 2;
             // 
             // dataGridViewUsersData
@@ -301,7 +301,7 @@
             dataGridViewUsersData.Dock = DockStyle.Fill;
             dataGridViewUsersData.Location = new Point(80, 0);
             dataGridViewUsersData.Name = "dataGridViewUsersData";
-            dataGridViewUsersData.Size = new Size(628, 320);
+            dataGridViewUsersData.Size = new Size(628, 302);
             dataGridViewUsersData.TabIndex = 3;
             dataGridViewUsersData.CellClick +=  dataGridViewUsersData_CellClick ;
             // 
@@ -359,6 +359,104 @@
             ColumnIsActive.HeaderText = "IsActive";
             ColumnIsActive.Name = "ColumnIsActive";
             ColumnIsActive.Visible = false;
+            // 
+            // panelFilters
+            // 
+            panelFilters.Controls.Add(flowLayoutPanelFilters);
+            panelFilters.Dock = DockStyle.Fill;
+            panelFilters.Location = new Point(0, 20);
+            panelFilters.Margin = new Padding(0);
+            panelFilters.Name = "panelFilters";
+            panelFilters.Size = new Size(794, 28);
+            panelFilters.TabIndex = 4;
+            // 
+            // flowLayoutPanelFilters
+            // 
+            flowLayoutPanelFilters.Controls.Add(labelFilterName);
+            flowLayoutPanelFilters.Controls.Add(textBoxUserFilter);
+            flowLayoutPanelFilters.Controls.Add(labelEmailFilter);
+            flowLayoutPanelFilters.Controls.Add(textBoxEmailFilter);
+            flowLayoutPanelFilters.Controls.Add(checkBoxAllUsers);
+            flowLayoutPanelFilters.Controls.Add(buttonRefresh);
+            flowLayoutPanelFilters.Controls.Add(buttonClearTextBoxes);
+            flowLayoutPanelFilters.Location = new Point(1, -1);
+            flowLayoutPanelFilters.Name = "flowLayoutPanelFilters";
+            flowLayoutPanelFilters.Size = new Size(793, 34);
+            flowLayoutPanelFilters.TabIndex = 0;
+            // 
+            // labelFilterName
+            // 
+            labelFilterName.AutoSize = true;
+            labelFilterName.Location = new Point(2, 0);
+            labelFilterName.Margin = new Padding(2, 0, 0, 0);
+            labelFilterName.Name = "labelFilterName";
+            labelFilterName.Padding = new Padding(0, 7, 0, 0);
+            labelFilterName.Size = new Size(50, 22);
+            labelFilterName.TabIndex = 0;
+            labelFilterName.Text = "Usuário:";
+            // 
+            // textBoxUserFilter
+            // 
+            textBoxUserFilter.Location = new Point(55, 3);
+            textBoxUserFilter.Name = "textBoxUserFilter";
+            textBoxUserFilter.Size = new Size(168, 23);
+            textBoxUserFilter.TabIndex = 1;
+            textBoxUserFilter.TextChanged +=  textBoxUserFilter_TextChanged ;
+            // 
+            // labelEmailFilter
+            // 
+            labelEmailFilter.AutoSize = true;
+            labelEmailFilter.Location = new Point(226, 0);
+            labelEmailFilter.Margin = new Padding(0);
+            labelEmailFilter.Name = "labelEmailFilter";
+            labelEmailFilter.Padding = new Padding(0, 7, 0, 0);
+            labelEmailFilter.Size = new Size(42, 22);
+            labelEmailFilter.TabIndex = 2;
+            labelEmailFilter.Text = "Email: ";
+            // 
+            // textBoxEmailFilter
+            // 
+            textBoxEmailFilter.Location = new Point(271, 3);
+            textBoxEmailFilter.Name = "textBoxEmailFilter";
+            textBoxEmailFilter.Size = new Size(177, 23);
+            textBoxEmailFilter.TabIndex = 3;
+            textBoxEmailFilter.TextChanged +=  textBoxEmailFilter_TextChanged ;
+            // 
+            // checkBoxAllUsers
+            // 
+            checkBoxAllUsers.Anchor =     AnchorStyles.Top  |  AnchorStyles.Right ;
+            checkBoxAllUsers.AutoSize = true;
+            checkBoxAllUsers.Location = new Point(451, 3);
+            checkBoxAllUsers.Margin = new Padding(0, 3, 0, 0);
+            checkBoxAllUsers.Name = "checkBoxAllUsers";
+            checkBoxAllUsers.Padding = new Padding(0, 4, 0, 0);
+            checkBoxAllUsers.Size = new Size(166, 23);
+            checkBoxAllUsers.TabIndex = 1;
+            checkBoxAllUsers.Text = "Mostrar usuários Excluidos";
+            checkBoxAllUsers.UseVisualStyleBackColor = true;
+            checkBoxAllUsers.CheckedChanged +=  checkBoxAllUsers_CheckedChanged ;
+            // 
+            // buttonRefresh
+            // 
+            buttonRefresh.Location = new Point(617, 2);
+            buttonRefresh.Margin = new Padding(0, 2, 0, 3);
+            buttonRefresh.Name = "buttonRefresh";
+            buttonRefresh.Size = new Size(70, 26);
+            buttonRefresh.TabIndex = 2;
+            buttonRefresh.Text = "Atualizar";
+            buttonRefresh.UseVisualStyleBackColor = true;
+            buttonRefresh.Click +=  buttonRefresh_Click ;
+            // 
+            // buttonClearTextBoxes
+            // 
+            buttonClearTextBoxes.Location = new Point(687, 2);
+            buttonClearTextBoxes.Margin = new Padding(0, 2, 0, 3);
+            buttonClearTextBoxes.Name = "buttonClearTextBoxes";
+            buttonClearTextBoxes.Size = new Size(102, 26);
+            buttonClearTextBoxes.TabIndex = 4;
+            buttonClearTextBoxes.Text = "Limpar Filtros";
+            buttonClearTextBoxes.UseVisualStyleBackColor = true;
+            buttonClearTextBoxes.Click +=  buttonClearTextBoxes_Click ;
             // 
             // panelNewUser
             // 
@@ -816,6 +914,11 @@
             btnMyData.UseVisualStyleBackColor = false;
             btnMyData.Click +=  btnMyData_Click ;
             // 
+            // _filterTimer
+            // 
+            _filterTimer.Interval = 300;
+            _filterTimer.Tick +=  _filterTimer_Tick ;
+            // 
             // FormUser
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -837,6 +940,9 @@
             flowLayoutPanelTopInfoUsers.PerformLayout();
             panelDataUsersMiddle.ResumeLayout(false);
             ( ( System.ComponentModel.ISupportInitialize ) dataGridViewUsersData ).EndInit();
+            panelFilters.ResumeLayout(false);
+            flowLayoutPanelFilters.ResumeLayout(false);
+            flowLayoutPanelFilters.PerformLayout();
             panelNewUser.ResumeLayout(false);
             panelNewUserTextBoxes.ResumeLayout(false);
             panelNewUserTextBoxes.PerformLayout();
@@ -920,5 +1026,14 @@
         private DataGridViewTextBoxColumn ColumnIsActive;
         private Panel panel1;
         private Button buttonReactivateUser;
+        private Button buttonRefresh;
+        private Panel panelFilters;
+        private FlowLayoutPanel flowLayoutPanelFilters;
+        private Label labelFilterName;
+        private TextBox textBoxUserFilter;
+        private Label labelEmailFilter;
+        private TextBox textBoxEmailFilter;
+        private Button buttonClearTextBoxes;
+        private System.Windows.Forms.Timer _filterTimer;
     }
 }

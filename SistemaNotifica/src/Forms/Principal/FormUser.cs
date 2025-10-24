@@ -27,7 +27,6 @@ namespace SistemaNotifica.src.Forms.Principal
         private int? _userIdBeingEdited = null;
         private int _lastSelectedRowIndex = -1;
 
-
         private readonly UserService _userService;
 
         public FormUser()
@@ -58,6 +57,7 @@ namespace SistemaNotifica.src.Forms.Principal
             //CentralizarTodosLabelsErro();
             LimparErros();
             SendPanelsToBack();
+
             _ = LoadDataToGridAsync();
         }
 
@@ -121,8 +121,6 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-
-
         // --------------------------- Carrega os dados do usuário logado nos campos do formulário ------------------
         private void CarregarDadosUsuario()
         {
@@ -165,39 +163,6 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-        public async void CarregarDadosUsuarioEspecifico(int userId)
-        {
-            if ( !_isAdmin )
-            {
-                MessageBox.Show(
-                    "Você não tem permissão para visualizar dados de outros usuários.",
-                    "Acesso Negado",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-                return;
-            }
-
-            try
-            {
-                // TODO: Implementar chamada à API para buscar dados do usuário específico
-                // var userService = new UserService(apiService);
-                // var userData = await userService.GetUserByIdAsync(userId);
-
-                // Preencher os campos com os dados retornados
-                Debug.WriteLine($"Carregando dados do usuário ID: {userId}");
-            }
-            catch ( Exception ex )
-            {
-                Debug.WriteLine($"Erro ao carregar dados do usuário {userId}: {ex.Message}");
-                MessageBox.Show(
-                    $"Erro ao carregar dados do usuário: {ex.Message}",
-                    "Erro",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
-            }
-        }
 
         private void ConfigDataGridView()
         {
@@ -230,6 +195,7 @@ namespace SistemaNotifica.src.Forms.Principal
             CentralizeElement(panelUserData, panelUserDataTextBoxes);
             CentralizeElement(panelAllUsersData, panelNewUserTextBoxes);
             CentralizeElement(panelDataUsersTop, flowLayoutPanelTopInfoUsers);
+            CentralizeElement(panelFilters, flowLayoutPanelFilters);
             CentralizarTodosLabelsErro();
         }
 
@@ -421,7 +387,7 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-        // ✅ Filtra dados baseado no checkbox
+        // --------------------------------- FILTROS --------------------------------
         private JArray FilterData(JArray data)
         {
             if ( data == null || data.Count == 0 )
@@ -429,28 +395,60 @@ namespace SistemaNotifica.src.Forms.Principal
 
             JArray resultado = new JArray();
 
+            // ✅ Obter valores dos filtros
+            string userFilter = textBoxUserFilter.Text.Trim();
+            string emailFilter = textBoxEmailFilter.Text.Trim();
+
+            bool hasUserFilter = !string.IsNullOrWhiteSpace(userFilter);
+            bool hasEmailFilter = !string.IsNullOrWhiteSpace(emailFilter);
+
             foreach ( JObject item in data )
             {
                 bool isActive = item["is_active"]?.Value<bool>() ?? false;
 
-                // ✅ Se checkbox DESMARCADO: mostra apenas usuários ativos
+                // ✅ FILTRO 1: Status Ativo/Inativo (checkbox)
+                bool passaFiltroStatus = false;
+
                 if ( !checkBoxAllUsers.Checked )
                 {
-                    if ( isActive )
-                    {
-                        resultado.Add(item);
-                    }
+                    // Checkbox DESMARCADO: mostra apenas usuários ATIVOS
+                    passaFiltroStatus = isActive;
                 }
-                // ✅ Se checkbox MARCADO: mostra TODOS os usuários (ativos e inativos)
                 else
                 {
-                    resultado.Add(item);
+                    // Checkbox MARCADO: mostra TODOS os usuários
+                    passaFiltroStatus = true;
                 }
+
+                // Se não passa no filtro de status, pula para o próximo
+                if ( !passaFiltroStatus )
+                    continue;
+
+                // ✅ FILTRO 2: Nome de Usuário
+                bool passaFiltroNome = true;
+                if ( hasUserFilter )
+                {
+                    string nome = item["nome"]?.ToString() ?? "";
+                    passaFiltroNome = nome.IndexOf(userFilter, StringComparison.OrdinalIgnoreCase) >= 0;
+                }
+
+                // Se não passa no filtro de nome, pula para o próximo
+                if ( !passaFiltroNome )
+                    continue;
+
+                // ✅ FILTRO 3: Email
+                bool passaFiltroEmail = true;
+                if ( hasEmailFilter )
+                {
+                    string email = item["email"]?.ToString() ?? "";
+                    passaFiltroEmail = email.IndexOf(emailFilter, StringComparison.OrdinalIgnoreCase) >= 0;
+                }
+
+                // Se não passa no filtro de email, pula para o próximo
+                if ( !passaFiltroEmail )
+                    continue;
+                resultado.Add(item);
             }
-
-            Debug.WriteLine($"Checkbox marcado: {checkBoxAllUsers.Checked}");
-            Debug.WriteLine($"Total de usuários após filtro: {resultado.Count} de {data.Count}");
-
             return resultado;
         }
 
@@ -479,6 +477,89 @@ namespace SistemaNotifica.src.Forms.Principal
             ConfigurarColunas();
             Debug.WriteLine($"Total de linhas adicionadas: {dataGridViewUsersData.Rows.Count}");
         }
+
+        private void textBoxEmailFilter_TextChanged(object sender, EventArgs e)
+        {
+            // Para o timer se estiver rodando
+            _filterTimer.Stop();
+
+            // Reinicia o timer
+            _filterTimer.Start();
+
+            TextBox textBox = sender as TextBox;
+            Debug.WriteLine($"Texto digitado: {textBox.Text}");
+        }
+
+        private void textBoxUserFilter_TextChanged(object sender, EventArgs e)
+        {
+            // Para o timer se estiver rodando
+            _filterTimer.Stop();
+
+            // Reinicia o timer
+            _filterTimer.Start();
+
+            TextBox textBox = sender as TextBox;
+            Debug.WriteLine($"Texto digitado: {textBox.Text}");
+        }
+
+        private void _filterTimer_Tick(object sender, EventArgs e)
+        {
+            _filterTimer.Stop();
+            Debug.WriteLine($"[FILTRO] Aplicando filtros - Nome: '{textBoxUserFilter.Text}' | Email: '{textBoxEmailFilter.Text}'");
+            ApplyFilters();
+        }
+
+        private void buttonClearTextBoxes_Click(object sender, EventArgs e)
+        {
+            textBoxUserFilter.Clear();
+            textBoxEmailFilter.Clear();
+            checkBoxAllUsers.Checked = false;
+        }
+
+        private void ConfigurarPlaceholdersForFilters()
+        {
+            // Se você estiver usando TextBoxes normais, pode fazer assim:
+
+            textBoxUserFilter.ForeColor = Color.Gray;
+            textBoxUserFilter.Text = "Buscar por nome...";
+            textBoxUserFilter.Enter += (s, e) =>
+            {
+                if ( textBoxUserFilter.Text == "Buscar por nome..." )
+                {
+                    textBoxUserFilter.Text = "";
+                    textBoxUserFilter.ForeColor = Color.Black;
+                }
+            };
+            textBoxUserFilter.Leave += (s, e) =>
+            {
+                if ( string.IsNullOrWhiteSpace(textBoxUserFilter.Text) )
+                {
+                    textBoxUserFilter.Text = "Buscar por nome...";
+                    textBoxUserFilter.ForeColor = Color.Gray;
+                }
+            };
+
+            textBoxEmailFilter.ForeColor = Color.Gray;
+            textBoxEmailFilter.Text = "Buscar por email...";
+            textBoxEmailFilter.Enter += (s, e) =>
+            {
+                if ( textBoxEmailFilter.Text == "Buscar por email..." )
+                {
+                    textBoxEmailFilter.Text = "";
+                    textBoxEmailFilter.ForeColor = Color.Black;
+                }
+            };
+            textBoxEmailFilter.Leave += (s, e) =>
+            {
+                if ( string.IsNullOrWhiteSpace(textBoxEmailFilter.Text) )
+                {
+                    textBoxEmailFilter.Text = "Buscar por email...";
+                    textBoxEmailFilter.ForeColor = Color.Gray;
+                }
+            };
+        }
+
+        // -------------------------------------------------------------------------------------------------
 
         private void ConfigurarColunas()
         {
@@ -888,6 +969,13 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
         // --------------------------------------------------------------------------------------------------
+
+        private void buttonRefresh_Click(object sender, EventArgs e)
+        {
+            // TODO --> reafazer a busca e atualizar os dados no grid - APENAS ADMIN
+        }
+
+
         // Método auxiliar para limpar o formulário
         private void LimparFormulario()
         {
@@ -1137,7 +1225,7 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-
+       
 
 
 

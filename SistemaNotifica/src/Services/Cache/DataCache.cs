@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SistemaNotifica.src.Forms.Principal
+namespace SistemaNotifica.src.Services.Cache
 {
     public static class ProtestoDataCache
     {
