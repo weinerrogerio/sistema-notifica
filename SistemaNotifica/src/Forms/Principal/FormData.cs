@@ -35,13 +35,13 @@ namespace SistemaNotifica.src.Forms.Principal
             tableLayoutPanel.Dock = DockStyle.Fill;
             this.Resize += FormData_Resize;
             ConfigDataGridView();
-            
+
             // Inscreve nos eventos do cache
             ProtestoDataCache.OnDataUpdated += OnCacheDataUpdated;
             ProtestoDataCache.OnLoadingStateChanged += OnCacheLoadingStateChanged;
 
-            LoadDataWithCache();
-            
+            //LoadDataWithCache();
+
         }
 
         private void FormData_Resize(object sender, EventArgs e)
@@ -280,7 +280,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
             Debug.WriteLine($"FormData: Grid agora tem {totalRecords} registros");
         }
-                
+
         private void AddDataBatch(List<JObject> data)
         {
             dataGridViewProtesto.SuspendLayout();
@@ -578,6 +578,23 @@ namespace SistemaNotifica.src.Forms.Principal
 
             _dataCache_formatted?.Clear();
             base.OnFormClosed(e);
+        }
+
+        private void buttonRefresh_Click(object sender, EventArgs e)
+        {
+            DialogResult question = MessageBox.Show("Refazer busca?",
+                "Tem certeza que deseja refazer a busca no banco de dados? \n" +
+                "Dependendo a quandiade de dados que voce tem, isso pode levar algum tempo",
+                MessageBoxButtons.YesNo);
+
+            if ( question ==DialogResult.Yes )
+            {
+                // TODO --> reafazer a busca na a api e atualizar os dados no grid
+            }
+            else
+            {
+                // TODO --> apenas cancelar a busca
+            }
         }
     }
 }

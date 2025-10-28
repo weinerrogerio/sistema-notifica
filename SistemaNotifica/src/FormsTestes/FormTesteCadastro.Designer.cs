@@ -87,6 +87,7 @@
             Controls.Add(buttonSave);
             Name = "FormTesteCadastro";
             Text = "FormConfig";
+            //Load +=  this.FormTesteCadastro_Load ;
             ResumeLayout(false);
         }
 
