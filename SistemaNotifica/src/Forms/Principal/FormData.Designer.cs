@@ -31,14 +31,14 @@
             tableLayoutPanel = new TableLayoutPanel();
             flowLayoutPanel2 = new FlowLayoutPanel();
             labelField1 = new Label();
-            textBoxFiled1 = new TextBox();
+            textBoxField1 = new TextBox();
             labelField2 = new Label();
             textBoxField2 = new TextBox();
-            label1 = new Label();
-            textBox1 = new TextBox();
+            labelField3 = new Label();
+            textBoxField3 = new TextBox();
             flowLayoutPanelOptions = new FlowLayoutPanel();
             labelFieldSelected = new Label();
-            comboBox1 = new ComboBox();
+            comboBoxOptions = new ComboBox();
             button1 = new Button();
             buttonRefresh = new Button();
             dataGridViewProtesto = new DataGridView();
@@ -90,11 +90,11 @@
             flowLayoutPanel2.AutoSize = true;
             flowLayoutPanel2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             flowLayoutPanel2.Controls.Add(labelField1);
-            flowLayoutPanel2.Controls.Add(textBoxFiled1);
+            flowLayoutPanel2.Controls.Add(textBoxField1);
             flowLayoutPanel2.Controls.Add(labelField2);
             flowLayoutPanel2.Controls.Add(textBoxField2);
-            flowLayoutPanel2.Controls.Add(label1);
-            flowLayoutPanel2.Controls.Add(textBox1);
+            flowLayoutPanel2.Controls.Add(labelField3);
+            flowLayoutPanel2.Controls.Add(textBoxField3);
             flowLayoutPanel2.Dock = DockStyle.Fill;
             flowLayoutPanel2.Location = new Point(0, 36);
             flowLayoutPanel2.Margin = new Padding(0);
@@ -113,12 +113,13 @@
             labelField1.TabIndex = 0;
             labelField1.Text = "campo1:";
             // 
-            // textBoxFiled1
+            // textBoxField1
             // 
-            textBoxFiled1.Location = new Point(65, 6);
-            textBoxFiled1.Name = "textBoxFiled1";
-            textBoxFiled1.Size = new Size(280, 23);
-            textBoxFiled1.TabIndex = 1;
+            textBoxField1.Location = new Point(65, 6);
+            textBoxField1.Name = "textBoxField1";
+            textBoxField1.Size = new Size(280, 23);
+            textBoxField1.TabIndex = 1;
+            textBoxField1.TextChanged +=  textBoxFiled1_TextChanged ;
             // 
             // labelField2
             // 
@@ -136,30 +137,32 @@
             textBoxField2.Name = "textBoxField2";
             textBoxField2.Size = new Size(170, 23);
             textBoxField2.TabIndex = 3;
+            textBoxField2.TextChanged +=  textBoxField2_TextChanged ;
             // 
-            // label1
+            // labelField3
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(589, 11);
-            label1.Margin = new Padding(3, 8, 3, 3);
-            label1.Name = "label1";
-            label1.Size = new Size(56, 15);
-            label1.TabIndex = 4;
-            label1.Text = "campo2: ";
+            labelField3.AutoSize = true;
+            labelField3.Location = new Point(589, 11);
+            labelField3.Margin = new Padding(3, 8, 3, 3);
+            labelField3.Name = "labelField3";
+            labelField3.Size = new Size(56, 15);
+            labelField3.TabIndex = 4;
+            labelField3.Text = "campo3: ";
             // 
-            // textBox1
+            // textBoxField3
             // 
-            textBox1.Location = new Point(651, 6);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(170, 23);
-            textBox1.TabIndex = 5;
+            textBoxField3.Location = new Point(651, 6);
+            textBoxField3.Name = "textBoxField3";
+            textBoxField3.Size = new Size(170, 23);
+            textBoxField3.TabIndex = 5;
+            textBoxField3.TextChanged +=  textBoxFiled3_TextChanged ;
             // 
             // flowLayoutPanelOptions
             // 
             flowLayoutPanelOptions.AutoSize = true;
             flowLayoutPanelOptions.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             flowLayoutPanelOptions.Controls.Add(labelFieldSelected);
-            flowLayoutPanelOptions.Controls.Add(comboBox1);
+            flowLayoutPanelOptions.Controls.Add(comboBoxOptions);
             flowLayoutPanelOptions.Controls.Add(button1);
             flowLayoutPanelOptions.Controls.Add(buttonRefresh);
             flowLayoutPanelOptions.Dock = DockStyle.Fill;
@@ -180,28 +183,28 @@
             labelFieldSelected.TabIndex = 0;
             labelFieldSelected.Text = "Campo: ";
             // 
-            // comboBox1
+            // comboBoxOptions
             // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "Distribuição/Apontamento", "Apontamento e Data apontamento", "CPF ou CNPJ do Devedor", "CPF ou CNPJ do Devedor e Data do protocolo", "Nome do devedor", "CPF ou CNPJ do Credor", "Numero do Titulo", "Numero do Titulo e Data de Distribuição", "Numero do Titulo e Vencimento" });
-            comboBox1.Location = new Point(64, 6);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(381, 23);
-            comboBox1.TabIndex = 2;
+            comboBoxOptions.FormattingEnabled = true;
+            comboBoxOptions.Items.AddRange(new object[] { "Distribuição/Apontamento", "Apontamento e Data apontamento", "CPF ou CNPJ do Devedor", "CPF ou CNPJ do Devedor e Data do protocolo", "Nome do devedor", "CPF ou CNPJ do Credor", "Numero do Titulo", "Numero do Titulo e Data de Distribuição", "Numero do Titulo e Vencimento" });
+            comboBoxOptions.Location = new Point(64, 6);
+            comboBoxOptions.Name = "comboBoxOptions";
+            comboBoxOptions.Size = new Size(381, 23);
+            comboBoxOptions.TabIndex = 2;
             // 
             // button1
             // 
             button1.Location = new Point(448, 3);
             button1.Margin = new Padding(0);
             button1.Name = "button1";
-            button1.Size = new Size(135, 30);
+            button1.Size = new Size(146, 30);
             button1.TabIndex = 3;
             button1.Text = "button1";
             button1.UseVisualStyleBackColor = true;
             // 
             // buttonRefresh
             // 
-            buttonRefresh.Location = new Point(583, 3);
+            buttonRefresh.Location = new Point(594, 3);
             buttonRefresh.Margin = new Padding(0);
             buttonRefresh.Name = "buttonRefresh";
             buttonRefresh.Size = new Size(196, 30);
@@ -369,14 +372,14 @@
         private DataGridViewTextBoxColumn file_data_importacao;
         private FlowLayoutPanel flowLayoutPanel2;
         private Label labelField1;
-        private TextBox textBoxFiled1;
+        private TextBox textBoxField1;
         private Label labelField2;
         private TextBox textBoxField2;
-        private Label label1;
-        private TextBox textBox1;
+        private Label labelField3;
+        private TextBox textBoxField3;
         private FlowLayoutPanel flowLayoutPanelOptions;
         private Label labelFieldSelected;
-        private ComboBox comboBox1;
+        private ComboBox comboBoxOptions;
         private Button button1;
         private Button buttonRefresh;
     }

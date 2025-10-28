@@ -22,7 +22,7 @@ namespace SistemaNotifica.src.Forms.Principal
         private CancellationTokenSource _cancellationTokenSource;
         private bool _isInitializing = false;
         private int _lastAddedRowCount = 0;
-
+        
         // Configurações de cache
         private const int CACHE_PAGE_SIZE = 50;
         private const int UI_UPDATE_BATCH_SIZE = 10;
@@ -40,6 +40,7 @@ namespace SistemaNotifica.src.Forms.Principal
             ProtestoDataCache.OnDataUpdated += OnCacheDataUpdated;
             ProtestoDataCache.OnLoadingStateChanged += OnCacheLoadingStateChanged;
 
+            InitializeFields();
             //LoadDataWithCache();
 
         }
@@ -580,6 +581,307 @@ namespace SistemaNotifica.src.Forms.Principal
             base.OnFormClosed(e);
         }
 
+
+        // -------------------------------------- FILTROS E AÇÕES DE FILTROS --------------------------------------   
+
+               
+
+        // Estrutura para configuração dos campos
+        private class FieldConfig
+        {
+            public string Label1 { get; set; }
+            public string Placeholder1 { get; set; }
+            public bool IsMask1Doc { get; set; }
+            public bool IsMask1Date { get; set; }
+
+            public string Label2 { get; set; }
+            public string Placeholder2 { get; set; }
+            public bool IsMask2Date { get; set; }
+            public bool ShowField2 { get; set; }
+
+            public string Label3 { get; set; }
+            public string Placeholder3 { get; set; }
+            public bool ShowField3 { get; set; }
+        }
+
+        // Configurações de campos - cada opção em comboBoxOptions deve ter um FieldConfig
+        private readonly Dictionary<string, FieldConfig> _fieldConfigs = new Dictionary<string, FieldConfig>
+        {
+            ["Distribuição/Apontamento"] = new FieldConfig
+            {
+                Label1 = "Distribuição/Apontamento:",
+                Placeholder1 = "Digite a distribuição ou apontamento",
+                ShowField2 = false,
+                ShowField3 = false
+            },
+            ["Apontamento e Data apontamento"] = new FieldConfig
+            {
+                Label1 = "Apontamento:",
+                Placeholder1 = "Digite o apontamento",
+                Label2 = "Data Apontamento:",
+                Placeholder2 = "dd/MM/yyyy",
+                IsMask2Date = true,
+                ShowField2 = true,
+                ShowField3 = false
+            },
+            ["CPF ou CNPJ do Devedor"] = new FieldConfig
+            {
+                Label1 = "CPF/CNPJ Devedor:",
+                Placeholder1 = "Digite o CPF ou CNPJ",
+                IsMask1Doc = true,
+                ShowField2 = false,
+                ShowField3 = false
+            },
+            ["CPF ou CNPJ do Devedor e Data do protocolo"] = new FieldConfig
+            {
+                Label1 = "CPF/CNPJ Devedor:",
+                Placeholder1 = "Digite o CPF ou CNPJ",
+                IsMask1Doc = true,
+                Label2 = "Data do Protocolo:",
+                Placeholder2 = "dd/MM/yyyy",
+                IsMask2Date = true,
+                ShowField2 = true,
+                ShowField3 = false
+            },
+            ["Nome do devedor"] = new FieldConfig
+            {
+                Label1 = "Nome do Devedor:",
+                Placeholder1 = "Digite o nome do devedor",
+                ShowField2 = false,
+                ShowField3 = false
+            },
+            ["CPF ou CNPJ do Credor"] = new FieldConfig
+            {
+                Label1 = "CPF/CNPJ Credor:",
+                Placeholder1 = "Digite o CPF ou CNPJ",
+                IsMask1Doc = true,
+                ShowField2 = false,
+                ShowField3 = false
+            },
+            ["Numero do Titulo"] = new FieldConfig
+            {
+                Label1 = "Número do Título:",
+                Placeholder1 = "Digite o número do título",
+                ShowField2 = false,
+                ShowField3 = false
+            },
+            ["Numero do Titulo e Data de Distribuição"] = new FieldConfig
+            {
+                Label1 = "Número do Título:",
+                Placeholder1 = "Digite o número do título",
+                Label2 = "Data de Distribuição:",
+                Placeholder2 = "dd/MM/yyyy",
+                IsMask2Date = true,
+                ShowField2 = true,
+                ShowField3 = false
+            },
+            ["Numero do Titulo e Vencimento"] = new FieldConfig
+            {
+                Label1 = "Número do Título:",
+                Placeholder1 = "Digite o número do título",
+                Label2 = "Data de Vencimento:",
+                Placeholder2 = "dd/MM/yyyy",
+                IsMask2Date = true,
+                ShowField2 = true,
+                ShowField3 = false
+            }
+        };
+
+
+        private void InitializeFields()
+        {
+            // Configurar evento do ComboBox
+            comboBoxOptions.SelectedIndexChanged += ComboBoxOptions_SelectedIndexChanged;
+
+            // Configurar eventos dos TextBoxes
+            textBoxField1.Enter += TextBox_Enter;
+            textBoxField1.Leave += TextBox_Leave;
+            textBoxField1.TextChanged += TextBoxField1_TextChanged;
+
+            textBoxField2.Enter += TextBox_Enter;
+            textBoxField2.Leave += TextBox_Leave;
+            textBoxField2.TextChanged += TextBoxField2_TextChanged;
+
+            textBoxField3.Enter += TextBox_Enter;
+            textBoxField3.Leave += TextBox_Leave;
+
+            // Inicializar campos ocultos
+            HideAllFields();
+        }
+
+        private void ComboBoxOptions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if ( comboBoxOptions.SelectedItem == null ) return;
+
+            string selected = comboBoxOptions.SelectedItem.ToString();
+
+            if ( _fieldConfigs.TryGetValue(selected, out var config) )
+            {
+                ConfigureFields(config);
+            }
+        }
+
+        private void ConfigureFields(FieldConfig config)
+        {
+            // Campo 1 - sempre visível
+            labelField1.Text = config.Label1;
+            SetPlaceholder(textBoxField1, config.Placeholder1);
+            labelField1.Visible = true;
+            textBoxField1.Visible = true;
+            RemoveMask(textBoxField1);
+
+            // Campo 2
+            if ( config.ShowField2 )
+            {
+                labelField2.Text = config.Label2;
+                SetPlaceholder(textBoxField2, config.Placeholder2);
+                labelField2.Visible = true;
+                textBoxField2.Visible = true;
+
+                if ( config.IsMask2Date )
+                    ApplyDateMask(textBoxField2);
+                else
+                    RemoveMask(textBoxField2);
+            }
+            else
+            {
+                labelField2.Visible = false;
+                textBoxField2.Visible = false;
+            }
+
+            // Campo 3
+            if ( config.ShowField3 )
+            {
+                labelField3.Text = config.Label3;
+                SetPlaceholder(textBoxField3, config.Placeholder3);
+                labelField3.Visible = true;
+                textBoxField3.Visible = true;
+            }
+            else
+            {
+                labelField3.Visible = false;
+                textBoxField3.Visible = false;
+            }
+
+            // Guarda configuração para aplicar máscaras dinâmicas
+            textBoxField1.Tag = config;
+        }
+
+        private void HideAllFields()
+        {
+            labelField1.Visible = false;
+            textBoxField1.Visible = false;
+            labelField2.Visible = false;
+            textBoxField2.Visible = false;
+            labelField3.Visible = false;
+            textBoxField3.Visible = false;
+        }
+
+        private void SetPlaceholder(TextBox textBox, string placeholder)
+        {
+            textBox.Text = placeholder;
+            textBox.ForeColor = Color.Gray;
+            textBox.Tag = new { Placeholder = placeholder, Config = textBox.Tag };
+        }
+
+        private void TextBox_Enter(object sender, EventArgs e)
+        {
+            var textBox = ( TextBox ) sender;
+            var tag = textBox.Tag as dynamic;
+
+            if ( textBox.ForeColor == Color.Gray && tag?.Placeholder != null )
+            {
+                textBox.Text = "";
+                textBox.ForeColor = Color.Black;
+            }
+        }
+
+        private void TextBox_Leave(object sender, EventArgs e)
+        {
+            var textBox = ( TextBox ) sender;
+            var tag = textBox.Tag as dynamic;
+
+            if ( string.IsNullOrWhiteSpace(textBox.Text) && tag?.Placeholder != null )
+            {
+                textBox.Text = tag.Placeholder;
+                textBox.ForeColor = Color.Gray;
+            }
+        }
+
+        private void TextBoxField1_TextChanged(object sender, EventArgs e)
+        {
+            if ( textBoxField1.ForeColor == Color.Gray ) return; // Ignorar placeholder
+
+            var config = textBoxField1.Tag as FieldConfig;
+            if ( config?.IsMask1Doc == true && !string.IsNullOrWhiteSpace(textBoxField1.Text) )
+            {
+                ApplyDocumentMask(textBoxField1);
+            }
+        }
+
+        private void TextBoxField2_TextChanged(object sender, EventArgs e)
+        {
+            // Máscara de data já aplicada no ConfigureFields se necessário
+        }
+
+        private void ApplyDocumentMask(TextBox textBox)
+        {
+            string text = new string(textBox.Text.Where(char.IsDigit).ToArray());
+
+            if ( text.Length <= 11 ) // CPF
+            {
+                if ( text.Length > 3 ) text = text.Insert(3, ".");
+                if ( text.Length > 7 ) text = text.Insert(7, ".");
+                if ( text.Length > 11 ) text = text.Insert(11, "-");
+            }
+            else // CNPJ
+            {
+                if ( text.Length > 2 ) text = text.Insert(2, ".");
+                if ( text.Length > 6 ) text = text.Insert(6, ".");
+                if ( text.Length > 10 ) text = text.Insert(10, "/");
+                if ( text.Length > 15 ) text = text.Insert(15, "-");
+            }
+
+            int cursorPos = textBox.SelectionStart;
+            textBox.Text = text;
+            textBox.SelectionStart = Math.Min(cursorPos, text.Length);
+        }
+
+        private void ApplyDateMask(TextBox textBox)
+        {
+            textBox.TextChanged += (s, e) =>
+            {
+                if ( textBox.ForeColor == Color.Gray ) return;
+
+                string text = new string(textBox.Text.Where(char.IsDigit).ToArray());
+
+                if ( text.Length > 2 ) text = text.Insert(2, "/");
+                if ( text.Length > 5 ) text = text.Insert(5, "/");
+                if ( text.Length > 10 ) text = text.Substring(0, 10);
+
+                int cursorPos = textBox.SelectionStart;
+                textBox.Text = text;
+                textBox.SelectionStart = Math.Min(cursorPos, text.Length);
+            };
+        }
+
+        private void RemoveMask(TextBox textBox)
+        {
+            // Remove handlers de máscara anteriores recriando o controle se necessário
+            textBox.Text = "";
+        }
+
+
+
+
+
+
+
+
+        //----------------------------------------------------------------------------------------------
+
+
+        // botão para refazer buscas --> descarta dados em cache e refaz a busca
         private void buttonRefresh_Click(object sender, EventArgs e)
         {
             DialogResult question = MessageBox.Show("Refazer busca?",
@@ -587,14 +889,30 @@ namespace SistemaNotifica.src.Forms.Principal
                 "Dependendo a quandiade de dados que voce tem, isso pode levar algum tempo",
                 MessageBoxButtons.YesNo);
 
-            if ( question ==DialogResult.Yes )
+            if ( question == DialogResult.Yes )
             {
                 // TODO --> reafazer a busca na a api e atualizar os dados no grid
+                // --> refaz busca, limpa os dados em cache, adiciona os novos e atualiza o grid
             }
             else
             {
                 // TODO --> apenas cancelar a busca
             }
+        }
+
+        private void textBoxFiled1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBoxField2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBoxFiled3_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
