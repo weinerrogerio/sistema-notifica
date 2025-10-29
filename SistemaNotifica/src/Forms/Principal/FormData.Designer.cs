@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             tableLayoutPanel = new TableLayoutPanel();
             flowLayoutPanel2 = new FlowLayoutPanel();
             labelField1 = new Label();
@@ -39,7 +40,7 @@
             flowLayoutPanelOptions = new FlowLayoutPanel();
             labelFieldSelected = new Label();
             comboBoxOptions = new ComboBox();
-            button1 = new Button();
+            buttonLimparFiltros = new Button();
             buttonRefresh = new Button();
             dataGridViewProtesto = new DataGridView();
             ColumnId = new DataGridViewTextBoxColumn();
@@ -62,6 +63,7 @@
             ColumnDataEnvio = new DataGridViewTextBoxColumn();
             nome_arquivo = new DataGridViewTextBoxColumn();
             file_data_importacao = new DataGridViewTextBoxColumn();
+            _filterTimer = new System.Windows.Forms.Timer(components);
             tableLayoutPanel.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
             flowLayoutPanelOptions.SuspendLayout();
@@ -119,7 +121,7 @@
             textBoxField1.Name = "textBoxField1";
             textBoxField1.Size = new Size(280, 23);
             textBoxField1.TabIndex = 1;
-            textBoxField1.TextChanged +=  textBoxFiled1_TextChanged ;
+            textBoxField1.TextChanged +=  textBoxField1_TextChanged ;
             // 
             // labelField2
             // 
@@ -155,7 +157,7 @@
             textBoxField3.Name = "textBoxField3";
             textBoxField3.Size = new Size(170, 23);
             textBoxField3.TabIndex = 5;
-            textBoxField3.TextChanged +=  textBoxFiled3_TextChanged ;
+            textBoxField3.TextChanged +=  textBoxField3_TextChanged ;
             // 
             // flowLayoutPanelOptions
             // 
@@ -163,7 +165,7 @@
             flowLayoutPanelOptions.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             flowLayoutPanelOptions.Controls.Add(labelFieldSelected);
             flowLayoutPanelOptions.Controls.Add(comboBoxOptions);
-            flowLayoutPanelOptions.Controls.Add(button1);
+            flowLayoutPanelOptions.Controls.Add(buttonLimparFiltros);
             flowLayoutPanelOptions.Controls.Add(buttonRefresh);
             flowLayoutPanelOptions.Dock = DockStyle.Fill;
             flowLayoutPanelOptions.Location = new Point(0, 0);
@@ -192,15 +194,16 @@
             comboBoxOptions.Size = new Size(381, 23);
             comboBoxOptions.TabIndex = 2;
             // 
-            // button1
+            // buttonLimparFiltros
             // 
-            button1.Location = new Point(448, 3);
-            button1.Margin = new Padding(0);
-            button1.Name = "button1";
-            button1.Size = new Size(146, 30);
-            button1.TabIndex = 3;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = true;
+            buttonLimparFiltros.Location = new Point(448, 3);
+            buttonLimparFiltros.Margin = new Padding(0);
+            buttonLimparFiltros.Name = "buttonLimparFiltros";
+            buttonLimparFiltros.Size = new Size(146, 30);
+            buttonLimparFiltros.TabIndex = 3;
+            buttonLimparFiltros.Text = "Limpar filtros";
+            buttonLimparFiltros.UseVisualStyleBackColor = true;
+            buttonLimparFiltros.Click +=  buttonLimparFiltros_Click ;
             // 
             // buttonRefresh
             // 
@@ -217,6 +220,7 @@
             // 
             dataGridViewProtesto.AllowUserToAddRows = false;
             dataGridViewProtesto.AllowUserToDeleteRows = false;
+            dataGridViewProtesto.AllowUserToOrderColumns = true;
             dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewProtesto.Columns.AddRange(new DataGridViewColumn[] { ColumnId, ColumnDataApresentacao, ColumnDataDistribuicao, ColumnNumDistribuicao, ColumnCartProtesto, ColumnNumTitulo, ColumnValor, ColumnSaldo, ColumnVencimento, ColumNomeDevedor, ColumnDocDevedor, ColumnNomeApresentante, ColumnCodApresentante, ColumnSacador, ColumnCedente, ColumnDocCredor, ColumnEmailEnviado, ColumnDataEnvio, nome_arquivo, file_data_importacao });
             dataGridViewProtesto.Dock = DockStyle.Fill;
@@ -328,6 +332,11 @@
             file_data_importacao.HeaderText = "Data Importacao";
             file_data_importacao.Name = "file_data_importacao";
             // 
+            // _filterTimer
+            // 
+            _filterTimer.Interval = 300;
+            _filterTimer.Tick +=  _filterTimer_Tick ;
+            // 
             // FormData
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -380,7 +389,8 @@
         private FlowLayoutPanel flowLayoutPanelOptions;
         private Label labelFieldSelected;
         private ComboBox comboBoxOptions;
-        private Button button1;
+        private Button buttonLimparFiltros;
         private Button buttonRefresh;
+        private System.Windows.Forms.Timer _filterTimer;
     }
 }

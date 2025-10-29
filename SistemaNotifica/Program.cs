@@ -49,20 +49,20 @@ namespace SistemaNotifica
             //List<ErroDetalhado> erros = new List<ErroDetalhado>();
 
             //Application.Run(new src.FormsTestes.FormTesteLayout());
-            Application.Run(new FormData());
+            //Application.Run(new FormData());
 
-            //using ( FormLogin loginForm = new FormLogin() )
-            //{
-            //    if ( loginForm.ShowDialog() == DialogResult.OK )
-            //    {
-            //        // Login bem-sucedido, agora inicie o formulário principal da aplicação
-            //        Application.Run(new FormOrigin()); // Assumindo que FormOrigin é o seu formulário principal
-            //    }
-            //    else
-            //    {
-            //        Debug.WriteLine("ERRO EM PROGRAM.CS --> LOGIN");
-            //    }
-            //}
+            using ( FormLogin loginForm = new FormLogin() )
+            {
+                if ( loginForm.ShowDialog() == DialogResult.OK )
+                {
+                    // Login bem-sucedido, agora inicie o formulário principal da aplicação
+                    Application.Run(new FormOrigin()); // Assumindo que FormOrigin é o seu formulário principal
+                }
+                else
+                {
+                    Debug.WriteLine("ERRO EM PROGRAM.CS --> LOGIN");
+                }
+            }
         }
 
 

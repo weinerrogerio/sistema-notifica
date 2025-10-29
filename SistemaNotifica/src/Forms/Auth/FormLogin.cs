@@ -1,20 +1,21 @@
-﻿using System;
+﻿using SistemaNotifica.src.Forms;
+using SistemaNotifica.src.Models;
+using SistemaNotifica.src.Services;
+using SistemaNotifica.src.Services.Cache;
+using SistemaNotifica.src.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D; // Importar para cantos arredondados
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SistemaNotifica.src.Forms;
-using SistemaNotifica.src.Services;
-using SistemaNotifica.src.Models;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using System.Diagnostics;
-using SistemaNotifica.src.Utils;
 using static SistemaNotifica.src.Models.Auth;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace SistemaNotifica
 {
@@ -80,6 +81,9 @@ namespace SistemaNotifica
 
                 if (response != null && !string.IsNullOrEmpty(response.AccessToken)) // Ou response.IsSuccess == true 
                 {
+                    CacheInitializer.StartBackgroundCacheInitialization();
+                    await Task.Delay(100);
+
                     this.DialogResult = DialogResult.OK;
                     this.Close(); // Fecha o formulário de login
                 }

@@ -22,7 +22,7 @@ namespace SistemaNotifica.src.Forms.Principal
         private CancellationTokenSource _cancellationTokenSource;
         private bool _isInitializing = false;
         private int _lastAddedRowCount = 0;
-        
+
         // Configurações de cache
         private const int CACHE_PAGE_SIZE = 50;
         private const int UI_UPDATE_BATCH_SIZE = 10;
@@ -42,7 +42,8 @@ namespace SistemaNotifica.src.Forms.Principal
 
             InitializeFields();
             //LoadDataWithCache();
-
+            _ = LoadDataFromCache();
+            
         }
 
         private void FormData_Resize(object sender, EventArgs e)
@@ -366,9 +367,7 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
-
-        /// Adiciona uma linha individual ao grid (método existente otimizado)
-
+        // Adiciona uma linha individual ao grid 
         private void AdicionarLinhaApiTabela(JObject protesto)
         {
             try
@@ -569,6 +568,12 @@ namespace SistemaNotifica.src.Forms.Principal
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
+            // Remove eventos de validação
+            textBoxField1.KeyPress -= TextBoxDocument_KeyPress;
+            textBoxField1.KeyPress -= TextBoxAlphaNumeric_KeyPress;
+            textBoxField2.KeyPress -= TextBoxDocument_KeyPress;
+            textBoxField2.KeyPress -= TextBoxAlphaNumeric_KeyPress;
+
             // Limpa recursos e cancela operações
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
@@ -583,8 +588,6 @@ namespace SistemaNotifica.src.Forms.Principal
 
 
         // -------------------------------------- FILTROS E AÇÕES DE FILTROS --------------------------------------   
-
-               
 
         // Estrutura para configuração dos campos
         private class FieldConfig
@@ -603,6 +606,9 @@ namespace SistemaNotifica.src.Forms.Principal
             public string Placeholder3 { get; set; }
             public bool ShowField3 { get; set; }
         }
+
+
+
 
         // Configurações de campos - cada opção em comboBoxOptions deve ter um FieldConfig
         private readonly Dictionary<string, FieldConfig> _fieldConfigs = new Dictionary<string, FieldConfig>
@@ -725,18 +731,38 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             // Campo 1 - sempre visível
             labelField1.Text = config.Label1;
-            SetPlaceholder(textBoxField1, config.Placeholder1);
             labelField1.Visible = true;
             textBoxField1.Visible = true;
+
+            // Remove eventos anteriores
+            textBoxField1.KeyPress -= TextBoxDocument_KeyPress;
+            textBoxField1.KeyPress -= TextBoxAlphaNumeric_KeyPress;
+
+            // Guarda configuração ANTES de definir placeholder
+            textBoxField1.Tag = new TextBoxData { Config = config };
+            SetPlaceholder(textBoxField1, config.Placeholder1);
+
             RemoveMask(textBoxField1);
+
+            // ADICIONA validação se for campo de documento
+            if ( config.IsMask1Doc )
+            {
+                textBoxField1.KeyPress += TextBoxDocument_KeyPress;
+            }
+            else if ( config.Label1.Contains("Nome") )
+            {
+                textBoxField1.KeyPress += TextBoxAlphaNumeric_KeyPress;
+            }
 
             // Campo 2
             if ( config.ShowField2 )
             {
                 labelField2.Text = config.Label2;
-                SetPlaceholder(textBoxField2, config.Placeholder2);
                 labelField2.Visible = true;
                 textBoxField2.Visible = true;
+
+                textBoxField2.Tag = new TextBoxData { Config = config };
+                SetPlaceholder(textBoxField2, config.Placeholder2);
 
                 if ( config.IsMask2Date )
                     ApplyDateMask(textBoxField2);
@@ -753,19 +779,19 @@ namespace SistemaNotifica.src.Forms.Principal
             if ( config.ShowField3 )
             {
                 labelField3.Text = config.Label3;
-                SetPlaceholder(textBoxField3, config.Placeholder3);
                 labelField3.Visible = true;
                 textBoxField3.Visible = true;
+
+                textBoxField3.Tag = new TextBoxData { Config = config };
+                SetPlaceholder(textBoxField3, config.Placeholder3);
             }
             else
             {
                 labelField3.Visible = false;
                 textBoxField3.Visible = false;
             }
-
-            // Guarda configuração para aplicar máscaras dinâmicas
-            textBoxField1.Tag = config;
         }
+
 
         private void HideAllFields()
         {
@@ -777,19 +803,40 @@ namespace SistemaNotifica.src.Forms.Principal
             textBoxField3.Visible = false;
         }
 
-        private void SetPlaceholder(TextBox textBox, string placeholder)
+        private class TextBoxData
         {
-            textBox.Text = placeholder;
+            public string Placeholder { get; set; }
+            public FieldConfig Config { get; set; }
+        }
+
+        private void SetPlaceholder(TextBox textBox, string placeholderText)
+        {
+            // Remove eventos anteriores
+            textBox.Enter -= TextBox_Enter;
+            textBox.Leave -= TextBox_Leave;
+
+            // Preserva o FieldConfig se já existir
+            var existingData = textBox.Tag as TextBoxData;
+            var config = existingData?.Config ?? textBox.Tag as FieldConfig;
+
+            textBox.Text = placeholderText;
             textBox.ForeColor = Color.Gray;
-            textBox.Tag = new { Placeholder = placeholder, Config = textBox.Tag };
+            textBox.Tag = new TextBoxData
+            {
+                Placeholder = placeholderText,
+                Config = config
+            };
+
+            textBox.Enter += TextBox_Enter;
+            textBox.Leave += TextBox_Leave;
         }
 
         private void TextBox_Enter(object sender, EventArgs e)
         {
             var textBox = ( TextBox ) sender;
-            var tag = textBox.Tag as dynamic;
+            var data = textBox.Tag as TextBoxData;
 
-            if ( textBox.ForeColor == Color.Gray && tag?.Placeholder != null )
+            if ( textBox.ForeColor == Color.Gray && data?.Placeholder != null )
             {
                 textBox.Text = "";
                 textBox.ForeColor = Color.Black;
@@ -799,13 +846,19 @@ namespace SistemaNotifica.src.Forms.Principal
         private void TextBox_Leave(object sender, EventArgs e)
         {
             var textBox = ( TextBox ) sender;
-            var tag = textBox.Tag as dynamic;
+            var data = textBox.Tag as TextBoxData;
 
-            if ( string.IsNullOrWhiteSpace(textBox.Text) && tag?.Placeholder != null )
+            if ( string.IsNullOrWhiteSpace(textBox.Text) && data?.Placeholder != null )
             {
-                textBox.Text = tag.Placeholder;
+                textBox.Text = data.Placeholder;
                 textBox.ForeColor = Color.Gray;
             }
+        }
+
+        private bool IsPlaceholder(TextBox textBox)
+        {
+            var data = textBox.Tag as TextBoxData;
+            return textBox.ForeColor == Color.Gray && data?.Placeholder != null;
         }
 
         private void TextBoxField1_TextChanged(object sender, EventArgs e)
@@ -871,13 +924,6 @@ namespace SistemaNotifica.src.Forms.Principal
             textBox.Text = "";
         }
 
-
-
-
-
-
-
-
         //----------------------------------------------------------------------------------------------
 
 
@@ -899,20 +945,398 @@ namespace SistemaNotifica.src.Forms.Principal
                 // TODO --> apenas cancelar a busca
             }
         }
-
-        private void textBoxFiled1_TextChanged(object sender, EventArgs e)
+        // -------------------------------  FILTROS  - LOGICA COM TIMER/DEBOUNCE  -------------------------------------
+        // Mapeamento: Opção ComboBox -> (Coluna1, Coluna2, Coluna3)
+        private readonly Dictionary<string, (string col1, string col2, string col3)> _filterMapping = new()
         {
+            ["Distribuição/Apontamento"] = ("ColumnNumDistribuicao", null, null),
+            ["Apontamento e Data apontamento"] = ("ColumnNumDistribuicao", "ColumnDataApresentacao", null),
+            ["CPF ou CNPJ do Devedor"] = ("ColumnDocDevedor", null, null),
+            ["CPF ou CNPJ do Devedor e Data do protocolo"] = ("ColumnDocDevedor", "ColumnDataApresentacao", null),
+            ["Nome do devedor"] = ("ColumNomeDevedor", null, null),
+            ["CPF ou CNPJ do Credor"] = ("ColumnDocCredor", null, null),
+            ["Numero do Titulo"] = ("ColumnNumTitulo", null, null),
+            ["Numero do Titulo e Data de Distribuição"] = ("ColumnNumTitulo", "ColumnDataDistribuicao", null),
+            ["Numero do Titulo e Vencimento"] = ("ColumnNumTitulo", "ColumnVencimento", null)
+        };
 
+        private JArray FilterData(JArray data)
+        {
+            if ( data == null || data.Count == 0 )
+                return new JArray();
+
+            string selectedOption = comboBoxOptions.SelectedItem?.ToString();
+            if ( string.IsNullOrEmpty(selectedOption) || !_filterMapping.ContainsKey(selectedOption) )
+                return data;
+
+            var (col1, col2, col3) = _filterMapping[selectedOption];
+
+            // Obtém valores dos filtros (ignora placeholders)
+            string filter1 = IsPlaceholder(textBoxField1) ? "" : textBoxField1.Text.Trim();
+            string filter2 = IsPlaceholder(textBoxField2) ? "" : textBoxField2.Text.Trim();
+            string filter3 = IsPlaceholder(textBoxField3) ? "" : textBoxField3.Text.Trim();
+
+            // Remove máscaras para comparação (mantém apenas letras e números)
+            filter1 = RemoveMaskForComparison(filter1);
+            filter2 = RemoveMaskForComparison(filter2);
+            filter3 = RemoveMaskForComparison(filter3);
+
+            bool hasFilter1 = !string.IsNullOrWhiteSpace(filter1);
+            bool hasFilter2 = !string.IsNullOrWhiteSpace(filter2) && col2 != null;
+            bool hasFilter3 = !string.IsNullOrWhiteSpace(filter3) && col3 != null;
+
+            // Se não há filtros ativos, retorna todos os dados
+            if ( !hasFilter1 && !hasFilter2 && !hasFilter3 )
+                return data;
+
+            Debug.WriteLine($"[FILTRO] Aplicando filtros:");
+            Debug.WriteLine($"  - Campo 1 ({col1}): '{filter1}' (original: '{textBoxField1.Text}')");
+            if ( hasFilter2 ) Debug.WriteLine($"  - Campo 2 ({col2}): '{filter2}' (original: '{textBoxField2.Text}')");
+            if ( hasFilter3 ) Debug.WriteLine($"  - Campo 3 ({col3}): '{filter3}' (original: '{textBoxField3.Text}')");
+
+            JArray resultado = new JArray();
+
+            foreach ( JObject item in data )
+            {
+                bool match = true;
+
+                // Filtro 1
+                if ( hasFilter1 )
+                {
+                    string valor = GetValueFromPath(item, col1);
+                    string valorLimpo = RemoveMaskForComparison(valor);
+
+                    bool encontrado = valorLimpo.IndexOf(filter1, StringComparison.OrdinalIgnoreCase) >= 0;
+
+                    if ( !encontrado && resultado.Count < 5 ) // Debug apenas primeiros resultados
+                    {
+                        Debug.WriteLine($"  [DEBUG] Não match: '{valorLimpo}' vs '{filter1}'");
+                    }
+
+                    match &= encontrado;
+                }
+
+                // Filtro 2
+                if ( hasFilter2 && match )
+                {
+                    string valor = GetValueFromPath(item, col2);
+                    string valorLimpo = RemoveMaskForComparison(valor);
+                    match &= valorLimpo.IndexOf(filter2, StringComparison.OrdinalIgnoreCase) >= 0;
+                }
+
+                // Filtro 3
+                if ( hasFilter3 && match )
+                {
+                    string valor = GetValueFromPath(item, col3);
+                    string valorLimpo = RemoveMaskForComparison(valor);
+                    match &= valorLimpo.IndexOf(filter3, StringComparison.OrdinalIgnoreCase) >= 0;
+                }
+
+                if ( match )
+                    resultado.Add(item);
+            }
+
+            Debug.WriteLine($"[FILTRO] Encontrados {resultado.Count} de {data.Count} registros");
+            return resultado;
+        }
+
+        private string GetValueFromPath(JObject item, string columnName)
+        {
+            if ( string.IsNullOrEmpty(columnName) ) return "";
+
+            try
+            {
+                // Mapeamento: Nome da coluna -> caminho no JSON
+                switch ( columnName )
+                {
+                    // Campos diretos do protesto
+                    case "ColumnNumDistribuicao":
+                        return item["num_distribuicao"]?.ToString() ?? "";
+
+                    case "ColumnDataApresentacao":
+                        return item["data_apresentacao"]?.ToString() ?? "";
+
+                    case "ColumnDataDistribuicao":
+                        return item["data_distribuicao"]?.ToString() ?? "";
+
+                    case "ColumnNumTitulo":
+                        return item["num_titulo"]?.ToString() ?? "";
+
+                    case "ColumnVencimento":
+                        return item["vencimento"]?.ToString() ?? "";
+
+                    // Campos do devedor (navega no array notificacao)
+                    case "ColumNomeDevedor":
+                        var notificacoes = item["notificacao"] as JArray;
+                        if ( notificacoes != null && notificacoes.Count > 0 )
+                        {
+                            var notificacao = notificacoes[0] as JObject;
+                            var devedor = notificacao?["devedor"] as JObject;
+                            return devedor?["nome"]?.ToString() ?? "";
+                        }
+                        return "";
+
+                    case "ColumnDocDevedor":
+                        var notifDev = item["notificacao"] as JArray;
+                        if ( notifDev != null && notifDev.Count > 0 )
+                        {
+                            var notif = notifDev[0] as JObject;
+                            var dev = notif?["devedor"] as JObject;
+                            return dev?["doc_devedor"]?.ToString() ?? "";
+                        }
+                        return "";
+
+                    // Campos do credor (navega no array credores)
+                    case "ColumnDocCredor":
+                        var credores = item["credores"] as JArray;
+                        if ( credores != null && credores.Count > 0 )
+                        {
+                            var credorObj = credores[0]["credor"] as JObject;
+                            return credorObj?["doc_credor"]?.ToString() ?? "";
+                        }
+                        return "";
+
+                    case "ColumnSacador":
+                        var credSac = item["credores"] as JArray;
+                        if ( credSac != null && credSac.Count > 0 )
+                        {
+                            var credObj = credSac[0]["credor"] as JObject;
+                            return credObj?["sacador"]?.ToString() ?? "";
+                        }
+                        return "";
+
+                    case "ColumnCedente":
+                        var credCed = item["credores"] as JArray;
+                        if ( credCed != null && credCed.Count > 0 )
+                        {
+                            var credObj = credCed[0]["credor"] as JObject;
+                            return credObj?["cedente"]?.ToString() ?? "";
+                        }
+                        return "";
+
+                    default:
+                        // Fallback: tenta buscar diretamente
+                        return item[columnName]?.ToString() ?? "";
+                }
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro ao obter valor de {columnName}: {ex.Message}");
+                return "";
+            }
+        }
+
+        // Novo método: remove TUDO exceto letras e números (sem espaços!)
+        private string RemoveMaskForComparison(string text)
+        {
+            if ( string.IsNullOrEmpty(text) ) return "";
+            // Remove TUDO que não for letra ou número
+            return new string(text.Where(c => char.IsLetterOrDigit(c)).ToArray());
+        }
+
+        private void ApplyFilters()
+        {
+            try
+            {
+                ShowLoadingIndicator(true, "Aplicando filtros...");
+
+                dataGridViewProtesto.SuspendLayout();
+                dataGridViewProtesto.Rows.Clear();
+
+                // Obtém dados do cache
+                List<JObject> dadosCache = ProtestoDataCache.GetAllData();
+
+                if ( dadosCache.Count == 0 )
+                {
+                    Debug.WriteLine("Cache vazio - nenhum dado para filtrar");
+                    dataGridViewProtesto.ResumeLayout();
+                    UpdateStatusLabel("Nenhum dado disponível");
+                    ShowLoadingIndicator(false);
+                    return;
+                }
+
+                // Aplica filtros
+                JArray dados = new JArray(dadosCache);
+                JArray dadosFiltrados = FilterData(dados);
+
+                if ( dadosFiltrados.Count == 0 )
+                {
+                    Debug.WriteLine("Nenhum dado encontrado após filtragem");
+                    dataGridViewProtesto.ResumeLayout();
+                    UpdateStatusLabel($"Nenhum resultado encontrado (Total: {dados.Count})");
+                    ShowLoadingIndicator(false);
+                    return;
+                }
+
+                // Carrega dados filtrados (com virtualização se muitos resultados)
+                if ( dadosFiltrados.Count > 100 )
+                {
+                    // Carrega apenas os primeiros 100
+                    for ( int i = 0; i < 100; i++ )
+                    {
+                        AdicionarLinhaApiTabela(dadosFiltrados[i] as JObject);
+                    }
+
+                    // Carrega o resto em background
+                    _ = Task.Run(async () =>
+                    {
+                        for ( int i = 100; i < dadosFiltrados.Count; i++ )
+                        {
+                            if ( i % 50 == 0 ) await Task.Delay(50);
+
+                            this.Invoke(new Action(() =>
+                            {
+                                AdicionarLinhaApiTabela(dadosFiltrados[i] as JObject);
+                            }));
+                        }
+
+                        this.Invoke(new Action(() =>
+                        {
+                            UpdateStatusLabel($"Exibindo {dadosFiltrados.Count} de {dados.Count} registros");
+                        }));
+                    });
+
+                    UpdateStatusLabel($"Carregando... 100/{dadosFiltrados.Count} registros");
+                }
+                else
+                {
+                    // Carrega tudo se poucos resultados
+                    foreach ( JObject item in dadosFiltrados )
+                    {
+                        AdicionarLinhaApiTabela(item);
+                    }
+                    UpdateStatusLabel($"Exibindo {dadosFiltrados.Count} de {dados.Count} registros");
+                }
+
+                if ( dataGridViewProtesto.Rows.Count > 0 )
+                {
+                    dataGridViewProtesto.Rows[0].Selected = false;
+                    dataGridViewProtesto.ClearSelection();
+                }
+
+                dataGridViewProtesto.ResumeLayout();
+                ShowLoadingIndicator(false);
+
+                Debug.WriteLine($"Filtro aplicado - Resultados: {dadosFiltrados.Count}/{dados.Count}");
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro ao aplicar filtros: {ex.Message}");
+                ShowLoadingIndicator(false);
+            }
+        }
+
+        private string RemoveMask(string text)
+        {
+            if ( string.IsNullOrEmpty(text) ) return "";
+            return new string(text.Where(c => char.IsLetterOrDigit(c) || c == ' ').ToArray());
+        }
+
+
+        // --------------------------------- EVENTOS ---------------------------------
+
+
+        private void TextBoxDocument_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Permite apenas números, backspace e delete
+            if ( !char.IsDigit(e.KeyChar) && e.KeyChar != ( char ) Keys.Back && e.KeyChar != ( char ) Keys.Delete )
+            {
+                e.Handled = true;
+            }
+        }
+
+        // NOVO MÉTODO: Valida entrada alfanumérica (para nome)
+        private void TextBoxAlphaNumeric_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Permite letras, números, espaço, backspace, delete
+            if ( !char.IsLetterOrDigit(e.KeyChar) &&
+                e.KeyChar != ' ' &&
+                e.KeyChar != ( char ) Keys.Back &&
+                e.KeyChar != ( char ) Keys.Delete )
+            {
+                e.Handled = true;
+            }
+        }
+
+
+        private void textBoxField1_TextChanged(object sender, EventArgs e)
+        {
+            if ( textBoxField1.ForeColor == Color.Gray ) return;
+
+            var data = textBoxField1.Tag as TextBoxData;
+            if ( data?.Config?.IsMask1Doc == true && !string.IsNullOrWhiteSpace(textBoxField1.Text) )
+            {
+                ApplyDocumentMask(textBoxField1);
+            }
+            _filterTimer.Stop();
+            _filterTimer.Start();
         }
 
         private void textBoxField2_TextChanged(object sender, EventArgs e)
         {
+            if ( IsPlaceholder(textBoxField2) ) return;
 
+            _filterTimer.Stop();
+            _filterTimer.Start();
         }
 
-        private void textBoxFiled3_TextChanged(object sender, EventArgs e)
+        private void textBoxField3_TextChanged(object sender, EventArgs e)
         {
+            if ( IsPlaceholder(textBoxField3) ) return;
 
+            _filterTimer.Stop();
+            _filterTimer.Start();
+        }
+
+        private void comboBoxOptions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Atualiza configuração dos campos (código anterior)
+            if ( comboBoxOptions.SelectedItem == null ) return;
+
+            string selected = comboBoxOptions.SelectedItem.ToString();
+            if ( _fieldConfigs.TryGetValue(selected, out var config) )
+            {
+                ConfigureFields(config);
+            }
+
+            // Limpa filtros ao mudar opção
+            LimparFiltros();
+            ApplyFilters();
+        }
+
+        private void _filterTimer_Tick(object sender, EventArgs e)
+        {
+            _filterTimer.Stop();
+
+            string f1 = IsPlaceholder(textBoxField1) ? "" : textBoxField1.Text;
+            string f2 = IsPlaceholder(textBoxField2) ? "" : textBoxField2.Text;
+            string f3 = IsPlaceholder(textBoxField3) ? "" : textBoxField3.Text;
+
+            Debug.WriteLine($"[FILTRO] Aplicando: F1='{f1}' | F2='{f2}' | F3='{f3}'");
+            ApplyFilters();
+        }
+        
+
+        private void buttonLimparFiltros_Click(object sender, EventArgs e)
+        {
+            LimparFiltros();
+            ApplyFilters();
+        }
+
+        private void LimparFiltros()
+        {
+            if ( comboBoxOptions.SelectedItem != null )
+            {
+                string selected = comboBoxOptions.SelectedItem.ToString();
+                if ( _fieldConfigs.TryGetValue(selected, out var config) )
+                {
+                    SetPlaceholder(textBoxField1, config.Placeholder1);
+                    if ( config.ShowField2 )
+                        SetPlaceholder(textBoxField2, config.Placeholder2);
+                    if ( config.ShowField3 )
+                        SetPlaceholder(textBoxField3, config.Placeholder3);
+                }
+            }
         }
     }
 }
