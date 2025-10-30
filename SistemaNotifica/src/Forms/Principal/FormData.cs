@@ -135,7 +135,6 @@ namespace SistemaNotifica.src.Forms.Principal
 
 
         /// Carrega dados usando o sistema de cache
-
         private async Task LoadDataWithCache()
         {
             try
@@ -589,13 +588,15 @@ namespace SistemaNotifica.src.Forms.Principal
 
         // -------------------------------------- FILTROS E AÇÕES DE FILTROS --------------------------------------   
 
+        // -------------------------------------- FILTROS E AÇÕES DE FILTROS --------------------------------------   
+
         // Estrutura para configuração dos campos
         private class FieldConfig
         {
             public string Label1 { get; set; }
             public string Placeholder1 { get; set; }
             public bool IsMask1Doc { get; set; }
-            public bool IsMask1Date { get; set; }
+            public bool IsMask1Date { get; set; } // Embora não usado atualmente, é boa prática ter
 
             public string Label2 { get; set; }
             public string Placeholder2 { get; set; }
@@ -606,9 +607,6 @@ namespace SistemaNotifica.src.Forms.Principal
             public string Placeholder3 { get; set; }
             public bool ShowField3 { get; set; }
         }
-
-
-
 
         // Configurações de campos - cada opção em comboBoxOptions deve ter um FieldConfig
         private readonly Dictionary<string, FieldConfig> _fieldConfigs = new Dictionary<string, FieldConfig>
@@ -693,38 +691,26 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         };
 
-
         private void InitializeFields()
         {
             // Configurar evento do ComboBox
-            comboBoxOptions.SelectedIndexChanged += ComboBoxOptions_SelectedIndexChanged;
+            comboBoxOptions.SelectedIndexChanged += comboBoxOptions_SelectedIndexChanged;
 
             // Configurar eventos dos TextBoxes
             textBoxField1.Enter += TextBox_Enter;
             textBoxField1.Leave += TextBox_Leave;
-            textBoxField1.TextChanged += TextBoxField1_TextChanged;
+            textBoxField1.TextChanged += textBoxField1_TextChanged; // Handler com timer
 
             textBoxField2.Enter += TextBox_Enter;
             textBoxField2.Leave += TextBox_Leave;
-            textBoxField2.TextChanged += TextBoxField2_TextChanged;
+            textBoxField2.TextChanged += textBoxField2_TextChanged; // Handler com timer e máscara
 
             textBoxField3.Enter += TextBox_Enter;
             textBoxField3.Leave += TextBox_Leave;
+            textBoxField3.TextChanged += textBoxField3_TextChanged; // Handler com timer
 
             // Inicializar campos ocultos
             HideAllFields();
-        }
-
-        private void ComboBoxOptions_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if ( comboBoxOptions.SelectedItem == null ) return;
-
-            string selected = comboBoxOptions.SelectedItem.ToString();
-
-            if ( _fieldConfigs.TryGetValue(selected, out var config) )
-            {
-                ConfigureFields(config);
-            }
         }
 
         private void ConfigureFields(FieldConfig config)
@@ -742,7 +728,7 @@ namespace SistemaNotifica.src.Forms.Principal
             textBoxField1.Tag = new TextBoxData { Config = config };
             SetPlaceholder(textBoxField1, config.Placeholder1);
 
-            RemoveMask(textBoxField1);
+            RemoveMask(textBoxField1); // Apenas limpa o texto
 
             // ADICIONA validação se for campo de documento
             if ( config.IsMask1Doc )
@@ -763,11 +749,6 @@ namespace SistemaNotifica.src.Forms.Principal
 
                 textBoxField2.Tag = new TextBoxData { Config = config };
                 SetPlaceholder(textBoxField2, config.Placeholder2);
-
-                if ( config.IsMask2Date )
-                    ApplyDateMask(textBoxField2);
-                else
-                    RemoveMask(textBoxField2);
             }
             else
             {
@@ -817,7 +798,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
             // Preserva o FieldConfig se já existir
             var existingData = textBox.Tag as TextBoxData;
-            var config = existingData?.Config ?? textBox.Tag as FieldConfig;
+            var config = existingData?.Config ?? ( textBox.Tag as FieldConfig ); // Fallback para Tag antiga
 
             textBox.Text = placeholderText;
             textBox.ForeColor = Color.Gray;
@@ -858,94 +839,92 @@ namespace SistemaNotifica.src.Forms.Principal
         private bool IsPlaceholder(TextBox textBox)
         {
             var data = textBox.Tag as TextBoxData;
-            return textBox.ForeColor == Color.Gray && data?.Placeholder != null;
+            // Verifica também se o texto é igual ao placeholder, caso o foco nunca tenha saído
+            return textBox.ForeColor == Color.Gray && ( data?.Placeholder == null || data.Placeholder == textBox.Text );
         }
 
-        private void TextBoxField1_TextChanged(object sender, EventArgs e)
-        {
-            if ( textBoxField1.ForeColor == Color.Gray ) return; // Ignorar placeholder
 
-            var config = textBoxField1.Tag as FieldConfig;
-            if ( config?.IsMask1Doc == true && !string.IsNullOrWhiteSpace(textBoxField1.Text) )
-            {
-                ApplyDocumentMask(textBoxField1);
-            }
-        }
-
-        private void TextBoxField2_TextChanged(object sender, EventArgs e)
-        {
-            // Máscara de data já aplicada no ConfigureFields se necessário
-        }
-
+        /**
+         * Lógica de máscara de documento (CPF/CNPJ) corrigida.
+         * Chamada a partir de textBoxField1_TextChanged.
+         */
         private void ApplyDocumentMask(TextBox textBox)
         {
+            // Salva a posição atual do cursor
+            int selStart = textBox.SelectionStart;
+            string oldText = textBox.Text;
+
+            // 1. Remove tudo que não for dígito
             string text = new string(textBox.Text.Where(char.IsDigit).ToArray());
 
-            if ( text.Length <= 11 ) // CPF
+            // 2. Limita o tamanho
+            if ( text.Length > 14 )
             {
-                if ( text.Length > 3 ) text = text.Insert(3, ".");
-                if ( text.Length > 7 ) text = text.Insert(7, ".");
-                if ( text.Length > 11 ) text = text.Insert(11, "-");
+                text = text.Substring(0, 14);
             }
-            else // CNPJ
+
+            // 3. Aplica a máscara
+            if ( text.Length <= 11 ) // CPF: 000.000.000-00
             {
-                if ( text.Length > 2 ) text = text.Insert(2, ".");
+                if ( text.Length > 9 ) text = text.Insert(9, "-");
                 if ( text.Length > 6 ) text = text.Insert(6, ".");
-                if ( text.Length > 10 ) text = text.Insert(10, "/");
-                if ( text.Length > 15 ) text = text.Insert(15, "-");
+                if ( text.Length > 3 ) text = text.Insert(3, ".");
+            }
+            else // CNPJ: 00.000.000/0000-00
+            {
+                // text já está limitado a 14 dígitos
+                if ( text.Length > 12 ) text = text.Insert(12, "-");
+                if ( text.Length > 8 ) text = text.Insert(8, "/");
+                if ( text.Length > 5 ) text = text.Insert(5, ".");
+                if ( text.Length > 2 ) text = text.Insert(2, ".");
             }
 
-            int cursorPos = textBox.SelectionStart;
-            textBox.Text = text;
-            textBox.SelectionStart = Math.Min(cursorPos, text.Length);
-        }
-
-        private void ApplyDateMask(TextBox textBox)
-        {
-            textBox.TextChanged += (s, e) =>
+            // 4. Define o texto e restaura o cursor
+            if ( textBox.Text != text )
             {
-                if ( textBox.ForeColor == Color.Gray ) return;
-
-                string text = new string(textBox.Text.Where(char.IsDigit).ToArray());
-
-                if ( text.Length > 2 ) text = text.Insert(2, "/");
-                if ( text.Length > 5 ) text = text.Insert(5, "/");
-                if ( text.Length > 10 ) text = text.Substring(0, 10);
-
-                int cursorPos = textBox.SelectionStart;
                 textBox.Text = text;
-                textBox.SelectionStart = Math.Min(cursorPos, text.Length);
-            };
+
+                // Ajusta a posição do cursor
+                int newSelStart = selStart + ( text.Length - oldText.Length );
+                textBox.SelectionStart = Math.Max(0, Math.Min(newSelStart, text.Length));
+            }
         }
+
+        // REMOVIDO: Método ApplyDateMask. A lógica agora está em textBoxField2_TextChanged.
 
         private void RemoveMask(TextBox textBox)
         {
-            // Remove handlers de máscara anteriores recriando o controle se necessário
+            // Esta função agora é usada apenas para limpar o texto
+            // Handlers de máscara são gerenciados em ConfigureFields ou nos próprios TextChanged
             textBox.Text = "";
         }
 
         //----------------------------------------------------------------------------------------------
 
-
         // botão para refazer buscas --> descarta dados em cache e refaz a busca
-        private void buttonRefresh_Click(object sender, EventArgs e)
+        private async void buttonRefresh_Click(object sender, EventArgs e)
         {
             DialogResult question = MessageBox.Show("Refazer busca?",
                 "Tem certeza que deseja refazer a busca no banco de dados? \n" +
-                "Dependendo a quandiade de dados que voce tem, isso pode levar algum tempo",
-                MessageBoxButtons.YesNo);
+                "Isso limpará os dados atuais e buscará tudo novamente, o que pode levar algum tempo.",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if ( question == DialogResult.Yes )
             {
-                // TODO --> reafazer a busca na a api e atualizar os dados no grid
-                // --> refaz busca, limpa os dados em cache, adiciona os novos e atualiza o grid
+                // Limpa filtros de texto
+                LimparFiltros();
+
+                // Força a atualização do cache
+                await ForceRefreshCache();
             }
             else
             {
-                // TODO --> apenas cancelar a busca
+                // Ação cancelada pelo usuário
             }
         }
+
         // -------------------------------  FILTROS  - LOGICA COM TIMER/DEBOUNCE  -------------------------------------
+
         // Mapeamento: Opção ComboBox -> (Coluna1, Coluna2, Coluna3)
         private readonly Dictionary<string, (string col1, string col2, string col3)> _filterMapping = new()
         {
@@ -960,6 +939,25 @@ namespace SistemaNotifica.src.Forms.Principal
             ["Numero do Titulo e Vencimento"] = ("ColumnNumTitulo", "ColumnVencimento", null)
         };
 
+        /**
+         * NOVO: Helper para formatar datas ISO (cache) para comparação com datas dd/MM/yyyy (input).
+         */
+        private string FormatarDataParaComparacao(string dataStringIso)
+        {
+            if ( string.IsNullOrEmpty(dataStringIso) )
+                return "";
+
+            // Tenta parsear a data ISO
+            if ( DateTime.TryParse(dataStringIso, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime data) )
+            {
+                // Formata para "ddMMyyyy"
+                return data.ToString("ddMMyyyy");
+            }
+
+            // Fallback: se não for data, apenas limpa
+            return RemoveMaskForComparison(dataStringIso);
+        }
+
         private JArray FilterData(JArray data)
         {
             if ( data == null || data.Count == 0 )
@@ -968,6 +966,9 @@ namespace SistemaNotifica.src.Forms.Principal
             string selectedOption = comboBoxOptions.SelectedItem?.ToString();
             if ( string.IsNullOrEmpty(selectedOption) || !_filterMapping.ContainsKey(selectedOption) )
                 return data;
+
+            // Pega a configuração do campo para saber quais campos são datas
+            _fieldConfigs.TryGetValue(selectedOption, out var config);
 
             var (col1, col2, col3) = _filterMapping[selectedOption];
 
@@ -978,7 +979,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
             // Remove máscaras para comparação (mantém apenas letras e números)
             filter1 = RemoveMaskForComparison(filter1);
-            filter2 = RemoveMaskForComparison(filter2);
+            filter2 = RemoveMaskForComparison(filter2); // Para datas, isso resulta em "ddMMyyyy"
             filter3 = RemoveMaskForComparison(filter3);
 
             bool hasFilter1 = !string.IsNullOrWhiteSpace(filter1);
@@ -990,9 +991,9 @@ namespace SistemaNotifica.src.Forms.Principal
                 return data;
 
             Debug.WriteLine($"[FILTRO] Aplicando filtros:");
-            Debug.WriteLine($"  - Campo 1 ({col1}): '{filter1}' (original: '{textBoxField1.Text}')");
-            if ( hasFilter2 ) Debug.WriteLine($"  - Campo 2 ({col2}): '{filter2}' (original: '{textBoxField2.Text}')");
-            if ( hasFilter3 ) Debug.WriteLine($"  - Campo 3 ({col3}): '{filter3}' (original: '{textBoxField3.Text}')");
+            if ( hasFilter1 ) Debug.WriteLine($"  - Campo 1 ({col1}): '{filter1}'");
+            if ( hasFilter2 ) Debug.WriteLine($"  - Campo 2 ({col2}): '{filter2}' (É Data: {config?.IsMask2Date})");
+            if ( hasFilter3 ) Debug.WriteLine($"  - Campo 3 ({col3}): '{filter3}'");
 
             JArray resultado = new JArray();
 
@@ -1000,31 +1001,34 @@ namespace SistemaNotifica.src.Forms.Principal
             {
                 bool match = true;
 
-                // Filtro 1
+                // Filtro 1 (Nunca é data, baseado em _fieldConfigs)
                 if ( hasFilter1 )
                 {
                     string valor = GetValueFromPath(item, col1);
                     string valorLimpo = RemoveMaskForComparison(valor);
-
-                    bool encontrado = valorLimpo.IndexOf(filter1, StringComparison.OrdinalIgnoreCase) >= 0;
-
-                    if ( !encontrado && resultado.Count < 5 ) // Debug apenas primeiros resultados
-                    {
-                        Debug.WriteLine($"  [DEBUG] Não match: '{valorLimpo}' vs '{filter1}'");
-                    }
-
-                    match &= encontrado;
+                    match &= valorLimpo.IndexOf(filter1, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
 
-                // Filtro 2
+                // Filtro 2 (Pode ser data)
                 if ( hasFilter2 && match )
                 {
                     string valor = GetValueFromPath(item, col2);
-                    string valorLimpo = RemoveMaskForComparison(valor);
+                    string valorLimpo;
+
+                    // CORREÇÃO: Verifica se o campo é uma data
+                    if ( config != null && config.IsMask2Date )
+                    {
+                        // Converte a data do cache (ISO) para "ddMMyyyy" para comparar
+                        valorLimpo = FormatarDataParaComparacao(valor);
+                    }
+                    else
+                    {
+                        valorLimpo = RemoveMaskForComparison(valor);
+                    }
                     match &= valorLimpo.IndexOf(filter2, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
 
-                // Filtro 3
+                // Filtro 3 (Nunca é data, baseado em _fieldConfigs)
                 if ( hasFilter3 && match )
                 {
                     string valor = GetValueFromPath(item, col3);
@@ -1054,16 +1058,16 @@ namespace SistemaNotifica.src.Forms.Principal
                         return item["num_distribuicao"]?.ToString() ?? "";
 
                     case "ColumnDataApresentacao":
-                        return item["data_apresentacao"]?.ToString() ?? "";
+                        return item["data_apresentacao"]?.ToString() ?? ""; // Retorna ISO String
 
                     case "ColumnDataDistribuicao":
-                        return item["data_distribuicao"]?.ToString() ?? "";
+                        return item["data_distribuicao"]?.ToString() ?? ""; // Retorna ISO String
 
                     case "ColumnNumTitulo":
                         return item["num_titulo"]?.ToString() ?? "";
 
                     case "ColumnVencimento":
-                        return item["vencimento"]?.ToString() ?? "";
+                        return item["vencimento"]?.ToString() ?? ""; // Pode ser ISO ou outro formato
 
                     // Campos do devedor (navega no array notificacao)
                     case "ColumNomeDevedor":
@@ -1168,45 +1172,16 @@ namespace SistemaNotifica.src.Forms.Principal
                     return;
                 }
 
-                // Carrega dados filtrados (com virtualização se muitos resultados)
-                if ( dadosFiltrados.Count > 100 )
+                // Adiciona os dados filtrados
+                // NOTA: A lógica de carregar em background foi removida para simplicidade
+                // Se houver problemas de performance com muitos resultados de filtro,
+                // a lógica de "AddDataToGridInBatches" pode ser usada aqui.
+                foreach ( JObject item in dadosFiltrados )
                 {
-                    // Carrega apenas os primeiros 100
-                    for ( int i = 0; i < 100; i++ )
-                    {
-                        AdicionarLinhaApiTabela(dadosFiltrados[i] as JObject);
-                    }
-
-                    // Carrega o resto em background
-                    _ = Task.Run(async () =>
-                    {
-                        for ( int i = 100; i < dadosFiltrados.Count; i++ )
-                        {
-                            if ( i % 50 == 0 ) await Task.Delay(50);
-
-                            this.Invoke(new Action(() =>
-                            {
-                                AdicionarLinhaApiTabela(dadosFiltrados[i] as JObject);
-                            }));
-                        }
-
-                        this.Invoke(new Action(() =>
-                        {
-                            UpdateStatusLabel($"Exibindo {dadosFiltrados.Count} de {dados.Count} registros");
-                        }));
-                    });
-
-                    UpdateStatusLabel($"Carregando... 100/{dadosFiltrados.Count} registros");
+                    AdicionarLinhaApiTabela(item);
                 }
-                else
-                {
-                    // Carrega tudo se poucos resultados
-                    foreach ( JObject item in dadosFiltrados )
-                    {
-                        AdicionarLinhaApiTabela(item);
-                    }
-                    UpdateStatusLabel($"Exibindo {dadosFiltrados.Count} de {dados.Count} registros");
-                }
+                UpdateStatusLabel($"Exibindo {dadosFiltrados.Count} de {dados.Count} registros");
+
 
                 if ( dataGridViewProtesto.Rows.Count > 0 )
                 {
@@ -1226,6 +1201,7 @@ namespace SistemaNotifica.src.Forms.Principal
             }
         }
 
+        // Este método não é usado pelo FilterData, que usa RemoveMaskForComparison
         private string RemoveMask(string text)
         {
             if ( string.IsNullOrEmpty(text) ) return "";
@@ -1238,22 +1214,21 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private void TextBoxDocument_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Permite apenas números, backspace e delete
-            if ( !char.IsDigit(e.KeyChar) && e.KeyChar != ( char ) Keys.Back && e.KeyChar != ( char ) Keys.Delete )
+            if ( !char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar) )
             {
+                // Se não for nem dígito nem controle, bloqueia a tecla
                 e.Handled = true;
             }
         }
 
-        // NOVO MÉTODO: Valida entrada alfanumérica (para nome)
         private void TextBoxAlphaNumeric_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Permite letras, números, espaço, backspace, delete
+            // CORREÇÃO: Permite letras, dígitos, espaço OU qualquer caractere de controle
             if ( !char.IsLetterOrDigit(e.KeyChar) &&
                 e.KeyChar != ' ' &&
-                e.KeyChar != ( char ) Keys.Back &&
-                e.KeyChar != ( char ) Keys.Delete )
+                !char.IsControl(e.KeyChar) )
             {
+                // Se não for nenhum dos permitidos, bloqueia a tecla
                 e.Handled = true;
             }
         }
@@ -1261,14 +1236,18 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private void textBoxField1_TextChanged(object sender, EventArgs e)
         {
-            if ( textBoxField1.ForeColor == Color.Gray ) return;
+            if ( IsPlaceholder(textBoxField1) ) return;
 
             var data = textBoxField1.Tag as TextBoxData;
-            if ( data?.Config?.IsMask1Doc == true && !string.IsNullOrWhiteSpace(textBoxField1.Text) )
+
+            // Para o timer antes de aplicar a máscara
+            _filterTimer.Stop();
+
+            if ( data?.Config?.IsMask1Doc == true )
             {
                 ApplyDocumentMask(textBoxField1);
             }
-            _filterTimer.Stop();
+
             _filterTimer.Start();
         }
 
@@ -1276,7 +1255,33 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             if ( IsPlaceholder(textBoxField2) ) return;
 
+            var data = textBoxField2.Tag as TextBoxData;
+            bool isDate = data?.Config?.IsMask2Date == true;
+
+            // Para o timer antes de aplicar a máscara
             _filterTimer.Stop();
+
+            // CORREÇÃO: Lógica da máscara de data movida para cá
+            if ( isDate )
+            {
+                string text = new string(textBoxField2.Text.Where(char.IsDigit).ToArray());
+                int selStart = textBoxField2.SelectionStart;
+                string oldText = textBoxField2.Text;
+
+                if ( text.Length > 8 ) text = text.Substring(0, 8); // Limita a 8 dígitos (ddmmyyyy)
+
+                if ( text.Length > 4 ) text = text.Insert(4, "/"); // ddmm/yyyy
+                if ( text.Length > 2 ) text = text.Insert(2, "/"); // dd/mm/yyyy
+
+                if ( textBoxField2.Text != text )
+                {
+                    textBoxField2.Text = text;
+                    // Ajusta o cursor
+                    int newSelStart = selStart + ( text.Length - oldText.Length );
+                    textBoxField2.SelectionStart = Math.Max(0, Math.Min(newSelStart, text.Length));
+                }
+            }
+
             _filterTimer.Start();
         }
 
@@ -1290,7 +1295,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private void comboBoxOptions_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Atualiza configuração dos campos (código anterior)
+            // Atualiza configuração dos campos
             if ( comboBoxOptions.SelectedItem == null ) return;
 
             string selected = comboBoxOptions.SelectedItem.ToString();
@@ -1299,9 +1304,9 @@ namespace SistemaNotifica.src.Forms.Principal
                 ConfigureFields(config);
             }
 
-            // Limpa filtros ao mudar opção
+            // Limpa filtros de texto e aplica (para mostrar todos os dados)
             LimparFiltros();
-            ApplyFilters();
+            ApplyFilters(); // Aplica o filtro "vazio"
         }
 
         private void _filterTimer_Tick(object sender, EventArgs e)
@@ -1312,15 +1317,15 @@ namespace SistemaNotifica.src.Forms.Principal
             string f2 = IsPlaceholder(textBoxField2) ? "" : textBoxField2.Text;
             string f3 = IsPlaceholder(textBoxField3) ? "" : textBoxField3.Text;
 
-            Debug.WriteLine($"[FILTRO] Aplicando: F1='{f1}' | F2='{f2}' | F3='{f3}'");
+            Debug.WriteLine($"[FILTRO] Timer tick. Aplicando: F1='{f1}' | F2='{f2}' | F3='{f3}'");
             ApplyFilters();
         }
-        
+
 
         private void buttonLimparFiltros_Click(object sender, EventArgs e)
         {
             LimparFiltros();
-            ApplyFilters();
+            ApplyFilters(); // Aplica o filtro "vazio"
         }
 
         private void LimparFiltros()
@@ -1330,12 +1335,20 @@ namespace SistemaNotifica.src.Forms.Principal
                 string selected = comboBoxOptions.SelectedItem.ToString();
                 if ( _fieldConfigs.TryGetValue(selected, out var config) )
                 {
+                    // Redefine os campos para seus placeholders
                     SetPlaceholder(textBoxField1, config.Placeholder1);
                     if ( config.ShowField2 )
                         SetPlaceholder(textBoxField2, config.Placeholder2);
                     if ( config.ShowField3 )
                         SetPlaceholder(textBoxField3, config.Placeholder3);
                 }
+            }
+            else
+            {
+                // Fallback se nada estiver selecionado
+                SetPlaceholder(textBoxField1, "");
+                SetPlaceholder(textBoxField2, "");
+                SetPlaceholder(textBoxField3, "");
             }
         }
     }
