@@ -42,8 +42,9 @@ namespace SistemaNotifica.src.Forms.Principal
 
             InitializeFields();
             //LoadDataWithCache();
-            _ = LoadDataFromCache();
-            
+            //_ = LoadDataFromCache();
+            _ = InitializeAndLoadDataAsync();
+
         }
 
         private void FormData_Resize(object sender, EventArgs e)
@@ -211,6 +212,54 @@ namespace SistemaNotifica.src.Forms.Principal
 
 
         /// Carrega dados existentes do cache para o grid
+        private async Task InitializeAndLoadDataAsync()
+        {
+            if ( _isInitializing ) return;
+            _isInitializing = true;
+
+            ShowLoadingIndicator(true, "Carregando dados do cache...");
+
+            try
+            {
+                // 1. Fase: Carregamento Inicial do Cache (SEM subscrição)
+                List<JObject> cachedData = ProtestoDataCache.GetAllData();
+
+                if ( cachedData.Count > 0 )
+                {
+                    Debug.WriteLine($"FormData: Carregando {cachedData.Count} registros iniciais do cache com pausas.");
+
+                    // Adiciona todos os dados com responsividade
+                    await AddDataToGridInBatches(cachedData);
+
+                    UpdateStatusLabel($"{cachedData.Count} registros carregados do cache");
+                    _lastAddedRowCount = cachedData.Count;
+                }
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"FormData: Erro ao carregar dados iniciais do cache: {ex.Message}");
+            }
+
+            // 2. Fase: Subscrição (Após o carregamento inicial)
+            // Agora o cache pode continuar carregando e disparando eventos de forma segura.
+            ProtestoDataCache.OnDataUpdated += OnCacheDataUpdated;
+            ProtestoDataCache.OnLoadingStateChanged += OnCacheLoadingStateChanged;
+
+            // 3. Fase: Sincronização
+            bool isCacheStillLoading = ProtestoDataCache.IsLoading;
+
+            // Se o cache já estava carregando, sincroniza o indicador (seu método)
+            // Caso contrário, finaliza o indicador.
+            OnCacheLoadingStateChanged_Internal(isCacheStillLoading);
+
+            if ( !isCacheStillLoading )
+            {
+                int totalRecords = ProtestoDataCache.Count;
+                UpdateStatusLabel($"{totalRecords} registros carregados");
+            }
+
+            _isInitializing = false;
+        }
 
         private async Task LoadDataFromCache()
         {
@@ -246,41 +295,46 @@ namespace SistemaNotifica.src.Forms.Principal
 
 
         /// Evento chamado quando novos dados são adicionados ao cache
+        //private async void OnCacheDataUpdated(List<JObject> newData)
+        //{
+        //    if ( newData.Count == 0 ) return;
 
-        private async void OnCacheDataUpdated(List<JObject> newData)
+        //    try
+        //    {
+        //        if ( this.InvokeRequired )
+        //        {
+        //            this.Invoke(new Action(async () => await OnCacheDataUpdated_Internal(newData)));
+        //        }
+        //        else
+        //        {
+        //            await OnCacheDataUpdated_Internal(newData);
+        //        }
+        //    }
+        //    catch ( Exception ex )
+        //    {
+        //        Debug.WriteLine($"FormData: Erro em OnCacheDataUpdated: {ex.Message}");
+        //    }
+        //}
+
+        // EM FormData.cs - Seu Event Handler
+
+        private async void OnCacheDataUpdated(List<JObject> newItems)
         {
-            if ( newData.Count == 0 ) return;
-
-            try
+            if ( InvokeRequired )
             {
-                if ( this.InvokeRequired )
-                {
-                    this.Invoke(new Action(async () => await OnCacheDataUpdated_Internal(newData)));
-                }
-                else
-                {
-                    await OnCacheDataUpdated_Internal(newData);
-                }
+                Invoke(new Action<List<JObject>>(OnCacheDataUpdated), newItems);
+                return;
             }
-            catch ( Exception ex )
-            {
-                Debug.WriteLine($"FormData: Erro em OnCacheDataUpdated: {ex.Message}");
-            }
+
+            Debug.WriteLine($"FormData: Recebendo {newItems.Count} itens novos do cache.");
+
+            // Usa o método otimizado para adicionar os novos itens
+            await AddDataToGridInBatches(newItems);
+
+            // Atualiza o contador de linhas (se aplicável)
+            _lastAddedRowCount += newItems.Count;
         }
-
-        private async Task OnCacheDataUpdated_Internal(List<JObject> newData)
-        {
-            Debug.WriteLine($"FormData: Adicionando {newData.Count} novos registros ao grid");
-
-            // Remove a chamada recursiva de AddDataToGridInBatches
-            // Apenas adicione as linhas ao grid diretamente
-            AddDataBatch(newData);
-
-            int totalRecords = dataGridViewProtesto.Rows.Count;
-            UpdateStatusLabel($"{totalRecords} registros carregados");
-
-            Debug.WriteLine($"FormData: Grid agora tem {totalRecords} registros");
-        }
+        
 
         private void AddDataBatch(List<JObject> data)
         {
@@ -325,45 +379,79 @@ namespace SistemaNotifica.src.Forms.Principal
 
 
         /// Adiciona dados ao grid em lotes para não travar a UI
-        private async Task AddDataToGridInBatches(List<JObject> data, bool clearGrid = true)
+        //private async Task AddDataToGridInBatches(List<JObject> data, bool clearGrid = true)
+        //{
+        //    if ( data.Count == 0 ) return;
+
+        //    if ( clearGrid )
+        //    {
+        //        dataGridViewProtesto.Rows.Clear();
+        //        _lastAddedRowCount = 0;
+        //    }
+
+        //    int currentIndex = 0;
+
+        //    while ( currentIndex < data.Count )
+        //    {
+        //        int batchSize = Math.Min(UI_UPDATE_BATCH_SIZE, data.Count - currentIndex);
+        //        var batch = data.Skip(currentIndex).Take(batchSize).ToList();
+
+        //        dataGridViewProtesto.SuspendLayout();
+
+        //        foreach ( var item in batch )
+        //        {
+        //            AdicionarLinhaApiTabela(item);
+        //        }
+
+        //        dataGridViewProtesto.ResumeLayout();
+
+        //        currentIndex += batchSize;
+        //        _lastAddedRowCount += batchSize;
+
+        //        // Permite que a UI se atualize
+        //        await Task.Delay(UI_UPDATE_DELAY_MS);
+        //        Application.DoEvents();
+
+        //        // Atualiza o status periodicamente
+        //        if ( currentIndex % ( UI_UPDATE_BATCH_SIZE * 5 ) == 0 )
+        //        {
+        //            UpdateStatusLabel($"Carregando... {currentIndex}/{data.Count} registros");
+        //        }
+        //    }
+        //}
+        // EM FormData.cs - Novo/Modificado
+
+        /// <summary>
+        /// Adiciona uma lista de dados ao DataGridView em blocos assíncronos
+        /// para manter a UI responsiva.
+        /// </summary>
+        private async Task AddDataToGridInBatches(List<JObject> dataToAdd)
         {
-            if ( data.Count == 0 ) return;
+            if ( !IsHandleCreated ) return; // Previne erros se o Form ainda não estiver pronto
 
-            if ( clearGrid )
+            // Previne a repintura automática a cada linha
+            dataGridViewProtesto.SuspendLayout();
+
+            // Adiciona os dados em lotes
+            foreach ( JObject item in dataToAdd )
             {
-                dataGridViewProtesto.Rows.Clear();
-                _lastAddedRowCount = 0;
-            }
+                // Seu método para adicionar uma linha
+                AdicionarLinhaApiTabela(item);
 
-            int currentIndex = 0;
-
-            while ( currentIndex < data.Count )
-            {
-                int batchSize = Math.Min(UI_UPDATE_BATCH_SIZE, data.Count - currentIndex);
-                var batch = data.Skip(currentIndex).Take(batchSize).ToList();
-
-                dataGridViewProtesto.SuspendLayout();
-
-                foreach ( var item in batch )
+                // Se o número de linhas adicionadas for múltiplo do lote, dá uma pausa
+                if ( dataGridViewProtesto.RowCount % UI_UPDATE_BATCH_SIZE == 0 )
                 {
-                    AdicionarLinhaApiTabela(item);
-                }
-
-                dataGridViewProtesto.ResumeLayout();
-
-                currentIndex += batchSize;
-                _lastAddedRowCount += batchSize;
-
-                // Permite que a UI se atualize
-                await Task.Delay(UI_UPDATE_DELAY_MS);
-                Application.DoEvents();
-
-                // Atualiza o status periodicamente
-                if ( currentIndex % ( UI_UPDATE_BATCH_SIZE * 5 ) == 0 )
-                {
-                    UpdateStatusLabel($"Carregando... {currentIndex}/{data.Count} registros");
+                    // Retorna o controle para a UI Thread para processar eventos e redesenhar
+                    // Isso evita o travamento e as linhas vazias
+                    await Task.Delay(UI_UPDATE_DELAY_MS);
                 }
             }
+
+            // Retoma a repintura
+            dataGridViewProtesto.ResumeLayout();
+
+            // Força uma atualização final
+            dataGridViewProtesto.Refresh();
         }
 
         // Adiciona uma linha individual ao grid 
