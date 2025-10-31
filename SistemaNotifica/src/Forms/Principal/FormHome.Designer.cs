@@ -39,37 +39,38 @@
             flowLayoutPanel = new FlowLayoutPanel();
             btnImport = new Button();
             dataGridViewProtesto = new DataGridView();
-            tableLayoutPanelBotton = new TableLayoutPanel();
-            chartDist = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            panelArq = new Panel();
-            dataGridViewImports = new DataGridView();
-            panelHeader = new Panel();
-            ColumnArquivo = new DataGridViewTextBoxColumn();
-            ColumnDataImport = new DataGridViewTextBoxColumn();
-            ColumnUser = new DataGridViewTextBoxColumn();
-            ColumnStatusArquivo = new DataGridViewTextBoxColumn();
             ColumnDataDist = new DataGridViewTextBoxColumn();
             ColumnNumDist = new DataGridViewTextBoxColumn();
             ColumnDevedor = new DataGridViewTextBoxColumn();
             ColumnDocDev = new DataGridViewTextBoxColumn();
             ColumnEmail = new DataGridViewTextBoxColumn();
             ColumnStatus = new DataGridViewTextBoxColumn();
+            tableLayoutPanelBotton = new TableLayoutPanel();
+            chartDist = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            panelArq = new Panel();
+            dataGridViewImports = new DataGridView();
+            ColumnArquivo = new DataGridViewTextBoxColumn();
+            ColumnDataImport = new DataGridViewTextBoxColumn();
+            ColumnUser = new DataGridViewTextBoxColumn();
+            ColumnStatusArquivo = new DataGridViewTextBoxColumn();
+            panelHeader = new Panel();
+            btnRefresh = new Button();
             panelHome.SuspendLayout();
             mainTableLayoutPanel.SuspendLayout();
             tableLayoutPanelTop.SuspendLayout();
             panel3.SuspendLayout();
             flowLayoutPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).BeginInit();
+            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewProtesto ).BeginInit();
             tableLayoutPanelBotton.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)chartDist).BeginInit();
+            ( ( System.ComponentModel.ISupportInitialize ) chartDist ).BeginInit();
             panelArq.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewImports).BeginInit();
+            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewImports ).BeginInit();
             panelHeader.SuspendLayout();
             SuspendLayout();
             // 
             // labelHome
             // 
-            labelHome.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            labelHome.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
             labelHome.AutoSize = true;
             labelHome.Location = new Point(378, 7);
             labelHome.Name = "labelHome";
@@ -134,6 +135,7 @@
             // flowLayoutPanel
             // 
             flowLayoutPanel.BackColor = SystemColors.Control;
+            flowLayoutPanel.Controls.Add(btnRefresh);
             flowLayoutPanel.Controls.Add(btnImport);
             flowLayoutPanel.Dock = DockStyle.Right;
             flowLayoutPanel.Location = new Point(5, 0);
@@ -143,18 +145,18 @@
             // 
             // btnImport
             // 
-            btnImport.BackColor = Color.FromArgb(64, 64, 64);
+            btnImport.BackColor = Color.FromArgb(      64,       64,       64);
             btnImport.FlatAppearance.BorderSize = 0;
             btnImport.FlatStyle = FlatStyle.Flat;
-            btnImport.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnImport.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point,    0);
             btnImport.ForeColor = Color.White;
-            btnImport.Location = new Point(3, 3);
+            btnImport.Location = new Point(3, 49);
             btnImport.Name = "btnImport";
             btnImport.Size = new Size(200, 40);
             btnImport.TabIndex = 6;
             btnImport.Text = "IMPORTAR NOVO ARQUIVO";
             btnImport.UseVisualStyleBackColor = false;
-            btnImport.Click += btnImport_Click;
+            btnImport.Click +=  btnImport_Click ;
             // 
             // dataGridViewProtesto
             // 
@@ -170,6 +172,46 @@
             dataGridViewProtesto.ReadOnly = true;
             dataGridViewProtesto.Size = new Size(561, 192);
             dataGridViewProtesto.TabIndex = 2;
+            // 
+            // ColumnDataDist
+            // 
+            ColumnDataDist.FillWeight = 60F;
+            ColumnDataDist.HeaderText = "Data Distribuição";
+            ColumnDataDist.Name = "ColumnDataDist";
+            ColumnDataDist.ReadOnly = true;
+            // 
+            // ColumnNumDist
+            // 
+            ColumnNumDist.FillWeight = 55F;
+            ColumnNumDist.HeaderText = "Distribuição";
+            ColumnNumDist.Name = "ColumnNumDist";
+            ColumnNumDist.ReadOnly = true;
+            // 
+            // ColumnDevedor
+            // 
+            ColumnDevedor.FillWeight = 135F;
+            ColumnDevedor.HeaderText = "Devedor";
+            ColumnDevedor.Name = "ColumnDevedor";
+            ColumnDevedor.ReadOnly = true;
+            // 
+            // ColumnDocDev
+            // 
+            ColumnDocDev.HeaderText = "Doc. Devedor";
+            ColumnDocDev.Name = "ColumnDocDev";
+            ColumnDocDev.ReadOnly = true;
+            // 
+            // ColumnEmail
+            // 
+            ColumnEmail.HeaderText = "Email";
+            ColumnEmail.Name = "ColumnEmail";
+            ColumnEmail.ReadOnly = true;
+            // 
+            // ColumnStatus
+            // 
+            ColumnStatus.FillWeight = 45F;
+            ColumnStatus.HeaderText = "Status da Notificação";
+            ColumnStatus.Name = "ColumnStatus";
+            ColumnStatus.ReadOnly = true;
             // 
             // tableLayoutPanelBotton
             // 
@@ -233,15 +275,6 @@
             dataGridViewImports.Size = new Size(381, 188);
             dataGridViewImports.TabIndex = 0;
             // 
-            // panelHeader
-            // 
-            panelHeader.Controls.Add(labelHome);
-            panelHeader.Dock = DockStyle.Top;
-            panelHeader.Location = new Point(0, 0);
-            panelHeader.Name = "panelHeader";
-            panelHeader.Size = new Size(800, 25);
-            panelHeader.TabIndex = 1;
-            // 
             // ColumnArquivo
             // 
             ColumnArquivo.HeaderText = "Arquivo";
@@ -267,45 +300,28 @@
             ColumnStatusArquivo.Name = "ColumnStatusArquivo";
             ColumnStatusArquivo.ReadOnly = true;
             // 
-            // ColumnDataDist
+            // panelHeader
             // 
-            ColumnDataDist.FillWeight = 60F;
-            ColumnDataDist.HeaderText = "Data Distribuição";
-            ColumnDataDist.Name = "ColumnDataDist";
-            ColumnDataDist.ReadOnly = true;
+            panelHeader.Controls.Add(labelHome);
+            panelHeader.Dock = DockStyle.Top;
+            panelHeader.Location = new Point(0, 0);
+            panelHeader.Name = "panelHeader";
+            panelHeader.Size = new Size(800, 25);
+            panelHeader.TabIndex = 1;
             // 
-            // ColumnNumDist
+            // btnRefresh
             // 
-            ColumnNumDist.FillWeight = 55F;
-            ColumnNumDist.HeaderText = "Distribuição";
-            ColumnNumDist.Name = "ColumnNumDist";
-            ColumnNumDist.ReadOnly = true;
-            // 
-            // ColumnDevedor
-            // 
-            ColumnDevedor.FillWeight = 135F;
-            ColumnDevedor.HeaderText = "Devedor";
-            ColumnDevedor.Name = "ColumnDevedor";
-            ColumnDevedor.ReadOnly = true;
-            // 
-            // ColumnDocDev
-            // 
-            ColumnDocDev.HeaderText = "Doc. Devedor";
-            ColumnDocDev.Name = "ColumnDocDev";
-            ColumnDocDev.ReadOnly = true;
-            // 
-            // ColumnEmail
-            // 
-            ColumnEmail.HeaderText = "Email";
-            ColumnEmail.Name = "ColumnEmail";
-            ColumnEmail.ReadOnly = true;
-            // 
-            // ColumnStatus
-            // 
-            ColumnStatus.FillWeight = 45F;
-            ColumnStatus.HeaderText = "Status da Notificação";
-            ColumnStatus.Name = "ColumnStatus";
-            ColumnStatus.ReadOnly = true;
+            btnRefresh.BackColor = Color.FromArgb(      64,       64,       64);
+            btnRefresh.FlatAppearance.BorderSize = 0;
+            btnRefresh.FlatStyle = FlatStyle.Flat;
+            btnRefresh.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point,    0);
+            btnRefresh.ForeColor = Color.White;
+            btnRefresh.Location = new Point(3, 3);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(200, 40);
+            btnRefresh.TabIndex = 7;
+            btnRefresh.Text = "ATUALIZAR";
+            btnRefresh.UseVisualStyleBackColor = false;
             // 
             // FormHome
             // 
@@ -322,11 +338,11 @@
             tableLayoutPanelTop.ResumeLayout(false);
             panel3.ResumeLayout(false);
             flowLayoutPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).EndInit();
+            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewProtesto ).EndInit();
             tableLayoutPanelBotton.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)chartDist).EndInit();
+            ( ( System.ComponentModel.ISupportInitialize ) chartDist ).EndInit();
             panelArq.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridViewImports).EndInit();
+            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewImports ).EndInit();
             panelHeader.ResumeLayout(false);
             panelHeader.PerformLayout();
             ResumeLayout(false);
@@ -357,5 +373,6 @@
         private DataGridViewTextBoxColumn ColumnDataImport;
         private DataGridViewTextBoxColumn ColumnUser;
         private DataGridViewTextBoxColumn ColumnStatusArquivo;
+        private Button btnRefresh;
     }
 }

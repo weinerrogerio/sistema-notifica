@@ -556,7 +556,6 @@ namespace SistemaNotifica.src.Forms.Principal
         public async Task ForceRefreshCache()
         {
             Debug.WriteLine("FormData: Forçando atualização completa do cache");
-
             ProtestoDataCache.Clear();
             await LoadDataWithCache();
         }
@@ -992,9 +991,9 @@ namespace SistemaNotifica.src.Forms.Principal
         // botão para refazer buscas --> descarta dados em cache e refaz a busca
         private async void buttonRefresh_Click(object sender, EventArgs e)
         {
-            DialogResult question = MessageBox.Show("Refazer busca?",
-                "Tem certeza que deseja refazer a busca no banco de dados? \n" +
-                "Isso limpará os dados atuais e buscará tudo novamente, o que pode levar algum tempo.",
+            DialogResult question = MessageBox.Show("Tem certeza que deseja refazer a busca no banco de dados? \n" +
+                "Isso limpará os dados atuais e buscará tudo novamente, o que pode levar algum tempo.",                
+                "Refazer busca?",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if ( question == DialogResult.Yes )

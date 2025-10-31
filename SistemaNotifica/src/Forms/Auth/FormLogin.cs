@@ -55,8 +55,6 @@ namespace SistemaNotifica
             // MELHORAR ISSO ADICIONAR BORDAS VERMELHAS AOS CAMPOS E MENSAGENS DE ERRO
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                //MessageBox.Show("Por favor, preencha todos os campos.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                // Aqui você pode exibir a mensagem no seu label de erro ou borda do campo
                 lblErrorMessage.Text = "Por favor, preencha todos os campos.";
                 lblErrorMessage.Visible = true;
                 return;
@@ -81,6 +79,7 @@ namespace SistemaNotifica
 
                 if (response != null && !string.IsNullOrEmpty(response.AccessToken)) // Ou response.IsSuccess == true 
                 {
+                    // Inicia cache de dados --> distribuição
                     CacheInitializer.StartBackgroundCacheInitialization();
                     await Task.Delay(100);
 
