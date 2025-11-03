@@ -24,6 +24,7 @@ namespace SistemaNotifica.src.Forms.Principal
         private List<Notificacao> dados = [];
         private NotificationService _notificationService;
         private DevedorService _devedorService;
+        private TemplateService _templateService;
         private string currentSessionId = null;
 
         // Variáveis para manter a referência da conexão SSE
@@ -39,6 +40,7 @@ namespace SistemaNotifica.src.Forms.Principal
             ConfigCheckBoxes();
             _common = new Common();
             _notificationService = Program.NotificationService;
+            _templateService = Program.TemplateService;
             _devedorService = Program.DevedorService;
 
             _devedorService.OnLogReceived += HandleLogReceived;
@@ -439,10 +441,18 @@ namespace SistemaNotifica.src.Forms.Principal
             SelecionarTodas();
         }
 
-
-
-        private void btnSendSelected_Click(object sender, EventArgs e)
+        private async void btnSendSelected_Click(object sender, EventArgs e)
         {
+            var template = await _templateService.GetDefaultTemplateAsync();
+            if (template == null)
+            {
+                MessageBox.Show("Não foi possível carregar o template padrão. Verifique se existe um template configurado.",
+                              "Template não encontrado",
+                              MessageBoxButtons.OK,
+                              MessageBoxIcon.Warning);
+                return;
+            }
+
             try
             {
                 // 1. Validar se há registros selecionados
@@ -904,10 +914,5 @@ namespace SistemaNotifica.src.Forms.Principal
                 AddLogToRichTextBox("error", $"Erro ao iniciar busca: {ex.Message}", DateTime.Now);
             }
         }
-
-
-
-
-
     }
 }

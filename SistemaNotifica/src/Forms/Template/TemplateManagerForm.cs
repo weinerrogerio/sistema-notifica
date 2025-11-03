@@ -17,8 +17,8 @@ using SistemaNotifica.src.Forms.Template.Controls;
 namespace SistemaNotifica.src.Forms.Template
 {
     public partial class TemplateManagerForm : Form
-    {
-        private ApiService _apiService;
+    {        
+        private TemplateService _templateService;
         private List<EmailTemplate> _templates;
         private FlowLayoutPanel _flowLayoutTemplates;
         private EmailTemplate _selectedTemplate;
@@ -37,7 +37,7 @@ namespace SistemaNotifica.src.Forms.Template
         {
             InitializeComponent();
             //_apiService = new ApiService("http://localhost:3000/");
-            _apiService = Program.ApiService;
+            _templateService = Program.TemplateService;
             _templates = new List<EmailTemplate>();
             _templateCards = new List<TemplateCard>();
             SetupTemplatePanel();
@@ -74,7 +74,7 @@ namespace SistemaNotifica.src.Forms.Template
                 SetStatus("Carregando templates...");
 
                 // Busca todos os templates
-                _templates = await _apiService.GetTemplatesAsync();
+                _templates = await _templateService.GetTemplatesAsync();
                 Debug.WriteLine($"Templates carregados:::::::::: {_templates.Count}");
 
                 // Limpa cards existentes
@@ -151,7 +151,7 @@ namespace SistemaNotifica.src.Forms.Template
             try
             {
                 SetStatus("Definindo template padrão...");
-                await _apiService.SetTemplatePadraoAsync(template.Id);
+                await _templateService.SetTemplatePadraoAsync(template.Id);
 
                 // Atualiza os dados locais
                 foreach (var t in _templates)
@@ -225,7 +225,7 @@ namespace SistemaNotifica.src.Forms.Template
                 if (string.IsNullOrEmpty(conteudoHtml))
                 {
                     Debug.WriteLine("Conteúdo HTML vazio, buscando template completo...");
-                    var templateCompleto = await _apiService.GetTemplateAsync(template.Id);
+                    var templateCompleto = await _templateService.GetTemplateAsync(template.Id);
                     conteudoHtml = templateCompleto.ConteudoHtml;
                 }
 
@@ -238,7 +238,7 @@ namespace SistemaNotifica.src.Forms.Template
 
                 // Processa o template localmente com dados de teste
                 var dadosTeste = GetDadosTeste();
-                var htmlProcessado = _apiService.ProcessarTemplate(conteudoHtml, dadosTeste);
+                var htmlProcessado = _templateService.ProcessarTemplate(conteudoHtml, dadosTeste);
 
                 Debug.WriteLine($"HTML processado: {htmlProcessado.Length} caracteres");
 
@@ -314,7 +314,7 @@ namespace SistemaNotifica.src.Forms.Template
                 try
                 {
                     SetStatus("Excluindo template...");
-                    await _apiService.DeleteTemplateAsync(_selectedTemplate.Id);
+                    await _templateService.DeleteTemplateAsync(_selectedTemplate.Id);
                     await CarregarTemplates();
                     SetStatus("Template excluído");
                 }
@@ -333,7 +333,7 @@ namespace SistemaNotifica.src.Forms.Template
             try
             {
                 SetStatus("Definindo template padrão...");
-                await _apiService.SetTemplatePadraoAsync(_selectedTemplate.Id);
+                await _templateService.SetTemplatePadraoAsync(_selectedTemplate.Id);
                 await CarregarTemplates();
                 MessageBox.Show($"Template '{_selectedTemplate.NomeArquivo}' definido como padrão!", "Sucesso",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -455,7 +455,7 @@ namespace SistemaNotifica.src.Forms.Template
 
                             try
                             {
-                                var template = await _apiService.UploadTemplateAsync(fileBytes, nomeArquivo);
+                                var template = await _templateService.UploadTemplateAsync(fileBytes, nomeArquivo);
 
                                 MessageBox.Show(
                                     $"Template '{template.NomeArquivo}' enviado com sucesso!",
@@ -632,7 +632,7 @@ namespace SistemaNotifica.src.Forms.Template
                     SetStatus("Carregando template completo do servidor...");
                     try
                     {
-                        templateCompleto = await _apiService.GetTemplateAsync(_selectedTemplate.Id);
+                        templateCompleto = await _templateService.GetTemplateAsync(_selectedTemplate.Id);
                         Debug.WriteLine($"Template carregado do servidor - ID: {templateCompleto?.Id}, ConteudoHtml: {templateCompleto?.ConteudoHtml?.Length ?? 0} chars");
                     }
                     catch (Exception ex)
@@ -900,7 +900,7 @@ namespace SistemaNotifica.src.Forms.Template
         {
             if (NeedsFullTemplateData(template))
             {
-                return await _apiService.GetTemplateAsync(template.Id);
+                return await _templateService.GetTemplateAsync(template.Id);
             }
             return template;
         }

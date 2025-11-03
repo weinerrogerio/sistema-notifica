@@ -21,6 +21,7 @@ namespace SistemaNotifica
         public static NotificationService NotificationService { get; private set; }
         public static DevedorService DevedorService { get; private set; }
         public static UserService UserService { get; private set; }
+        public static TemplateService TemplateService { get; private set; }
 
         /// <summary>
         ///  The main entry point for the application.
@@ -39,6 +40,7 @@ namespace SistemaNotifica
             NotificationService = new NotificationService(ApiService);
             DevedorService = new DevedorService(ApiService); 
             UserService = new UserService(ApiService);
+            TemplateService = new TemplateService(ApiService);
 
 
             ConfigureCacheHandlers();

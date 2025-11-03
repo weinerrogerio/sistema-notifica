@@ -37,6 +37,7 @@
             tableLayoutPanelTop = new TableLayoutPanel();
             panel3 = new Panel();
             flowLayoutPanel = new FlowLayoutPanel();
+            btnRefresh = new Button();
             btnImport = new Button();
             dataGridViewProtesto = new DataGridView();
             ColumnDataDist = new DataGridViewTextBoxColumn();
@@ -54,23 +55,23 @@
             ColumnUser = new DataGridViewTextBoxColumn();
             ColumnStatusArquivo = new DataGridViewTextBoxColumn();
             panelHeader = new Panel();
-            btnRefresh = new Button();
+            btnNotification = new Button();
             panelHome.SuspendLayout();
             mainTableLayoutPanel.SuspendLayout();
             tableLayoutPanelTop.SuspendLayout();
             panel3.SuspendLayout();
             flowLayoutPanel.SuspendLayout();
-            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewProtesto ).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).BeginInit();
             tableLayoutPanelBotton.SuspendLayout();
-            ( ( System.ComponentModel.ISupportInitialize ) chartDist ).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)chartDist).BeginInit();
             panelArq.SuspendLayout();
-            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewImports ).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewImports).BeginInit();
             panelHeader.SuspendLayout();
             SuspendLayout();
             // 
             // labelHome
             // 
-            labelHome.Anchor =       AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            labelHome.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             labelHome.AutoSize = true;
             labelHome.Location = new Point(378, 7);
             labelHome.Name = "labelHome";
@@ -137,18 +138,33 @@
             flowLayoutPanel.BackColor = SystemColors.Control;
             flowLayoutPanel.Controls.Add(btnRefresh);
             flowLayoutPanel.Controls.Add(btnImport);
+            flowLayoutPanel.Controls.Add(btnNotification);
             flowLayoutPanel.Dock = DockStyle.Right;
             flowLayoutPanel.Location = new Point(5, 0);
             flowLayoutPanel.Name = "flowLayoutPanel";
             flowLayoutPanel.Size = new Size(200, 192);
             flowLayoutPanel.TabIndex = 7;
             // 
+            // btnRefresh
+            // 
+            btnRefresh.BackColor = Color.FromArgb(64, 64, 64);
+            btnRefresh.FlatAppearance.BorderSize = 0;
+            btnRefresh.FlatStyle = FlatStyle.Flat;
+            btnRefresh.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnRefresh.ForeColor = Color.White;
+            btnRefresh.Location = new Point(3, 3);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(200, 40);
+            btnRefresh.TabIndex = 7;
+            btnRefresh.Text = "ATUALIZAR";
+            btnRefresh.UseVisualStyleBackColor = false;
+            // 
             // btnImport
             // 
-            btnImport.BackColor = Color.FromArgb(      64,       64,       64);
+            btnImport.BackColor = Color.FromArgb(64, 64, 64);
             btnImport.FlatAppearance.BorderSize = 0;
             btnImport.FlatStyle = FlatStyle.Flat;
-            btnImport.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point,    0);
+            btnImport.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnImport.ForeColor = Color.White;
             btnImport.Location = new Point(3, 49);
             btnImport.Name = "btnImport";
@@ -156,7 +172,7 @@
             btnImport.TabIndex = 6;
             btnImport.Text = "IMPORTAR NOVO ARQUIVO";
             btnImport.UseVisualStyleBackColor = false;
-            btnImport.Click +=  btnImport_Click ;
+            btnImport.Click += btnImport_Click;
             // 
             // dataGridViewProtesto
             // 
@@ -309,19 +325,20 @@
             panelHeader.Size = new Size(800, 25);
             panelHeader.TabIndex = 1;
             // 
-            // btnRefresh
+            // btnNotification
             // 
-            btnRefresh.BackColor = Color.FromArgb(      64,       64,       64);
-            btnRefresh.FlatAppearance.BorderSize = 0;
-            btnRefresh.FlatStyle = FlatStyle.Flat;
-            btnRefresh.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point,    0);
-            btnRefresh.ForeColor = Color.White;
-            btnRefresh.Location = new Point(3, 3);
-            btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(200, 40);
-            btnRefresh.TabIndex = 7;
-            btnRefresh.Text = "ATUALIZAR";
-            btnRefresh.UseVisualStyleBackColor = false;
+            btnNotification.BackColor = Color.FromArgb(64, 64, 64);
+            btnNotification.FlatAppearance.BorderSize = 0;
+            btnNotification.FlatStyle = FlatStyle.Flat;
+            btnNotification.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnNotification.ForeColor = Color.White;
+            btnNotification.Location = new Point(3, 95);
+            btnNotification.Name = "btnNotification";
+            btnNotification.Size = new Size(200, 40);
+            btnNotification.TabIndex = 8;
+            btnNotification.Text = "NOTIFICAÇÕES";
+            btnNotification.UseVisualStyleBackColor = false;
+            btnNotification.Click += btnNotification_Click;
             // 
             // FormHome
             // 
@@ -338,11 +355,11 @@
             tableLayoutPanelTop.ResumeLayout(false);
             panel3.ResumeLayout(false);
             flowLayoutPanel.ResumeLayout(false);
-            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewProtesto ).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewProtesto).EndInit();
             tableLayoutPanelBotton.ResumeLayout(false);
-            ( ( System.ComponentModel.ISupportInitialize ) chartDist ).EndInit();
+            ((System.ComponentModel.ISupportInitialize)chartDist).EndInit();
             panelArq.ResumeLayout(false);
-            ( ( System.ComponentModel.ISupportInitialize ) dataGridViewImports ).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewImports).EndInit();
             panelHeader.ResumeLayout(false);
             panelHeader.PerformLayout();
             ResumeLayout(false);
@@ -374,5 +391,6 @@
         private DataGridViewTextBoxColumn ColumnUser;
         private DataGridViewTextBoxColumn ColumnStatusArquivo;
         private Button btnRefresh;
+        private Button btnNotification;
     }
 }

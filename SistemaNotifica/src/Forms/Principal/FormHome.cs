@@ -22,6 +22,7 @@ namespace SistemaNotifica.src.Forms
         private readonly ImportService _importService;
 
         public event Action OnNavigateToImport;
+        public event Action OnNavigateToNotification;
 
         public FormHome()
         {
@@ -33,7 +34,7 @@ namespace SistemaNotifica.src.Forms
             LoadDataImport(); // carrega dados de importação -> arquivos impoartados
             CarregarGrafico(); // carrega dados de registros por dia(15 dias ou menos) para gráfico
         }
-        private void ConfigDataGridView() 
+        private void ConfigDataGridView()
         {
             dataGridViewProtesto.Rows.Clear();
             dataGridViewProtesto.RowHeadersVisible = false;
@@ -263,7 +264,7 @@ namespace SistemaNotifica.src.Forms
                 row.Cells["ColumnArquivo"].Value = data.nome_arquivo;
                 row.Cells["ColumnDataImport"].Value = data.data_importacao;
                 row.Cells["ColumnUser"].Value = data.usuario?.Nome ?? "N/A"; // Proteção contra null
-                row.Cells["ColumnStatusArquivo"].Value = data.status;             
+                row.Cells["ColumnStatusArquivo"].Value = data.status;
                 // Armazenar o status na Tag da linha para usar na coloração
                 row.Tag = status;
 
@@ -537,6 +538,11 @@ namespace SistemaNotifica.src.Forms
         private void btnImport_Click(object sender, EventArgs e)
         {
             OnNavigateToImport?.Invoke();
+        }
+
+        private void btnNotification_Click(object sender, EventArgs e)
+        {
+            OnNavigateToNotification?.Invoke();
         }
     }
 }

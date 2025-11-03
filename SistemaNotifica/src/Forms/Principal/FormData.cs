@@ -21,7 +21,7 @@ namespace SistemaNotifica.src.Forms.Principal
         private readonly ProtestoService _protestoService;
         private CancellationTokenSource _cancellationTokenSource;
         private bool _isInitializing = false;
-        private int _lastAddedRowCount = 0;
+        private int _lastAddedRowCount;
 
         // Configurações de cache
         private const int CACHE_PAGE_SIZE = 50;
@@ -44,6 +44,7 @@ namespace SistemaNotifica.src.Forms.Principal
             //LoadDataWithCache();
             //_ = LoadDataFromCache();
             _ = InitializeAndLoadDataAsync();
+            buttonLimparFiltros_Click(null,null);
 
         }
 
@@ -378,53 +379,10 @@ namespace SistemaNotifica.src.Forms.Principal
         }
 
 
-        /// Adiciona dados ao grid em lotes para não travar a UI
-        //private async Task AddDataToGridInBatches(List<JObject> data, bool clearGrid = true)
-        //{
-        //    if ( data.Count == 0 ) return;
+        
 
-        //    if ( clearGrid )
-        //    {
-        //        dataGridViewProtesto.Rows.Clear();
-        //        _lastAddedRowCount = 0;
-        //    }
-
-        //    int currentIndex = 0;
-
-        //    while ( currentIndex < data.Count )
-        //    {
-        //        int batchSize = Math.Min(UI_UPDATE_BATCH_SIZE, data.Count - currentIndex);
-        //        var batch = data.Skip(currentIndex).Take(batchSize).ToList();
-
-        //        dataGridViewProtesto.SuspendLayout();
-
-        //        foreach ( var item in batch )
-        //        {
-        //            AdicionarLinhaApiTabela(item);
-        //        }
-
-        //        dataGridViewProtesto.ResumeLayout();
-
-        //        currentIndex += batchSize;
-        //        _lastAddedRowCount += batchSize;
-
-        //        // Permite que a UI se atualize
-        //        await Task.Delay(UI_UPDATE_DELAY_MS);
-        //        Application.DoEvents();
-
-        //        // Atualiza o status periodicamente
-        //        if ( currentIndex % ( UI_UPDATE_BATCH_SIZE * 5 ) == 0 )
-        //        {
-        //            UpdateStatusLabel($"Carregando... {currentIndex}/{data.Count} registros");
-        //        }
-        //    }
-        //}
-        // EM FormData.cs - Novo/Modificado
-
-        /// <summary>
-        /// Adiciona uma lista de dados ao DataGridView em blocos assíncronos
-        /// para manter a UI responsiva.
-        /// </summary>
+        
+        // Adiciona uma lista de dados ao DataGridView em blocos assíncronos        
         private async Task AddDataToGridInBatches(List<JObject> dataToAdd)
         {
             if ( !IsHandleCreated ) return; // Previne erros se o Form ainda não estiver pronto

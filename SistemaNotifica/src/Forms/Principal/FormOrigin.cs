@@ -362,6 +362,7 @@ namespace SistemaNotifica
 
             // INSCREVA-SE NO EVENTO AQUI
             formHome.OnNavigateToImport += HandleNavigateToImport;
+            formHome.OnNavigateToNotification += HandleNavigateToNotification;
 
             objForm = formHome; // Atribua à variável global
             TelaAtual = "FormHome";
@@ -401,6 +402,11 @@ namespace SistemaNotifica
                 AddClickHandlerToControls(pnlMain);
             }
             return;
+        }
+
+        private void HandleNavigateToNotification()
+        {
+            btnEnviarNotificacao_Click(null, null);
         }
 
         private void btnEnviarNotificacao_Click(object sender, EventArgs e)
