@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Newtonsoft.Json.Linq;
 
 namespace SistemaNotifica.src.Forms.Principal
@@ -38,6 +38,7 @@ namespace SistemaNotifica.src.Forms.Principal
             ConfigMaskedTextBox();
             ConfigDateTimePickers();
             ConfigCheckBoxes();
+            ConfigTextBoxes();
             _common = new Common();
             _notificationService = Program.NotificationService;
             _templateService = Program.TemplateService;
@@ -164,6 +165,63 @@ namespace SistemaNotifica.src.Forms.Principal
             chkBoxSended.CheckedChanged += chkBoxSended_CheckedChanged;
         }
 
+
+        private void ConfigTextBoxes()
+        {
+            // --- Configurar Placeholders ---
+            textBoxDevedor.Tag = "Filtrar por Devedor...";
+            textBoxDoc.Tag = "Filtrar por Documento...";
+            textBoxEmail.Tag = "Filtrar por Email...";
+
+            SetPlaceholder(textBoxDevedor);
+            SetPlaceholder(textBoxDoc);
+            SetPlaceholder(textBoxEmail);
+
+            // Eventos de Enter/Leave para placeholders
+            textBoxDevedor.Enter += TextBox_Enter;
+            textBoxDevedor.Leave += TextBox_Leave;
+            textBoxDoc.Enter += TextBox_Enter;
+            textBoxDoc.Leave += TextBox_Leave;
+            textBoxEmail.Enter += TextBox_Enter;
+            textBoxEmail.Leave += TextBox_Leave;
+
+            // --- Configurar Evento de Filtro ---
+            // Chama ApplyFilters sempre que o texto mudar
+            textBoxDevedor.TextChanged += TextBoxFilter_TextChanged;
+            textBoxDoc.TextChanged += TextBoxFilter_TextChanged;
+            textBoxEmail.TextChanged += TextBoxFilter_TextChanged;
+        }
+
+        // --- MÉTODOS AUXILIARES PARA PLACEHOLDER E FILTRO ---
+
+        private void SetPlaceholder(TextBox textBox)
+        {
+            if ( string.IsNullOrWhiteSpace(textBox.Text) && textBox.Tag != null )
+            {
+                textBox.Text = textBox.Tag.ToString();
+                textBox.ForeColor = Color.Gray;
+            }
+        }
+
+        private void RemovePlaceholder(TextBox textBox)
+        {
+            if ( textBox.Tag != null && textBox.Text == textBox.Tag.ToString() )
+            {
+                textBox.Text = "";
+                textBox.ForeColor = SystemColors.WindowText; // Cor padrão do texto
+            }
+        }
+
+        private string GetFilterText(TextBox textBox)
+        {
+            // Se o texto for o placeholder, retorna string vazia (sem filtro)
+            if ( textBox.Tag != null && textBox.Text == textBox.Tag.ToString() )
+            {
+                return "";
+            }
+            return textBox.Text.Trim();
+        }
+
         // Eventos para sincronizar MaskedTextBox com DateTimePicker
         private void MaskedTextBoxInitialDate_Leave(object sender, EventArgs e)
         {
@@ -173,6 +231,25 @@ namespace SistemaNotifica.src.Forms.Principal
                 maskedTextBoxInitialDate.Text = date.ToString("dd/MM/yyyy");
                 ApplyFilters();
             }
+        }
+
+        // --- EVENT HANDLERS PARA TEXTBOXES ---
+        private void TextBox_Enter(object sender, EventArgs e)
+        {
+            // Remove o placeholder ao entrar no campo
+            RemovePlaceholder(sender as TextBox);
+        }
+
+        private void TextBox_Leave(object sender, EventArgs e)
+        {
+            // Restaura o placeholder se o campo estiver vazio
+            SetPlaceholder(sender as TextBox);
+        }
+
+        private void TextBoxFilter_TextChanged(object sender, EventArgs e)
+        {
+            // Aplica os filtros sempre que o texto for alterado
+            ApplyFilters();
         }
 
         private void MaskedTextBoxFinalDate_Leave(object sender, EventArgs e)
@@ -199,8 +276,9 @@ namespace SistemaNotifica.src.Forms.Principal
 
         // Eventos dos CheckBoxes
         private void chkBoxNotSended_CheckedChanged(object sender, EventArgs e)
-        {
+        {   
             ApplyFilters();
+
         }
 
         private void chkBoxSended_CheckedChanged(object sender, EventArgs e)
@@ -305,7 +383,6 @@ namespace SistemaNotifica.src.Forms.Principal
                     Debug.WriteLine($"AdicionarLinhaApiTabela - Sucesso: {item}");
                     AdicionarLinhaApiTabela(item);
                 }
-
                 // Atualizar status na interface (opcional)
                 // lblTotalRegistros.Text = $"Total: {dadosFiltrados.Count} registros";
             }
@@ -327,33 +404,61 @@ namespace SistemaNotifica.src.Forms.Principal
             var resultado = dados.AsEnumerable();
 
             Debug.WriteLine($"FilterData resultado - {resultado.Count()} registros encontrados {resultado}");
-            
+
             bool mostrarNaoEnviados = chkBoxNotSended.Checked;
             bool mostrarEnviados = chkBoxSended.Checked;
 
-            // Se ambos os checkboxes estiverem desmarcados, retornar uma lista vazia
+            // --- 1. Filtro de CheckBox (Status) ---
+            // (Lógica existente - sem alteração)
             if ( !mostrarNaoEnviados && !mostrarEnviados )
             {
                 return new List<Notificacao>();
             }
-            // Se ambos estiverem marcados, não aplicar filtro por status (mostrar todos)
             else if ( mostrarNaoEnviados && mostrarEnviados )
             {
                 // Não faz nada, resultado já contém todos os dados.
-                // O filtro de data será aplicado em seguida.
             }
-            // Se apenas 'Não Enviados' estiver marcado
             else if ( mostrarNaoEnviados )
             {
                 resultado = resultado.Where(n => !n.emailEnviado);
             }
-            // Se apenas 'Enviados' estiver marcado
             else if ( mostrarEnviados )
             {
                 resultado = resultado.Where(n => n.emailEnviado);
             }
 
-            // Filtro por data de criação (createdAt)
+            // --- 2. Filtros de Texto (Novos) ---
+            // Estes filtros são aplicados APÓS o filtro de status
+            string filtroDevedor = GetFilterText(textBoxDevedor);
+            // Remove formatação (pontos, barras, traços) do filtro de documento
+            // para comparar com o dado bruto (ex: 14827831000100)
+            string filtroDoc = GetFilterText(textBoxDoc).Replace(".", "").Replace("/", "").Replace("-", "");
+            string filtroEmail = GetFilterText(textBoxEmail);
+
+            if ( !string.IsNullOrEmpty(filtroDevedor) )
+            {
+                resultado = resultado.Where(n =>
+                    n.nomeDevedor != null &&
+                    n.nomeDevedor.IndexOf(filtroDevedor, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            if ( !string.IsNullOrEmpty(filtroDoc) )
+            {
+                // Assumindo que 'n.docDevedor' armazena o número sem formatação
+                resultado = resultado.Where(n =>
+                    n.docDevedor != null &&
+                    n.docDevedor.IndexOf(filtroDoc, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            if ( !string.IsNullOrEmpty(filtroEmail) )
+            {
+                resultado = resultado.Where(n =>
+                    n.devedorEmail != null &&
+                    n.devedorEmail.IndexOf(filtroEmail, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            // --- 3. Filtro por data de criação (createdAt) ---
+            // (Lógica existente - sem alteração)
             DateTime? dataInicial = null;
             DateTime? dataFinal = null;
 
@@ -382,7 +487,7 @@ namespace SistemaNotifica.src.Forms.Principal
                     return dentroIntervalo;
                 });
             }
-            //Por que não funciona?
+
             Debug.WriteLine($"FilterData resultado.tolist - {resultado.Count()} registros encontrados {resultado}");
             return resultado.ToList();
         }
@@ -701,6 +806,9 @@ namespace SistemaNotifica.src.Forms.Principal
             btnSearchEmails.Enabled = !disable;
             btnSendAll.Enabled = !disable;
             btnSendSelected.Enabled = !disable;
+            textBoxDevedor.Enabled = !disable;
+            textBoxDoc.Enabled = !disable;
+            textBoxEmail.Enabled = !disable;
         }
 
 

@@ -71,9 +71,8 @@ namespace SistemaNotifica.src.Services
             }
         }
 
-        /// <summary>
-        /// Obtém o template marcado como padrão
-        /// </summary>
+        
+        // Obtém o template marcado como padrão, se não tiver pdrão configurado, retornar null
         public async Task<EmailTemplate?> GetDefaultTemplateAsync()
         {
             try
@@ -92,10 +91,8 @@ namespace SistemaNotifica.src.Services
                 throw new Exception($"Erro ao buscar template padrão: {ex.Message}");
             }
         }
-
-        /// <summary>
+                
         /// Faz upload de um novo template HTML
-        /// </summary>
         public async Task<EmailTemplate> UploadTemplateAsync(byte[] fileBytes, string nomeArquivo, string descricao = null)
         {
             try
