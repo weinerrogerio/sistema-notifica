@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SistemaNotifica.src.Models;
 using System;
 using System.Collections.Generic;
@@ -91,7 +92,7 @@ namespace SistemaNotifica.src.Services
                 throw new Exception($"Erro ao buscar template padrão: {ex.Message}");
             }
         }
-                
+
         /// Faz upload de um novo template HTML
         public async Task<EmailTemplate> UploadTemplateAsync(byte[] fileBytes, string nomeArquivo, string descricao = null)
         {
@@ -99,14 +100,14 @@ namespace SistemaNotifica.src.Services
             {
                 Debug.WriteLine($"Fazendo upload: {nomeArquivo}");
 
-                using (var form = new MultipartFormDataContent())
+                using ( var form = new MultipartFormDataContent() )
                 {
                     var fileContent = new ByteArrayContent(fileBytes);
                     fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("text/html");
 
                     form.Add(fileContent, "file", nomeArquivo);
 
-                    if (!string.IsNullOrEmpty(descricao))
+                    if ( !string.IsNullOrEmpty(descricao) )
                     {
                         form.Add(new StringContent(descricao), "descricao");
                     }
@@ -117,16 +118,163 @@ namespace SistemaNotifica.src.Services
                         form
                     );
 
-                    response.EnsureSuccessStatusCode();
+                    // ✅ Se deu erro, processar a mensagem
+                    if ( !response.IsSuccessStatusCode )
+                    {
+                        var errorContent = await response.Content.ReadAsStringAsync();
+
+                        // Tentar extrair mensagem formatada
+                        var formattedError = FormatTemplateError(errorContent);
+
+                        // Lançar exceção com mensagem formatada
+                        throw new Exception(formattedError);
+                    }
 
                     var responseJson = await response.Content.ReadAsStringAsync();
                     return JsonConvert.DeserializeObject<EmailTemplate>(responseJson);
                 }
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro no upload: {ex}");
-                throw new Exception($"Erro ao fazer upload do template: {ex.Message}");
+                throw; // Repassa a exceção
+            }
+        }
+
+        private string FormatTemplateError(string jsonError)
+        {
+            try
+            {
+                var error = JObject.Parse(jsonError);
+
+                // Verifica se tem a estrutura de erro de validação
+                if ( error["erros"] == null )
+                {
+                    // Erro genérico
+                    return error["message"]?.ToString() ?? "Erro ao processar template";
+                }
+
+                var sb = new StringBuilder();
+
+                // Cabeçalho
+                sb.AppendLine("❌ ERRO DE VALIDAÇÃO DO TEMPLATE");
+                sb.AppendLine();
+                sb.AppendLine(error["message"]?.ToString() ?? "O template contém erros.");
+                sb.AppendLine();
+                sb.AppendLine("═══════════════════════════════════════════════════════════");
+                sb.AppendLine();
+
+                var erros = error["erros"];
+                int errorNumber = 1;
+
+                // Função auxiliar para processar seções de erro
+                Action<JToken, string, string> ProcessarSecaoErro = (token, titulo, prefixoVariavel) =>
+                {
+                    if ( token == null || ( token.Type == JTokenType.Object && !token.HasValues ) )
+                        return;
+
+                    sb.AppendLine($"{errorNumber}. {titulo}:");
+
+                    if ( token.Type == JTokenType.Object ) // Caso 1: Estrutura complexa (como o original esperava)
+                    {
+                        var erroObj = ( JObject ) token;
+                        var mensagem = erroObj["mensagem"]?.ToString();
+                        var variaveis = erroObj["variaveis"] as JArray;
+
+                        if ( !string.IsNullOrEmpty(mensagem) )
+                        {
+                            sb.AppendLine($"   {mensagem}");
+                            sb.AppendLine();
+                        }
+
+                        if ( variaveis != null && variaveis.Count > 0 )
+                        {
+                            foreach ( var v in variaveis )
+                            {
+                                sb.AppendLine($"      • {prefixoVariavel}{{{v}}}");
+                            }
+                        }
+                    }
+                    else if ( token.Type == JTokenType.String ) // Caso 2: Estrutura simples (string, como a API está enviando)
+                    {
+                        sb.AppendLine($"   {token.ToString()}");
+                    }
+
+                    sb.AppendLine();
+                    errorNumber++;
+                };
+
+                // ============================================
+                // 1. SINTAXE INCORRETA (${...})
+                // ============================================
+                ProcessarSecaoErro(erros["sintaxeInvalida"], "SINTAXE INCORRETA", "$");
+
+                // ============================================
+                // 2. HELPERS/FUNÇÕES NÃO PERMITIDAS
+                // ============================================
+                ProcessarSecaoErro(erros["helpersInvalidos"], "FUNÇÕES NÃO PERMITIDAS", "{{");
+
+                // ============================================
+                // 3. VARIÁVEIS INVÁLIDAS
+                // ============================================
+                ProcessarSecaoErro(erros["placeholdersInvalidos"], "VARIÁVEIS INVÁLIDAS", "{{");
+
+
+                sb.AppendLine("═══════════════════════════════════════════════════════════");
+                sb.AppendLine();
+
+                // ============================================
+                // LEGENDA DE VARIÁVEIS VÁLIDAS
+                // ============================================
+                var placeholdersValidos = error["placeholdersValidos"] as JArray;
+                var descriptions = error["placeholderDescriptions"] as JObject;
+
+                if ( placeholdersValidos != null && placeholdersValidos.Count > 0 )
+                {
+                    sb.AppendLine("✅ VARIÁVEIS VÁLIDAS:");
+                    sb.AppendLine();
+
+                  
+
+                    foreach ( var placeholder in placeholdersValidos )
+                    {
+                        
+
+                        string placeholderKey = placeholder.ToString();
+                        string description = placeholderKey;
+
+                        // Busca descrição amigável se existir
+                        if ( descriptions != null && descriptions[placeholderKey] != null )
+                        {
+                            // Acessa o valor da propriedade de forma segura
+                            description = descriptions.Value<string>(placeholderKey) ?? placeholderKey;
+                        }
+
+                        sb.AppendLine($"   • {description}: {{{{{placeholderKey}}}}}");
+                        
+                    }
+                }
+
+                return sb.ToString();
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro ao formatar mensagem de erro principal: {ex.Message}");
+
+                string formattedFallbackJson = jsonError; // Por padrão, o texto bruto
+                try
+                {
+                    // Tenta formatar (pretty-print) o JSON bruto
+                    var parsedJson = JToken.Parse(jsonError);
+                    formattedFallbackJson = parsedJson.ToString(Formatting.Indented);
+                }
+                catch ( Exception formatEx )
+                {
+                    Debug.WriteLine($"Erro ao tentar formatar JSON de fallback: {formatEx.Message}");
+                }
+
+                // Retorna a mensagem simples + o JSON formatado
+                return $"Erro ao validar template. Verifique a sintaxe e as variáveis utilizadas.{Environment.NewLine}{Environment.NewLine}{formattedFallbackJson}";
             }
         }
 

@@ -50,7 +50,7 @@ namespace SistemaNotifica
             //ApplicationConfiguration.Initialize();
             //List<ErroDetalhado> erros = new List<ErroDetalhado>();
 
-            //Application.Run(new src.FormsTestes.FormTesteLayout());
+            //Application.Run(new src.Forms.Template.TemplateManagerForm());
             //Application.Run(new FormData());
 
             using ( FormLogin loginForm = new FormLogin() )

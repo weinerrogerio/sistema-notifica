@@ -85,7 +85,7 @@ namespace SistemaNotifica.src.Forms.Template.Controls
             pnlMain.Dock = DockStyle.Fill;
             pnlMain.Location = new Point(0, 0);
             pnlMain.Name = "pnlMain";
-            pnlMain.Padding = new Padding(12);
+            pnlMain.Padding = new Padding(5);
             pnlMain.Size = new Size(176, 68);
             pnlMain.TabIndex = 0;
             pnlMain.Click += PnlMain_Click;

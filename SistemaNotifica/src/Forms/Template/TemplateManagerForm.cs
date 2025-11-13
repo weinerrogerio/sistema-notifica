@@ -361,14 +361,14 @@ namespace SistemaNotifica.src.Forms.Template
         // Upload permanece igual ao código original
         private async void BtnUpload_Click(object sender, EventArgs e)
         {
-            using (var openFileDialog = new OpenFileDialog())
+            using ( var openFileDialog = new OpenFileDialog() )
             {
                 openFileDialog.Filter = "Arquivos HTML (*.html)|*.html|Todos os arquivos (*.*)|*.*";
                 openFileDialog.Title = "Selecionar Template HTML";
                 openFileDialog.CheckFileExists = true;
                 openFileDialog.CheckPathExists = true;
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                if ( openFileDialog.ShowDialog() == DialogResult.OK )
                 {
                     string caminhoArquivoSelecionado = openFileDialog.FileName;
                     Debug.WriteLine($"Arquivo selecionado: {caminhoArquivoSelecionado}");
@@ -377,11 +377,13 @@ namespace SistemaNotifica.src.Forms.Template
                     {
                         var fileInfo = new FileInfo(caminhoArquivoSelecionado);
 
-                        if (!fileInfo.Exists)
+                        if ( !fileInfo.Exists )
                         {
-                            MessageBox.Show("O arquivo selecionado não foi encontrado no caminho especificado. Por favor, verifique.", "Arquivo Não Encontrado",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            Debug.WriteLine($"ERRO: Arquivo não encontrado: {caminhoArquivoSelecionado}");
+                            MessageBox.Show(
+                                "O arquivo selecionado não foi encontrado no caminho especificado.",
+                                "Arquivo Não Encontrado",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                             return;
                         }
 
@@ -389,66 +391,65 @@ namespace SistemaNotifica.src.Forms.Template
                         try
                         {
                             fileBytes = await File.ReadAllBytesAsync(caminhoArquivoSelecionado);
-                            Debug.WriteLine($"Bytes lidos no frontend (File.ReadAllBytesAsync): {fileBytes.Length} bytes");
                         }
-                        catch (UnauthorizedAccessException)
+                        catch ( UnauthorizedAccessException )
                         {
-                            MessageBox.Show("Sem permissão para ler o arquivo selecionado. Verifique as permissões de acesso ao arquivo.", "Erro de Permissão",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            Debug.WriteLine($"ERRO: Sem permissão para ler o arquivo: {caminhoArquivoSelecionado}");
+                            MessageBox.Show(
+                                "Sem permissão para ler o arquivo selecionado.",
+                                "Erro de Permissão",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                             return;
                         }
-                        catch (IOException ex) when ((ex.HResult & 0xFFFF) == 32)
+                        catch ( IOException ex )
                         {
-                            MessageBox.Show($"O arquivo está sendo usado por outro processo. Por favor, feche-o e tente novamente.\n\nDetalhes: {ex.Message}", "Arquivo em Uso",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            Debug.WriteLine($"ERRO: Arquivo em uso: {caminhoArquivoSelecionado} - {ex.Message}");
-                            return;
-                        }
-                        catch (IOException ex)
-                        {
-                            MessageBox.Show($"Erro de I/O ao acessar o arquivo: {ex.Message}", "Erro de Acesso ao Arquivo",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            Debug.WriteLine($"ERRO: Erro de I/O: {caminhoArquivoSelecionado} - {ex.Message}");
+                            MessageBox.Show(
+                                $"Erro ao acessar o arquivo: {ex.Message}",
+                                "Erro de Acesso",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                             return;
                         }
 
-                        if (fileBytes.Length == 0)
+                        if ( fileBytes.Length == 0 )
                         {
-                            MessageBox.Show("O arquivo selecionado está vazio ou não pôde ser lido em sua totalidade. Por favor, selecione um arquivo com conteúdo.", "Arquivo Vazio",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            Debug.WriteLine($"ERRO: Arquivo vazio após leitura: {caminhoArquivoSelecionado}");
+                            MessageBox.Show(
+                                "O arquivo selecionado está vazio.",
+                                "Arquivo Vazio",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                             return;
                         }
 
-                        const long tamanhoMaximo = 20 * 1024 * 1024; // 20MB
-                        if (fileBytes.Length > tamanhoMaximo)
+                        const long tamanhoMaximo = 20 * 1024 * 1024;
+                        if ( fileBytes.Length > tamanhoMaximo )
                         {
-                            MessageBox.Show($"Arquivo muito grande. Tamanho máximo permitido: {tamanhoMaximo / (1024 * 1024)}MB. Tamanho do arquivo: {Math.Round(fileBytes.Length / (1024.0 * 1024.0), 2)}MB.", "Arquivo Muito Grande",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            Debug.WriteLine($"ERRO: Arquivo muito grande: {caminhoArquivoSelecionado} - {fileBytes.Length} bytes");
+                            MessageBox.Show(
+                                $"Arquivo muito grande. Tamanho máximo: 20MB",
+                                "Arquivo Muito Grande",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                             return;
                         }
 
                         var nomeArquivo = Path.GetFileName(caminhoArquivoSelecionado);
-                        var tamanhoMB = Math.Round(fileBytes.Length / (1024.0 * 1024.0), 2);
+                        var tamanhoMB = Math.Round(fileBytes.Length / ( 1024.0 * 1024.0 ), 2);
 
                         var confirmacao = MessageBox.Show(
                             $"Deseja fazer upload do template?\n\n" +
                             $"Arquivo: {nomeArquivo}\n" +
-                            $"Tamanho: {tamanhoMB} MB\n" +
-                            $"Caminho: {caminhoArquivoSelecionado}",
+                            $"Tamanho: {tamanhoMB} MB",
                             "Confirmar Upload",
                             MessageBoxButtons.YesNo,
                             MessageBoxIcon.Question
                         );
 
-                        if (confirmacao == DialogResult.Yes)
+                        if ( confirmacao == DialogResult.Yes )
                         {
-                            SetStatus("Preparando para enviar o template...");
+                            SetStatus("Enviando template...");
 
                             var btnUpload = sender as Button;
-                            if (btnUpload != null)
+                            if ( btnUpload != null )
                             {
                                 btnUpload.Enabled = false;
                             }
@@ -467,30 +468,94 @@ namespace SistemaNotifica.src.Forms.Template
                                 SetStatus("Upload concluído com sucesso.");
                                 await CarregarTemplates();
                             }
-                            catch (Exception ex)
+                            catch ( Exception ex )
                             {
-                                MessageBox.Show($"Erro ao fazer upload do template: {ex.Message}", "Erro no Upload",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                Debug.WriteLine($"ERRO CRÍTICO NO UPLOAD: {ex}");
+                                Debug.WriteLine($"ERRO NO UPLOAD: {ex}");
+
+                                // ✅ Exibir erro formatado em modal com scroll
+                                ShowErrorDialog("Erro de Validação", ex.Message);
+
                                 SetStatus("Erro no upload.");
                             }
                             finally
                             {
-                                if (btnUpload != null)
+                                if ( btnUpload != null )
                                 {
                                     btnUpload.Enabled = true;
                                 }
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch ( Exception ex )
                     {
-                        MessageBox.Show($"Ocorreu um erro inesperado: {ex.Message}", "Erro Inesperado",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        Debug.WriteLine($"ERRO INESPERADO NA FUNÇÃO DE UPLOAD: {ex}");
-                        SetStatus("Erro inesperado.");
+                        MessageBox.Show(
+                            $"Ocorreu um erro inesperado: {ex.Message}",
+                            "Erro Inesperado",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                        Debug.WriteLine($"ERRO INESPERADO: {ex}");
                     }
                 }
+            }
+        }
+
+        private void ShowErrorDialog(string title, string message)
+        {
+            using ( var errorForm = new Form() )
+            {
+                errorForm.Text = title;
+                errorForm.Width = 500;
+                errorForm.Height = 600;
+                errorForm.StartPosition = FormStartPosition.CenterParent;
+                errorForm.FormBorderStyle = FormBorderStyle.Sizable;
+                errorForm.MaximizeBox = false;
+                errorForm.MinimizeBox = false;
+                errorForm.ShowIcon = false;
+
+                // ✅ USAR RichTextBox ao invés de TextBox
+                var richTextBox = new RichTextBox
+                {
+                    Multiline = true,
+                    ReadOnly = true,
+                    ScrollBars = RichTextBoxScrollBars.Vertical,
+                    Dock = DockStyle.Fill,
+                    Font = new Font("Consolas", 9.5F),
+                    Text = message,
+                    BackColor = Color.White,
+                    BorderStyle = BorderStyle.None,
+                    WordWrap = true,
+                    DetectUrls = false, // Evita formatação de URLs
+                    Padding = new Padding(15)
+                };
+
+                var panel = new Panel
+                {
+                    Dock = DockStyle.Fill,
+                    Padding = new Padding(15),
+                    BackColor = Color.White
+                };
+                panel.Controls.Add(richTextBox);
+
+                var btnOk = new Button
+                {
+                    Text = "OK",
+                    Dock = DockStyle.Bottom,
+                    Height = 50,
+                    DialogResult = DialogResult.OK,
+                    FlatStyle = FlatStyle.Flat,
+                    BackColor = Color.FromArgb(0, 123, 255),
+                    ForeColor = Color.White,
+                    Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                    Cursor = Cursors.Hand
+                };
+
+                btnOk.FlatAppearance.BorderSize = 0;
+
+                errorForm.Controls.Add(panel);
+                errorForm.Controls.Add(btnOk);
+                errorForm.AcceptButton = btnOk;
+
+                errorForm.ShowDialog(this);
             }
         }
 
@@ -567,48 +632,7 @@ namespace SistemaNotifica.src.Forms.Template
             }
             panelEdit.Controls.Clear();
             isFormLoaded = false;
-        }
-
-        //private async void CreateAndConfigureForm()
-        //{
-        //    try
-        //    {
-        //        // Criar o formulário
-        //        pnlForm = new TemplateEditForm
-        //        {
-        //            TopLevel = false,
-        //            FormBorderStyle = FormBorderStyle.None,
-        //            Dock = DockStyle.None,
-        //            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom,
-        //            WindowState = FormWindowState.Normal // Garantir que não está maximizado
-        //        };
-
-        //        // Definir tamanho inicial
-        //        pnlForm.Location = new Point(0, 0);
-        //        pnlForm.Size = new Size(0, panelEdit.Height);
-
-        //        // Adicionar ao painel ANTES de mostrar
-        //        panelEdit.Controls.Add(pnlForm);
-        //        //panelEdit.BringToFront();
-
-        //        // Aguardar um frame para garantir que o controle foi adicionado
-        //        await Task.Delay(1);
-
-        //        // Mostrar o formulário
-        //        pnlForm.Show();
-        //        pnlForm.BringToFront();
-
-        //        // Aguardar a inicialização dos WebView2 (importante!)
-        //        await Task.Delay(100);
-
-        //        isFormLoaded = true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Erro ao criar formulário: {ex.Message}", "Erro",
-        //            MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
+        }        
 
         private async void CreateAndConfigureForm()
         {
