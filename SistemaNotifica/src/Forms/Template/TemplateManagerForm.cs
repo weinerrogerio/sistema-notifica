@@ -17,7 +17,7 @@ using SistemaNotifica.src.Forms.Template.Controls;
 namespace SistemaNotifica.src.Forms.Template
 {
     public partial class TemplateManagerForm : Form
-    {        
+    {
         private TemplateService _templateService;
         private List<EmailTemplate> _templates;
         private FlowLayoutPanel _flowLayoutTemplates;
@@ -55,8 +55,8 @@ namespace SistemaNotifica.src.Forms.Template
                 FlowDirection = FlowDirection.TopDown,
                 WrapContents = false,
                 AutoScroll = true,
-                BackColor = Color.FromArgb(248, 249, 250),
-                Padding = new Padding(8)
+                //BackColor = Color.FromArgb(248, 249, 250),
+                //Padding = new Padding(8)
             };
 
             panelTableTamplates.Controls.Add(_flowLayoutTemplates);
@@ -82,7 +82,7 @@ namespace SistemaNotifica.src.Forms.Template
                 _templateCards.Clear();
 
                 // Se não há templates, exibe mensagem
-                if (_templates.Count == 0)
+                if ( _templates.Count == 0 )
                 {
                     webPreview.DocumentText = "<html><body style='display:flex;align-items:center;justify-content:center;height:100vh;font-family:Segoe UI;color:#6c757d;'><div>Nenhum template disponível</div></body></html>";
                     SetStatus("Nenhum template encontrado");
@@ -92,13 +92,14 @@ namespace SistemaNotifica.src.Forms.Template
                 // Cria cards para cada template
                 TemplateCard templatePadraoCard = null;
 
-                foreach (var template in _templates)
+                foreach ( var template in _templates )
                 {
                     Debug.WriteLine($"Criando card para template: {template.Id} - {template.NomeArquivo} - Padrão: {template.EhPadrao}");
 
                     var card = new TemplateCard
                     {
-                        Template = template
+                        Template = template,
+                        Width = _flowLayoutTemplates.ClientSize.Width - 5
                     };
 
                     card.CardClicked += Card_CardClicked;
@@ -108,7 +109,7 @@ namespace SistemaNotifica.src.Forms.Template
                     _flowLayoutTemplates.Controls.Add(card);
 
                     // Guarda referência do template padrão
-                    if (template.EhPadrao)
+                    if ( template.EhPadrao )
                     {
                         templatePadraoCard = card;
                     }
@@ -123,13 +124,13 @@ namespace SistemaNotifica.src.Forms.Template
                 // Seleciona automaticamente o template padrão, ou o primeiro
                 var cardParaSelecionar = templatePadraoCard ?? _templateCards[0];
 
-                if (cardParaSelecionar != null)
+                if ( cardParaSelecionar != null )
                 {
                     SelectTemplate(cardParaSelecionar);
                     await ExibirPreview(cardParaSelecionar.Template);
                 }
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao carregar templates: {ex}");
                 MessageBox.Show($"Erro ao carregar templates: {ex.Message}", "Erro",
@@ -154,13 +155,13 @@ namespace SistemaNotifica.src.Forms.Template
                 await _templateService.SetTemplatePadraoAsync(template.Id);
 
                 // Atualiza os dados locais
-                foreach (var t in _templates)
+                foreach ( var t in _templates )
                 {
                     t.EhPadrao = t.Id == template.Id;
                 }
 
                 // Atualiza a exibição dos cards
-                foreach (var card in _templateCards)
+                foreach ( var card in _templateCards )
                 {
                     card.Template = card.Template; // Força refresh
                 }
@@ -170,14 +171,14 @@ namespace SistemaNotifica.src.Forms.Template
                 MessageBox.Show($"Template '{template.NomeArquivo}' definido como padrão!", "Sucesso",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 MessageBox.Show($"Erro ao definir template padrão: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 // Reverte o checkbox em caso de erro
                 var card = sender as TemplateCard;
-                if (card != null)
+                if ( card != null )
                 {
                     card.Template = card.Template; // Força refresh para reverter
                 }
@@ -187,13 +188,13 @@ namespace SistemaNotifica.src.Forms.Template
         private void SelectTemplate(TemplateCard selectedCard)
         {
             // Desmarca todos os cards
-            foreach (var card in _templateCards)
+            foreach ( var card in _templateCards )
             {
                 card.IsSelected = false;
             }
 
             // Marca o card selecionado
-            if (selectedCard != null)
+            if ( selectedCard != null )
             {
                 selectedCard.IsSelected = true;
                 _selectedTemplate = selectedCard.Template;
@@ -222,14 +223,14 @@ namespace SistemaNotifica.src.Forms.Template
                 // Busca o template completo se não tiver conteúdo
                 string conteudoHtml = template.ConteudoHtml;
 
-                if (string.IsNullOrEmpty(conteudoHtml))
+                if ( string.IsNullOrEmpty(conteudoHtml) )
                 {
                     Debug.WriteLine("Conteúdo HTML vazio, buscando template completo...");
                     var templateCompleto = await _templateService.GetTemplateAsync(template.Id);
                     conteudoHtml = templateCompleto.ConteudoHtml;
                 }
 
-                if (string.IsNullOrEmpty(conteudoHtml))
+                if ( string.IsNullOrEmpty(conteudoHtml) )
                 {
                     throw new Exception("Template não possui conteúdo HTML");
                 }
@@ -246,7 +247,7 @@ namespace SistemaNotifica.src.Forms.Template
                 webPreview.DocumentText = htmlProcessado;
                 SetStatus("Preview carregado com sucesso");
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao exibir preview: {ex}");
 
@@ -297,9 +298,9 @@ namespace SistemaNotifica.src.Forms.Template
         // Métodos de botões atualizados
         private async void BtnDelete_Click(object sender, EventArgs e)
         {
-            if (_selectedTemplate == null) return;
+            if ( _selectedTemplate == null ) return;
 
-            if (_selectedTemplate.EhPadrao)
+            if ( _selectedTemplate.EhPadrao )
             {
                 MessageBox.Show("Não é possível excluir o template padrão!", "Aviso",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -309,7 +310,7 @@ namespace SistemaNotifica.src.Forms.Template
             var result = MessageBox.Show($"Tem certeza que deseja excluir o template '{_selectedTemplate.NomeArquivo}'?",
                 "Confirmar Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            if (result == DialogResult.Yes)
+            if ( result == DialogResult.Yes )
             {
                 try
                 {
@@ -318,7 +319,7 @@ namespace SistemaNotifica.src.Forms.Template
                     await CarregarTemplates();
                     SetStatus("Template excluído");
                 }
-                catch (Exception ex)
+                catch ( Exception ex )
                 {
                     MessageBox.Show($"Erro ao excluir template: {ex.Message}", "Erro",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -328,7 +329,7 @@ namespace SistemaNotifica.src.Forms.Template
 
         private async void BtnSetPadrao_Click(object sender, EventArgs e)
         {
-            if (_selectedTemplate == null) return;
+            if ( _selectedTemplate == null ) return;
 
             try
             {
@@ -338,7 +339,7 @@ namespace SistemaNotifica.src.Forms.Template
                 MessageBox.Show($"Template '{_selectedTemplate.NomeArquivo}' definido como padrão!", "Sucesso",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 MessageBox.Show($"Erro ao definir template padrão: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -347,7 +348,7 @@ namespace SistemaNotifica.src.Forms.Template
 
         private async void BtnPreview_Click(object sender, EventArgs e)
         {
-            if (_selectedTemplate != null)
+            if ( _selectedTemplate != null )
             {
                 await ExibirPreview(_selectedTemplate);
             }
@@ -509,7 +510,6 @@ namespace SistemaNotifica.src.Forms.Template
                 errorForm.StartPosition = FormStartPosition.CenterParent;
                 errorForm.FormBorderStyle = FormBorderStyle.Sizable;
                 errorForm.MaximizeBox = false;
-                errorForm.MinimizeBox = false;
                 errorForm.ShowIcon = false;
 
                 // ✅ USAR RichTextBox ao invés de TextBox
@@ -591,16 +591,18 @@ namespace SistemaNotifica.src.Forms.Template
 
         }
 
+
+
         //EDIT --> panelEdit
         private void btnEdit_Click(object sender, EventArgs e)
         {
 
             // Prevenir múltiplos cliques durante animação
-            if (isAnimating)
+            if ( isAnimating )
                 return;
 
             // Se já existe um formulário expandido, contrair primeiro
-            if (pnlFormExpanded && pnlForm != null)
+            if ( pnlFormExpanded && pnlForm != null )
             {
                 ContractPanel();
                 return;
@@ -624,7 +626,7 @@ namespace SistemaNotifica.src.Forms.Template
 
         private void CleanupForm()
         {
-            if (pnlForm != null && !pnlForm.IsDisposed)
+            if ( pnlForm != null && !pnlForm.IsDisposed )
             {
                 pnlForm.Close();
                 pnlForm.Dispose();
@@ -632,13 +634,13 @@ namespace SistemaNotifica.src.Forms.Template
             }
             panelEdit.Controls.Clear();
             isFormLoaded = false;
-        }        
+        }
 
         private async void CreateAndConfigureForm()
         {
             try
             {
-                if (_selectedTemplate == null)
+                if ( _selectedTemplate == null )
                 {
                     MessageBox.Show("Selecione um template para editar.", "Aviso",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -651,7 +653,7 @@ namespace SistemaNotifica.src.Forms.Template
                 EmailTemplate templateCompleto = _selectedTemplate;
 
                 // ✅ Se o template não tem conteúdo HTML, buscar do servidor
-                if (string.IsNullOrEmpty(_selectedTemplate.ConteudoHtml))
+                if ( string.IsNullOrEmpty(_selectedTemplate.ConteudoHtml) )
                 {
                     SetStatus("Carregando template completo do servidor...");
                     try
@@ -659,7 +661,7 @@ namespace SistemaNotifica.src.Forms.Template
                         templateCompleto = await _templateService.GetTemplateAsync(_selectedTemplate.Id);
                         Debug.WriteLine($"Template carregado do servidor - ID: {templateCompleto?.Id}, ConteudoHtml: {templateCompleto?.ConteudoHtml?.Length ?? 0} chars");
                     }
-                    catch (Exception ex)
+                    catch ( Exception ex )
                     {
                         Debug.WriteLine($"Erro ao carregar template do servidor: {ex.Message}");
                         MessageBox.Show($"Erro ao carregar template: {ex.Message}", "Erro",
@@ -673,7 +675,7 @@ namespace SistemaNotifica.src.Forms.Template
                 }
 
                 // ✅ Verificar se conseguimos obter o template
-                if (templateCompleto == null)
+                if ( templateCompleto == null )
                 {
                     MessageBox.Show("Não foi possível carregar o template.", "Erro",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -727,7 +729,7 @@ namespace SistemaNotifica.src.Forms.Template
 
                 Debug.WriteLine("CreateAndConfigureForm concluído com sucesso");
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro em CreateAndConfigureForm: {ex.Message}");
                 MessageBox.Show($"Erro ao carregar template para edição: {ex.Message}", "Erro",
@@ -750,20 +752,20 @@ namespace SistemaNotifica.src.Forms.Template
 
                 // Atualizar template na lista local
                 var index = _templates.FindIndex(t => t.Id == updatedTemplate.Id);
-                if (index >= 0)
+                if ( index >= 0 )
                 {
                     _templates[index] = updatedTemplate;
                 }
 
                 // Atualizar card correspondente
                 var card = _templateCards.FirstOrDefault(c => c.Template.Id == updatedTemplate.Id);
-                if (card != null)
+                if ( card != null )
                 {
                     card.Template = updatedTemplate;
                 }
 
                 // Atualizar preview se este template estiver selecionado
-                if (_selectedTemplate?.Id == updatedTemplate.Id)
+                if ( _selectedTemplate?.Id == updatedTemplate.Id )
                 {
                     _selectedTemplate = updatedTemplate;
                     await ExibirPreview(updatedTemplate);
@@ -771,7 +773,7 @@ namespace SistemaNotifica.src.Forms.Template
 
                 SetStatus("Template atualizado com sucesso");
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 SetStatus($"Erro ao atualizar template: {ex.Message}");
             }
@@ -800,7 +802,7 @@ namespace SistemaNotifica.src.Forms.Template
             const int step = 20;
             const int minStep = 3;
 
-            if (!pnlFormExpanded) // Expandindo
+            if ( !pnlFormExpanded ) // Expandindo
             {
                 int remainingWidth = targetWidth - panelEdit.Width;
                 int currentStep = Math.Max(minStep, Math.Min(step, remainingWidth / 8));
@@ -808,7 +810,7 @@ namespace SistemaNotifica.src.Forms.Template
                 panelEdit.Width += currentStep;
 
                 // Atualizar tamanho do formulário para acompanhar o painel
-                if (pnlForm != null && !pnlForm.IsDisposed && isFormLoaded)
+                if ( pnlForm != null && !pnlForm.IsDisposed && isFormLoaded )
                 {
                     try
                     {
@@ -816,13 +818,13 @@ namespace SistemaNotifica.src.Forms.Template
                         pnlForm.Height = panelEdit.Height;
                         pnlForm.Refresh(); // Forçar redesenho
                     }
-                    catch (Exception ex)
+                    catch ( Exception ex )
                     {
                         Console.WriteLine($"Erro ao redimensionar: {ex.Message}");
                     }
                 }
 
-                if (panelEdit.Width >= targetWidth)
+                if ( panelEdit.Width >= targetWidth )
                 {
                     // Animação de expansão concluída
                     panelEdit.Width = targetWidth;
@@ -831,14 +833,14 @@ namespace SistemaNotifica.src.Forms.Template
                     timerTransition.Stop();
 
                     // Agora sim, aplicar Dock.Fill para responsividade
-                    if (pnlForm != null && !pnlForm.IsDisposed && isFormLoaded)
+                    if ( pnlForm != null && !pnlForm.IsDisposed && isFormLoaded )
                     {
                         try
                         {
                             pnlForm.Dock = DockStyle.Fill;
                             pnlForm.Refresh();
                         }
-                        catch (Exception ex)
+                        catch ( Exception ex )
                         {
                             Console.WriteLine($"Erro ao aplicar Dock.Fill: {ex.Message}");
                         }
@@ -851,7 +853,7 @@ namespace SistemaNotifica.src.Forms.Template
                 panelEdit.Width -= currentStep;
 
                 // Atualizar tamanho do formulário durante contração
-                if (pnlForm != null && !pnlForm.IsDisposed)
+                if ( pnlForm != null && !pnlForm.IsDisposed )
                 {
                     try
                     {
@@ -859,13 +861,13 @@ namespace SistemaNotifica.src.Forms.Template
                         pnlForm.Width = panelEdit.Width;
                         pnlForm.Height = panelEdit.Height;
                     }
-                    catch (Exception ex)
+                    catch ( Exception ex )
                     {
                         Console.WriteLine($"Erro ao redimensionar na contração: {ex.Message}");
                     }
                 }
 
-                if (panelEdit.Width <= 0)
+                if ( panelEdit.Width <= 0 )
                 {
                     // Animação de contração concluída
                     panelEdit.Width = 0;
@@ -882,19 +884,19 @@ namespace SistemaNotifica.src.Forms.Template
         // Método para fechar o painel de edição
         private void ContractPanel()
         {
-            if (!pnlFormExpanded || pnlForm == null)
+            if ( !pnlFormExpanded || pnlForm == null )
                 return;
 
             try
             {
                 // Verificar alterações pendentes
                 var editForm = pnlForm as TemplateEditForm;
-                if (editForm?.HasUnsavedChanges() == true)
+                if ( editForm?.HasUnsavedChanges() == true )
                 {
                     var result = MessageBox.Show("Existem alterações não salvas. Deseja fechar mesmo assim?",
                         "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-                    if (result == DialogResult.No)
+                    if ( result == DialogResult.No )
                         return;
                 }
 
@@ -905,7 +907,7 @@ namespace SistemaNotifica.src.Forms.Template
 
                 SetStatus("Fechando editor...");
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 MessageBox.Show($"Erro ao fechar editor: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -922,7 +924,7 @@ namespace SistemaNotifica.src.Forms.Template
         // Método para pré-carregar dados do template se necessário
         private async Task<EmailTemplate> EnsureTemplateComplete(EmailTemplate template)
         {
-            if (NeedsFullTemplateData(template))
+            if ( NeedsFullTemplateData(template) )
             {
                 return await _templateService.GetTemplateAsync(template.Id);
             }
@@ -935,7 +937,7 @@ namespace SistemaNotifica.src.Forms.Template
             base.OnResize(e);
 
             // Se o painel estiver totalmente expandido, ajustar largura
-            if (pnlFormExpanded && !isAnimating && panelEdit.Width > 0)
+            if ( pnlFormExpanded && !isAnimating && panelEdit.Width > 0 )
             {
                 targetWidth = this.ClientSize.Width;
                 panelEdit.Width = targetWidth;
@@ -951,5 +953,7 @@ namespace SistemaNotifica.src.Forms.Template
             CleanupForm();
             base.OnFormClosing(e);
         }
+
+        
     }
 }

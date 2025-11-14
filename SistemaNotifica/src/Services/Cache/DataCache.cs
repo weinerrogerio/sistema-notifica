@@ -18,7 +18,7 @@ namespace SistemaNotifica.src.Services.Cache
         private static int _totalPages = 0;
 
         // Limite máximo de registros no cache
-        private const int MAX_CACHE_SIZE = 100;
+        private const int MAX_CACHE_SIZE = 10;
 
         // Eventos para notificar atualizações
         public static event Action<List<JObject>> OnDataUpdated;

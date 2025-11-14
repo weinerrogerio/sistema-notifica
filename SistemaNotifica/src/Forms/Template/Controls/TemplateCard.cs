@@ -76,6 +76,7 @@ namespace SistemaNotifica.src.Forms.Template.Controls
             // 
             // pnlMain
             // 
+            pnlMain.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             pnlMain.BackColor = Color.White;
             pnlMain.BorderStyle = BorderStyle.FixedSingle;
             pnlMain.Controls.Add(lblNomeArquivo);
@@ -86,35 +87,35 @@ namespace SistemaNotifica.src.Forms.Template.Controls
             pnlMain.Location = new Point(0, 0);
             pnlMain.Name = "pnlMain";
             pnlMain.Padding = new Padding(5);
-            pnlMain.Size = new Size(176, 68);
+            pnlMain.Size = new Size(950, 68);
             pnlMain.TabIndex = 0;
-            pnlMain.Click += PnlMain_Click;
-            pnlMain.MouseEnter += PnlMain_MouseEnter;
-            pnlMain.MouseLeave += PnlMain_MouseLeave;
+            pnlMain.Click +=  PnlMain_Click ;
+            pnlMain.MouseEnter +=  PnlMain_MouseEnter ;
+            pnlMain.MouseLeave +=  PnlMain_MouseLeave ;
             // 
             // lblNomeArquivo
             // 
             lblNomeArquivo.Cursor = Cursors.Hand;
             lblNomeArquivo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblNomeArquivo.ForeColor = Color.FromArgb(33, 37, 41);
+            lblNomeArquivo.ForeColor = Color.FromArgb(      33,       37,       41);
             lblNomeArquivo.Location = new Point(5, -1);
             lblNomeArquivo.Name = "lblNomeArquivo";
             lblNomeArquivo.Size = new Size(160, 20);
             lblNomeArquivo.TabIndex = 0;
             lblNomeArquivo.TextAlign = ContentAlignment.MiddleLeft;
-            lblNomeArquivo.Click += PnlMain_Click;
+            lblNomeArquivo.Click +=  PnlMain_Click ;
             // 
             // lblDataCriacao
             // 
             lblDataCriacao.Cursor = Cursors.Hand;
             lblDataCriacao.Font = new Font("Segoe UI", 8.5F);
-            lblDataCriacao.ForeColor = Color.FromArgb(108, 117, 125);
+            lblDataCriacao.ForeColor = Color.FromArgb(      108,       117,       125);
             lblDataCriacao.Location = new Point(5, 21);
             lblDataCriacao.Name = "lblDataCriacao";
             lblDataCriacao.Size = new Size(160, 16);
             lblDataCriacao.TabIndex = 1;
             lblDataCriacao.TextAlign = ContentAlignment.MiddleLeft;
-            lblDataCriacao.Click += PnlMain_Click;
+            lblDataCriacao.Click +=  PnlMain_Click ;
             // 
             // pnlStatus
             // 
@@ -125,27 +126,27 @@ namespace SistemaNotifica.src.Forms.Template.Controls
             pnlStatus.Name = "pnlStatus";
             pnlStatus.Size = new Size(160, 20);
             pnlStatus.TabIndex = 2;
-            pnlStatus.Click += PnlMain_Click;
+            pnlStatus.Click +=  PnlMain_Click ;
             // 
             // chkEhPadrao
             // 
             chkEhPadrao.Font = new Font("Segoe UI", 8F);
-            chkEhPadrao.ForeColor = Color.FromArgb(40, 167, 69);
+            chkEhPadrao.ForeColor = Color.FromArgb(      40,       167,       69);
             chkEhPadrao.Location = new Point(5, -1);
             chkEhPadrao.Name = "chkEhPadrao";
             chkEhPadrao.Size = new Size(80, 20);
             chkEhPadrao.TabIndex = 0;
             chkEhPadrao.Text = "Padrão";
             chkEhPadrao.UseVisualStyleBackColor = true;
-            chkEhPadrao.CheckedChanged += ChkEhPadrao_CheckedChanged;
+            chkEhPadrao.CheckedChanged +=  ChkEhPadrao_CheckedChanged ;
             // 
             // lblStatus
             // 
             lblStatus.Font = new Font("Segoe UI", 7F, FontStyle.Bold);
-            lblStatus.ForeColor = Color.FromArgb(40, 167, 69);
+            lblStatus.ForeColor = Color.FromArgb(      40,       167,       69);
             lblStatus.Location = new Point(84, 1);
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(75, 16);
+            lblStatus.Size = new Size(75, 18);
             lblStatus.TabIndex = 1;
             lblStatus.TextAlign = ContentAlignment.MiddleRight;
             // 
@@ -153,8 +154,9 @@ namespace SistemaNotifica.src.Forms.Template.Controls
             // 
             Controls.Add(pnlMain);
             Margin = new Padding(5);
+            MinimumSize = new Size(150, 68);
             Name = "TemplateCard";
-            Size = new Size(176, 68);
+            Size = new Size(950, 68);
             pnlMain.ResumeLayout(false);
             pnlStatus.ResumeLayout(false);
             ResumeLayout(false);
