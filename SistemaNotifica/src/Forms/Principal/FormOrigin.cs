@@ -23,7 +23,7 @@ namespace SistemaNotifica
         private const int SIDEBAR_MAX_WIDTH = 190;
 
         private const int SUBMENU_MIN_HEIGHT = 42;
-        private const int SUBMENU_MAX_HEIGHT = 125;
+        private const int SUBMENU_MAX_HEIGHT = 140;
 
         public FormOrigin()
         {

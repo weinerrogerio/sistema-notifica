@@ -302,17 +302,26 @@ namespace SistemaNotifica.src.Services
             }
         }
 
-        /// <summary>
-        /// Exclui um template
-        /// </summary>
-        public async Task DeleteTemplateAsync(int id)
+        
+        // Exclui um template se del===true --> se del===false apenas marca como inativo        
+        public async Task DeleteTemplateAsync(int id, bool del=false)
         {
             try
             {
-                Debug.WriteLine($"Excluindo template {id}");
-                await _apiService.DeleteAsync($"template/{id}");
+                // 1. Define o endpoint base
+                string endpoint = $"template/{id}";
+                // 2. Adiciona o query parameter 'fisico=true' se 'del' for true
+                if ( del )
+                {
+                    // A API NestJS espera a string 'true'
+                    endpoint += "?delete=true";
+                }
+                Debug.WriteLine($"Chamando DELETE /{endpoint}");
+
+                // 3. Chama o ApiService com a URL já montada (com ou sem o query parameter)
+                await _apiService.DeleteAsync(endpoint);
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao excluir: {ex}");
                 throw new Exception($"Erro ao excluir template: {ex.Message}");

@@ -131,14 +131,14 @@ namespace SistemaNotifica.src.Services
             return JArray.Parse(json); 
         }
 
-        // --------------------------------------------------------------------------------------------------//
+        // ------------------------------- FUNÇÃO DELETE COM PARAMETROS --------------------------------------//
 
-        public async Task DeleteAsync(string endpoint)
+        public async Task DeleteAsync(string endpoint, Dictionary<string, string> queryParams = null)
         {
             try
             {
-                Debug.WriteLine($"Excluindo arquivo no endpoint: {endpoint}");
-                var url = BuildUrlWithQueryParams(endpoint);
+                var url = BuildUrlWithQueryParams(endpoint, queryParams);
+                Debug.WriteLine($"Excluindo no endpoint: {url}");
                 var response = await _sharedHttpClient.DeleteAsync(url);
                 response.EnsureSuccessStatusCode();
             }

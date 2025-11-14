@@ -225,7 +225,7 @@
             btnEdit.TabIndex = 14;
             btnEdit.Text = "Editar";
             btnEdit.UseVisualStyleBackColor = false;
-            btnEdit.Click +=  btnEdit_Click ;
+            btnEdit.Click +=  btnEdit_ClickAsync ;
             // 
             // btnUpload
             // 
@@ -252,6 +252,7 @@
             btnDelete.TabIndex = 15;
             btnDelete.Text = "🗑️ Excluir";
             btnDelete.UseVisualStyleBackColor = false;
+            btnDelete.Click +=  btnDelete_Click;
             // 
             // btnRefresh
             // 
@@ -265,6 +266,7 @@
             btnRefresh.TabIndex = 16;
             btnRefresh.Text = "🔄 Atualizar";
             btnRefresh.UseVisualStyleBackColor = false;
+            btnRefresh.Click +=  btnRefresh_Click ;
             // 
             // btnSetPadrao
             // 
