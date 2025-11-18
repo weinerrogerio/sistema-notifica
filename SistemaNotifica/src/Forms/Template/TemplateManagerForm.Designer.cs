@@ -252,7 +252,7 @@
             btnDelete.TabIndex = 15;
             btnDelete.Text = "🗑️ Excluir";
             btnDelete.UseVisualStyleBackColor = false;
-            btnDelete.Click +=  btnDelete_Click;
+            btnDelete.Click +=  btnDelete_Click ;
             // 
             // btnRefresh
             // 
@@ -281,6 +281,7 @@
             btnSetPadrao.TabIndex = 17;
             btnSetPadrao.Text = "⭐ Definir como Padrão";
             btnSetPadrao.UseVisualStyleBackColor = false;
+            btnSetPadrao.Click +=  btnSetPadrao_Click ;
             // 
             // btnPreview
             // 
@@ -361,7 +362,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colNomeArquivo;
         private System.Windows.Forms.DataGridViewTextBoxColumn colCriadoEm;
         private FlowLayoutPanel pnlTemplates;
-        private Label label2;
         private Panel panelMain;
         private Panel panelEdit;
         private System.Windows.Forms.Timer timerTransition;

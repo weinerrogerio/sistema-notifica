@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            ListViewItem listViewItem1 = new ListViewItem("teste");
             timerTransition = new System.Windows.Forms.Timer(components);
             btnEdit = new Button();
             btnUpload = new Button();
@@ -41,36 +42,25 @@
             panelEdit = new Panel();
             pnlPreviewTemplate = new Panel();
             webPreview = new WebBrowser();
-            label3 = new Label();
             label1 = new Label();
-            dgvTemplates = new DataGridView();
             panelTableTamplates = new Panel();
+            label3 = new Label();
             panelTemplatesMain = new Panel();
             tableLayoutPanel2 = new TableLayoutPanel();
             pnlPreviewTemplateMain = new Panel();
+            listView1 = new ListView();
             tableLayoutPanel1 = new TableLayoutPanel();
             panelMain = new Panel();
             lblStatus = new ToolStripStatusLabel();
             statusStrip = new StatusStrip();
-            webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
-            webView2Preview = new Microsoft.Web.WebView2.WinForms.WebView2();
-            splitContainerMain = new SplitContainer();
             flowLayoutPanel1.SuspendLayout();
             pnlPreviewTemplate.SuspendLayout();
-            ( ( System.ComponentModel.ISupportInitialize ) dgvTemplates ).BeginInit();
-            panelTableTamplates.SuspendLayout();
             panelTemplatesMain.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             pnlPreviewTemplateMain.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             panelMain.SuspendLayout();
             statusStrip.SuspendLayout();
-            ( ( System.ComponentModel.ISupportInitialize ) webView2 ).BeginInit();
-            ( ( System.ComponentModel.ISupportInitialize ) webView2Preview ).BeginInit();
-            ( ( System.ComponentModel.ISupportInitialize ) splitContainerMain ).BeginInit();
-            splitContainerMain.Panel1.SuspendLayout();
-            splitContainerMain.Panel2.SuspendLayout();
-            splitContainerMain.SuspendLayout();
             SuspendLayout();
             // 
             // timerTransition
@@ -80,7 +70,7 @@
             // btnEdit
             // 
             btnEdit.BackColor = Color.FromArgb(      33,       150,       243);
-            btnEdit.FlatStyle = FlatStyle.Popup;
+            btnEdit.FlatStyle = FlatStyle.Flat;
             btnEdit.ForeColor = SystemColors.Control;
             btnEdit.Location = new Point(3, 6);
             btnEdit.Margin = new Padding(3, 6, 3, 3);
@@ -93,7 +83,7 @@
             // btnUpload
             // 
             btnUpload.BackColor = Color.FromArgb(      76,       175,       80);
-            btnUpload.FlatStyle = FlatStyle.Popup;
+            btnUpload.FlatStyle = FlatStyle.Flat;
             btnUpload.ForeColor = Color.White;
             btnUpload.Location = new Point(109, 6);
             btnUpload.Margin = new Padding(3, 6, 3, 3);
@@ -106,7 +96,7 @@
             // btnDelete
             // 
             btnDelete.BackColor = Color.FromArgb(      244,       67,       54);
-            btnDelete.FlatStyle = FlatStyle.Popup;
+            btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.ForeColor = Color.White;
             btnDelete.Location = new Point(215, 6);
             btnDelete.Margin = new Padding(3, 6, 3, 3);
@@ -119,7 +109,7 @@
             // btnRefresh
             // 
             btnRefresh.BackColor = Color.FromArgb(      96,       125,       139);
-            btnRefresh.FlatStyle = FlatStyle.Popup;
+            btnRefresh.FlatStyle = FlatStyle.Flat;
             btnRefresh.ForeColor = Color.White;
             btnRefresh.Location = new Point(321, 6);
             btnRefresh.Margin = new Padding(3, 6, 3, 3);
@@ -133,7 +123,7 @@
             // 
             btnSetPadrao.BackColor = Color.FromArgb(      255,       193,       7);
             btnSetPadrao.Enabled = false;
-            btnSetPadrao.FlatStyle = FlatStyle.Popup;
+            btnSetPadrao.FlatStyle = FlatStyle.Flat;
             btnSetPadrao.ForeColor = Color.Transparent;
             btnSetPadrao.Location = new Point(427, 6);
             btnSetPadrao.Margin = new Padding(3, 6, 3, 3);
@@ -147,7 +137,7 @@
             // 
             btnPreview.BackColor = Color.FromArgb(      33,       150,       243);
             btnPreview.Enabled = false;
-            btnPreview.FlatStyle = FlatStyle.Popup;
+            btnPreview.FlatStyle = FlatStyle.Flat;
             btnPreview.ForeColor = Color.White;
             btnPreview.Location = new Point(573, 6);
             btnPreview.Margin = new Padding(3, 6, 3, 3);
@@ -160,7 +150,7 @@
             // btnShowLegend
             // 
             btnShowLegend.BackColor = Color.Gray;
-            btnShowLegend.FlatStyle = FlatStyle.Popup;
+            btnShowLegend.FlatStyle = FlatStyle.Flat;
             btnShowLegend.ForeColor = Color.White;
             btnShowLegend.Location = new Point(679, 6);
             btnShowLegend.Margin = new Padding(3, 6, 3, 3);
@@ -169,6 +159,7 @@
             btnShowLegend.TabIndex = 13;
             btnShowLegend.Text = "Mostrar variáveis válidas";
             btnShowLegend.UseVisualStyleBackColor = false;
+            btnShowLegend.Click +=  btnShowLegend_Click ;
             // 
             // flowLayoutPanel1
             // 
@@ -199,92 +190,75 @@
             // 
             // pnlPreviewTemplate
             // 
-            pnlPreviewTemplate.Controls.Add(splitContainerMain);
             pnlPreviewTemplate.Controls.Add(webPreview);
             pnlPreviewTemplate.Dock = DockStyle.Fill;
             pnlPreviewTemplate.Location = new Point(0, 30);
             pnlPreviewTemplate.Name = "pnlPreviewTemplate";
-            pnlPreviewTemplate.Size = new Size(776, 356);
+            pnlPreviewTemplate.Size = new Size(804, 362);
             pnlPreviewTemplate.TabIndex = 3;
             // 
             // webPreview
             // 
             webPreview.Dock = DockStyle.Fill;
             webPreview.Location = new Point(0, 0);
+            webPreview.Margin = new Padding(0);
             webPreview.Name = "webPreview";
-            webPreview.Size = new Size(776, 356);
+            webPreview.Size = new Size(804, 362);
             webPreview.TabIndex = 0;
+            // 
+            // label1
+            // 
+            label1.BackColor = Color.FromArgb(      245,       245,       245);
+            label1.Dock = DockStyle.Top;
+            label1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            label1.Location = new Point(0, 0);
+            label1.Margin = new Padding(0);
+            label1.Name = "label1";
+            label1.Padding = new Padding(10, 0, 0, 0);
+            label1.Size = new Size(804, 30);
+            label1.TabIndex = 2;
+            label1.Text = "Preview do Template";
+            label1.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // panelTableTamplates
+            // 
+            panelTableTamplates.BackColor = Color.White;
+            panelTableTamplates.Dock = DockStyle.Fill;
+            panelTableTamplates.Location = new Point(0, 30);
+            panelTableTamplates.Name = "panelTableTamplates";
+            panelTableTamplates.Size = new Size(173, 362);
+            panelTableTamplates.TabIndex = 5;
             // 
             // label3
             // 
             label3.BackColor = Color.FromArgb(      245,       245,       245);
-            label3.BorderStyle = BorderStyle.Fixed3D;
             label3.Dock = DockStyle.Top;
             label3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             label3.Location = new Point(0, 0);
             label3.Name = "label3";
             label3.Padding = new Padding(10, 0, 0, 0);
-            label3.Size = new Size(187, 30);
+            label3.Size = new Size(173, 30);
             label3.TabIndex = 6;
             label3.Text = "Templates Disponíveis";
             label3.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // label1
-            // 
-            label1.BackColor = Color.FromArgb(      245,       245,       245);
-            label1.BorderStyle = BorderStyle.Fixed3D;
-            label1.Dock = DockStyle.Top;
-            label1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            label1.Location = new Point(0, 0);
-            label1.Name = "label1";
-            label1.Padding = new Padding(10, 0, 0, 0);
-            label1.Size = new Size(776, 30);
-            label1.TabIndex = 2;
-            label1.Text = "Preview do Template";
-            label1.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // dgvTemplates
-            // 
-            dgvTemplates.AllowUserToAddRows = false;
-            dgvTemplates.AllowUserToDeleteRows = false;
-            dgvTemplates.BackgroundColor = Color.White;
-            dgvTemplates.BorderStyle = BorderStyle.None;
-            dgvTemplates.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvTemplates.Dock = DockStyle.Fill;
-            dgvTemplates.Location = new Point(0, 0);
-            dgvTemplates.MultiSelect = false;
-            dgvTemplates.Name = "dgvTemplates";
-            dgvTemplates.ReadOnly = true;
-            dgvTemplates.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTemplates.Size = new Size(187, 354);
-            dgvTemplates.TabIndex = 0;
-            // 
-            // panelTableTamplates
-            // 
-            panelTableTamplates.Controls.Add(dgvTemplates);
-            panelTableTamplates.Dock = DockStyle.Fill;
-            panelTableTamplates.Location = new Point(0, 30);
-            panelTableTamplates.Name = "panelTableTamplates";
-            panelTableTamplates.Size = new Size(187, 354);
-            panelTableTamplates.TabIndex = 5;
-            // 
             // panelTemplatesMain
             // 
             panelTemplatesMain.BackColor = SystemColors.Control;
-            panelTemplatesMain.BorderStyle = BorderStyle.FixedSingle;
             panelTemplatesMain.Controls.Add(panelTableTamplates);
             panelTemplatesMain.Controls.Add(label3);
             panelTemplatesMain.Dock = DockStyle.Fill;
-            panelTemplatesMain.Location = new Point(3, 3);
+            panelTemplatesMain.Location = new Point(0, 0);
+            panelTemplatesMain.Margin = new Padding(0);
             panelTemplatesMain.Name = "panelTemplatesMain";
-            panelTemplatesMain.Size = new Size(189, 386);
+            panelTemplatesMain.Size = new Size(173, 392);
             panelTemplatesMain.TabIndex = 4;
             // 
             // tableLayoutPanel2
             // 
             tableLayoutPanel2.ColumnCount = 2;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel2.Controls.Add(panelTemplatesMain, 0, 0);
             tableLayoutPanel2.Controls.Add(pnlPreviewTemplateMain, 1, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
@@ -298,13 +272,25 @@
             // 
             // pnlPreviewTemplateMain
             // 
+            pnlPreviewTemplateMain.Controls.Add(listView1);
             pnlPreviewTemplateMain.Controls.Add(pnlPreviewTemplate);
             pnlPreviewTemplateMain.Controls.Add(label1);
             pnlPreviewTemplateMain.Dock = DockStyle.Fill;
-            pnlPreviewTemplateMain.Location = new Point(198, 3);
+            pnlPreviewTemplateMain.Location = new Point(173, 0);
+            pnlPreviewTemplateMain.Margin = new Padding(0);
             pnlPreviewTemplateMain.Name = "pnlPreviewTemplateMain";
-            pnlPreviewTemplateMain.Size = new Size(776, 386);
+            pnlPreviewTemplateMain.Size = new Size(804, 392);
             pnlPreviewTemplateMain.TabIndex = 5;
+            // 
+            // listView1
+            // 
+            listViewItem1.ToolTipText = "teste";
+            listView1.Items.AddRange(new ListViewItem[] { listViewItem1 });
+            listView1.Location = new Point(506, 0);
+            listView1.Name = "listView1";
+            listView1.Size = new Size(295, 310);
+            listView1.TabIndex = 19;
+            listView1.UseCompatibleStateImageBehavior = false;
             // 
             // tableLayoutPanel1
             // 
@@ -347,51 +333,6 @@
             statusStrip.Size = new Size(977, 22);
             statusStrip.TabIndex = 7;
             // 
-            // webView2
-            // 
-            webView2.AllowExternalDrop = true;
-            webView2.CreationProperties = null;
-            webView2.DefaultBackgroundColor = Color.FromArgb(      30,       30,       30);
-            webView2.Dock = DockStyle.Fill;
-            webView2.Location = new Point(0, 0);
-            webView2.Margin = new Padding(0);
-            webView2.Name = "webView2";
-            webView2.Size = new Size(300, 356);
-            webView2.TabIndex = 0;
-            webView2.ZoomFactor = 1D;
-            // 
-            // webView2Preview
-            // 
-            webView2Preview.AllowExternalDrop = true;
-            webView2Preview.CreationProperties = null;
-            webView2Preview.DefaultBackgroundColor = Color.White;
-            webView2Preview.Location = new Point(0, 30);
-            webView2Preview.Margin = new Padding(0);
-            webView2Preview.Name = "webView2Preview";
-            webView2Preview.Size = new Size(452, 441);
-            webView2Preview.TabIndex = 1;
-            webView2Preview.ZoomFactor = 1D;
-            // 
-            // splitContainerMain
-            // 
-            splitContainerMain.Dock = DockStyle.Fill;
-            splitContainerMain.Location = new Point(0, 0);
-            splitContainerMain.Margin = new Padding(0);
-            splitContainerMain.Name = "splitContainerMain";
-            // 
-            // splitContainerMain.Panel1
-            // 
-            splitContainerMain.Panel1.Controls.Add(webView2);
-            splitContainerMain.Panel1MinSize = 300;
-            // 
-            // splitContainerMain.Panel2
-            // 
-            splitContainerMain.Panel2.Controls.Add(webView2Preview);
-            splitContainerMain.Panel2MinSize = 300;
-            splitContainerMain.Size = new Size(776, 356);
-            splitContainerMain.SplitterDistance = 300;
-            splitContainerMain.TabIndex = 3;
-            // 
             // MainFormOnTop
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -404,8 +345,6 @@
             Text = "MainFormOnTop";
             flowLayoutPanel1.ResumeLayout(false);
             pnlPreviewTemplate.ResumeLayout(false);
-            ( ( System.ComponentModel.ISupportInitialize ) dgvTemplates ).EndInit();
-            panelTableTamplates.ResumeLayout(false);
             panelTemplatesMain.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
             pnlPreviewTemplateMain.ResumeLayout(false);
@@ -415,12 +354,6 @@
             panelMain.PerformLayout();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
-            ( ( System.ComponentModel.ISupportInitialize ) webView2 ).EndInit();
-            ( ( System.ComponentModel.ISupportInitialize ) webView2Preview ).EndInit();
-            splitContainerMain.Panel1.ResumeLayout(false);
-            splitContainerMain.Panel2.ResumeLayout(false);
-            ( ( System.ComponentModel.ISupportInitialize ) splitContainerMain ).EndInit();
-            splitContainerMain.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -439,10 +372,9 @@
         private Panel panelEdit;
         private Panel pnlPreviewTemplate;
         private WebBrowser webPreview;
-        private Label label3;
         private Label label1;
-        private DataGridView dgvTemplates;
         private Panel panelTableTamplates;
+        private Label label3;
         private Panel panelTemplatesMain;
         private TableLayoutPanel tableLayoutPanel2;
         private Panel pnlPreviewTemplateMain;
@@ -450,8 +382,6 @@
         private Panel panelMain;
         private ToolStripStatusLabel lblStatus;
         private StatusStrip statusStrip;
-        private SplitContainer splitContainerMain;
-        private Microsoft.Web.WebView2.WinForms.WebView2 webView2;
-        private Microsoft.Web.WebView2.WinForms.WebView2 webView2Preview;
+        private ListView listView1;
     }
 }

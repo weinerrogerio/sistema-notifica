@@ -327,7 +327,7 @@ namespace SistemaNotifica.src.Forms.Template
             }
         }
 
-        private async void BtnSetPadrao_Click(object sender, EventArgs e)
+        private async void btnSetPadrao_Click(object sender, EventArgs e)
         {
             if ( _selectedTemplate == null ) return;
 
@@ -1023,6 +1023,9 @@ namespace SistemaNotifica.src.Forms.Template
             base.OnFormClosing(e);
         }
 
-       
+        private void btnShowLegend_Click(object sender, EventArgs e)
+        {
+            //sobrepor o panel ou list de variáveis em cima de pnlPreviewTemplate e label1
+        }
     }
 }

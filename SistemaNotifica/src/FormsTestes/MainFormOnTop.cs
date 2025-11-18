@@ -242,5 +242,13 @@ namespace SistemaNotifica.src.FormsTestes
         {
             HideOverlay_Click(null, null);
         }
+
+        private void btnShowLegend_Click(object sender, EventArgs e)
+        {
+            //groupBoxImportHistory.Controls.Remove(overlayUploadPanel);
+            //this.Controls.Add(overlayUploadPanel);
+            listView1.Visible = true;
+            listView1.BringToFront();
+        }
     }
 }

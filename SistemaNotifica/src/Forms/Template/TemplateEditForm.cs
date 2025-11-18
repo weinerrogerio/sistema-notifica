@@ -1,12 +1,13 @@
 ﻿using Microsoft.Web.WebView2.Core;
+using SistemaNotifica.src.Models;
+using SistemaNotifica.src.Services;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text;
 using Timer = System.Windows.Forms.Timer;
-using SistemaNotifica.src.Models;
-using System.Diagnostics;
 
 namespace SistemaNotifica.src.Forms.Template
 {
@@ -19,6 +20,12 @@ namespace SistemaNotifica.src.Forms.Template
         private bool isPreviewReady = false;
         private bool isInitializing = false;
         private bool isContentLoaded = false; // ✅ Novo flag para controlar se o conteúdo foi carregado
+
+        private bool isLoadingPlaceholders = false;
+        private DateTime lastToggleTime = DateTime.MinValue;
+        private const int TOGGLE_DELAY_MS = 500; // Delay de 500ms entre toggles
+
+        private TemplateService _templateService;
 
         private EmailTemplate _currentTemplate;
         // Adicionar evento para comunicação com o form pai
@@ -35,13 +42,17 @@ namespace SistemaNotifica.src.Forms.Template
             this.MinimumSize = new Size(300, 200);
             this.Load += TemplateEditForm_Load;
 
+            listViewPlaceholders.SendToBack();
+            listViewPlaceholders.Visible = false;
+            _templateService = Program.TemplateService;
+
             // ✅ Debug para verificar se o template está chegando
             Debug.WriteLine($"TemplateEditForm Construtor - Template: {template?.Id}, ConteudoHtml: {template?.ConteudoHtml?.Length ?? 0} chars");
         }
 
         private async void TemplateEditForm_Load(object sender, EventArgs e)
         {
-            if (isInitializing) return;
+            if ( isInitializing ) return;
             isInitializing = true;
 
             Debug.WriteLine($"TemplateEditForm_Load - Template: {_currentTemplate?.Id}, ConteudoHtml: {_currentTemplate?.ConteudoHtml?.Length ?? 0} chars");
@@ -56,7 +67,7 @@ namespace SistemaNotifica.src.Forms.Template
                 // ✅ Carregar conteúdo do template após tudo estar pronto
                 await LoadTemplateContent();
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 MessageBox.Show($"Erro na inicialização: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -65,6 +76,29 @@ namespace SistemaNotifica.src.Forms.Template
             {
                 isInitializing = false;
             }
+            splitContainerMain.Panel2.Resize += (s, ev) =>
+            {
+                if ( listViewPlaceholders.Visible )
+                {
+                    AdjustListViewPosition();
+                }
+            };
+        }
+
+        private void AdjustListViewPosition()
+        {
+            int margin = 10;
+            int listWidth = 500;
+
+            listViewPlaceholders.Location = new Point(
+                splitContainerMain.Panel2.Width - listWidth - margin,
+                margin
+            );
+
+            listViewPlaceholders.Size = new Size(
+                listWidth,
+                splitContainerMain.Panel2.Height - ( margin * 2 )
+            );
         }
 
         // ✅ Novo método para carregar o conteúdo do template
@@ -75,7 +109,7 @@ namespace SistemaNotifica.src.Forms.Template
                 string contentToLoad = GetDefaultHtml(); // Conteúdo padrão
 
                 // Se há um template e ele tem conteúdo HTML, usar esse conteúdo
-                if (_currentTemplate != null && !string.IsNullOrEmpty(_currentTemplate.ConteudoHtml))
+                if ( _currentTemplate != null && !string.IsNullOrEmpty(_currentTemplate.ConteudoHtml) )
                 {
                     contentToLoad = _currentTemplate.ConteudoHtml;
                     Debug.WriteLine($"Carregando conteúdo do template: {contentToLoad.Substring(0, Math.Min(100, contentToLoad.Length))}...");
@@ -87,13 +121,13 @@ namespace SistemaNotifica.src.Forms.Template
 
                 // Aguardar Monaco estar pronto
                 int attempts = 0;
-                while (!isMonacoReady && attempts < 20)
+                while ( !isMonacoReady && attempts < 20 )
                 {
                     await Task.Delay(100);
                     attempts++;
                 }
 
-                if (isMonacoReady)
+                if ( isMonacoReady )
                 {
                     await SetEditorContent(contentToLoad);
                     isContentLoaded = true;
@@ -104,7 +138,7 @@ namespace SistemaNotifica.src.Forms.Template
                     Debug.WriteLine("Monaco não ficou pronto a tempo");
                 }
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao carregar conteúdo do template: {ex.Message}");
             }
@@ -132,7 +166,7 @@ namespace SistemaNotifica.src.Forms.Template
                 await InitializeMonacoEditor();
                 await InitializePreviewWebView();
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 throw new Exception($"Erro na inicialização do editor: {ex.Message}", ex);
             }
@@ -140,14 +174,14 @@ namespace SistemaNotifica.src.Forms.Template
 
         private void ConfigureButtons()
         {
-            btnSave.Click += BtnSave_Click;
-            btnBack.Click += BtnBack_Click;
-            btnCacelar.Click += BtnCancelar_Click;
-            btnPreview.Click += BtnPreview_Click;
+            btnSave.Click += btnSave_Click;
+            btnBack.Click += btnBack_Click;
+            btnCancelar.Click += btnCancelar_Click;
+            btnPreview.Click += btnPreview_Click;
 
             // Habilitar botões depois que o Monaco estiver pronto
             btnPreview.Enabled = false;
-            btnCacelar.Enabled = false;
+            btnCancelar.Enabled = false;
         }
 
         private async Task InitializeMonacoEditor()
@@ -155,7 +189,7 @@ namespace SistemaNotifica.src.Forms.Template
             try
             {
                 // Verificar se o WebView2 está disponível
-                if (webView2 == null || webView2.IsDisposed)
+                if ( webView2 == null || webView2.IsDisposed )
                     return;
 
                 // Garantir que o WebView2 está inicializado
@@ -177,7 +211,7 @@ namespace SistemaNotifica.src.Forms.Template
                 string monacoHtml = GetMonacoEditorHtml();
                 webView2.NavigateToString(monacoHtml);
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 throw new Exception($"Erro ao inicializar Monaco Editor: {ex.Message}", ex);
             }
@@ -188,7 +222,7 @@ namespace SistemaNotifica.src.Forms.Template
             try
             {
                 // Verificar se o WebView2 está disponível
-                if (webView2Preview == null || webView2Preview.IsDisposed)
+                if ( webView2Preview == null || webView2Preview.IsDisposed )
                     return;
 
                 // Garantir que o WebView2 de preview está inicializado
@@ -207,7 +241,7 @@ namespace SistemaNotifica.src.Forms.Template
                 isPreviewReady = true;
                 Debug.WriteLine("Preview WebView inicializado");
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 throw new Exception($"Erro ao inicializar Preview: {ex.Message}", ex);
             }
@@ -215,7 +249,7 @@ namespace SistemaNotifica.src.Forms.Template
 
         private void PreviewWebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
-            if (e.IsSuccess)
+            if ( e.IsSuccess )
             {
                 isPreviewReady = true;
                 Debug.WriteLine("Preview WebView carregado com sucesso");
@@ -230,7 +264,7 @@ namespace SistemaNotifica.src.Forms.Template
         {
             try
             {
-                if (e.IsSuccess)
+                if ( e.IsSuccess )
                 {
                     // Aguardar um pouco para garantir que tudo foi carregado
                     await Task.Delay(300);
@@ -243,7 +277,7 @@ namespace SistemaNotifica.src.Forms.Template
                     this.Invoke(() =>
                     {
                         btnPreview.Enabled = true;
-                        btnCacelar.Enabled = true;
+                        btnCancelar.Enabled = true;
                     });
 
                     // ✅ Não definir conteúdo padrão aqui - será feito no LoadTemplateContent
@@ -253,7 +287,7 @@ namespace SistemaNotifica.src.Forms.Template
                     Debug.WriteLine("Erro no carregamento do Monaco Editor");
                 }
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro no NavigationCompleted: {ex.Message}");
             }
@@ -265,16 +299,16 @@ namespace SistemaNotifica.src.Forms.Template
             {
                 string message = e.TryGetWebMessageAsString();
 
-                if (message.StartsWith("content:"))
+                if ( message.StartsWith("content:") )
                 {
                     // Conteúdo do editor foi alterado
                     string newContent = message.Substring(8); // Remove "content:"
-                    if (currentHtmlContent != newContent)
+                    if ( currentHtmlContent != newContent )
                     {
                         currentHtmlContent = newContent;
 
                         // ✅ Só atualizar preview se não estiver carregando conteúdo inicial
-                        if (isContentLoaded)
+                        if ( isContentLoaded )
                         {
                             // Atualizar Preview com delay
                             updateTimer.Stop();
@@ -283,7 +317,7 @@ namespace SistemaNotifica.src.Forms.Template
                     }
                 }
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao processar mensagem: {ex.Message}");
             }
@@ -299,17 +333,17 @@ namespace SistemaNotifica.src.Forms.Template
         {
             try
             {
-                if (!isPreviewReady || string.IsNullOrEmpty(htmlContent))
+                if ( !isPreviewReady || string.IsNullOrEmpty(htmlContent) )
                     return;
 
-                if (webView2Preview == null || webView2Preview.IsDisposed)
+                if ( webView2Preview == null || webView2Preview.IsDisposed )
                     return;
 
                 // Navegar para o novo conteúdo HTML
                 webView2Preview.NavigateToString(htmlContent);
                 Debug.WriteLine($"Preview atualizado com {htmlContent.Length} caracteres");
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao atualizar preview: {ex.Message}");
             }
@@ -317,7 +351,7 @@ namespace SistemaNotifica.src.Forms.Template
 
         private async Task<string> GetEditorContent()
         {
-            if (!isMonacoReady) return currentHtmlContent;
+            if ( !isMonacoReady ) return currentHtmlContent;
 
             try
             {
@@ -329,7 +363,7 @@ namespace SistemaNotifica.src.Forms.Template
 
                 return currentHtmlContent;
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao obter conteúdo do editor: {ex.Message}");
                 return currentHtmlContent;
@@ -338,7 +372,7 @@ namespace SistemaNotifica.src.Forms.Template
 
         private async Task SetEditorContent(string content)
         {
-            if (!isMonacoReady)
+            if ( !isMonacoReady )
             {
                 Debug.WriteLine("Monaco não está pronto para receber conteúdo");
                 return;
@@ -359,7 +393,7 @@ namespace SistemaNotifica.src.Forms.Template
                 await Task.Delay(200);
                 await UpdatePreview(content);
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao definir conteúdo: {ex.Message}");
             }
@@ -368,7 +402,7 @@ namespace SistemaNotifica.src.Forms.Template
         // ✅ Método melhorado para escapar conteúdo JavaScript
         private string EscapeForJavaScript(string content)
         {
-            if (string.IsNullOrEmpty(content)) return "";
+            if ( string.IsNullOrEmpty(content) ) return "";
 
             return content.Replace("\\", "\\\\")
                          .Replace("`", "\\`")
@@ -379,20 +413,20 @@ namespace SistemaNotifica.src.Forms.Template
         }
 
         // Método para salvar alterações no template atual
-        private async void BtnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
             try
             {
                 string content = await GetEditorContent();
 
-                if (string.IsNullOrEmpty(content))
+                if ( string.IsNullOrEmpty(content) )
                 {
                     MessageBox.Show("Nenhum conteúdo para salvar.", "Aviso",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                if (_currentTemplate != null)
+                if ( _currentTemplate != null )
                 {
                     // Salvar no servidor via API
                     _currentTemplate.ConteudoHtml = content;
@@ -409,13 +443,13 @@ namespace SistemaNotifica.src.Forms.Template
                 else
                 {
                     // Salvar como novo arquivo
-                    using (SaveFileDialog saveDialog = new SaveFileDialog())
+                    using ( SaveFileDialog saveDialog = new SaveFileDialog() )
                     {
                         saveDialog.Filter = "Arquivos HTML (*.html)|*.html|Todos os arquivos (*.*)|*.*";
                         saveDialog.DefaultExt = "html";
                         saveDialog.FileName = "template.html";
 
-                        if (saveDialog.ShowDialog() == DialogResult.OK)
+                        if ( saveDialog.ShowDialog() == DialogResult.OK )
                         {
                             await File.WriteAllTextAsync(saveDialog.FileName, content, Encoding.UTF8);
                             MessageBox.Show("📁 Template salvo com sucesso!", "Salvar",
@@ -424,7 +458,7 @@ namespace SistemaNotifica.src.Forms.Template
                     }
                 }
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 MessageBox.Show($"❌ Erro ao salvar: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -432,16 +466,16 @@ namespace SistemaNotifica.src.Forms.Template
         }
 
         // Modificar o método de voltar para usar evento
-        private void BtnBack_Click(object sender, EventArgs e)
+        private void btnBack_Click(object sender, EventArgs e)
         {
             // Verificar se há alterações não salvas
-            if (!string.IsNullOrEmpty(currentHtmlContent) &&
-                (_currentTemplate == null || currentHtmlContent != _currentTemplate?.ConteudoHtml))
+            if ( !string.IsNullOrEmpty(currentHtmlContent) &&
+                ( _currentTemplate == null || currentHtmlContent != _currentTemplate?.ConteudoHtml ) )
             {
                 var result = MessageBox.Show("Existem alterações não salvas. Deseja sair mesmo assim?",
                     "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-                if (result == DialogResult.No)
+                if ( result == DialogResult.No )
                     return;
             }
 
@@ -449,12 +483,12 @@ namespace SistemaNotifica.src.Forms.Template
             CloseRequested?.Invoke(this, EventArgs.Empty);
         }
 
-        private async void BtnCancelar_Click(object sender, EventArgs e)
+        private async void btnCancelar_Click(object sender, EventArgs e)
         {
-            var result = MessageBox.Show("Deseja cancelar todas as alterações?",
+            var result = MessageBox.Show("Deseja cancelar e descartar todas as alterações?",
                 "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            if (result == DialogResult.Yes)
+            if ( result == DialogResult.Yes )
             {
                 // ✅ Restaurar conteúdo original do template ou padrão
                 string originalContent = _currentTemplate?.ConteudoHtml ?? GetDefaultHtml();
@@ -462,13 +496,13 @@ namespace SistemaNotifica.src.Forms.Template
             }
         }
 
-        private async void BtnPreview_Click(object sender, EventArgs e)
+        private async void btnPreview_Click(object sender, EventArgs e)
         {
             try
             {
                 string content = await GetEditorContent();
 
-                if (string.IsNullOrEmpty(content))
+                if ( string.IsNullOrEmpty(content) )
                 {
                     MessageBox.Show("Nenhum conteúdo para visualizar.", "Aviso",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -483,7 +517,7 @@ namespace SistemaNotifica.src.Forms.Template
                     UseShellExecute = true
                 });
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 MessageBox.Show($"❌ Erro ao abrir preview: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -499,7 +533,7 @@ namespace SistemaNotifica.src.Forms.Template
         // Método para verificar se há alterações pendentes
         public bool HasUnsavedChanges()
         {
-            if (_currentTemplate == null)
+            if ( _currentTemplate == null )
                 return !string.IsNullOrEmpty(currentHtmlContent);
 
             return currentHtmlContent != _currentTemplate.ConteudoHtml;
@@ -642,22 +676,22 @@ namespace SistemaNotifica.src.Forms.Template
                 updateTimer?.Dispose();
 
                 // Limpar arquivo temporário
-                if (File.Exists(tempHtmlFile))
+                if ( File.Exists(tempHtmlFile) )
                     File.Delete(tempHtmlFile);
 
                 // Limpar WebViews
-                if (webView2?.CoreWebView2 != null)
+                if ( webView2?.CoreWebView2 != null )
                 {
                     webView2.CoreWebView2.NavigationCompleted -= CoreWebView2_NavigationCompleted;
                     webView2.CoreWebView2.WebMessageReceived -= CoreWebView2_WebMessageReceived;
                 }
 
-                if (webView2Preview?.CoreWebView2 != null)
+                if ( webView2Preview?.CoreWebView2 != null )
                 {
                     webView2Preview.CoreWebView2.NavigationCompleted -= PreviewWebView2_NavigationCompleted;
                 }
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro no fechamento: {ex.Message}");
             }
@@ -666,12 +700,104 @@ namespace SistemaNotifica.src.Forms.Template
         }
 
         // Override para garantir que o form seja exibido corretamente
-        protected override void SetVisibleCore(bool value)
+        private async void btnShowLegend_Click(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
-                value = false;
+            // Anti-spam: verificar se passou tempo suficiente desde último toggle
+            var timeSinceLastToggle = DateTime.Now - lastToggleTime;
+            if ( timeSinceLastToggle.TotalMilliseconds < TOGGLE_DELAY_MS )
+            {
+                Debug.WriteLine($"⏱️ Toggle ignorado - aguarde {TOGGLE_DELAY_MS}ms entre cliques");
+                return;
+            }
 
-            base.SetVisibleCore(value);
+            lastToggleTime = DateTime.Now;
+
+            // Se já está carregando, ignorar
+            if ( isLoadingPlaceholders )
+            {
+                Debug.WriteLine("⏳ Já carregando placeholders...");
+                return;
+            }
+
+            // Toggle visibility
+            if ( listViewPlaceholders.Visible )
+            {
+                // ✅ Esconder e limpar
+                listViewPlaceholders.Visible = false;
+                listViewPlaceholders.SendToBack();
+                listViewPlaceholders.Items.Clear();
+                btnShowLegend.Text = "Mostrar variáveis válidas";
+                Debug.WriteLine("🔽 Lista de placeholders ocultada");
+            }
+            else
+            {
+                // ✅ Mostrar e carregar
+                btnShowLegend.Text = "Esconder variáveis válidas";
+                listViewPlaceholders.BringToFront();
+                listViewPlaceholders.Visible = true;
+                Debug.WriteLine("🔼 Lista de placeholders exibida");
+
+                // Carregar dados se a lista estiver vazia
+                if ( listViewPlaceholders.Items.Count == 0 )
+                {
+                    await LoadPlaceholdersAsync();
+                }
+            }
+        }
+
+       
+
+        private async Task LoadPlaceholdersAsync()
+        {
+            if ( _templateService == null )
+            {
+                MessageBox.Show("Serviço de templates não disponível.", "Erro",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                isLoadingPlaceholders = true;
+                listViewPlaceholders.Items.Clear();
+
+                // Adicionar item de "Carregando..."
+                listViewPlaceholders.Items.Add(new ListViewItem(new[] { "Carregando...", "" }));
+
+                // Buscar da API
+                var placeholders = await _templateService.GetPlaceholderDescriptionsAsync();
+
+                // Limpar e popular
+                listViewPlaceholders.Items.Clear();
+
+                foreach ( var kvp in placeholders.OrderBy(x => x.Key) )
+                {
+                    var item = new ListViewItem(new[]
+                    {
+                kvp.Value,              // Coluna 1: Descrição
+                $"{{{{{kvp.Key}}}}}"    // Coluna 2: {{placeholder}}
+            });
+
+                    listViewPlaceholders.Items.Add(item);
+                }
+
+                Debug.WriteLine($"✅ {placeholders.Count} placeholders carregados");
+            }
+            catch ( Exception ex )
+            {
+                listViewPlaceholders.Items.Clear();
+                listViewPlaceholders.Items.Add(new ListViewItem(new[]
+                {
+            "❌ Erro ao carregar",
+            ex.Message
+        }));
+
+                Debug.WriteLine($"Erro ao carregar placeholders: {ex.Message}");
+            }
+            finally
+            {
+                isLoadingPlaceholders = false;
+            }
         }
     }
 }

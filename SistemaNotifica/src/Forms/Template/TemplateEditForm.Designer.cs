@@ -31,12 +31,15 @@
             btnShowLegend = new Button();
             btnSave = new Button();
             btnBack = new Button();
-            btnCacelar = new Button();
+            btnCancelar = new Button();
             btnPreview = new Button();
             tableLayoutPanel1 = new TableLayoutPanel();
             flowLayoutPanel1 = new FlowLayoutPanel();
             splitContainerMain = new SplitContainer();
             webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            listViewPlaceholders = new ListView();
+            columnHeaderPlaceholder = new ColumnHeader();
+            columnHeaderDesc = new ColumnHeader();
             webView2Preview = new Microsoft.Web.WebView2.WinForms.WebView2();
             tableLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
@@ -53,12 +56,13 @@
             btnShowLegend.BackColor = Color.Gray;
             btnShowLegend.FlatStyle = FlatStyle.Flat;
             btnShowLegend.ForeColor = Color.White;
-            btnShowLegend.Location = new Point(454, 3);
+            btnShowLegend.Location = new Point(493, 3);
             btnShowLegend.Name = "btnShowLegend";
             btnShowLegend.Size = new Size(177, 27);
             btnShowLegend.TabIndex = 10;
             btnShowLegend.Text = "Mostrar variáveis válidas";
             btnShowLegend.UseVisualStyleBackColor = false;
+            btnShowLegend.Click +=  btnShowLegend_Click ;
             // 
             // btnSave
             // 
@@ -69,12 +73,13 @@
             btnSave.FlatAppearance.MouseOverBackColor = Color.FromArgb(      70,       80,       90);
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(318, 3);
+            btnSave.Location = new Point(357, 3);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(130, 27);
             btnSave.TabIndex = 5;
             btnSave.Text = "📁 Salvar";
             btnSave.UseVisualStyleBackColor = false;
+            btnSave.Click +=  btnSave_Click ;
             // 
             // btnBack
             // 
@@ -87,20 +92,21 @@
             btnBack.TabIndex = 9;
             btnBack.Text = "🔄 Voltar";
             btnBack.UseVisualStyleBackColor = false;
-            btnBack.Click +=  BtnBack_Click ;
+            btnBack.Click +=  btnBack_Click ;
             // 
-            // btnCacelar
+            // btnCancelar
             // 
-            btnCacelar.BackColor = Color.FromArgb(      244,       67,       54);
-            btnCacelar.Enabled = false;
-            btnCacelar.FlatStyle = FlatStyle.Flat;
-            btnCacelar.ForeColor = Color.White;
-            btnCacelar.Location = new Point(232, 3);
-            btnCacelar.Name = "btnCacelar";
-            btnCacelar.Size = new Size(80, 27);
-            btnCacelar.TabIndex = 6;
-            btnCacelar.Text = "🗑️ Cancelar";
-            btnCacelar.UseVisualStyleBackColor = false;
+            btnCancelar.BackColor = Color.FromArgb(      244,       67,       54);
+            btnCancelar.Enabled = false;
+            btnCancelar.FlatStyle = FlatStyle.Flat;
+            btnCancelar.ForeColor = Color.White;
+            btnCancelar.Location = new Point(271, 3);
+            btnCancelar.Name = "btnCancelar";
+            btnCancelar.Size = new Size(80, 27);
+            btnCancelar.TabIndex = 6;
+            btnCancelar.Text = "🗑️ Cancelar";
+            btnCancelar.UseVisualStyleBackColor = false;
+            btnCancelar.Click +=  btnCancelar_Click ;
             // 
             // btnPreview
             // 
@@ -110,7 +116,7 @@
             btnPreview.ForeColor = Color.White;
             btnPreview.Location = new Point(99, 3);
             btnPreview.Name = "btnPreview";
-            btnPreview.Size = new Size(127, 27);
+            btnPreview.Size = new Size(166, 27);
             btnPreview.TabIndex = 8;
             btnPreview.Text = "🌐 Abrir no Navegador";
             btnPreview.UseVisualStyleBackColor = false;
@@ -137,7 +143,7 @@
             flowLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             flowLayoutPanel1.Controls.Add(btnBack);
             flowLayoutPanel1.Controls.Add(btnPreview);
-            flowLayoutPanel1.Controls.Add(btnCacelar);
+            flowLayoutPanel1.Controls.Add(btnCancelar);
             flowLayoutPanel1.Controls.Add(btnSave);
             flowLayoutPanel1.Controls.Add(btnShowLegend);
             flowLayoutPanel1.Dock = DockStyle.Fill;
@@ -161,10 +167,11 @@
             // 
             // splitContainerMain.Panel2
             // 
+            splitContainerMain.Panel2.Controls.Add(listViewPlaceholders);
             splitContainerMain.Panel2.Controls.Add(webView2Preview);
             splitContainerMain.Panel2MinSize = 300;
             splitContainerMain.Size = new Size(838, 458);
-            splitContainerMain.SplitterDistance = 400;
+            splitContainerMain.SplitterDistance = 399;
             splitContainerMain.TabIndex = 2;
             // 
             // webView2
@@ -176,9 +183,34 @@
             webView2.Location = new Point(0, 0);
             webView2.Margin = new Padding(0);
             webView2.Name = "webView2";
-            webView2.Size = new Size(400, 458);
+            webView2.Size = new Size(399, 458);
             webView2.TabIndex = 0;
             webView2.ZoomFactor = 1D;
+            // 
+            // listViewPlaceholders
+            // 
+            listViewPlaceholders.Anchor =      AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Right ;
+            listViewPlaceholders.BorderStyle = BorderStyle.FixedSingle;
+            listViewPlaceholders.Columns.AddRange(new ColumnHeader[] { columnHeaderPlaceholder, columnHeaderDesc });
+            listViewPlaceholders.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            listViewPlaceholders.Location = new Point(113, -2);
+            listViewPlaceholders.MultiSelect = false;
+            listViewPlaceholders.Name = "listViewPlaceholders";
+            listViewPlaceholders.Size = new Size(322, 460);
+            listViewPlaceholders.TabIndex = 11;
+            listViewPlaceholders.UseCompatibleStateImageBehavior = false;
+            listViewPlaceholders.View = View.Details;
+            listViewPlaceholders.Visible = false;
+            // 
+            // columnHeaderPlaceholder
+            // 
+            columnHeaderPlaceholder.Text = "Placeholder";
+            columnHeaderPlaceholder.Width = 150;
+            // 
+            // columnHeaderDesc
+            // 
+            columnHeaderDesc.Text = "Descrição";
+            columnHeaderDesc.Width = 200;
             // 
             // webView2Preview
             // 
@@ -189,7 +221,7 @@
             webView2Preview.Location = new Point(0, 0);
             webView2Preview.Margin = new Padding(0);
             webView2Preview.Name = "webView2Preview";
-            webView2Preview.Size = new Size(434, 458);
+            webView2Preview.Size = new Size(435, 458);
             webView2Preview.TabIndex = 1;
             webView2Preview.ZoomFactor = 1D;
             // 
@@ -216,7 +248,7 @@
 
         #endregion
         private Button btnSave;
-        private Button btnCacelar;
+        private Button btnCancelar;
         private Button btnBack;
         private Button btnPreview;
         private Button btnShowLegend;
@@ -225,5 +257,8 @@
         private SplitContainer splitContainerMain;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView2;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView2Preview;
+        private ListView listViewPlaceholders;
+        private ColumnHeader columnHeaderPlaceholder;
+        private ColumnHeader columnHeaderDesc;
     }
 }

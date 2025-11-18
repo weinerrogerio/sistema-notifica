@@ -357,5 +357,20 @@ namespace SistemaNotifica.src.Services
                 return conteudoHtml;
             }
         }
+
+        public async Task<Dictionary<string, string>> GetPlaceholderDescriptionsAsync()
+        {
+            try
+            {
+                Debug.WriteLine("Chamando GET /template/placeholders");
+                return await _apiService.GetAsync<Dictionary<string, string>>("template/placeholders")
+                       ?? new Dictionary<string, string>();
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro em GetPlaceholderDescriptionsAsync: {ex}");
+                throw new Exception($"Erro ao buscar placeholders: {ex.Message}");
+            }
+        }
     }
 }

@@ -51,7 +51,7 @@ namespace SistemaNotifica
             //List<ErroDetalhado> erros = new List<ErroDetalhado>();
 
             //Application.Run(new src.FormsTestes.MainFormOnTop());
-            //Application.Run(new src.Forms.Template.TemplateManagerForm());
+            //Application.Run(new src.Forms.Template.TemplateEditForm());
             using ( FormLogin loginForm = new FormLogin() )
             {
                 if ( loginForm.ShowDialog() == DialogResult.OK )
