@@ -394,8 +394,9 @@ namespace SistemaNotifica.src.Forms.Template
         }
 
         // Upload permanece igual ao código original
-        private async void BtnUpload_Click(object sender, EventArgs e)
+        private async void btnUpload_Click(object sender, EventArgs e)
         {
+            Debug.WriteLine("CLICK no botão upload de template...");
             using ( var openFileDialog = new OpenFileDialog() )
             {
                 openFileDialog.Filter = "Arquivos HTML (*.html)|*.html|Todos os arquivos (*.*)|*.*";
@@ -508,7 +509,7 @@ namespace SistemaNotifica.src.Forms.Template
                                 Debug.WriteLine($"ERRO NO UPLOAD: {ex}");
 
                                 // ✅ Exibir erro formatado em modal com scroll
-                                ShowErrorDialog("Erro de Validação", ex.Message);
+                                TemplateValidationHelper.ShowTemplateValidationError(this, ex.Message);
 
                                 SetStatus("Erro no upload.");
                             }
@@ -534,64 +535,7 @@ namespace SistemaNotifica.src.Forms.Template
             }
         }
 
-        private void ShowErrorDialog(string title, string message)
-        {
-            using ( var errorForm = new Form() )
-            {
-                errorForm.Text = title;
-                errorForm.Width = 500;
-                errorForm.Height = 600;
-                errorForm.StartPosition = FormStartPosition.CenterParent;
-                errorForm.FormBorderStyle = FormBorderStyle.Sizable;
-                errorForm.MaximizeBox = false;
-                errorForm.ShowIcon = false;
 
-                // ✅ USAR RichTextBox ao invés de TextBox
-                var richTextBox = new RichTextBox
-                {
-                    Multiline = true,
-                    ReadOnly = true,
-                    ScrollBars = RichTextBoxScrollBars.Vertical,
-                    Dock = DockStyle.Fill,
-                    Font = new Font("Consolas", 9.5F),
-                    Text = message,
-                    BackColor = Color.White,
-                    BorderStyle = BorderStyle.None,
-                    WordWrap = true,
-                    DetectUrls = false, // Evita formatação de URLs
-                    Padding = new Padding(15)
-                };
-
-                var panel = new Panel
-                {
-                    Dock = DockStyle.Fill,
-                    Padding = new Padding(15),
-                    BackColor = Color.White
-                };
-                panel.Controls.Add(richTextBox);
-
-                var btnOk = new Button
-                {
-                    Text = "OK",
-                    Dock = DockStyle.Bottom,
-                    Height = 50,
-                    DialogResult = DialogResult.OK,
-                    FlatStyle = FlatStyle.Flat,
-                    BackColor = Color.FromArgb(0, 123, 255),
-                    ForeColor = Color.White,
-                    Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                    Cursor = Cursors.Hand
-                };
-
-                btnOk.FlatAppearance.BorderSize = 0;
-
-                errorForm.Controls.Add(panel);
-                errorForm.Controls.Add(btnOk);
-                errorForm.AcceptButton = btnOk;
-
-                errorForm.ShowDialog(this);
-            }
-        }
 
         private Dictionary<string, object> GetDadosTeste()
         {
@@ -653,6 +597,7 @@ namespace SistemaNotifica.src.Forms.Template
             try
             {
                 // Parar qualquer animação em andamento
+                panelEdit.BringToFront();
                 timerTransition.Stop();
                 Debug.WriteLine("⏸️ Timer parado");
 
@@ -810,7 +755,7 @@ namespace SistemaNotifica.src.Forms.Template
         private void EditForm_CloseRequested(object sender, EventArgs e)
         {
             // Fechar o painel de edição
-            ContractPanel();
+            ContractPanel(force: true);
         }
 
         private async void EditForm_TemplateUpdated(object sender, EmailTemplate updatedTemplate)
@@ -951,7 +896,7 @@ namespace SistemaNotifica.src.Forms.Template
         }
 
         // Método para fechar o painel de edição
-        private void ContractPanel()
+        private void ContractPanel(bool force = false)
         {
             if ( !pnlFormExpanded || pnlForm == null )
                 return;
@@ -959,16 +904,15 @@ namespace SistemaNotifica.src.Forms.Template
             try
             {
                 // Verificar alterações pendentes
-                var editForm = pnlForm as TemplateEditForm;
-                if ( editForm?.HasUnsavedChanges() == true )
+                if ( !force )
                 {
-                    var result = MessageBox.Show("Existem alterações não salvas. Deseja fechar mesmo assim?",
-                        "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                    if ( result == DialogResult.No )
-                        return;
+                    var editForm = pnlForm as TemplateEditForm;
+                    if ( editForm?.HasUnsavedChanges() == true )
+                    {
+                        var result = MessageBox.Show("Existem alterações não salvas...");
+                        if ( result == DialogResult.No ) return;
+                    }
                 }
-
                 // Configurar animação de fechamento
                 isAnimating = true;
                 targetWidth = 0;
@@ -1027,5 +971,7 @@ namespace SistemaNotifica.src.Forms.Template
         {
             //sobrepor o panel ou list de variáveis em cima de pnlPreviewTemplate e label1
         }
+
+        
     }
 }

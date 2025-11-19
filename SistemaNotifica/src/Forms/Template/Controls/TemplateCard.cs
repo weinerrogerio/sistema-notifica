@@ -58,6 +58,7 @@ namespace SistemaNotifica.src.Forms.Template.Controls
             // e SuspendLayout/ResumeLayout são chamados.
             InitializeComponent();
             SetupLayout(); // Métodos de configuração visual adicionais, se houver
+            WireAllControls(this);
         }
 
         // InitializeComponent é gerado pelo designer no TemplateCard.Designer.cs
@@ -162,6 +163,24 @@ namespace SistemaNotifica.src.Forms.Template.Controls
             ResumeLayout(false);
         }
 
+        private void WireAllControls(Control parent)
+        {
+            foreach ( Control ctl in parent.Controls )
+            {
+                // Não sobrescreva o comportamento do CheckBox se ele tiver lógica própria
+                if ( !( ctl is CheckBox ) )
+                {
+                    ctl.Click += PnlMain_Click; // Todos apontam para o mesmo handler
+                    ctl.Cursor = Cursors.Hand;  // Garante que a mãozinha apareça em tudo
+                }
+
+                // Recursividade para pegar painéis dentro de painéis (ex: pnlStatus)
+                if ( ctl.HasChildren )
+                {
+                    WireAllControls(ctl);
+                }
+            }
+        }
         private void SetupLayout()
         {
             // Propriedades visuais do TemplateCard em si

@@ -239,6 +239,7 @@
             btnUpload.TabIndex = 0;
             btnUpload.Text = "📁 Upload Template";
             btnUpload.UseVisualStyleBackColor = false;
+            btnUpload.Click +=  btnUpload_Click;
             // 
             // btnDelete
             // 

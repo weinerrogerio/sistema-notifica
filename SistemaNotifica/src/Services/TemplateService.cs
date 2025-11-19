@@ -141,6 +141,49 @@ namespace SistemaNotifica.src.Services
             }
         }
 
+        public async Task<EmailTemplate> UpdateTemplateAsync(int id, string novoConteudoHtml, string nomeArquivo)
+        {
+            try
+            {
+                Debug.WriteLine($"Atualizando template {id}");
+
+                using ( var form = new MultipartFormDataContent() )
+                {
+                    // Criar arquivo em memória com o novo conteúdo
+                    var fileBytes = Encoding.UTF8.GetBytes(novoConteudoHtml);
+                    var fileContent = new ByteArrayContent(fileBytes);
+                    fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("text/html");
+
+                    // Importante: manter o nome do arquivo ou usar o fornecido
+                    form.Add(fileContent, "file", nomeArquivo ?? $"template_{id}.html");
+
+                    var httpClient = _apiService.GetHttpClient();
+
+                    // ✅ PATCH para atualizar template existente
+                    var response = await httpClient.PatchAsync(
+                        _apiService.BuildUrlWithQueryParams($"template/{id}"),
+                        form
+                    );
+
+                    // ✅ Se deu erro, processar a mensagem (MESMA LÓGICA DO UPLOAD)
+                    if ( !response.IsSuccessStatusCode )
+                    {
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        var formattedError = FormatTemplateError(errorContent);
+                        throw new Exception(formattedError);
+                    }
+
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<EmailTemplate>(responseJson);
+                }
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro ao atualizar template: {ex}");
+                throw; // Repassa a exceção formatada
+            }
+        }
+
         private string FormatTemplateError(string jsonError)
         {
             try

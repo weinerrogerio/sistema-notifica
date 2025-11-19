@@ -428,21 +428,50 @@ namespace SistemaNotifica.src.Forms.Template
 
                 if ( _currentTemplate != null )
                 {
-                    // Salvar no servidor via API
-                    _currentTemplate.ConteudoHtml = content;
+                    try
+                    {
+                        SetStatus("Salvando template...");
 
-                    // Aqui você chamaria seu ApiService para salvar
-                    // await _apiService.UpdateTemplateAsync(_currentTemplate);
+                        // ✅ Desabilitar botão durante salvamento
+                        btnSave.Enabled = false;
 
-                    // Disparar evento para atualizar a lista no form pai
-                    TemplateUpdated?.Invoke(this, _currentTemplate);
+                        // ✅ Validar e salvar no servidor via API
+                        var updatedTemplate = await _templateService.UpdateTemplateAsync(
+                            _currentTemplate.Id,
+                            content,
+                            _currentTemplate.NomeArquivo // Manter nome original
+                        );
 
-                    MessageBox.Show("Template salvo com sucesso!", "Sucesso",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        // ✅ Atualizar template local
+                        _currentTemplate.ConteudoHtml = updatedTemplate.ConteudoHtml;
+                        _currentTemplate.AtualizadoEm = updatedTemplate.AtualizadoEm;
+
+                        // ✅ Atualizar o conteúdo atual para evitar avisos de "não salvo"
+                        currentHtmlContent = content;
+
+                        // ✅ Disparar evento para atualizar a lista no form pai
+                        TemplateUpdated?.Invoke(this, _currentTemplate);
+
+                        SetStatus("Template salvo com sucesso");
+                        MessageBox.Show("Template salvo com sucesso!", "Sucesso",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch ( Exception ex )
+                    {
+                        Debug.WriteLine($"Erro ao salvar template: {ex}");
+                        SetStatus("Erro ao salvar template");
+
+                        // ✅ Usar a classe utilitária para mostrar erro de validação
+                        TemplateValidationHelper.ShowTemplateValidationError(this, ex.Message);
+                    }
+                    finally
+                    {
+                        btnSave.Enabled = true;
+                    }
                 }
                 else
                 {
-                    // Salvar como novo arquivo
+                    // Salvar como novo arquivo local
                     using ( SaveFileDialog saveDialog = new SaveFileDialog() )
                     {
                         saveDialog.Filter = "Arquivos HTML (*.html)|*.html|Todos os arquivos (*.*)|*.*";
@@ -463,6 +492,12 @@ namespace SistemaNotifica.src.Forms.Template
                 MessageBox.Show($"❌ Erro ao salvar: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void SetStatus(string message)
+        {
+            // Se você tem uma StatusStrip, atualize aqui
+            Debug.WriteLine($"[Status] {message}");
         }
 
         // Modificar o método de voltar para usar evento
