@@ -380,6 +380,7 @@ namespace SistemaNotifica.src.Forms.Template
 
             try
             {
+                await Task.Delay(500);
                 // ✅ Melhor escape de conteúdo para JavaScript
                 string escapedContent = EscapeForJavaScript(content);
 

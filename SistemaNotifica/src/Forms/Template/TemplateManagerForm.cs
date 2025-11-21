@@ -37,6 +37,13 @@ namespace SistemaNotifica.src.Forms.Template
         {
             InitializeComponent();
             //_apiService = new ApiService("http://localhost:3000/");
+
+            typeof(Panel).InvokeMember("DoubleBuffered",
+                System.Reflection.BindingFlags.SetProperty |
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic,
+                null, panelEdit, new object[] { true });
+
             _templateService = Program.TemplateService;
             _templates = new List<EmailTemplate>();
             _templateCards = new List<TemplateCard>();
@@ -574,19 +581,14 @@ namespace SistemaNotifica.src.Forms.Template
         //EDIT --> panelEdit
         private async void btnEdit_ClickAsync(object sender, EventArgs e)
         {
+            if ( isAnimating ) return;
 
-            // Prevenir múltiplos cliques durante animação
-            if ( isAnimating )
-                return;
-
-            // Se já existe um formulário expandido, contrair primeiro
             if ( pnlFormExpanded && pnlForm != null )
             {
                 ContractPanel();
                 return;
             }
 
-            // Verificar se há template selecionado
             if ( _selectedTemplate == null )
             {
                 MessageBox.Show("Selecione um template para editar.", "Aviso",
@@ -596,43 +598,125 @@ namespace SistemaNotifica.src.Forms.Template
 
             try
             {
-                // Parar qualquer animação em andamento
                 panelEdit.BringToFront();
                 timerTransition.Stop();
-                Debug.WriteLine("⏸️ Timer parado");
 
-                // 1. Limpar formulário existente
                 CleanupForm();
-                Debug.WriteLine("🧹 Formulário limpo");
 
-                // 2. Criar e configurar o novo formulário (AWAIT!)
                 bool formCreated = await CreateAndConfigureFormAsync();
+                if ( !formCreated ) return;
 
-                if ( !formCreated )
-                {
-                    Debug.WriteLine("❌ Falha ao criar formulário");
-                    SetStatus("Erro ao criar editor");
-                    return;
-                }
+                // ✅ AGUARDAR SIDEBAR CONTRAIR COMPLETAMENTE
+                await WaitForSidebarContraction();
 
-                Debug.WriteLine("✅ Formulário criado e configurado");
-
-                // 3. Configurar animação
-                SetupAnimation();
-                Debug.WriteLine("⚙️ Animação configurada");
-
-                // 4. Iniciar animação
-                StartAnimation();
-                Debug.WriteLine("▶️ Animação iniciada");
+                // ✅ ANIMAR COM A LARGURA CORRETA
+                await AnimateExpansionAsync();
             }
             catch ( Exception ex )
             {
-                Debug.WriteLine($"❌ Erro em btnEdit_Click: {ex.Message}");
-                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+                Debug.WriteLine($"❌ Erro: {ex.Message}");
                 MessageBox.Show($"Erro ao abrir editor: {ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CleanupForm();
                 isAnimating = false;
+            }
+        }
+        private async Task WaitForSidebarContraction()
+        {
+            // Buscar o FormOrigin (form pai)
+            var parentForm = this.ParentForm as FormOrigin;
+
+            if ( parentForm != null )
+            {
+                // Verificar se a sidebar está expandida através de reflection ou propriedade pública
+                var sidebarField = parentForm.GetType().GetField("sidebarMenu",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+                if ( sidebarField != null )
+                {
+                    var sidebar = sidebarField.GetValue(parentForm) as Control;
+
+                    if ( sidebar != null && sidebar.Width > 50 ) // Se sidebar está expandida
+                    {
+                        Debug.WriteLine("⏳ Aguardando sidebar contrair...");
+
+                        // Aguardar até a sidebar contrair (máximo 500ms)
+                        int attempts = 0;
+                        while ( sidebar.Width > 50 && attempts < 50 ) // 50 * 10ms = 500ms
+                        {
+                            await Task.Delay(10);
+                            attempts++;
+                        }
+
+                        // Aguardar mais um pouco para garantir estabilidade
+                        await Task.Delay(50);
+
+                        Debug.WriteLine($"✅ Sidebar contraída para {sidebar.Width}px");
+                    }
+                }
+            }
+
+            // Aguardar um frame extra para garantir que o layout foi atualizado
+            await Task.Delay(16); // ~1 frame a 60fps
+        }
+
+        private async Task AnimateExpansionAsync()
+        {
+            isAnimating = true;
+            pnlFormExpanded = false;
+
+            int duration = 300; // 300ms - rápido mas suave
+            int fps = 60;
+            int frames = ( duration * fps ) / 1000;
+            int delayPerFrame = duration / frames;
+
+            panelEdit.Width = 0;
+            panelEdit.Visible = true;
+
+            // ✅ Suspender layout durante animação
+            panelEdit.SuspendLayout();
+            if ( pnlForm != null ) pnlForm.SuspendLayout();
+
+            try
+            {
+                for ( int i = 0; i <= frames; i++ )
+                {
+                    // ✅ RECALCULAR largura alvo a cada frame (em caso de resize/sidebar)
+                    int currentTargetWidth = this.ClientSize.Width;
+
+                    // Interpolação suave (easing out)
+                    float progress = ( float ) i / frames;
+                    float eased = 1f - ( float ) Math.Pow(1 - progress, 3); // Cubic ease-out
+
+                    int newWidth = ( int ) ( currentTargetWidth * eased );
+                    panelEdit.Width = newWidth;
+
+                    if ( pnlForm != null && !pnlForm.IsDisposed && isFormLoaded )
+                    {
+                        pnlForm.Width = newWidth;
+                        pnlForm.Height = panelEdit.Height;
+                    }
+
+                    await Task.Delay(delayPerFrame);
+                }
+
+                // ✅ Garantir largura final exata (recalcular uma última vez)
+                int finalWidth = this.ClientSize.Width;
+                panelEdit.Width = finalWidth;
+
+                if ( pnlForm != null && !pnlForm.IsDisposed && isFormLoaded )
+                {
+                    pnlForm.Dock = DockStyle.Fill; // Agora sim aplicar Dock
+                }
+            }
+            finally
+            {
+                panelEdit.ResumeLayout(true);
+                if ( pnlForm != null && !pnlForm.IsDisposed ) pnlForm.ResumeLayout(true);
+
+                pnlFormExpanded = true;
+                isAnimating = false;
+                Debug.WriteLine("✅ Animação concluída");
             }
         }
 
@@ -811,114 +895,80 @@ namespace SistemaNotifica.src.Forms.Template
             timerTransition.Start();
         }
 
-        private void timerTransition_Tick(object sender, EventArgs e)
+        private async Task AnimateContractionAsync()
         {
-            const int step = 20;
-            const int minStep = 3;
+            isAnimating = true;
 
-            if ( !pnlFormExpanded ) // Expandindo
+            int duration = 250; // Contração mais rápida
+            int fps = 60;
+            int frames = ( duration * fps ) / 1000;
+            int delayPerFrame = duration / frames;
+
+            int startWidth = panelEdit.Width;
+
+            panelEdit.SuspendLayout();
+            if ( pnlForm != null && !pnlForm.IsDisposed )
             {
-                int remainingWidth = targetWidth - panelEdit.Width;
-                int currentStep = Math.Max(minStep, Math.Min(step, remainingWidth / 8));
-
-                panelEdit.Width += currentStep;
-
-                // Atualizar tamanho do formulário para acompanhar o painel
-                if ( pnlForm != null && !pnlForm.IsDisposed && isFormLoaded )
-                {
-                    try
-                    {
-                        pnlForm.Width = panelEdit.Width;
-                        pnlForm.Height = panelEdit.Height;
-                        pnlForm.Refresh(); // Forçar redesenho
-                    }
-                    catch ( Exception ex )
-                    {
-                        Console.WriteLine($"Erro ao redimensionar: {ex.Message}");
-                    }
-                }
-
-                if ( panelEdit.Width >= targetWidth )
-                {
-                    // Animação de expansão concluída
-                    panelEdit.Width = targetWidth;
-                    pnlFormExpanded = true;
-                    isAnimating = false;
-                    timerTransition.Stop();
-
-                    // Agora sim, aplicar Dock.Fill para responsividade
-                    if ( pnlForm != null && !pnlForm.IsDisposed && isFormLoaded )
-                    {
-                        try
-                        {
-                            pnlForm.Dock = DockStyle.Fill;
-                            pnlForm.Refresh();
-                        }
-                        catch ( Exception ex )
-                        {
-                            Console.WriteLine($"Erro ao aplicar Dock.Fill: {ex.Message}");
-                        }
-                    }
-                }
+                pnlForm.Dock = DockStyle.None;
+                pnlForm.SuspendLayout();
             }
-            else // Contraindo
+
+            try
             {
-                int currentStep = Math.Max(minStep, panelEdit.Width / 10);
-                panelEdit.Width -= currentStep;
-
-                // Atualizar tamanho do formulário durante contração
-                if ( pnlForm != null && !pnlForm.IsDisposed )
+                for ( int i = frames; i >= 0; i-- )
                 {
-                    try
+                    float progress = ( float ) i / frames;
+                    float eased = ( float ) Math.Pow(progress, 2); // Quadratic ease-in
+
+                    int newWidth = ( int ) ( startWidth * eased );
+                    panelEdit.Width = newWidth;
+
+                    if ( pnlForm != null && !pnlForm.IsDisposed )
                     {
-                        pnlForm.Dock = DockStyle.None; // Remover Dock para controlar manualmente
-                        pnlForm.Width = panelEdit.Width;
-                        pnlForm.Height = panelEdit.Height;
+                        pnlForm.Width = newWidth;
                     }
-                    catch ( Exception ex )
-                    {
-                        Console.WriteLine($"Erro ao redimensionar na contração: {ex.Message}");
-                    }
+
+                    await Task.Delay(delayPerFrame);
                 }
 
-                if ( panelEdit.Width <= 0 )
-                {
-                    // Animação de contração concluída
-                    panelEdit.Width = 0;
-                    pnlFormExpanded = false;
-                    isAnimating = false;
-                    timerTransition.Stop();
+                panelEdit.Width = 0;
+                panelEdit.Visible = false;
+            }
+            finally
+            {
+                panelEdit.ResumeLayout(true);
+                if ( pnlForm != null && !pnlForm.IsDisposed ) pnlForm.ResumeLayout(true);
 
-                    // Limpar formulário após contração
-                    CleanupForm();
-                }
+                CleanupForm();
+                pnlFormExpanded = false;
+                isAnimating = false;
+                SetStatus("Editor fechado");
+                Debug.WriteLine("✅ Contração concluída");
             }
         }
 
         // Método para fechar o painel de edição
-        private void ContractPanel(bool force = false)
+        private async void ContractPanel(bool force = false)
         {
-            if ( !pnlFormExpanded || pnlForm == null )
-                return;
+            if ( !pnlFormExpanded || pnlForm == null ) return;
 
             try
             {
-                // Verificar alterações pendentes
                 if ( !force )
                 {
                     var editForm = pnlForm as TemplateEditForm;
                     if ( editForm?.HasUnsavedChanges() == true )
                     {
-                        var result = MessageBox.Show("Existem alterações não salvas...");
+                        var result = MessageBox.Show(
+                            "Existem alterações não salvas. Deseja sair mesmo assim?",
+                            "Confirmação",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question);
                         if ( result == DialogResult.No ) return;
                     }
                 }
-                // Configurar animação de fechamento
-                isAnimating = true;
-                targetWidth = 0;
-                timerTransition.Start();
 
-                SetStatus("Fechando editor...");
+                await AnimateContractionAsync();
             }
             catch ( Exception ex )
             {

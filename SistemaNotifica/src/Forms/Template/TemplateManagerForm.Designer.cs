@@ -323,7 +323,6 @@
             // timerTransition
             // 
             timerTransition.Interval = 8;
-            timerTransition.Tick +=  timerTransition_Tick ;
             // 
             // TemplateManagerForm
             // 
