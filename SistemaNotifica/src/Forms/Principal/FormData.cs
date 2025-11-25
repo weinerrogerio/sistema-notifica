@@ -44,7 +44,7 @@ namespace SistemaNotifica.src.Forms.Principal
             //LoadDataWithCache();
             //_ = LoadDataFromCache();
             _ = InitializeAndLoadDataAsync();
-            buttonLimparFiltros_Click(null,null);
+            buttonLimparFiltros_Click(null, null);
 
         }
 
@@ -335,7 +335,7 @@ namespace SistemaNotifica.src.Forms.Principal
             // Atualiza o contador de linhas (se aplicável)
             _lastAddedRowCount += newItems.Count;
         }
-        
+
 
         private void AddDataBatch(List<JObject> data)
         {
@@ -379,9 +379,9 @@ namespace SistemaNotifica.src.Forms.Principal
         }
 
 
-        
 
-        
+
+
         // Adiciona uma lista de dados ao DataGridView em blocos assíncronos        
         private async Task AddDataToGridInBatches(List<JObject> dataToAdd)
         {
@@ -950,7 +950,7 @@ namespace SistemaNotifica.src.Forms.Principal
         private async void buttonRefresh_Click(object sender, EventArgs e)
         {
             DialogResult question = MessageBox.Show("Tem certeza que deseja refazer a busca no banco de dados? \n" +
-                "Isso limpará os dados atuais e buscará tudo novamente, o que pode levar algum tempo.",                
+                "Isso limpará os dados atuais e buscará tudo novamente, o que pode levar algum tempo.",
                 "Refazer busca?",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
@@ -965,6 +965,172 @@ namespace SistemaNotifica.src.Forms.Principal
             else
             {
                 // Ação cancelada pelo usuário
+            }
+        }
+        
+        // USAR BUSCA NA API APENAS COM EVENTO DE ENTER      
+        private async Task SearchApiDataEvent()
+        {
+            try
+            {
+                ShowLoadingIndicator(true, "Buscando na base de dados...");
+                dataGridViewProtesto.Rows.Clear();
+
+                string filtroTipo = comboBoxOptions.SelectedItem?.ToString();
+                string valorInput1 = textBoxField1.Text.Trim();
+
+                // ✅ VALIDAÇÃO: Verifica se o filtro foi selecionado
+                if ( string.IsNullOrEmpty(filtroTipo) )
+                {
+                    MessageBox.Show("Selecione um tipo de filtro antes de buscar.",
+                        "Filtro não selecionado",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // ✅ VALIDAÇÃO: Verifica se há valor no campo
+                if ( IsPlaceholder(textBoxField1) || string.IsNullOrWhiteSpace(valorInput1) )
+                {
+                    MessageBox.Show("Preencha o campo de busca antes de pesquisar.",
+                        "Campo vazio",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var queryParams = new Dictionary<string, string>();
+
+                switch ( filtroTipo )
+                {
+                    case "Distribuição/Apontamento":
+                        queryParams.Add("numDistribuicao", valorInput1);
+                        break;
+
+                    case "CPF ou CNPJ do Devedor":
+                        queryParams.Add("docDevedor", RemoveMaskForComparison(valorInput1));
+                        break;
+
+                    case "Nome do devedor":
+                        queryParams.Add("devedorNome", valorInput1);
+                        break;
+
+                    case "Numero do Titulo":
+                        queryParams.Add("numTitulo", valorInput1);
+                        break;
+
+                    case "CPF ou CNPJ do Credor":
+                        queryParams.Add("docCredor", RemoveMaskForComparison(valorInput1));
+                        break;
+
+                    case "Apontamento e Data apontamento":
+                        queryParams.Add("numDistribuicao", valorInput1);
+                        if ( !IsPlaceholder(textBoxField2) && !string.IsNullOrWhiteSpace(textBoxField2.Text) )
+                        {
+                            // Converte dd/MM/yyyy para yyyy-MM-dd (formato ISO)
+                            string dataTexto = RemoveMaskForComparison(textBoxField2.Text);
+                            if ( dataTexto.Length == 8 ) // ddMMyyyy
+                            {
+                                string dataISO = $"{dataTexto.Substring(4, 4)}-{dataTexto.Substring(2, 2)}-{dataTexto.Substring(0, 2)}";
+                                queryParams.Add("dataInicio", dataISO);
+                                queryParams.Add("dataFim", dataISO);
+                            }
+                        }
+                        break;
+
+                    case "CPF ou CNPJ do Devedor e Data do protocolo":
+                        queryParams.Add("docDevedor", RemoveMaskForComparison(valorInput1));
+                        if ( !IsPlaceholder(textBoxField2) && !string.IsNullOrWhiteSpace(textBoxField2.Text) )
+                        {
+                            string dataTexto = RemoveMaskForComparison(textBoxField2.Text);
+                            if ( dataTexto.Length == 8 )
+                            {
+                                string dataISO = $"{dataTexto.Substring(4, 4)}-{dataTexto.Substring(2, 2)}-{dataTexto.Substring(0, 2)}";
+                                queryParams.Add("dataInicio", dataISO);
+                                queryParams.Add("dataFim", dataISO);
+                            }
+                        }
+                        break;
+
+                    case "Numero do Titulo e Data de Distribuição":
+                        queryParams.Add("numTitulo", valorInput1);
+                        if ( !IsPlaceholder(textBoxField2) && !string.IsNullOrWhiteSpace(textBoxField2.Text) )
+                        {
+                            string dataTexto = RemoveMaskForComparison(textBoxField2.Text);
+                            if ( dataTexto.Length == 8 )
+                            {
+                                string dataISO = $"{dataTexto.Substring(4, 4)}-{dataTexto.Substring(2, 2)}-{dataTexto.Substring(0, 2)}";
+                                queryParams.Add("dataInicio", dataISO);
+                                queryParams.Add("dataFim", dataISO);
+                            }
+                        }
+                        break;
+
+                    case "Numero do Titulo e Vencimento":
+                        queryParams.Add("numTitulo", valorInput1);
+                        if ( !IsPlaceholder(textBoxField2) && !string.IsNullOrWhiteSpace(textBoxField2.Text) )
+                        {
+                            string dataTexto = RemoveMaskForComparison(textBoxField2.Text);
+                            if ( dataTexto.Length == 8 )
+                            {
+                                string dataISO = $"{dataTexto.Substring(4, 4)}-{dataTexto.Substring(2, 2)}-{dataTexto.Substring(0, 2)}";
+                                queryParams.Add("dataInicio", dataISO);
+                                queryParams.Add("dataFim", dataISO);
+                            }
+                        }
+                        break;
+
+                    default:
+                        MessageBox.Show($"Tipo de filtro '{filtroTipo}' não implementado.",
+                            "Filtro não suportado",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+                        return;
+                }
+
+                // ✅ VALIDAÇÃO FINAL: Verifica se ao menos 1 parâmetro foi adicionado
+                if ( queryParams.Count == 0 )
+                {
+                    MessageBox.Show("Nenhum parâmetro de busca válido foi fornecido.",
+                        "Busca inválida",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                Debug.WriteLine($"[BUSCA API] Parâmetros enviados: {string.Join(", ", queryParams.Select(kv => $"{kv.Key}={kv.Value}"))}");
+
+                var resultado = await _protestoService.SearchDistAsJArrayAsync(queryParams);
+
+                if ( resultado != null && resultado.Count > 0 )
+                {
+                    dataGridViewProtesto.SuspendLayout();
+                    foreach ( JObject item in resultado )
+                    {
+                        AdicionarLinhaApiTabela(item);
+                    }
+                    dataGridViewProtesto.ResumeLayout();
+                    UpdateStatusLabel($"Encontrados {resultado.Count} registros no servidor.");
+                }
+                else
+                {
+                    MessageBox.Show("Nenhum registro encontrado na base de dados.",
+                        "Busca Concluída",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"[BUSCA API] Erro: {ex.Message}");
+                MessageBox.Show($"Erro na busca: {ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ShowLoadingIndicator(false);
             }
         }
 
@@ -1245,18 +1411,9 @@ namespace SistemaNotifica.src.Forms.Principal
                 ShowLoadingIndicator(false);
             }
         }
-
-        // Este método não é usado pelo FilterData, que usa RemoveMaskForComparison
-        private string RemoveMask(string text)
-        {
-            if ( string.IsNullOrEmpty(text) ) return "";
-            return new string(text.Where(c => char.IsLetterOrDigit(c) || c == ' ').ToArray());
-        }
-
+        
 
         // --------------------------------- EVENTOS ---------------------------------
-
-
         private void TextBoxDocument_KeyPress(object sender, KeyPressEventArgs e)
         {
             if ( !char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar) )
@@ -1337,6 +1494,52 @@ namespace SistemaNotifica.src.Forms.Principal
             _filterTimer.Stop();
             _filterTimer.Start();
         }
+
+        
+
+        //EVENTOS PARA CAPTURAR ENTER --> se naço tem o dado em cache e aperta enter --> buscar dado antigo na api
+        private async void textBoxField1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ( e.KeyCode == Keys.Enter )
+            {
+                // 1. Impede o "ding" do Windows e a quebra de linha
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+
+                // 2. IMPORTANTE: Para o timer do TextChanged para não filtrar o cache enquanto buscamos na API
+                _filterTimer.Stop();
+
+                // 3. Chama a busca na API
+                await SearchApiDataEvent();
+            }
+            else
+            {
+                // Mantém a navegação com Tab/Enter se não for o campo específico ou se desejar manter comportamento padrão
+                // Se quiser que o Enter APENAS busque e não mude de campo, remova o SelectNextControl dentro do if acima
+            }
+        }
+
+        private async void textBoxField2_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ( e.KeyCode == Keys.Enter )
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                _filterTimer.Stop();
+                await SearchApiDataEvent();
+            }
+        }
+
+        private async void textBoxField3_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ( e.KeyCode == Keys.Enter )
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                _filterTimer.Stop();
+                await SearchApiDataEvent();
+            }
+        }        
 
         private void comboBoxOptions_SelectedIndexChanged(object sender, EventArgs e)
         {

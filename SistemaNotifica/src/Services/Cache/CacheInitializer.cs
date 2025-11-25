@@ -18,6 +18,7 @@ namespace SistemaNotifica.src.Services.Cache
         /// </summary>
         public static void StartBackgroundCacheInitialization()
         {
+
             lock ( _lock )
             {
                 if ( _isInitialized )
@@ -36,7 +37,7 @@ namespace SistemaNotifica.src.Services.Cache
                 try
                 {
                     // Pequeno delay para garantir que a UI principal carregue primeiro
-                    await Task.Delay(500, _cts.Token);
+                    await Task.Delay(1000, _cts.Token);
 
                     Debug.WriteLine("CacheInitializer: Iniciando carregamento do cache em segundo plano...");
 

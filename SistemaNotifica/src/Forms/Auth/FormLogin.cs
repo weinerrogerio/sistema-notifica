@@ -80,7 +80,7 @@ namespace SistemaNotifica
                 if (response != null && !string.IsNullOrEmpty(response.AccessToken)) // Ou response.IsSuccess == true 
                 {
                     // Inicia cache de dados --> distribuição
-                    //CacheInitializer.StartBackgroundCacheInitialization();
+                    CacheInitializer.StartBackgroundCacheInitialization();
                     await Task.Delay(100);
 
                     this.DialogResult = DialogResult.OK;

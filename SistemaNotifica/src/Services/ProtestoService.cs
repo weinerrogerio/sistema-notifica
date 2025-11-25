@@ -70,7 +70,30 @@ namespace SistemaNotifica.src.Services
                 throw;
             }
         }
-
+        
+        public async Task<JArray> SearchDistAsJArrayAsync(Dictionary<string, string> queryParams = null)
+        {
+            try
+            {
+                var response = await _apiService.GetAsJArrayAsync("doc-protesto/distribuicoes/buscar", queryParams);
+                return response;
+            }
+            catch ( HttpRequestException ex )
+            {
+                Debug.WriteLine($"Erro HTTP: {ex.Message}");
+                throw new Exception($"Erro de conexão com o servidor. Detalhes: {ex.Message}");
+            }
+            catch ( JsonException ex )
+            {
+                Debug.WriteLine($"Erro JSON: {ex.Message}");
+                throw new Exception($"Erro ao processar resposta da API: {ex.Message}");
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro geral: {ex.Message}");
+                throw;
+            }
+        }
 
         public async Task<JObject> GetAsJObjectAsync(string currentPage, string pageSize)
         {

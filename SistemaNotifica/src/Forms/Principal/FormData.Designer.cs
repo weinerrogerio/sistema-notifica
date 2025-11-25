@@ -122,6 +122,7 @@
             textBoxField1.Size = new Size(280, 23);
             textBoxField1.TabIndex = 1;
             textBoxField1.TextChanged +=  textBoxField1_TextChanged ;
+            textBoxField1.KeyDown +=  textBoxField1_KeyDown ;
             // 
             // labelField2
             // 
@@ -140,6 +141,7 @@
             textBoxField2.Size = new Size(170, 23);
             textBoxField2.TabIndex = 3;
             textBoxField2.TextChanged +=  textBoxField2_TextChanged ;
+            textBoxField2.KeyDown +=  textBoxField2_KeyDown ;
             // 
             // labelField3
             // 
@@ -158,6 +160,7 @@
             textBoxField3.Size = new Size(170, 23);
             textBoxField3.TabIndex = 5;
             textBoxField3.TextChanged +=  textBoxField3_TextChanged ;
+            textBoxField3.KeyDown +=  textBoxField3_KeyDown ;
             // 
             // flowLayoutPanelOptions
             // 
