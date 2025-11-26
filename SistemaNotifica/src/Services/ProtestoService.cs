@@ -21,29 +21,29 @@ namespace SistemaNotifica.src.Services
             _apiService = apiService;
         }
 
-        public async Task<List<Protesto>> SearchDistAsync()
-        {
-            try
-            {
-                var response = await _apiService.GetAsync<List<Protesto>>("doc-protesto/distribuicoes/buscar/");
-                return response;
-            }
-            catch (HttpRequestException ex)
-            {
-                Debug.WriteLine($"Erro HTTP: {ex.Message}");
-                throw new Exception($"Erro durante o processo de busca de distribuições::::Erro de conexão com o servidor. Verifique sua rede ou a URL da API. Detalhes: {ex.Message}");
-            }
-            catch (JsonException ex)
-            {
-                Debug.WriteLine($"Erro JSON: {ex.Message}");
-                throw new Exception($"Erro ao processar resposta da API: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Erro geral: {ex.Message}");
-                throw;
-            }
-        }
+        //public async Task<List<Protesto>> SearchDistAsync()
+        //{
+        //    try
+        //    {
+        //        var response = await _apiService.GetAsync<List<Protesto>>("doc-protesto/distribuicoes/buscar/");
+        //        return response;
+        //    }
+        //    catch (HttpRequestException ex)
+        //    {
+        //        Debug.WriteLine($"Erro HTTP: {ex.Message}");
+        //        throw new Exception($"Erro durante o processo de busca de distribuições::::Erro de conexão com o servidor. Verifique sua rede ou a URL da API. Detalhes: {ex.Message}");
+        //    }
+        //    catch (JsonException ex)
+        //    {
+        //        Debug.WriteLine($"Erro JSON: {ex.Message}");
+        //        throw new Exception($"Erro ao processar resposta da API: {ex.Message}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine($"Erro geral: {ex.Message}");
+        //        throw;
+        //    }
+        //}
 
 
         public async Task<List<DocProtesto>> FindByDateRange(DateTime? startDate = null, DateTime? endDate = null)

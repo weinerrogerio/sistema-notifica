@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using SistemaNotifica.src.Models;
+using SistemaNotifica.src.Services;
+using SistemaNotifica.src.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,9 +14,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using Newtonsoft.Json;
-using SistemaNotifica.src.Models;
-using SistemaNotifica.src.Services;
 
 
 namespace SistemaNotifica.src.Forms
@@ -73,98 +75,92 @@ namespace SistemaNotifica.src.Forms
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
+                var queryParams = new Dictionary<string, string>();
+                queryParams.Add("limit", "100");
+                queryParams.Add("email", true.ToString());
                 Debug.WriteLine("Iniciando LoadDistribData...");
-                List<Protesto> dados = await _protestoService.SearchDistAsync();
+                var dados = await _protestoService.SearchDistAsJArrayAsync(queryParams);
 
-                if (dados == null || dados.Count == 0)
-                {
-                    Debug.WriteLine("LoadDistribData: dados retornados são NULL ou vazios");
-                    return;
-                }
+                if ( dados == null || dados.Count == 0 ) return;
 
-                Debug.WriteLine($"LoadDistribData - Sucesso: {dados.Count} registros encontrados");
-
-                // Limpar dados existentes no grid
                 dataGridViewProtesto.Rows.Clear();
 
-                // Para cada protesto, adicionar uma linha para cada devedor
-                foreach (var protesto in dados)
+                foreach ( var itemProtesto in dados )
                 {
-                    if (protesto.devedor != null && protesto.devedor.Count > 0)
-                    {
-                        foreach (var devedor in protesto.devedor)
-                        {
-                            AdicionarLinhaApiTabela(protesto, devedor);
-                        }
-                    }
-                    else
-                    {
-                        // Se não houver devedores, ainda assim adiciona uma linha (com dados de devedor vazios)
-                        AdicionarLinhaApiTabela(protesto, null);
-                    }
+                    // Converte para JObject
+                    JObject jsonProtesto = JObject.FromObject(itemProtesto);
+
+                    // Passa o objeto inteiro. A função lá dentro vai se virar para achar o devedor.
+                    AdicionarLinhaApiTabela(jsonProtesto);
                 }
 
-                // Aplicar cores baseadas no status
                 AplicarCoresGidProtestoStatus();
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro em LoadDistribData: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-
-                MessageBox.Show($"Erro ao carregar dados da API: {ex.Message}", "Erro",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void AdicionarLinhaApiTabela(Protesto protesto, Devedor devedor)
+
+        private void AdicionarLinhaApiTabela(JObject protesto)
         {
             try
             {
-                // Determinar status baseado na notificação
-                string status = DeterminarStatus(protesto.statusNotificacao);
-
-                // Adicionar nova linha
                 int rowIndex = dataGridViewProtesto.Rows.Add();
                 DataGridViewRow row = dataGridViewProtesto.Rows[rowIndex];
 
-                // Preencher dados usando os nomes das colunas
-                row.Cells["ColumnDataDist"].Value = protesto.dataDistribuicao;
-                row.Cells["ColumnNumDist"].Value = protesto.numDistribuicao;
+                // 1. Dados do Protesto (Raiz)
+                // Usamos a classe Format estática conforme sua refatoração anterior
+                row.Cells["ColumnDataDistribuicao"].Value = Format.ParaData(protesto["data_distribuicao"]?.ToString());
+                row.Cells["ColumnNumDistribuicao"].Value = protesto["num_distribuicao"]?.ToString() ?? string.Empty;
 
-                // Dados do devedor (se existir)
-                if (devedor != null)
+                // 2. Extração dos dados aninhados (Logica do FormData)
+                // No FormData, o devedor e o status ficam dentro de "notificacao"
+                var notificacoes = protesto["notificacao"] as JArray;
+
+                bool dadosDevedorEncontrados = false;
+
+                if ( notificacoes != null && notificacoes.Count > 0 )
                 {
-                    row.Cells["ColumnDevedor"].Value = devedor.nome;
-                    row.Cells["ColumnDocDev"].Value = FormatarDocumento(devedor.docDevedor);
-                    row.Cells["ColumnEmail"].Value = devedor.email;
-                    row.Cells["ColumnStatus"].Value = status;
+                    // Pega a primeira notificação (ou itere se necessário, mas geralmente é 1 para 1 no grid principal)
+                    var notificacao = notificacoes[0] as JObject;
+
+                    if ( notificacao != null )
+                    {
+                        // Busca o objeto Devedor dentro da Notificação
+                        var devedor = notificacao["devedor"] as JObject;
+
+                        if ( devedor != null )
+                        {
+                            row.Cells["ColumNomeDevedor"].Value = devedor["nome"]?.ToString() ?? string.Empty;
+                            row.Cells["ColumnDocDevedor"].Value = Format.ParaDocumento(devedor["doc_devedor"]?.ToString());
+                            row.Cells["ColumnEmail"].Value = devedor["email"]?.ToString() ?? string.Empty;
+                            dadosDevedorEncontrados = true;
+                        }
+
+                        // 3. Lógica de Status (Baseado na Notificação)
+                        bool lido = notificacao["lido"]?.Value<bool>() ?? false; // Campo 'lido' geralmente fica na notificação
+                        bool enviado = notificacao["email_enviado"]?.Value<bool>() ?? false;
+
+                        string status = lido ? "Lido" : ( enviado ? "Enviado" : "Pendente" );
+                        row.Cells["ColumnStatus"].Value = status;
+                        row.Tag = status; // Para coloração
+                    }
                 }
-                else
+
+                // Fallback se não achou devedor/notificação
+                if ( !dadosDevedorEncontrados )
                 {
-                    row.Cells["ColumnDevedor"].Value = "Erro - Sem devedor";
-                    row.Cells["ColumnDocDev"].Value = "-";
+                    row.Cells["ColumNomeDevedor"].Value = "Sem devedor";
+                    row.Cells["ColumnDocDevedor"].Value = "-";
                     row.Cells["ColumnEmail"].Value = "-";
-                    row.Cells["ColumnStatus"].Value = status;
+                    row.Cells["ColumnStatus"].Value = "Pendente";
+                    row.Tag = "Pendente";
                 }
-
-                // Armazenar o status na Tag da linha para usar na coloração
-                row.Tag = status;
-
-                Debug.WriteLine($"Linha adicionada com sucesso: {devedor?.nome ?? "Sem devedor"} - Distribuição: {protesto.numDistribuicao}");
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
-                Debug.WriteLine($"Erro ao adicionar linha da API: {ex.Message}");
-
-                // Método alternativo usando índices
-                try
-                {
-                    AdicionarLinhaApiComIndices(protesto, devedor);
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"Todos os métodos para adicionar linha da API falharam: {err.Message}");
-                }
+                Debug.WriteLine($"FormHome: Erro ao adicionar linha: {ex.Message}");
             }
         }
 
@@ -420,17 +416,17 @@ namespace SistemaNotifica.src.Forms
         }
 
         // Método para atualizar dados (útil para quando os dados reais vierem da API)
-        private void AtualizarDadosTabela(List<dynamic> novosProtestos)
-        {
-            dataGridViewProtesto.Rows.Clear();
+        //private void AtualizarDadosTabela(List<dynamic> novosProtestos)
+        //{
+        //    dataGridViewProtesto.Rows.Clear();
 
-            foreach (var protesto in novosProtestos)
-            {
-                AdicionarLinhaApiTabela(protesto, protesto.devedor);
-            }
+        //    foreach (var protesto in novosProtestos)
+        //    {
+        //        AdicionarLinhaApiTabela(protesto, protesto.devedor);
+        //    }
 
-            AplicarCoresGidProtestoStatus();
-        }
+        //    AplicarCoresGidProtestoStatus();
+        //}
 
 
 

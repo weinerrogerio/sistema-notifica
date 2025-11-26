@@ -539,70 +539,27 @@ namespace SistemaNotifica.src.Forms.Principal
             this.Text = $"Sistema Notifica - {message}";
         }
 
-        // Cache de formatação (métodos existentes mantidos)
         private readonly Dictionary<string, string> _dataCache_formatted = new Dictionary<string, string>();
 
         private string FormatarData(string dataString)
         {
             if ( string.IsNullOrEmpty(dataString) )
                 return string.Empty;
-
             if ( _dataCache_formatted.ContainsKey(dataString) )
                 return _dataCache_formatted[dataString];
-
-            try
-            {
-                if ( DateTime.TryParse(dataString, out DateTime data) )
-                {
-                    string resultado = data.ToString("dd/MM/yyyy HH:mm");
-                    _dataCache_formatted[dataString] = resultado;
-                    return resultado;
-                }
-                return dataString;
-            }
-            catch
-            {
-                return dataString;
-            }
+            string resultado = SistemaNotifica.src.Utils.Format.ParaData(dataString);
+            _dataCache_formatted[dataString] = resultado;
+            return resultado;
         }
 
         private string FormatarValor(string valorString)
         {
-            if ( string.IsNullOrEmpty(valorString) )
-                return "R$ 0,00";
-
-            try
-            {
-                if ( decimal.TryParse(valorString, out decimal valor) )
-                {
-                    decimal valorEmReais = valor / 100;
-                    return valorEmReais.ToString("C2");
-                }
-                return valorString;
-            }
-            catch
-            {
-                return valorString;
-            }
+            return SistemaNotifica.src.Utils.Format.ParaValor(valorString);
         }
 
         private string FormatarDocumento(string documento)
         {
-            if ( string.IsNullOrEmpty(documento) )
-                return string.Empty;
-
-            documento = System.Text.RegularExpressions.Regex.Replace(documento, @"[^\d]", "");
-
-            if ( documento.Length == 11 )
-            {
-                return Convert.ToUInt64(documento).ToString(@"000\.000\.000\-00");
-            }
-            else if ( documento.Length == 14 )
-            {
-                return Convert.ToUInt64(documento).ToString(@"00\.000\.000\/0000\-00");
-            }
-
-            return documento;
+            return SistemaNotifica.src.Utils.Format.ParaDocumento(documento);
         }
 
         private void FormData_Load(object sender, EventArgs e)

@@ -52,6 +52,8 @@ namespace SistemaNotifica
 
             //Application.Run(new src.FormsTestes.MainFormOnTop());
             //Application.Run(new src.Forms.Template.TemplateEditForm());
+            //Application.Run(new src.Forms.FormHome());
+
             using ( FormLogin loginForm = new FormLogin() )
             {
                 if ( loginForm.ShowDialog() == DialogResult.OK )
