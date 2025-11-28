@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using SistemaNotifica.src.Models;
+using SistemaNotifica.src.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -70,7 +71,30 @@ namespace SistemaNotifica.src.Services
                 throw;
             }
         }
-        
+
+        //retorna a quantidade de registros (15 dias) independende do intervalo
+        public async Task<List<ChartDataPoint>> GetLastDaysWithDataAsync(int days = 15)
+        {
+            try
+            {
+                var queryParams = new Dictionary<string, string>
+        {
+            { "days", days.ToString() }
+        };
+
+                var response = await _apiService.GetAsync<List<ChartDataPoint>>(
+                    "doc-protesto/last-days-with-data",
+                    queryParams
+                );
+
+                return response;
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"Erro em GetLastDaysWithDataAsync: {ex.Message}");
+                throw;
+            }
+        }
         public async Task<JArray> SearchDistAsJArrayAsync(Dictionary<string, string> queryParams = null)
         {
             try
@@ -129,5 +153,5 @@ namespace SistemaNotifica.src.Services
             }
         }
 
-    }
+    }   
 }

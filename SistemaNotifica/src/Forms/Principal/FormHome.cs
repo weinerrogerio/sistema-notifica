@@ -437,7 +437,7 @@ namespace SistemaNotifica.src.Forms
             chartDist.ChartAreas.Clear();
             chartDist.Titles.Clear();
 
-            // Criar área do gráfico     
+            // Criar área do gráfico
             ChartArea areaGrafico = new();
             areaGrafico.AxisX.IntervalType = DateTimeIntervalType.Number;
             areaGrafico.AxisX.Interval = 1;
@@ -446,7 +446,7 @@ namespace SistemaNotifica.src.Forms
             areaGrafico.BackColor = Color.FromArgb(240, 240, 240);
             chartDist.ChartAreas.Add(areaGrafico);
 
-            // Criar série     
+            // Criar série
             Series serieDados = new("Quantidade por Data")
             {
                 ChartType = SeriesChartType.Column,
@@ -454,6 +454,7 @@ namespace SistemaNotifica.src.Forms
                 LabelFormat = "#",
                 Color = Color.DodgerBlue
             };
+
             chartDist.Legends.Clear();
             chartDist.TabStop = false;
             chartDist.Cursor = Cursors.Default;
@@ -461,74 +462,62 @@ namespace SistemaNotifica.src.Forms
 
             try
             {
-                // Obter dados da API
-                /*List<DocProtesto> dados = await GetDataToChart(
-                    startDate: new DateTime(2025, 6, 2),
-                    endDate: new DateTime(2025, 6, 17)
-                );*/
+                // 🔥 NOVA CHAMADA - Busca os últimos 15 dias com dados
+                List<ChartDataPoint> dadosGrafico = await _protestoService.GetLastDaysWithDataAsync(15);
 
-                List<DocProtesto> dados = await GetDataToChart();
-                // Debug: Verificar os dados recebidos
-                Debug.WriteLine($"Total de registros recebidos: {dados.Count}");
-                foreach (var item in dados.Take(3)) // Mostra apenas os 3 primeiros
+                Debug.WriteLine($"Total de dias com dados recebidos: {dadosGrafico.Count}");
+
+                if ( dadosGrafico == null || dadosGrafico.Count == 0 )
                 {
-                    Debug.WriteLine($"createdAt: {item.createdAt:yyyy-MM-dd HH:mm:ss}");
-                }
+                    Debug.WriteLine("Nenhum dado encontrado para o gráfico");
 
-                // Agrupar dados por data e contar quantidade - VERSÃO CORRIGIDA
-                var dadosAgrupados = dados
-                    .GroupBy(d => d.createdAt.Date) // Agrupa apenas pela data (sem hora)
-                    .Select(g => new
+                    // Adicionar mensagem no gráfico
+                    Title tituloSemDados = new Title("Nenhum dado encontrado nos últimos registros")
                     {
-                        Data = g.Key,
-                        Quantidade = g.Count()
-                    })
-                    .OrderBy(x => x.Data) // Ordena por data
-                    .ToList();
-
-                // Debug: Verificar o agrupamento
-                Debug.WriteLine($"Grupos criados: {dadosAgrupados.Count}");
-                foreach (var grupo in dadosAgrupados)
-                {
-                    Debug.WriteLine($"Data: {grupo.Data:dd/MM/yyyy}, Quantidade: {grupo.Quantidade}");
+                        Font = new Font("Arial", 10, FontStyle.Italic),
+                        ForeColor = Color.Gray
+                    };
+                    chartDist.Titles.Add(tituloSemDados);
+                    return;
                 }
 
                 // Adicionar pontos ao gráfico
-                for (int i = 0; i < dadosAgrupados.Count; i++)
+                for ( int i = 0; i < dadosGrafico.Count; i++ )
                 {
-                    int pontoIndex = serieDados.Points.AddXY(i + 1, dadosAgrupados[i].Quantidade);
-                    serieDados.Points[pontoIndex].AxisLabel = dadosAgrupados[i].Data.ToString("dd/MM/yyyy");
+                    var ponto = dadosGrafico[i];
+                    int pontoIndex = serieDados.Points.AddXY(i + 1, ponto.quantidade);
+                    serieDados.Points[pontoIndex].AxisLabel = ponto.data.ToString("dd/MM/yyyy");
+
+                    Debug.WriteLine($"Ponto {i + 1}: Data: {ponto.data:dd/MM/yyyy}, Quantidade: {ponto.quantidade}");
                 }
 
                 chartDist.Series.Add(serieDados);
 
-                // Adicionar título     
-                Title titulo = new("Quantidade de Registros dos ultimos 15 dias");
+                // Adicionar título com informação contextual
+                string periodoInicio = dadosGrafico[0].data.ToString("dd/MM/yyyy");
+                string periodoFim = dadosGrafico[^1].data.ToString("dd/MM/yyyy");
+
+                Title titulo = new Title($"Últimos {dadosGrafico.Count} dias com registros ({periodoInicio} - {periodoFim})")
+                {
+                    Font = new Font("Arial", 11, FontStyle.Bold)
+                };
                 chartDist.Titles.Add(titulo);
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 Debug.WriteLine($"Erro ao carregar gráfico: {ex.Message}");
-                // Opcional: Mostrar mensagem de erro para o usuário
+                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+
+                // Exibir mensagem de erro no gráfico
+                Title tituloErro = new Title($"Erro ao carregar dados: {ex.Message}")
+                {
+                    Font = new Font("Arial", 9, FontStyle.Italic),
+                    ForeColor = Color.Red
+                };
+                chartDist.Titles.Add(tituloErro);
             }
         }
-
-        private async Task<List<DocProtesto>> GetDataToChart(DateTime? startDate = null, DateTime? endDate = null)
-        {
-            try
-            {
-                Debug.WriteLine("Iniciando getDataToChart...");
-                List<DocProtesto> dados = await _protestoService.FindByDateRange(startDate, endDate);
-                Debug.WriteLine($"getDataToChart - Sucesso: {dados.Count} registros encontrados");
-                return dados;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Erro: {ex.Message}");
-                return [];
-            }
-
-        }
+        
 
         // fazer evento de transição para form de importação - -> não exibir form, APENAS PUXAR A FUNÇÃO DE IMPORTAÇÃO
         private void btnImport_Click(object sender, EventArgs e)
