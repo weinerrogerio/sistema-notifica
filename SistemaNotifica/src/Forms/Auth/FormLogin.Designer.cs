@@ -56,8 +56,9 @@
             // 
             // lblErrorMessage
             // 
+            lblErrorMessage.Anchor =      AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
             lblErrorMessage.ForeColor = Color.Red;
-            lblErrorMessage.Location = new Point(0, 142);
+            lblErrorMessage.Location = new Point(130, 142);
             lblErrorMessage.Name = "lblErrorMessage";
             lblErrorMessage.Size = new Size(200, 15);
             lblErrorMessage.TabIndex = 8;

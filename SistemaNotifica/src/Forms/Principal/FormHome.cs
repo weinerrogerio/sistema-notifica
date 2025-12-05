@@ -474,7 +474,7 @@ namespace SistemaNotifica.src.Forms
                     // Adicionar mensagem no gráfico
                     Title tituloSemDados = new Title("Nenhum dado encontrado nos últimos registros")
                     {
-                        Font = new Font("Arial", 10, FontStyle.Italic),
+                        Font = new Font("Arial", 9, FontStyle.Italic),
                         ForeColor = Color.Gray
                     };
                     chartDist.Titles.Add(tituloSemDados);
@@ -499,7 +499,7 @@ namespace SistemaNotifica.src.Forms
 
                 Title titulo = new Title($"Últimos {dadosGrafico.Count} dias com registros ({periodoInicio} - {periodoFim})")
                 {
-                    Font = new Font("Arial", 11, FontStyle.Bold)
+                    Font = new Font("Arial", 9, FontStyle.Bold)
                 };
                 chartDist.Titles.Add(titulo);
             }
