@@ -43,7 +43,8 @@ namespace SistemaNotifica.src.Forms.Principal
             InitializeFields();
             //LoadDataWithCache();
             //_ = LoadDataFromCache();
-            _ = InitializeAndLoadDataAsync();
+            //_ = InitializeAndLoadDataAsync();
+            _ = LoadDataWithCache();
             buttonLimparFiltros_Click(null, null);
 
         }
@@ -67,16 +68,17 @@ namespace SistemaNotifica.src.Forms.Principal
             dataGridViewProtesto.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewProtesto.AllowUserToAddRows = false;
             dataGridViewProtesto.MultiSelect = false;
-            dataGridViewProtesto.ReadOnly = true;
+            dataGridViewProtesto.ReadOnly = false;
             dataGridViewProtesto.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dataGridViewProtesto.Dock = DockStyle.Fill;
 
-            // Otimizações de performance
-            dataGridViewProtesto.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            // ✅ ADICIONAR/MODIFICAR ESTAS LINHAS:
+            dataGridViewProtesto.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None; // ⚠️ MUDOU de Fill para None
+            dataGridViewProtesto.AllowUserToResizeColumns = true;  // ✅ ADICIONAR
+            dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing; // ⚠️ MUDOU
+            dataGridViewProtesto.AllowUserToResizeRows = true;
+
             dataGridViewProtesto.ScrollBars = ScrollBars.Both;
-            dataGridViewProtesto.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewProtesto.AllowUserToResizeRows = false;
-            dataGridViewProtesto.AllowUserToResizeColumns = true;
             dataGridViewProtesto.Rows.Clear();
             dataGridViewProtesto.RowHeadersVisible = false;
 
@@ -92,44 +94,48 @@ namespace SistemaNotifica.src.Forms.Principal
 
         private void ConfigurarLargurasColunas()
         {
-            int larguraDisponivel = dataGridViewProtesto.ClientSize.Width - 20; // 20px para scroll
-            int totalColunas = dataGridViewProtesto.Columns.Count;
-
             var configColunas = new Dictionary<string, int>
-            {
-                {"ColumnId", 50},
-                {"ColumnDataApresentacao", 120},
-                {"ColumnDataDistribuicao", 130},
-                {"ColumnNumDistribuicao", 100},
-                {"ColumnCartProtesto", 200},
-                {"ColumnNumTitulo", 100},
-                {"ColumnValor", 100},
-                {"ColumnSaldo", 100},
-                {"ColumnVencimento", 100},
-                {"ColumNomeDevedor", 200},
-                {"ColumnDocDevedor", 120},
-                {"ColumnNomeApresentante", 180},
-                {"ColumnCodApresentante", 120},
-                {"nome_arquivo", 150},
-                {"file_data_importacao", 130},
-                {"ColumnSacador", 180},
-                {"ColumnCedente", 180},
-                {"ColumnDocCredor", 120},
-                {"ColumnEmailEnviado", 120},
-                {"ColumnDataEnvio", 120}
-            };
+    {
+        {"ColumnId", 50},
+        {"ColumnDataApresentacao", 120},
+        {"ColumnDataDistribuicao", 130},
+        {"ColumnNumDistribuicao", 100},
+        {"ColumnCartProtesto", 200},
+        {"ColumnNumTitulo", 100},
+        {"ColumnValor", 100},
+        {"ColumnSaldo", 100},
+        {"ColumnVencimento", 100},
+        {"ColumNomeDevedor", 200},
+        {"ColumnDocDevedor", 120},
+        {"ColumnNomeApresentante", 180},
+        {"ColumnCodApresentante", 120},
+        {"nome_arquivo", 150},
+        {"file_data_importacao", 130},
+        {"ColumnSacador", 180},
+        {"ColumnCedente", 180},
+        {"ColumnDocCredor", 120},
+        {"ColumnEmailEnviado", 120},
+        {"ColumnDataEnvio", 120}
+    };
 
             foreach ( DataGridViewColumn coluna in dataGridViewProtesto.Columns )
             {
                 if ( configColunas.ContainsKey(coluna.Name) )
                 {
                     coluna.Width = configColunas[coluna.Name];
-                    coluna.MinimumWidth = Math.Max(50, configColunas[coluna.Name] - 20);
+                    coluna.MinimumWidth = 50; // ⚠️ Largura mínima
 
-                    // ADICIONE: Permitir redimensionamento automático da última coluna
+                    // ✅ ADICIONAR: Permitir redimensionamento
+                    coluna.Resizable = DataGridViewTriState.True;
+
+                    // ✅ MODIFICAR: Última coluna preenche o espaço restante
                     if ( coluna == dataGridViewProtesto.Columns[dataGridViewProtesto.Columns.Count - 1] )
                     {
                         coluna.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    }
+                    else
+                    {
+                        coluna.AutoSizeMode = DataGridViewAutoSizeColumnMode.None; // ✅ Permite redimensionamento manual
                     }
                 }
             }
@@ -413,34 +419,40 @@ namespace SistemaNotifica.src.Forms.Principal
         }
 
         // Adiciona uma linha individual ao grid 
-        private void AdicionarLinhaApiTabela(JObject protesto)
+        private void AdicionarLinhaApiTabela(JObject linha)
         {
             try
             {
                 int rowIndex = dataGridViewProtesto.Rows.Add();
                 DataGridViewRow row = dataGridViewProtesto.Rows[rowIndex];
 
-                // Dados básicos do protesto
-                row.Cells["ColumnId"].Value = protesto["id"]?.ToString() ?? string.Empty;
-                row.Cells["ColumnDataApresentacao"].Value = FormatarData(protesto["data_apresentacao"]?.ToString());
-                row.Cells["ColumnDataDistribuicao"].Value = FormatarData(protesto["data_distribuicao"]?.ToString());
-                row.Cells["ColumnNumDistribuicao"].Value = protesto["num_distribuicao"]?.ToString() ?? string.Empty;
-                row.Cells["ColumnCartProtesto"].Value = protesto["cart_protesto"]?.ToString() ?? string.Empty;
-                row.Cells["ColumnNumTitulo"].Value = protesto["num_titulo"]?.ToString() ?? string.Empty;
-                row.Cells["ColumnValor"].Value = FormatarValor(protesto["valor"]?.ToString());
-                row.Cells["ColumnSaldo"].Value = FormatarValor(protesto["saldo"]?.ToString());
-                row.Cells["ColumnVencimento"].Value = protesto["vencimento"]?.ToString() ?? string.Empty;
+                // ========================================================================
+                // DADOS BÁSICOS DO PROTESTO
+                // ========================================================================
+                row.Cells["ColumnId"].Value = linha["id"]?.ToString() ?? string.Empty;
+                row.Cells["ColumnDataApresentacao"].Value = FormatarData(linha["data_apresentacao"]?.ToString());
+                row.Cells["ColumnDataDistribuicao"].Value = FormatarData(linha["data_distribuicao"]?.ToString());
+                row.Cells["ColumnNumDistribuicao"].Value = linha["num_distribuicao"]?.ToString() ?? string.Empty;
+                row.Cells["ColumnCartProtesto"].Value = linha["cart_protesto"]?.ToString() ?? string.Empty;
+                row.Cells["ColumnNumTitulo"].Value = linha["num_titulo"]?.ToString() ?? string.Empty;
+                row.Cells["ColumnValor"].Value = FormatarValor(linha["valor"]?.ToString());
+                row.Cells["ColumnSaldo"].Value = FormatarValor(linha["saldo"]?.ToString());
+                row.Cells["ColumnVencimento"].Value = linha["vencimento"]?.ToString() ?? string.Empty;
 
-                // Dados do apresentante
-                var apresentante = protesto["apresentante"] as JObject;
+                // ========================================================================
+                // DADOS DO APRESENTANTE
+                // ========================================================================
+                var apresentante = linha["apresentante"] as JObject;
                 if ( apresentante != null )
                 {
                     row.Cells["ColumnNomeApresentante"].Value = apresentante["nome"]?.ToString() ?? string.Empty;
                     row.Cells["ColumnCodApresentante"].Value = apresentante["cod_apresentante"]?.ToString() ?? string.Empty;
                 }
 
-                // Dados do credor
-                var credores = protesto["credores"] as JArray;
+                // ========================================================================
+                // DADOS DO CREDOR
+                // ========================================================================
+                var credores = linha["credores"] as JArray;
                 if ( credores != null && credores.Count > 0 )
                 {
                     var primeiroCredor = credores[0]["credor"] as JObject;
@@ -452,27 +464,41 @@ namespace SistemaNotifica.src.Forms.Principal
                     }
                 }
 
-                // Dados das notificações
-                var notificacoes = protesto["notificacao"] as JArray;
-                if ( notificacoes != null && notificacoes.Count > 0 )
-                {
-                    var notificacao = notificacoes[0] as JObject;
-                    if ( notificacao != null )
-                    {
-                        var devedor = notificacao["devedor"] as JObject;
-                        if ( devedor != null )
-                        {
-                            row.Cells["ColumNomeDevedor"].Value = devedor["nome"]?.ToString() ?? string.Empty;
-                            row.Cells["ColumnDocDevedor"].Value = FormatarDocumento(devedor["doc_devedor"]?.ToString());
-                        }
+                // ========================================================================
+                // DADOS DO DEVEDOR 
+                // ========================================================================
+                var devedor = linha["devedor"] as JObject;  // ← Devedor direto na linha
 
-                        row.Cells["ColumnEmailEnviado"].Value = ( notificacao["email_enviado"]?.Value<bool>() == true ) ? "Sim" : "Não";
-                        row.Cells["ColumnDataEnvio"].Value = FormatarData(notificacao["data_envio"]?.ToString());
-                    }
+                if ( devedor != null )
+                {
+                    row.Cells["ColumNomeDevedor"].Value = devedor["nome"]?.ToString() ?? string.Empty;
+                    row.Cells["ColumnDocDevedor"].Value = FormatarDocumento(devedor["doc_devedor"]?.ToString());
+                }
+                else
+                {
+                    // Caso não tenha devedor (protesto sem devedor)
+                    row.Cells["ColumNomeDevedor"].Value = "Sem devedor";
+                    row.Cells["ColumnDocDevedor"].Value = string.Empty;
                 }
 
-                // Dados do arquivo
-                var file = protesto["file"] as JObject;
+                // ========================================================================
+                // DADOS DA NOTIFICAÇÃO 
+                // ========================================================================
+                var notificacao = linha["notificacao"] as JObject;  // ← Notificação direta na linha
+
+                if ( notificacao != null )
+                {
+                    bool emailEnviado = notificacao["email_enviado"]?.Value<bool>() == true;
+                    row.Cells["ColumnEmailEnviado"].Value = emailEnviado ? "Sim" : "Não";
+                    row.Cells["ColumnDataEnvio"].Value = FormatarData(notificacao["data_envio"]?.ToString());
+                }
+                else
+                {
+                    row.Cells["ColumnEmailEnviado"].Value = "Não";
+                    row.Cells["ColumnDataEnvio"].Value = string.Empty;
+                }
+
+                var file = linha["file"] as JObject;
                 if ( file != null )
                 {
                     row.Cells["nome_arquivo"].Value = file["nome_arquivo"]?.ToString() ?? string.Empty;
@@ -482,8 +508,10 @@ namespace SistemaNotifica.src.Forms.Principal
             catch ( Exception ex )
             {
                 Debug.WriteLine($"FormData: Erro ao adicionar linha: {ex.Message}");
+                Debug.WriteLine($"Dados da linha: {linha?.ToString()}");
             }
         }
+
         /// Atualiza o cache em background após upload
         public static async Task RefreshCacheAfterUpload(ProtestoService protestoService)
         {
@@ -1221,44 +1249,38 @@ namespace SistemaNotifica.src.Forms.Principal
                 // Mapeamento: Nome da coluna -> caminho no JSON
                 switch ( columnName )
                 {
-                    // Campos diretos do protesto
+                    // ========================================================================
+                    // CAMPOS DIRETOS DO PROTESTO
+                    // ========================================================================
                     case "ColumnNumDistribuicao":
                         return item["num_distribuicao"]?.ToString() ?? "";
 
                     case "ColumnDataApresentacao":
-                        return item["data_apresentacao"]?.ToString() ?? ""; // Retorna ISO String
+                        return item["data_apresentacao"]?.ToString() ?? "";
 
                     case "ColumnDataDistribuicao":
-                        return item["data_distribuicao"]?.ToString() ?? ""; // Retorna ISO String
+                        return item["data_distribuicao"]?.ToString() ?? "";
 
                     case "ColumnNumTitulo":
                         return item["num_titulo"]?.ToString() ?? "";
 
                     case "ColumnVencimento":
-                        return item["vencimento"]?.ToString() ?? ""; // Pode ser ISO ou outro formato
+                        return item["vencimento"]?.ToString() ?? "";
 
-                    // Campos do devedor (navega no array notificacao)
+                    // ========================================================================
+                    // CAMPOS DO DEVEDOR (ESTRUTURA FLATTEN - devedor direto na linha)
+                    // ========================================================================
                     case "ColumNomeDevedor":
-                        var notificacoes = item["notificacao"] as JArray;
-                        if ( notificacoes != null && notificacoes.Count > 0 )
-                        {
-                            var notificacao = notificacoes[0] as JObject;
-                            var devedor = notificacao?["devedor"] as JObject;
-                            return devedor?["nome"]?.ToString() ?? "";
-                        }
-                        return "";
+                        var devedor = item["devedor"] as JObject;  
+                        return devedor?["nome"]?.ToString() ?? "";
 
                     case "ColumnDocDevedor":
-                        var notifDev = item["notificacao"] as JArray;
-                        if ( notifDev != null && notifDev.Count > 0 )
-                        {
-                            var notif = notifDev[0] as JObject;
-                            var dev = notif?["devedor"] as JObject;
-                            return dev?["doc_devedor"]?.ToString() ?? "";
-                        }
-                        return "";
+                        var dev = item["devedor"] as JObject;  
+                        return dev?["doc_devedor"]?.ToString() ?? "";
 
-                    // Campos do credor (navega no array credores)
+                    // ========================================================================
+                    // CAMPOS DO CREDOR (navega no array credores)
+                    // ========================================================================
                     case "ColumnDocCredor":
                         var credores = item["credores"] as JArray;
                         if ( credores != null && credores.Count > 0 )

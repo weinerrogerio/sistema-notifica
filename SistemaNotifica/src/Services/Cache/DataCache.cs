@@ -106,7 +106,10 @@ namespace SistemaNotifica.src.Services.Cache
             }
         }
 
+        /// <summary>
         /// Adiciona novos dados ao cache (usado durante o carregamento progressivo)
+        /// CORRIGIDO para trabalhar com estrutura FLATTEN
+        /// </summary>
         public static List<JObject> AddDataBatch(JArray newData, int currentPage, int totalPages)
         {
             List<JObject> newItems = new List<JObject>();
@@ -119,18 +122,35 @@ namespace SistemaNotifica.src.Services.Cache
 
                 foreach ( JObject item in newData )
                 {
-                    int itemId = item["id"]?.Value<int>() ?? 0;
+                    // ============================================================
+                    // CORREÇÃO PRINCIPAL: ID agora é STRING
+                    // Backend retorna IDs como "4_6", "4_7" (protesto_devedor)
+                    // ao invés de apenas números inteiros
+                    // ============================================================
+                    string itemId = item["id"]?.Value<string>() ?? "0";
 
-                    if ( !_data.Any(cachedItem => cachedItem["id"]?.Value<int>() == itemId) )
+                    // Verifica duplicidade por ID único
+                    if ( !_data.Any(cachedItem =>
+                        cachedItem["id"]?.Value<string>() == itemId) )
                     {
                         if ( _data.Count >= MAX_CACHE_SIZE )
                         {
                             Debug.WriteLine($"ProtestoDataCache: Limite de {MAX_CACHE_SIZE} registros atingido");
                             break;
                         }
+
                         _data.Add(item);
                         newItems.Add(item);
                         hasNewData = true;
+
+                        // Log para debug (pode remover depois)
+                        Debug.WriteLine($"Cache: Adicionado item ID={itemId}, " +
+                            $"Distribuição={item["num_distribuicao"]}, " +
+                            $"Devedor={item["devedor"]?["nome"]}");
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Cache: Item duplicado ignorado ID={itemId}");
                     }
                 }
 
@@ -143,7 +163,7 @@ namespace SistemaNotifica.src.Services.Cache
                 else if ( currentPage >= totalPages || _data.Count >= MAX_CACHE_SIZE )
                 {
                     _isLoaded = true;
-                    Debug.WriteLine($"ProtestoDataCache: Cache totalmente carregado. Total: {_data.Count} registros");
+                    Debug.WriteLine($"ProtestoDataCache: Cache totalmente carregado. Total: {_data.Count} registros (linhas/devedores)");
                 }
             }
 
@@ -158,7 +178,10 @@ namespace SistemaNotifica.src.Services.Cache
         /// <summary>
         /// Inicia o processo de carregamento assíncrono do cache
         /// </summary>
-        public static async Task LoadCacheAsync(Func<int, int, Task<JObject>> dataLoader, int pageSize = 50, CancellationToken cancellationToken = default)
+        public static async Task LoadCacheAsync(
+            Func<int, int, Task<JObject>> dataLoader,
+            int pageSize = 50,
+            CancellationToken cancellationToken = default)
         {
             if ( IsLoading )
             {
@@ -170,13 +193,13 @@ namespace SistemaNotifica.src.Services.Cache
 
             try
             {
-                Debug.WriteLine("ProtestoDataCache: Iniciando carregamento do cache");
+                Debug.WriteLine("ProtestoDataCache: Iniciando carregamento do cache (estrutura FLATTEN)");
 
                 int currentPage = 1;
                 int totalPagesToLoad = 0;
                 int maxPagesToLoad = ( int ) Math.Ceiling(( double ) MAX_CACHE_SIZE / pageSize);
-                int pagesWithoutNewData = 0; // Contador para páginas sem dados novos
-                const int MAX_PAGES_WITHOUT_DATA = 3; // Máximo de páginas consecutivas sem dados novos
+                int pagesWithoutNewData = 0;
+                const int MAX_PAGES_WITHOUT_DATA = 3;
 
                 do
                 {
@@ -197,7 +220,17 @@ namespace SistemaNotifica.src.Services.Cache
                         int totalPagesFromApi = response["lastPage"]?.Value<int>() ?? 1;
                         totalPagesToLoad = Math.Min(totalPagesFromApi, maxPagesToLoad);
 
-                        Debug.WriteLine($"ProtestoDataCache: Total de páginas da API: {totalPagesFromApi}, Páginas a carregar: {totalPagesToLoad}");
+                        // ============================================================
+                        // INFO ADICIONAL: Com estrutura FLATTEN
+                        // ============================================================
+                        int totalLinhas = response["total"]?.Value<int>() ?? 0;
+                        int totalProtestos = response["totalProtestos"]?.Value<int>() ?? 0;
+
+                        Debug.WriteLine($"ProtestoDataCache: API Info:");
+                        Debug.WriteLine($"  - Total de LINHAS (devedores): {totalLinhas}");
+                        Debug.WriteLine($"  - Total de PROTESTOS: {totalProtestos}");
+                        Debug.WriteLine($"  - Páginas na API: {totalPagesFromApi}");
+                        Debug.WriteLine($"  - Páginas a carregar: {totalPagesToLoad}");
                     }
 
                     // Adiciona os dados ao cache
@@ -217,7 +250,7 @@ namespace SistemaNotifica.src.Services.Cache
                     }
                     else
                     {
-                        pagesWithoutNewData = 0; // Reset contador
+                        pagesWithoutNewData = 0;
                     }
 
                     // Para se atingiu o limite de cache
@@ -230,11 +263,11 @@ namespace SistemaNotifica.src.Services.Cache
                     currentPage++;
 
                     // Pequeno delay para não sobrecarregar a API
-                    await Task.Delay(100, cancellationToken); // 100ms
+                    await Task.Delay(100, cancellationToken);
 
                 } while ( currentPage <= totalPagesToLoad && !cancellationToken.IsCancellationRequested );
 
-                Debug.WriteLine($"ProtestoDataCache: Carregamento concluído. Total: {Count} registros");
+                Debug.WriteLine($"ProtestoDataCache: Carregamento concluído. Total: {Count} linhas (devedores)");
             }
             catch ( OperationCanceledException )
             {
@@ -244,6 +277,7 @@ namespace SistemaNotifica.src.Services.Cache
             catch ( Exception ex )
             {
                 Debug.WriteLine($"ProtestoDataCache: Erro durante carregamento: {ex.Message}");
+                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
                 throw;
             }
             finally
@@ -255,7 +289,9 @@ namespace SistemaNotifica.src.Services.Cache
         /// <summary>
         /// Atualiza o cache em background (usado após upload)
         /// </summary>
-        public static async Task RefreshCacheInBackground(Func<int, int, Task<JObject>> dataLoader, int pageSize = 50)
+        public static async Task RefreshCacheInBackground(
+            Func<int, int, Task<JObject>> dataLoader,
+            int pageSize = 50)
         {
             try
             {
@@ -267,7 +303,7 @@ namespace SistemaNotifica.src.Services.Cache
                 // Recarrega os dados em background
                 await Task.Run(async () =>
                 {
-                    using ( var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5)) ) // Timeout de 5 minutos
+                    using ( var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5)) )
                     {
                         await LoadCacheAsync(dataLoader, pageSize, cts.Token);
                     }
@@ -299,18 +335,56 @@ namespace SistemaNotifica.src.Services.Cache
         {
             lock ( _lock )
             {
-                return $"Cache Stats - Registros: {_data.Count}/{MAX_CACHE_SIZE}, " +
+                return $"Cache Stats (FLATTEN) - Linhas: {_data.Count}/{MAX_CACHE_SIZE}, " +
                        $"Carregado: {_isLoaded}, Carregando: {_isLoading}, " +
                        $"Página: {_lastLoadedPage}/{_totalPages}";
             }
         }
 
+        /// <summary>
+        /// [NOVO] Obtém dados agrupados por protesto (se necessário para alguma visualização específica)
+        /// </summary>
+        public static Dictionary<string, List<JObject>> GetDataGroupedByProtesto()
+        {
+            lock ( _lock )
+            {
+                var grouped = new Dictionary<string, List<JObject>>();
 
+                foreach ( var item in _data )
+                {
+                    // Usa protesto_id para agrupar (se existir), senão usa num_distribuicao
+                    string protestoId = item["protesto_id"]?.ToString()
+                        ?? item["num_distribuicao"]?.ToString()
+                        ?? "unknown";
 
+                    if ( !grouped.ContainsKey(protestoId) )
+                    {
+                        grouped[protestoId] = new List<JObject>();
+                    }
 
+                    grouped[protestoId].Add(item);
+                }
 
+                return grouped;
+            }
+        }
 
+        /// <summary>
+        /// [NOVO] Conta quantos protestos únicos existem no cache
+        /// </summary>
+        public static int CountUniqueProtestos()
+        {
+            lock ( _lock )
+            {
+                var uniqueProtestos = _data
+                    .Select(item => item["protesto_id"]?.ToString()
+                        ?? item["num_distribuicao"]?.ToString())
+                    .Where(id => id != null)
+                    .Distinct()
+                    .Count();
 
-
+                return uniqueProtestos;
+            }
+        }
     }
 }
