@@ -12,7 +12,9 @@ namespace SistemaNotifica
     internal static class Program
     {
 
-        private static string _baseApiUrl = "http://localhost:3000"; // URL base
+        //private static string _baseApiUrl = "http://localhost:3000"; // URL base
+        //private static string _baseApiUrl = "https://sistema-notifica-nestjs.onrender.com"; // URL base
+        private static string _baseApiUrl = "https://sistema-notifica-wr-cc048c4a.koyeb.app"; // URL base
 
         public static ApiService ApiService { get; private set; }
         public static AuthService AuthService { get; private set; }
