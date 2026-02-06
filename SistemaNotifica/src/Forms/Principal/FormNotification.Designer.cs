@@ -39,7 +39,8 @@
             tableLayoutPanelSearch = new TableLayoutPanel();
             richTextBoxLogs = new RichTextBox();
             pnlSearchBotton = new Panel();
-            btnCancel = new Button();
+            btnFecharOverlay = new Button();
+            btnCancelSearch = new Button();
             dataGridViewDataNotification = new DataGridView();
             ColumnSelect = new DataGridViewCheckBoxColumn();
             ColumnId = new DataGridViewTextBoxColumn();
@@ -69,8 +70,8 @@
             flowLayoutPanel1 = new FlowLayoutPanel();
             label1 = new Label();
             textBoxDevedor = new TextBox();
-            textBoxDoc = new TextBox();
             label2 = new Label();
+            textBoxDoc = new TextBox();
             label3 = new Label();
             textBoxEmail = new TextBox();
             pnlMain.SuspendLayout();
@@ -205,23 +206,35 @@
             // 
             // pnlSearchBotton
             // 
-            pnlSearchBotton.Controls.Add(btnCancel);
+            pnlSearchBotton.Controls.Add(btnFecharOverlay);
+            pnlSearchBotton.Controls.Add(btnCancelSearch);
             pnlSearchBotton.Dock = DockStyle.Fill;
             pnlSearchBotton.Location = new Point(3, 410);
             pnlSearchBotton.Name = "pnlSearchBotton";
             pnlSearchBotton.Size = new Size(539, 32);
             pnlSearchBotton.TabIndex = 2;
             // 
-            // btnCancel
+            // btnFecharOverlay
             // 
-            btnCancel.Anchor =      AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
-            btnCancel.Location = new Point(127, 3);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(278, 26);
-            btnCancel.TabIndex = 0;
-            btnCancel.Text = "Cancelar";
-            btnCancel.UseVisualStyleBackColor = true;
-            btnCancel.Click +=  btnCancel_Click ;
+            btnFecharOverlay.Anchor =      AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            btnFecharOverlay.Location = new Point(127, 3);
+            btnFecharOverlay.Name = "btnFecharOverlay";
+            btnFecharOverlay.Size = new Size(278, 26);
+            btnFecharOverlay.TabIndex = 1;
+            btnFecharOverlay.Text = "FECHAR";
+            btnFecharOverlay.UseVisualStyleBackColor = true;
+            btnFecharOverlay.Click +=  btnFecharOverlay_Click ;
+            // 
+            // btnCancelSearch
+            // 
+            btnCancelSearch.Anchor =      AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            btnCancelSearch.Location = new Point(127, 3);
+            btnCancelSearch.Name = "btnCancelSearch";
+            btnCancelSearch.Size = new Size(278, 26);
+            btnCancelSearch.TabIndex = 0;
+            btnCancelSearch.Text = "CANCELAR";
+            btnCancelSearch.UseVisualStyleBackColor = true;
+            btnCancelSearch.Click +=  btnCancel_Click ;
             // 
             // dataGridViewDataNotification
             // 
@@ -487,14 +500,6 @@
             textBoxDevedor.Size = new Size(244, 23);
             textBoxDevedor.TabIndex = 1;
             // 
-            // textBoxDoc
-            // 
-            textBoxDoc.Location = new Point(378, 3);
-            textBoxDoc.Margin = new Padding(0, 3, 0, 3);
-            textBoxDoc.Name = "textBoxDoc";
-            textBoxDoc.Size = new Size(176, 23);
-            textBoxDoc.TabIndex = 2;
-            // 
             // label2
             // 
             label2.AutoSize = true;
@@ -504,6 +509,14 @@
             label2.Size = new Size(76, 15);
             label2.TabIndex = 3;
             label2.Text = "Documento: ";
+            // 
+            // textBoxDoc
+            // 
+            textBoxDoc.Location = new Point(378, 3);
+            textBoxDoc.Margin = new Padding(0, 3, 0, 3);
+            textBoxDoc.Name = "textBoxDoc";
+            textBoxDoc.Size = new Size(176, 23);
+            textBoxDoc.TabIndex = 2;
             // 
             // label3
             // 
@@ -568,7 +581,7 @@
         private Panel mainPanelLogSearch;
         private DataGridView dataGridViewDataNotification;
         private Button btnSearchEmails;
-        private Button btnCancel;
+        private Button btnCancelSearch;
         private RichTextBox richTextBoxLogs;
         private TableLayoutPanel tableLayoutPanelSearch;
         private Panel pnlSearchBotton;
@@ -595,5 +608,6 @@
         private TextBox textBoxDoc;
         private Label label3;
         private TextBox textBoxEmail;
+        private Button btnFecharOverlay;
     }
 }

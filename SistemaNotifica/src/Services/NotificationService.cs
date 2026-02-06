@@ -20,7 +20,7 @@ namespace SistemaNotifica.src.Services
         }
 
         // Busca de notificações de devedores com email
-        public async Task<List<Notificacao>> SearchNotAsync()
+        public async Task<List<Notificacao>> SearchNotificationsAsync()
         {
             try
             {

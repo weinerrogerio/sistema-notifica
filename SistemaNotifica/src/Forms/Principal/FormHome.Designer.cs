@@ -41,12 +41,6 @@
             btnImport = new Button();
             btnNotification = new Button();
             dataGridViewProtesto = new DataGridView();
-            ColumnDataDistribuicao = new DataGridViewTextBoxColumn();
-            ColumnNumDistribuicao = new DataGridViewTextBoxColumn();
-            ColumNomeDevedor = new DataGridViewTextBoxColumn();
-            ColumnDocDevedor = new DataGridViewTextBoxColumn();
-            ColumnEmail = new DataGridViewTextBoxColumn();
-            ColumnStatus = new DataGridViewTextBoxColumn();
             tableLayoutPanelBotton = new TableLayoutPanel();
             chartDist = new System.Windows.Forms.DataVisualization.Charting.Chart();
             panelArq = new Panel();
@@ -56,6 +50,12 @@
             ColumnUser = new DataGridViewTextBoxColumn();
             ColumnStatusArquivo = new DataGridViewTextBoxColumn();
             panelHeader = new Panel();
+            ColumnDataDistribuicao = new DataGridViewTextBoxColumn();
+            ColumnNumDistribuicao = new DataGridViewTextBoxColumn();
+            ColumNomeDevedor = new DataGridViewTextBoxColumn();
+            ColumnDocDevedor = new DataGridViewTextBoxColumn();
+            ColumnEmail = new DataGridViewTextBoxColumn();
+            ColumnStatus = new DataGridViewTextBoxColumn();
             panelHome.SuspendLayout();
             mainTableLayoutPanel.SuspendLayout();
             tableLayoutPanelTop.SuspendLayout();
@@ -208,46 +208,6 @@
             dataGridViewProtesto.Size = new Size(682, 198);
             dataGridViewProtesto.TabIndex = 2;
             // 
-            // ColumnDataDistribuicao
-            // 
-            ColumnDataDistribuicao.FillWeight = 60F;
-            ColumnDataDistribuicao.HeaderText = "Data Distribuição";
-            ColumnDataDistribuicao.Name = "ColumnDataDistribuicao";
-            ColumnDataDistribuicao.ReadOnly = true;
-            // 
-            // ColumnNumDistribuicao
-            // 
-            ColumnNumDistribuicao.FillWeight = 55F;
-            ColumnNumDistribuicao.HeaderText = "Distribuição";
-            ColumnNumDistribuicao.Name = "ColumnNumDistribuicao";
-            ColumnNumDistribuicao.ReadOnly = true;
-            // 
-            // ColumNomeDevedor
-            // 
-            ColumNomeDevedor.FillWeight = 135F;
-            ColumNomeDevedor.HeaderText = "Devedor";
-            ColumNomeDevedor.Name = "ColumNomeDevedor";
-            ColumNomeDevedor.ReadOnly = true;
-            // 
-            // ColumnDocDevedor
-            // 
-            ColumnDocDevedor.HeaderText = "Doc. Devedor";
-            ColumnDocDevedor.Name = "ColumnDocDevedor";
-            ColumnDocDevedor.ReadOnly = true;
-            // 
-            // ColumnEmail
-            // 
-            ColumnEmail.HeaderText = "Email";
-            ColumnEmail.Name = "ColumnEmail";
-            ColumnEmail.ReadOnly = true;
-            // 
-            // ColumnStatus
-            // 
-            ColumnStatus.FillWeight = 45F;
-            ColumnStatus.HeaderText = "Status da Notificação";
-            ColumnStatus.Name = "ColumnStatus";
-            ColumnStatus.ReadOnly = true;
-            // 
             // tableLayoutPanelBotton
             // 
             tableLayoutPanelBotton.BackColor = SystemColors.Control;
@@ -347,6 +307,46 @@
             panelHeader.Name = "panelHeader";
             panelHeader.Size = new Size(908, 25);
             panelHeader.TabIndex = 1;
+            // 
+            // ColumnDataDistribuicao
+            // 
+            ColumnDataDistribuicao.FillWeight = 60F;
+            ColumnDataDistribuicao.HeaderText = "Data Distribuição";
+            ColumnDataDistribuicao.Name = "ColumnDataDistribuicao";
+            ColumnDataDistribuicao.ReadOnly = true;
+            // 
+            // ColumnNumDistribuicao
+            // 
+            ColumnNumDistribuicao.FillWeight = 55F;
+            ColumnNumDistribuicao.HeaderText = "Distribuição";
+            ColumnNumDistribuicao.Name = "ColumnNumDistribuicao";
+            ColumnNumDistribuicao.ReadOnly = true;
+            // 
+            // ColumNomeDevedor
+            // 
+            ColumNomeDevedor.FillWeight = 135F;
+            ColumNomeDevedor.HeaderText = "Devedor";
+            ColumNomeDevedor.Name = "ColumNomeDevedor";
+            ColumNomeDevedor.ReadOnly = true;
+            // 
+            // ColumnDocDevedor
+            // 
+            ColumnDocDevedor.HeaderText = "Doc. Devedor";
+            ColumnDocDevedor.Name = "ColumnDocDevedor";
+            ColumnDocDevedor.ReadOnly = true;
+            // 
+            // ColumnEmail
+            // 
+            ColumnEmail.HeaderText = "Email";
+            ColumnEmail.Name = "ColumnEmail";
+            ColumnEmail.ReadOnly = true;
+            // 
+            // ColumnStatus
+            // 
+            ColumnStatus.FillWeight = 45F;
+            ColumnStatus.HeaderText = "Status da Notificação";
+            ColumnStatus.Name = "ColumnStatus";
+            ColumnStatus.ReadOnly = true;
             // 
             // FormHome
             // 

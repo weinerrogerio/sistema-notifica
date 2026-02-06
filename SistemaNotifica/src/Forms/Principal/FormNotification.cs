@@ -31,6 +31,8 @@ namespace SistemaNotifica.src.Forms.Principal
         private CancellationTokenSource sseCancelToken;
         private HttpResponseMessage sseResponse;
 
+        private bool _searchCompleted = false;
+
         public FormNotification()
         {
             InitializeComponent();
@@ -46,11 +48,15 @@ namespace SistemaNotifica.src.Forms.Principal
 
             _devedorService.OnLogReceived += HandleLogReceived;
 
-            LoadDistribData();                       
-            
+            LoadDistribData();
+
             mainPanelLogSearchConfig();
             this.Resize += FormNotification_Resize;
             this.SizeChanged += FormNotification_Resize;
+
+            btnFecharOverlay.SendToBack();
+            btnFecharOverlay.Visible = false;
+            btnCancelSearch.Visible = true;
         }
 
 
@@ -72,8 +78,8 @@ namespace SistemaNotifica.src.Forms.Principal
 
             //mainPanelLogSearch.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             mainPanelLogSearch.Anchor = AnchorStyles.None;
-            mainPanelLogSearch.Height = this.ClientSize.Height; 
-            CenterOverlayHorizontally(); 
+            mainPanelLogSearch.Height = this.ClientSize.Height;
+            CenterOverlayHorizontally();
 
         }
 
@@ -276,7 +282,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
         // Eventos dos CheckBoxes
         private void chkBoxNotSended_CheckedChanged(object sender, EventArgs e)
-        {   
+        {
             ApplyFilters();
 
         }
@@ -352,7 +358,7 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             try
             {
-                dados = await _notificationService.SearchNotAsync();
+                dados = await _notificationService.SearchNotificationsAsync();
                 Debug.WriteLine($"LoadDistribData - Sucesso: {dados.Count} registros encontrados {dados}");
                 ApplyFilters();
             }
@@ -549,7 +555,7 @@ namespace SistemaNotifica.src.Forms.Principal
         private async void btnSendSelected_Click(object sender, EventArgs e)
         {
             var template = await _templateService.GetDefaultTemplateAsync();
-            if (template == null)
+            if ( template == null )
             {
                 MessageBox.Show("Não foi possível carregar o template padrão. Verifique se existe um template configurado.",
                               "Template não encontrado",
@@ -612,7 +618,8 @@ namespace SistemaNotifica.src.Forms.Principal
                 if ( resultFinal == DialogResult.Yes )
                 {
                     // TODO: Implementar envio das notificações
-                    EnviarNotificacoes(registrosSelecionados);
+                    await EnviarNotificacoes(registrosSelecionados);
+
                 }
             }
             catch ( Exception ex )
@@ -621,6 +628,7 @@ namespace SistemaNotifica.src.Forms.Principal
                                "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Debug.WriteLine($"Erro em btnSendSelected_Click: {ex.Message}");
             }
+            LoadDistribData();
         }
 
         public List<Notificacao> ObterRegistrosSelecionados()
@@ -654,7 +662,7 @@ namespace SistemaNotifica.src.Forms.Principal
 
 
 
-        private async void EnviarNotificacoes(List<Notificacao> registros)
+        private async Task EnviarNotificacoes(List<Notificacao> registros)
         {
             int sucessos = 0;
             int falhas = 0;
@@ -821,12 +829,16 @@ namespace SistemaNotifica.src.Forms.Principal
             mainPanelLogSearch.Location = new Point(x, y);
         }
 
-        public void ShowOverlay(string message = "Processando arquivo...")
+        private void ShowOverlay()
         {
+            Debug.WriteLine("Mostrando overlay...");
+
+            // ✅ RESETAR flag de conclusão
+            _searchCompleted = false;
             mainPanelLogSearch.Visible = true;
             mainPanelLogSearch.BringToFront();
             DisableMainControls(true);
-            CenterOverlayPanel(); // Centralizar ao mostrar
+            CenterOverlayPanel();
             this.Refresh();
             Application.DoEvents();
         }
@@ -836,9 +848,54 @@ namespace SistemaNotifica.src.Forms.Principal
         private void CloseOverlay()
         {
             Debug.WriteLine("Fechando overlay...");
-            //timerProgressBar.Stop();
+
+            // ✅ CANCELAR SSE se ainda ativo
+            if ( !string.IsNullOrEmpty(currentSessionId) )
+            {
+                try
+                {
+                    _devedorService.CancelSSEConnection();
+                    Debug.WriteLine($"[FormNotification] SSE cancelado para sessão: {currentSessionId}");
+                }
+                catch ( Exception ex )
+                {
+                    Debug.WriteLine($"[FormNotification] Erro ao cancelar SSE: {ex.Message}");
+                }
+            }
+
+            // ✅ Resetar estado
+            currentSessionId = null;
+            _searchCompleted = false;
             mainPanelLogSearch.Visible = false;
             DisableMainControls(false);
+        }
+
+        //FECHAR SSE QUANDO FECHAR A JANELA
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            try
+            {
+                Debug.WriteLine("[FormNotification] Form fechando, cancelando SSE...");
+
+                // ✅ Cancela stream SSE se ainda ativo
+                if ( !string.IsNullOrEmpty(currentSessionId) )
+                {
+                    // Não usa await aqui pois está fechando
+                    _devedorService.CancelSSEConnection();
+                    currentSessionId = null;
+                }
+
+                // ✅ Desinscreve do evento para evitar memory leak
+                _devedorService.OnLogReceived -= HandleLogReceived;
+
+                Debug.WriteLine("[FormNotification] SSE cancelado com sucesso");
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine($"[FormNotification] Erro ao cancelar SSE no fechamento: {ex.Message}");
+            }
         }
 
         private async void btnSearchEmails_Click(object sender, EventArgs e)
@@ -866,23 +923,42 @@ namespace SistemaNotifica.src.Forms.Principal
             await StartEmailSearch();
         }
 
-        
+
+
+
         private async void btnCancel_Click(object sender, EventArgs e)
         {
             try
             {
+                // ✅ Desabilita botão para evitar duplo clique
+                btnCancelSearch.Enabled = false;
+
                 AddLogToRichTextBox("warn", "Cancelando busca...", DateTime.Now);
 
-                // ⭐ CORRIGIDO: Agora passa o sessionId
                 await _devedorService.CancelSSE(currentSessionId);
-                MessageBox.Show("Busca de emails cancelada!", "Busca cancelada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // ✅ Aguarda um pouco para processar cancelamento
+                await Task.Delay(500);
+
+                AddLogToRichTextBox("warn", "Busca cancelada com sucesso", DateTime.Now);
                 LoadDistribData();
                 CloseOverlay();
             }
             catch ( Exception ex )
             {
-                MessageBox.Show($"Erro ao cancelar o envio: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Erro ao cancelar: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            finally
+            {
+                btnCancelSearch.Enabled = true;
+            }
+        }
+
+
+        private void btnCloseOverlay_Click(object sender, EventArgs e)
+        {
+            // Permite fechar manualmente sem cancelar busca
+            CloseOverlay();
         }
 
 
@@ -927,18 +1003,49 @@ namespace SistemaNotifica.src.Forms.Principal
         //Handler para receber os logs do DevedorService
         private void HandleLogReceived(string logLevel, string message, DateTime timestamp, string cnpj = null, string email = null)
         {
-            // O Invoke é fundamental, pois este evento será disparado pela thread do SSE
+            // ✅ VERIFICAR se Form ainda existe e tem handle
+            if ( this.IsDisposed || !this.IsHandleCreated )
+            {
+                Debug.WriteLine($"[FormNotification] Form já foi fechado, ignorando log: {message}");
+                return; // ← SAIR se Form não existe mais
+            }
+
             this.Invoke(( Action ) ( () =>
             {
                 AddLogToRichTextBox(logLevel, message, timestamp, cnpj, email);
 
-                // Lógica para fechar overlay quando a sessão termina ou dá erro fatal
-                if ( logLevel == "session_ended" || logLevel == "error" )
+                // ❌ REMOVIDO: Todo o código de MessageBox e fechamento automático
+                // Agora apenas loga as mensagens, sem fechar o painel
+
+                // Atualiza a flag quando receber session_ended (sem MessageBox, sem fechar)
+                if ( logLevel.ToLower() == "session_ended" && !_searchCompleted )
                 {
-                    CloseOverlay();
+                    _searchCompleted = true;
+                    AddLogToRichTextBox("connection", "Busca concluída!", DateTime.Now);
+                    LoadDistribData();
+                }
+
+                // Mantém apenas tratamento de erros fatais
+                if ( logLevel.ToLower() == "error" )
+                {
+                    string lowerMessage = message.ToLower();
+
+                    if ( lowerMessage.Contains("fatal") ||
+                         lowerMessage.Contains("conexão") ||
+                         lowerMessage.Contains("sessão inválida") ||
+                         lowerMessage.Contains("não autorizado") ||
+                         lowerMessage.Contains("timeout") )
+                    {
+                        MessageBox.Show($"Erro fatal: {message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        CloseOverlay();
+                    }
                 }
             } ));
         }
+
+
+
+
         public async Task<bool> CreateEmailSearchSession()
         {
             try
@@ -971,24 +1078,60 @@ namespace SistemaNotifica.src.Forms.Principal
             {
                 AddLogToRichTextBox("connection", "Conectando aos logs...", DateTime.Now);
 
-                // Chama o Service para obter a resposta e o token
                 var result = await _devedorService.ConnectToSSE(currentSessionId);
                 sseResponse = result.Response;
                 sseCancelToken = result.CancelSource;
 
                 if ( sseResponse != null && sseResponse.IsSuccessStatusCode )
                 {
-                    // ⭐️ Dispara o Processamento do Stream em background, mas dentro do DevedorService
-                    _ = Task.Run(() => _devedorService.ProcessSSEStream(sseResponse, sseCancelToken.Token));
+                    AddLogToRichTextBox("connection", "Conectado! Aguardando início da busca...", DateTime.Now);
+
+                    // ✅ Dispara processamento em background
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            // Processa o stream SSE
+                            await _devedorService.ProcessSSEStream(sseResponse, sseCancelToken.Token);
+
+                            // ✅ Quando stream terminar naturalmente
+                            this.Invoke(( Action ) ( () =>
+                            {
+                                AddLogToRichTextBox("connection", "Stream encerrado naturalmente.", DateTime.Now);
+
+                                // 1. Troca os botões ANTES da mensagem
+                                btnCancelSearch.Visible = false;
+                                btnFecharOverlay.Visible = true;
+                                btnFecharOverlay.BringToFront();
+
+                                // 2. Exibe a mensagem de sucesso (apenas UMA vez)
+                                MessageBox.Show("Busca de emails concluída com sucesso!", "Concluído", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                                // ❌ REMOVIDO: CloseOverlay() - painel permanece aberto!
+                            } ));
+                        }
+                        catch ( Exception ex )
+                        {
+                            this.Invoke(( Action ) ( () =>
+                            {
+                                AddLogToRichTextBox("error", $"Erro no stream SSE: {ex.Message}", DateTime.Now);
+
+                                // Mantém aberto para visualizar erro também
+                                btnCancelSearch.Visible = false;
+                                btnFecharOverlay.Visible = true;
+                                btnFecharOverlay.BringToFront();
+                            } ));
+                        }
+                    });
+
                     return true;
                 }
 
-                // O log de erro já é tratado dentro do DevedorService em caso de falha HTTP
                 return false;
             }
-            catch ( Exception )
+            catch ( Exception ex )
             {
-                // Erros aqui já foram logados via HandleLogReceived. Apenas retorna false.
+                AddLogToRichTextBox("error", $"Erro ao conectar SSE: {ex.Message}", DateTime.Now);
                 return false;
             }
         }
@@ -1004,6 +1147,13 @@ namespace SistemaNotifica.src.Forms.Principal
             try
             {
                 AddLogToRichTextBox("connection", "Iniciando busca de emails...", DateTime.Now);
+
+                // 1. GARANTIR ESTADO INICIAL DOS BOTÕES
+                btnCancelSearch.Visible = true;
+                btnCancelSearch.BringToFront();
+
+                // Supondo que você já criou este botão no Designer
+                btnFecharOverlay.Visible = false;
 
                 // Chama o Service, que tem a responsabilidade do endpoint
                 var response = await _devedorService.StartEmailSearch(currentSessionId);
@@ -1021,6 +1171,20 @@ namespace SistemaNotifica.src.Forms.Principal
             {
                 AddLogToRichTextBox("error", $"Erro ao iniciar busca: {ex.Message}", DateTime.Now);
             }
+        }
+
+        private void btnFecharOverlay_Click(object sender, EventArgs e)
+        {
+            // 1. Fecha o overlay
+            CloseOverlay();
+            // 2. Reseta o estado visual para a próxima busca
+            btnFecharOverlay.Visible = false;
+            btnCancelSearch.Visible = true;
+            // 3. (Opcional) Limpa o log se quiser que comece vazio na próxima
+            richTextBoxLogs.Clear(); 
+            // 4. Reseta flags
+            _searchCompleted = false;
+            currentSessionId = null;
         }
     }
 }

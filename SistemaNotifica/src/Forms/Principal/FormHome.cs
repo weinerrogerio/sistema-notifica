@@ -22,7 +22,7 @@ namespace SistemaNotifica.src.Forms
     {
         private readonly ProtestoService _protestoService;
         private readonly ImportService _importService;
-
+        private NotificationService _notificationService;
         public event Action OnNavigateToImport;
         public event Action OnNavigateToNotification;
 
@@ -31,6 +31,7 @@ namespace SistemaNotifica.src.Forms
             InitializeComponent();
             _protestoService = Program.ProtestoService;
             _importService = Program.ImportService;
+            _notificationService = Program.NotificationService;
             ConfigDataGridView();//Configurando o DataGrid
             LoadDistribData(); // carega dados de distribuição
             LoadDataImport(); // carrega dados de importação -> arquivos impoartados
@@ -63,23 +64,24 @@ namespace SistemaNotifica.src.Forms
             dataGridViewImports.AllowUserToResizeRows = false;
             dataGridViewImports.AllowUserToResizeColumns = false;
         }
+
+
+
+        // ARRUMAR A TABELA DE DISTRIB/NOTIFICAÇÕES --> SERÁ APENAS NOTIFICAÇÕES --> USAR CACHE
         private async Task LoadDistribData()
         {
             try
             {
-
-                if (_protestoService == null)
+                if ( _protestoService == null )
                 {
                     Debug.WriteLine("ProtestoService não foi inicializado!");
-                    MessageBox.Show("Erro: Serviço não disponivel, verifique sua conexão.", "Erro",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                var queryParams = new Dictionary<string, string>();
-                queryParams.Add("limit", "100");
-                queryParams.Add("email", true.ToString());
+
                 Debug.WriteLine("Iniciando LoadDistribData...");
-                var dados = await _protestoService.SearchDistAsJArrayAsync(queryParams);
+
+                // Assume que retorna uma List ou JArray
+                var dados = await _notificationService.SearchNotificationsAsync();
 
                 if ( dados == null || dados.Count == 0 ) return;
 
@@ -87,10 +89,9 @@ namespace SistemaNotifica.src.Forms
 
                 foreach ( var itemProtesto in dados )
                 {
-                    // Converte para JObject
+                    // Converte o objeto (Notificacao) ou item dinâmico para JObject para facilitar leitura flexível
                     JObject jsonProtesto = JObject.FromObject(itemProtesto);
 
-                    // Passa o objeto inteiro. A função lá dentro vai se virar para achar o devedor.
                     AdicionarLinhaApiTabela(jsonProtesto);
                 }
 
@@ -108,55 +109,23 @@ namespace SistemaNotifica.src.Forms
             {
                 int rowIndex = dataGridViewProtesto.Rows.Add();
                 DataGridViewRow row = dataGridViewProtesto.Rows[rowIndex];
+                row.Cells["ColumnDataDistribuicao"].Value = Format.ParaData(protesto["dataDistribuicao"]?.ToString());
+                row.Cells["ColumnNumDistribuicao"].Value = protesto["distribuicao"]?.ToString() ?? string.Empty;
 
-                // 1. Dados do Protesto (Raiz)
-                // Usamos a classe Format estática conforme sua refatoração anterior
-                row.Cells["ColumnDataDistribuicao"].Value = Format.ParaData(protesto["data_distribuicao"]?.ToString());
-                row.Cells["ColumnNumDistribuicao"].Value = protesto["num_distribuicao"]?.ToString() ?? string.Empty;
+                string nomeDevedor = protesto["nomeDevedor"]?.ToString() ?? string.Empty;
+                string docDevedor = protesto["docDevedor"]?.ToString() ?? string.Empty;
+                string emailDevedor = protesto["devedorEmail"]?.ToString() ?? string.Empty;
 
-                // 2. Extração dos dados aninhados (Logica do FormData)
-                // No FormData, o devedor e o status ficam dentro de "notificacao"
-                var notificacoes = protesto["notificacao"] as JArray;
+                row.Cells["ColumNomeDevedor"].Value = string.IsNullOrEmpty(nomeDevedor) ? "Sem devedor" : nomeDevedor;
+                row.Cells["ColumnDocDevedor"].Value = Format.ParaDocumento(docDevedor);
+                row.Cells["ColumnEmail"].Value = string.IsNullOrEmpty(emailDevedor) ? "-" : emailDevedor;
 
-                bool dadosDevedorEncontrados = false;
+                bool lido = protesto["lido"]?.Value<bool>() ?? false;
+                bool enviado = protesto["emailEnviado"]?.Value<bool>() ?? false;
 
-                if ( notificacoes != null && notificacoes.Count > 0 )
-                {
-                    // Pega a primeira notificação (ou itere se necessário, mas geralmente é 1 para 1 no grid principal)
-                    var notificacao = notificacoes[0] as JObject;
-
-                    if ( notificacao != null )
-                    {
-                        // Busca o objeto Devedor dentro da Notificação
-                        var devedor = notificacao["devedor"] as JObject;
-
-                        if ( devedor != null )
-                        {
-                            row.Cells["ColumNomeDevedor"].Value = devedor["nome"]?.ToString() ?? string.Empty;
-                            row.Cells["ColumnDocDevedor"].Value = Format.ParaDocumento(devedor["doc_devedor"]?.ToString());
-                            row.Cells["ColumnEmail"].Value = devedor["email"]?.ToString() ?? string.Empty;
-                            dadosDevedorEncontrados = true;
-                        }
-
-                        // 3. Lógica de Status (Baseado na Notificação)
-                        bool lido = notificacao["lido"]?.Value<bool>() ?? false; // Campo 'lido' geralmente fica na notificação
-                        bool enviado = notificacao["email_enviado"]?.Value<bool>() ?? false;
-
-                        string status = lido ? "Lido" : ( enviado ? "Enviado" : "Pendente" );
-                        row.Cells["ColumnStatus"].Value = status;
-                        row.Tag = status; // Para coloração
-                    }
-                }
-
-                // Fallback se não achou devedor/notificação
-                if ( !dadosDevedorEncontrados )
-                {
-                    row.Cells["ColumNomeDevedor"].Value = "Sem devedor";
-                    row.Cells["ColumnDocDevedor"].Value = "-";
-                    row.Cells["ColumnEmail"].Value = "-";
-                    row.Cells["ColumnStatus"].Value = "Pendente";
-                    row.Tag = "Pendente";
-                }
+                string status = lido ? "Lido" : ( enviado ? "Enviado" : "Pendente" );
+                row.Cells["ColumnStatus"].Value = status;
+                row.Tag = status; // Para coloração na função AplicarCoresGidProtestoStatus
             }
             catch ( Exception ex )
             {

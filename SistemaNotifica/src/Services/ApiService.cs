@@ -24,10 +24,23 @@ namespace SistemaNotifica.src.Services
         };
 
         // HttpClient separado para SSE (long-lived connections)
-        private static readonly HttpClient _sseHttpClient = new HttpClient
+        //private static readonly HttpClient _sseHttpClient = new HttpClient
+        //{
+        //    Timeout = Timeout.InfiniteTimeSpan // SSE precisa de timeout infinito
+        //};
+
+        private static readonly HttpClient _sseHttpClient = new HttpClient(new SocketsHttpHandler
+        {
+            PooledConnectionLifetime = Timeout.InfiniteTimeSpan, // Mantém conexão viva
+            PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
+            ResponseDrainTimeout = TimeSpan.FromSeconds(30),
+            KeepAlivePingDelay = TimeSpan.FromSeconds(30), // Ping a cada 30s
+            KeepAlivePingTimeout = TimeSpan.FromSeconds(30)
+        })
         {
             Timeout = Timeout.InfiniteTimeSpan // SSE precisa de timeout infinito
         };
+
 
         private readonly string _baseUrl;
 
@@ -44,6 +57,10 @@ namespace SistemaNotifica.src.Services
             {
                 _sharedHttpClient.DefaultRequestHeaders.Remove("Authorization");
                 _sharedHttpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+
+                _sseHttpClient.DefaultRequestHeaders.Remove("Authorization");
+                _sseHttpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+
                 Debug.WriteLine($"[API Service] ✅ SetAuthorizationHeader chamado com token: {token.Substring(0, Math.Min(50, token.Length))}...");
             }
             else
