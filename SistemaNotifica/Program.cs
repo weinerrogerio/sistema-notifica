@@ -1,5 +1,6 @@
 using SistemaNotifica.src.Forms;
 using SistemaNotifica.src.Forms.Principal;
+using SistemaNotifica.src.Forms.Principal.Config;
 using SistemaNotifica.src.Forms.Template;
 using SistemaNotifica.src.FormsTestes;
 using SistemaNotifica.src.Models;
@@ -13,7 +14,7 @@ namespace SistemaNotifica
     {
 
         //private static string _baseApiUrl = "http://localhost:3000"; // URL base
-         private static string _baseApiUrl = "https://sistema-notifica-nestjs.onrender.com"; // URL base
+        // private static string _baseApiUrl = "https://sistema-notifica-nestjs.onrender.com"; // URL base
         //private static string _baseApiUrl = "https://sistema-notifica-wr-cc048c4a.koyeb.app"; // URL base
 
         public static ApiService ApiService { get; private set; }
@@ -34,16 +35,9 @@ namespace SistemaNotifica
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            ApiService = new ApiService(_baseApiUrl);
-            // Passar a mesma instância para todos os serviços
-            AuthService = new AuthService(ApiService);
-            ProtestoService = new ProtestoService(ApiService);
-            ImportService = new ImportService(ApiService);
-            NotificationService = new NotificationService(ApiService);
-            DevedorService = new DevedorService(ApiService); 
-            UserService = new UserService(ApiService);
-            TemplateService = new TemplateService(ApiService);
+            string baseApiUrl = AppSettingsManager.GetBaseApiUrl();
 
+            InitializeServices(baseApiUrl);
 
             ConfigureCacheHandlers();
 
@@ -54,7 +48,8 @@ namespace SistemaNotifica
 
             //Application.Run(new src.FormsTestes.MainFormOnTop());
             //Application.Run(new src.Forms.Template.TemplateEditForm());
-            //Application.Run(new src.Forms.FormHome());
+            //Application.Run(new src.Forms.Principal.FormConfig());
+            //Application.Run(new FormOrigin());
 
             using ( FormLogin loginForm = new FormLogin() )
             {
@@ -70,6 +65,18 @@ namespace SistemaNotifica
             }
         }
 
+
+        public static void InitializeServices(string baseApiUrl)
+        {
+            ApiService = new ApiService(baseApiUrl);
+            AuthService = new AuthService(ApiService);
+            ProtestoService = new ProtestoService(ApiService);
+            ImportService = new ImportService(ApiService);
+            NotificationService = new NotificationService(ApiService);
+            DevedorService = new DevedorService(ApiService);
+            UserService = new UserService(ApiService);
+            TemplateService = new TemplateService(ApiService);
+        }
 
         private static void ConfigureCacheHandlers()
         {

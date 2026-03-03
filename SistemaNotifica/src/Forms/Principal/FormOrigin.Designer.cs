@@ -311,6 +311,7 @@ namespace SistemaNotifica
             btnSettings.TabIndex = 2;
             btnSettings.Text = "Configurações";
             btnSettings.UseVisualStyleBackColor = false;
+            btnSettings.Click +=  btnSettings_Click ;
             // 
             // panelUser
             // 

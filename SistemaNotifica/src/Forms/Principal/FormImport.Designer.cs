@@ -62,6 +62,17 @@
             labelStatusUpload = new Label();
             progressBar = new ProgressBar();
             dataGridViewDataImport = new DataGridView();
+            id = new DataGridViewTextBoxColumn();
+            ColumnFile = new DataGridViewTextBoxColumn();
+            ColumnDate = new DataGridViewTextBoxColumn();
+            ColumnStatus = new DataGridViewTextBoxColumn();
+            ColumnUser = new DataGridViewTextBoxColumn();
+            ColumnRecordsCount = new DataGridViewTextBoxColumn();
+            ColumnErrorCount = new DataGridViewTextBoxColumn();
+            ColumnDuplicatesCount = new DataGridViewTextBoxColumn();
+            ColumnFileSize = new DataGridViewTextBoxColumn();
+            ColumnDetalhesErros = new DataGridViewTextBoxColumn();
+            ColumnDetalhesDuplicidades = new DataGridViewTextBoxColumn();
             contextMenuStripGrid = new ContextMenuStrip(components);
             toolStripMenuItemReprocess = new ToolStripMenuItem();
             toolStripMenuItemViewError = new ToolStripMenuItem();
@@ -75,17 +86,6 @@
             toolTipMain = new ToolTip(components);
             timerAutoRefresh = new System.Windows.Forms.Timer(components);
             timerProgressBar = new System.Windows.Forms.Timer(components);
-            id = new DataGridViewTextBoxColumn();
-            ColumnFile = new DataGridViewTextBoxColumn();
-            ColumnDate = new DataGridViewTextBoxColumn();
-            ColumnStatus = new DataGridViewTextBoxColumn();
-            ColumnUser = new DataGridViewTextBoxColumn();
-            ColumnRecordsCount = new DataGridViewTextBoxColumn();
-            ColumnErrorCount = new DataGridViewTextBoxColumn();
-            ColumnDuplicatesCount = new DataGridViewTextBoxColumn();
-            ColumnFileSize = new DataGridViewTextBoxColumn();
-            ColumnDetalhesErros = new DataGridViewTextBoxColumn();
-            ColumnDetalhesDuplicidades = new DataGridViewTextBoxColumn();
             tableLayoutPanelFormImportMain.SuspendLayout();
             panelTop.SuspendLayout();
             groupBoxFileSelection.SuspendLayout();
@@ -489,78 +489,6 @@
             dataGridViewDataImport.Size = new Size(834, 307);
             dataGridViewDataImport.TabIndex = 0;
             // 
-            // contextMenuStripGrid
-            // 
-            contextMenuStripGrid.Items.AddRange(new ToolStripItem[] { toolStripMenuItemReprocess, toolStripMenuItemViewError, toolStripMenuItemDelete, toolStripMenuItemCopyPath });
-            contextMenuStripGrid.Name = "contextMenuStripGrid";
-            contextMenuStripGrid.Size = new Size(198, 92);
-            // 
-            // toolStripMenuItemReprocess
-            // 
-            toolStripMenuItemReprocess.Name = "toolStripMenuItemReprocess";
-            toolStripMenuItemReprocess.Size = new Size(197, 22);
-            toolStripMenuItemReprocess.Text = "🔄 Reprocessar Arquivo";
-            // 
-            // toolStripMenuItemViewError
-            // 
-            toolStripMenuItemViewError.Name = "toolStripMenuItemViewError";
-            toolStripMenuItemViewError.Size = new Size(197, 22);
-            toolStripMenuItemViewError.Text = "⚠ Ver Detalhes do Erro";
-            // 
-            // toolStripMenuItemDelete
-            // 
-            toolStripMenuItemDelete.Name = "toolStripMenuItemDelete";
-            toolStripMenuItemDelete.Size = new Size(197, 22);
-            toolStripMenuItemDelete.Text = "🗑 Excluir Registro";
-            // 
-            // toolStripMenuItemCopyPath
-            // 
-            toolStripMenuItemCopyPath.Name = "toolStripMenuItemCopyPath";
-            toolStripMenuItemCopyPath.Size = new Size(197, 22);
-            toolStripMenuItemCopyPath.Text = "📋 Copiar Caminho";
-            // 
-            // statusStripMain
-            // 
-            statusStripMain.Items.AddRange(new ToolStripItem[] { toolStripStatusLabelRecords, toolStripStatusLabelLastUpdate, toolStripProgressBarImport });
-            statusStripMain.Location = new Point(0, 522);
-            statusStripMain.Name = "statusStripMain";
-            statusStripMain.Size = new Size(860, 22);
-            statusStripMain.TabIndex = 2;
-            statusStripMain.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabelRecords
-            // 
-            toolStripStatusLabelRecords.Name = "toolStripStatusLabelRecords";
-            toolStripStatusLabelRecords.Size = new Size(109, 17);
-            toolStripStatusLabelRecords.Text = "Total de registros: 0";
-            // 
-            // toolStripStatusLabelLastUpdate
-            // 
-            toolStripStatusLabelLastUpdate.Name = "toolStripStatusLabelLastUpdate";
-            toolStripStatusLabelLastUpdate.Size = new Size(736, 17);
-            toolStripStatusLabelLastUpdate.Spring = true;
-            toolStripStatusLabelLastUpdate.Text = "Última atualização: --";
-            toolStripStatusLabelLastUpdate.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // toolStripProgressBarImport
-            // 
-            toolStripProgressBarImport.Name = "toolStripProgressBarImport";
-            toolStripProgressBarImport.Size = new Size(100, 19);
-            toolStripProgressBarImport.Visible = false;
-            // 
-            // errorProviderMain
-            // 
-            errorProviderMain.ContainerControl = this;
-            // 
-            // timerAutoRefresh
-            // 
-            timerAutoRefresh.Interval = 30000;
-            // 
-            // timerProgressBar
-            // 
-            timerProgressBar.Interval = 300;
-            timerProgressBar.Tick +=  timerProgressBar_Tick ;
-            // 
             // id
             // 
             id.HeaderText = "id";
@@ -635,6 +563,78 @@
             ColumnDetalhesDuplicidades.Name = "ColumnDetalhesDuplicidades";
             ColumnDetalhesDuplicidades.ReadOnly = true;
             ColumnDetalhesDuplicidades.Visible = false;
+            // 
+            // contextMenuStripGrid
+            // 
+            contextMenuStripGrid.Items.AddRange(new ToolStripItem[] { toolStripMenuItemReprocess, toolStripMenuItemViewError, toolStripMenuItemDelete, toolStripMenuItemCopyPath });
+            contextMenuStripGrid.Name = "contextMenuStripGrid";
+            contextMenuStripGrid.Size = new Size(198, 92);
+            // 
+            // toolStripMenuItemReprocess
+            // 
+            toolStripMenuItemReprocess.Name = "toolStripMenuItemReprocess";
+            toolStripMenuItemReprocess.Size = new Size(197, 22);
+            toolStripMenuItemReprocess.Text = "🔄 Reprocessar Arquivo";
+            // 
+            // toolStripMenuItemViewError
+            // 
+            toolStripMenuItemViewError.Name = "toolStripMenuItemViewError";
+            toolStripMenuItemViewError.Size = new Size(197, 22);
+            toolStripMenuItemViewError.Text = "⚠ Ver Detalhes do Erro";
+            // 
+            // toolStripMenuItemDelete
+            // 
+            toolStripMenuItemDelete.Name = "toolStripMenuItemDelete";
+            toolStripMenuItemDelete.Size = new Size(197, 22);
+            toolStripMenuItemDelete.Text = "🗑 Excluir Registro";
+            // 
+            // toolStripMenuItemCopyPath
+            // 
+            toolStripMenuItemCopyPath.Name = "toolStripMenuItemCopyPath";
+            toolStripMenuItemCopyPath.Size = new Size(197, 22);
+            toolStripMenuItemCopyPath.Text = "📋 Copiar Caminho";
+            // 
+            // statusStripMain
+            // 
+            statusStripMain.Items.AddRange(new ToolStripItem[] { toolStripStatusLabelRecords, toolStripStatusLabelLastUpdate, toolStripProgressBarImport });
+            statusStripMain.Location = new Point(0, 522);
+            statusStripMain.Name = "statusStripMain";
+            statusStripMain.Size = new Size(860, 22);
+            statusStripMain.TabIndex = 2;
+            statusStripMain.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabelRecords
+            // 
+            toolStripStatusLabelRecords.Name = "toolStripStatusLabelRecords";
+            toolStripStatusLabelRecords.Size = new Size(109, 17);
+            toolStripStatusLabelRecords.Text = "Total de registros: 0";
+            // 
+            // toolStripStatusLabelLastUpdate
+            // 
+            toolStripStatusLabelLastUpdate.Name = "toolStripStatusLabelLastUpdate";
+            toolStripStatusLabelLastUpdate.Size = new Size(736, 17);
+            toolStripStatusLabelLastUpdate.Spring = true;
+            toolStripStatusLabelLastUpdate.Text = "Última atualização: --";
+            toolStripStatusLabelLastUpdate.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // toolStripProgressBarImport
+            // 
+            toolStripProgressBarImport.Name = "toolStripProgressBarImport";
+            toolStripProgressBarImport.Size = new Size(100, 19);
+            toolStripProgressBarImport.Visible = false;
+            // 
+            // errorProviderMain
+            // 
+            errorProviderMain.ContainerControl = this;
+            // 
+            // timerAutoRefresh
+            // 
+            timerAutoRefresh.Interval = 30000;
+            // 
+            // timerProgressBar
+            // 
+            timerProgressBar.Interval = 300;
+            timerProgressBar.Tick +=  timerProgressBar_Tick ;
             // 
             // FormImport
             // 

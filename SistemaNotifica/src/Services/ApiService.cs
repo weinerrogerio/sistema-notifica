@@ -78,7 +78,7 @@ namespace SistemaNotifica.src.Services
 
         public string BuildUrlWithQueryParams(string endpoint, Dictionary<string, string> parameters = null)
         {
-            var url = $"{_baseUrl}/{endpoint}";
+            var url = $"{_baseUrl}{endpoint}";
 
             if ( parameters != null && parameters.Count > 0 )
             {
@@ -173,7 +173,7 @@ namespace SistemaNotifica.src.Services
             {
                 var json = JsonConvert.SerializeObject(data);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                string fullUrl = $"{_baseUrl}/{endpoint}";
+                string fullUrl = $"{_baseUrl}{endpoint}";
 
                 // ✅ DEBUG: Verificar se o token existe
                 Debug.WriteLine($"[API Service] Session.AccessToken existe? {!string.IsNullOrEmpty(Session.AccessToken)}");
@@ -277,7 +277,7 @@ namespace SistemaNotifica.src.Services
             {
                 var json = JsonConvert.SerializeObject(data);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                string fullUrl = $"{_baseUrl}/{endpoint}";
+                string fullUrl = $"{_baseUrl}{endpoint}";
 
                 // ✅ DEBUG: Verificar se o token existe
                 Debug.WriteLine($"[API Service] Session.AccessToken existe? {!string.IsNullOrEmpty(Session.AccessToken)}");
@@ -370,7 +370,7 @@ namespace SistemaNotifica.src.Services
         {
             try
             {
-                string fullUrl = $"{_baseUrl}/{endpoint}";
+                string fullUrl = $"{_baseUrl}{endpoint}";
 
                 // ✅ DEBUG: Verificar se o token existe
                 Debug.WriteLine($"[API Service] Session.AccessToken existe? {!string.IsNullOrEmpty(Session.AccessToken)}");
@@ -550,7 +550,7 @@ namespace SistemaNotifica.src.Services
                     }
                 }
 
-                var url = $"{_baseUrl}/{endpoint}";
+                var url = $"{_baseUrl}{endpoint}";
                 Debug.WriteLine($"[API Service] Enviando POST (File) para: {url}");
                 Debug.WriteLine($"[API Service] Nome do arquivo: {fileName}");
 

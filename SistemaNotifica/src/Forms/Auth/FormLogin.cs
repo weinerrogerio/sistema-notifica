@@ -1,4 +1,6 @@
 ﻿using SistemaNotifica.src.Forms;
+using SistemaNotifica.src.Forms.Principal.Config;
+using SistemaNotifica.src.Forms.Principal.ConfigMenu;
 using SistemaNotifica.src.Models;
 using SistemaNotifica.src.Services;
 using SistemaNotifica.src.Services.Cache;
@@ -15,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static SistemaNotifica.src.Models.Auth;
+using static System.Windows.Forms.DataFormats;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace SistemaNotifica
@@ -36,24 +39,30 @@ namespace SistemaNotifica
 
             this.Resize += new EventHandler(this.FormLogin_Resize);
 
-            _authService = Program.AuthService;
+            //_authService = Program.AuthService;
             this.KeyPreview = true;
 
             this.Text = "Sistema de Notificações - Versão 1.0";
             string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "src/icons", "Logo_transp_pb.ico");
-            if (File.Exists(iconPath)) this.Icon = new Icon(iconPath);
+            if ( File.Exists(iconPath) ) this.Icon = new Icon(iconPath);            
+        }
+
+        private void FormLogin_Load(object sender, EventArgs e)
+        {
+            CenterPanelLogin();
+            this.BeginInvoke(new Action(() => VerificarConfiguracaoApi()));
         }
 
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
-            //string username = textBoxName.Text.Trim();
-            //string password = textBoxPassword.Text.Trim();
-            string username = "admin".Trim();
-            string password = "123456".Trim();
+            string username = textBoxName.Text.Trim();
+            string password = textBoxPassword.Text.Trim();
+            //string username = "admin".Trim();
+            //string password = "123456".Trim();
 
             // MELHORAR ISSO ADICIONAR BORDAS VERMELHAS AOS CAMPOS E MENSAGENS DE ERRO
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            if ( string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) )
             {
                 lblErrorMessage.Text = "Por favor, preencha todos os campos.";
                 lblErrorMessage.Visible = true;
@@ -72,12 +81,13 @@ namespace SistemaNotifica
                 Debug.WriteLine("Login: " + username + " - Senha: " + password);
                 // Chama a API para autenticação
                 // var loginResponse = await _apiService.LoginAsync(nome, senha);
-                LoginResponse response = await _authService.LoginAsync(username, password);
-                Debug.WriteLine(" " );
+                //LoginResponse response = await _authService.LoginAsync(username, password);
+                LoginResponse response = await Program.AuthService.LoginAsync(username, password);
+                Debug.WriteLine(" ");
                 Debug.WriteLine("Response::::::::::::::::: " + response);
-                Debug.WriteLine(" " );
+                Debug.WriteLine(" ");
 
-                if (response != null && !string.IsNullOrEmpty(response.AccessToken)) // Ou response.IsSuccess == true 
+                if ( response != null && !string.IsNullOrEmpty(response.AccessToken) ) // Ou response.IsSuccess == true 
                 {
                     // Inicia cache de dados --> distribuição
                     //CacheInitializer.StartBackgroundCacheInitialization();
@@ -96,7 +106,7 @@ namespace SistemaNotifica
                     textBoxName.Focus(); // Foca no nome de usuário
                 }
             }
-            catch (HttpRequestException ex)
+            catch ( HttpRequestException ex )
             {
                 // Erro de conexão de rede ou servidor inacessível
                 //lblErrorMessage.Text = $"Erro de conexão: Verifique sua internet ou contate o suporte. Detalhes: {ex.Message}";
@@ -104,7 +114,7 @@ namespace SistemaNotifica
                 lblErrorMessage.Visible = true;
 
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 // Outros erros inesperados
                 Debug.WriteLine($"Ocorreu um erro inesperado: {ex.Message}");
@@ -120,9 +130,23 @@ namespace SistemaNotifica
             }
         }
 
-        private void FormLogin_Load(object sender, EventArgs e)
+        private void VerificarConfiguracaoApi()
         {
-            CenterPanelLogin();
+            // Obtém a URL (certifique-se que o GetBaseApiUrl não está mais dando 'throw')
+            string url = AppSettingsManager.GetBaseApiUrl();
+
+            if ( string.IsNullOrWhiteSpace(url) )
+            {
+                MessageBox.Show(
+                    "A URL da API não foi configurada. O sistema não poderá realizar o login até que uma conexão válida seja estabelecida.",
+                    "Configuração Necessária",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+
+                // abrir a tela de configuração automaticamente para facilitar a vida do usuário
+                labelUrl_Click(this, EventArgs.Empty);
+            }
         }
 
         private void FormLogin_Resize(object sender, EventArgs e)
@@ -138,8 +162,8 @@ namespace SistemaNotifica
         private void CenterPanelLogin()
         {
             panelLogin.Location = new Point(
-                (this.ClientSize.Width - panelLogin.Width) / 2,
-                (this.ClientSize.Height - panelLogin.Height) / 2
+                ( this.ClientSize.Width - panelLogin.Width ) / 2,
+                ( this.ClientSize.Height - panelLogin.Height ) / 2
             );
         }
 
@@ -175,23 +199,23 @@ namespace SistemaNotifica
         private void PanelLogin_Paint(object sender, PaintEventArgs e)
         {
             Panel panel = sender as Panel;
-            if (panel == null) return;
+            if ( panel == null ) return;
 
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             int borderRadius = 20; // Raio dos cantos para o painel
 
             // Desenha a sombra (opcional, pode ser ajustado ou removido)
-            using (GraphicsPath shadowPath = GetRoundedRect(new Rectangle(2, 2, panel.Width - 4, panel.Height - 4), borderRadius))
-            using (SolidBrush shadowBrush = new SolidBrush(Color.FromArgb(50, 0, 0, 0))) // Sombra suave
+            using ( GraphicsPath shadowPath = GetRoundedRect(new Rectangle(2, 2, panel.Width - 4, panel.Height - 4), borderRadius) )
+            using ( SolidBrush shadowBrush = new SolidBrush(Color.FromArgb(50, 0, 0, 0)) ) // Sombra suave
             {
                 e.Graphics.FillPath(shadowBrush, shadowPath);
             }
 
             // Desenha o painel com a cor de fundo e cantos arredondados
-            using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, panel.Width, panel.Height), borderRadius))
+            using ( GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, panel.Width, panel.Height), borderRadius) )
             {
                 panel.Region = new Region(path); // Define a região para o recorte do painel
-                using (SolidBrush brush = new SolidBrush(panel.BackColor))
+                using ( SolidBrush brush = new SolidBrush(panel.BackColor) )
                 {
                     e.Graphics.FillPath(brush, path);
                 }
@@ -202,16 +226,16 @@ namespace SistemaNotifica
         private void Button_Paint(object sender, PaintEventArgs e)
         {
             Button btn = sender as Button;
-            if (btn == null) return;
+            if ( btn == null ) return;
 
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             int borderRadius = 4; // Raio dos cantos para o botão
 
             Rectangle bounds = new Rectangle(0, 0, btn.Width, btn.Height);
-            using (GraphicsPath path = GetRoundedRect(bounds, borderRadius))
+            using ( GraphicsPath path = GetRoundedRect(bounds, borderRadius) )
             {
                 btn.Region = new Region(path); // Define a região para o recorte do botão
-                using (SolidBrush brush = new SolidBrush(btn.BackColor))
+                using ( SolidBrush brush = new SolidBrush(btn.BackColor) )
                 {
                     e.Graphics.FillPath(brush, path);
                 }
@@ -223,28 +247,50 @@ namespace SistemaNotifica
         private void TextBox_Paint(object sender, PaintEventArgs e)
         {
             TextBox txtBox = sender as TextBox;
-            if (txtBox == null) return;
+            if ( txtBox == null ) return;
 
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             int borderRadius = 8; // Raio dos cantos para as textboxes
 
             Rectangle bounds = new Rectangle(0, 0, txtBox.Width, txtBox.Height);
-            using (GraphicsPath path = GetRoundedRect(bounds, borderRadius))
+            using ( GraphicsPath path = GetRoundedRect(bounds, borderRadius) )
             {
                 txtBox.Region = new Region(path); // Define a região para o recorte da textbox
 
                 // Desenha o background da textbox (para preencher o "arredondado" antes do texto)
-                using (SolidBrush backgroundBrush = new SolidBrush(txtBox.BackColor))
+                using ( SolidBrush backgroundBrush = new SolidBrush(txtBox.BackColor) )
                 {
                     e.Graphics.FillPath(backgroundBrush, path);
                 }
 
                 // Desenha a borda arredondada
-                using (Pen borderPen = new Pen(Color.FromArgb(180, 180, 180), 1)) // Borda cinza suave
+                using ( Pen borderPen = new Pen(Color.FromArgb(180, 180, 180), 1) ) // Borda cinza suave
                 {
                     e.Graphics.DrawPath(borderPen, path);
                 }
             }
+        }
+
+        private void labelUrl_Click(object sender, EventArgs e)
+        {
+            UC_ConexaoBackend uc = new UC_ConexaoBackend();
+            Form window = new Form
+            {
+                Text = "Configuração de Conexão",
+                Size = uc.Size,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterParent,
+                MaximizeBox = false,
+                MinimizeBox = false
+            };
+
+            window.Controls.Add(uc);
+            uc.Dock = DockStyle.Fill;
+
+            window.ShowDialog();
+
+            // AQUI ESTÁ O SEGREDO: Após fechar o popup, chamamos a validação de novo
+            VerificarConfiguracaoApi();
         }
     }
 }

@@ -30,6 +30,7 @@
         {
             components = new System.ComponentModel.Container();
             panelLogin = new Panel();
+            labelUrl = new Label();
             lblErrorMessage = new Label();
             btnLogin = new Button();
             textBoxPassword = new TextBox();
@@ -43,6 +44,7 @@
             // panelLogin
             // 
             panelLogin.BackColor = SystemColors.Window;
+            panelLogin.Controls.Add(labelUrl);
             panelLogin.Controls.Add(lblErrorMessage);
             panelLogin.Controls.Add(btnLogin);
             panelLogin.Controls.Add(textBoxPassword);
@@ -54,11 +56,22 @@
             panelLogin.Size = new Size(460, 380);
             panelLogin.TabIndex = 6;
             // 
+            // labelUrl
+            // 
+            labelUrl.Anchor =      AnchorStyles.Bottom  |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            labelUrl.Cursor = Cursors.Hand;
+            labelUrl.Location = new Point(184, 352);
+            labelUrl.Name = "labelUrl";
+            labelUrl.Size = new Size(91, 17);
+            labelUrl.TabIndex = 9;
+            labelUrl.Text = "URL do Sistema";
+            labelUrl.Click +=  labelUrl_Click ;
+            // 
             // lblErrorMessage
             // 
             lblErrorMessage.Anchor =      AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
             lblErrorMessage.ForeColor = Color.Red;
-            lblErrorMessage.Location = new Point(130, 142);
+            lblErrorMessage.Location = new Point(130, 138);
             lblErrorMessage.Name = "lblErrorMessage";
             lblErrorMessage.Size = new Size(200, 15);
             lblErrorMessage.TabIndex = 8;
@@ -73,7 +86,7 @@
             btnLogin.FlatStyle = FlatStyle.Flat;
             btnLogin.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
             btnLogin.ForeColor = Color.White;
-            btnLogin.Location = new Point(130, 290);
+            btnLogin.Location = new Point(129, 277);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(200, 40);
             btnLogin.TabIndex = 5;
@@ -84,7 +97,7 @@
             // textBoxPassword
             // 
             textBoxPassword.Font = new Font("Segoe UI", 10F);
-            textBoxPassword.Location = new Point(80, 220);
+            textBoxPassword.Location = new Point(80, 216);
             textBoxPassword.Name = "textBoxPassword";
             textBoxPassword.PasswordChar = '*';
             textBoxPassword.PlaceholderText = "Senha";
@@ -95,7 +108,7 @@
             // textBoxName
             // 
             textBoxName.Font = new Font("Segoe UI", 10F);
-            textBoxName.Location = new Point(80, 160);
+            textBoxName.Location = new Point(80, 156);
             textBoxName.Name = "textBoxName";
             textBoxName.PlaceholderText = "Nome de Usuário";
             textBoxName.Size = new Size(300, 25);
@@ -107,7 +120,7 @@
             lblTituloLogin.AutoSize = true;
             lblTituloLogin.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
             lblTituloLogin.ForeColor = Color.FromArgb(      64,       64,       64);
-            lblTituloLogin.Location = new Point(50, 40);
+            lblTituloLogin.Location = new Point(60, 40);
             lblTituloLogin.Name = "lblTituloLogin";
             lblTituloLogin.Size = new Size(351, 32);
             lblTituloLogin.TabIndex = 6;
@@ -119,7 +132,7 @@
             lblInstrucaoLogin.AutoSize = true;
             lblInstrucaoLogin.Font = new Font("Segoe UI", 9.5F);
             lblInstrucaoLogin.ForeColor = Color.FromArgb(      100,       100,       100);
-            lblInstrucaoLogin.Location = new Point(80, 90);
+            lblInstrucaoLogin.Location = new Point(95, 90);
             lblInstrucaoLogin.Name = "lblInstrucaoLogin";
             lblInstrucaoLogin.Size = new Size(270, 17);
             lblInstrucaoLogin.TabIndex = 7;
@@ -156,5 +169,6 @@
         private Label lblInstrucaoLogin;
         private Label label2;
         private Label lblErrorMessage;
+        private Label labelUrl;
     }
 }

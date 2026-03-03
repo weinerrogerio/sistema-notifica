@@ -506,5 +506,30 @@ namespace SistemaNotifica
             }
             return;
         }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            //FormConfig
+            if ( !( TelaAtual == "FormConfig" ) )
+            {
+                ResetSidebarButtons();
+                btnConfigNotificacao.BackColor = Color.FromArgb(60, 60, 60);
+                objForm?.Close();
+                objForm = new FormConfig
+                {
+                    TopLevel = false,
+                    FormBorderStyle = FormBorderStyle.None,
+                    Dock = DockStyle.Fill
+                };
+
+                TelaAtual = "FormConfig";
+                pnlMain.Controls.Add(objForm);
+                objForm.Show();
+
+                // Reconfigurar handlers após adicionar novo form
+                AddClickHandlerToControls(pnlMain);
+            }
+            return;
+        }
     }
 }
