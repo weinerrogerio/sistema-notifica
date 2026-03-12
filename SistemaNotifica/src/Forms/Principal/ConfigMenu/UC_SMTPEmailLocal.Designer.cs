@@ -30,30 +30,34 @@
         {
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel2 = new TableLayoutPanel();
+            flowLayoutPanel5 = new FlowLayoutPanel();
+            label7 = new Label();
+            textBox5 = new TextBox();
+            flowLayoutPanel4 = new FlowLayoutPanel();
+            label6 = new Label();
+            textBox4 = new TextBox();
+            flowLayoutPanel3 = new FlowLayoutPanel();
+            label5 = new Label();
+            textBox3 = new TextBox();
+            flowLayoutPanel2 = new FlowLayoutPanel();
+            label4 = new Label();
+            textBox2 = new TextBox();
             label3 = new Label();
             label2 = new Label();
             flowLayoutPanel1 = new FlowLayoutPanel();
             label1 = new Label();
             textBox1 = new TextBox();
-            flowLayoutPanel2 = new FlowLayoutPanel();
-            label4 = new Label();
-            textBox2 = new TextBox();
-            flowLayoutPanel3 = new FlowLayoutPanel();
-            label5 = new Label();
-            textBox3 = new TextBox();
-            flowLayoutPanel4 = new FlowLayoutPanel();
-            label6 = new Label();
-            textBox4 = new TextBox();
-            flowLayoutPanel5 = new FlowLayoutPanel();
-            label7 = new Label();
-            textBox5 = new TextBox();
+            button2 = new Button();
+            button1 = new Button();
+            panel1 = new Panel();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
-            flowLayoutPanel1.SuspendLayout();
-            flowLayoutPanel2.SuspendLayout();
-            flowLayoutPanel3.SuspendLayout();
-            flowLayoutPanel4.SuspendLayout();
             flowLayoutPanel5.SuspendLayout();
+            flowLayoutPanel4.SuspendLayout();
+            flowLayoutPanel3.SuspendLayout();
+            flowLayoutPanel2.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -82,6 +86,7 @@
             tableLayoutPanel2.Controls.Add(label3, 0, 1);
             tableLayoutPanel2.Controls.Add(label2, 0, 0);
             tableLayoutPanel2.Controls.Add(flowLayoutPanel1, 0, 2);
+            tableLayoutPanel2.Controls.Add(panel1, 0, 7);
             tableLayoutPanel2.Location = new Point(95, 0);
             tableLayoutPanel2.Margin = new Padding(0, 0, 0, 20);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -96,6 +101,122 @@
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 70F));
             tableLayoutPanel2.Size = new Size(685, 361);
             tableLayoutPanel2.TabIndex = 0;
+            // 
+            // flowLayoutPanel5
+            // 
+            flowLayoutPanel5.Controls.Add(label7);
+            flowLayoutPanel5.Controls.Add(textBox5);
+            flowLayoutPanel5.Dock = DockStyle.Fill;
+            flowLayoutPanel5.Location = new Point(0, 256);
+            flowLayoutPanel5.Margin = new Padding(0);
+            flowLayoutPanel5.Name = "flowLayoutPanel5";
+            flowLayoutPanel5.Size = new Size(685, 34);
+            flowLayoutPanel5.TabIndex = 7;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(3, 8);
+            label7.Margin = new Padding(3, 8, 48, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(82, 15);
+            label7.TabIndex = 0;
+            label7.Text = "SMTP_FROM: ";
+            // 
+            // textBox5
+            // 
+            textBox5.Anchor = AnchorStyles.None;
+            textBox5.Location = new Point(136, 3);
+            textBox5.Name = "textBox5";
+            textBox5.Size = new Size(494, 23);
+            textBox5.TabIndex = 1;
+            // 
+            // flowLayoutPanel4
+            // 
+            flowLayoutPanel4.Controls.Add(label6);
+            flowLayoutPanel4.Controls.Add(textBox4);
+            flowLayoutPanel4.Dock = DockStyle.Fill;
+            flowLayoutPanel4.Location = new Point(0, 222);
+            flowLayoutPanel4.Margin = new Padding(0);
+            flowLayoutPanel4.Name = "flowLayoutPanel4";
+            flowLayoutPanel4.Size = new Size(685, 34);
+            flowLayoutPanel4.TabIndex = 6;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(3, 8);
+            label6.Margin = new Padding(3, 8, 55, 0);
+            label6.Name = "label6";
+            label6.Size = new Size(75, 15);
+            label6.TabIndex = 0;
+            label6.Text = "SMTP_PASS: ";
+            // 
+            // textBox4
+            // 
+            textBox4.Anchor = AnchorStyles.None;
+            textBox4.Location = new Point(136, 3);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new Size(494, 23);
+            textBox4.TabIndex = 1;
+            // 
+            // flowLayoutPanel3
+            // 
+            flowLayoutPanel3.Controls.Add(label5);
+            flowLayoutPanel3.Controls.Add(textBox3);
+            flowLayoutPanel3.Dock = DockStyle.Fill;
+            flowLayoutPanel3.Location = new Point(0, 188);
+            flowLayoutPanel3.Margin = new Padding(0);
+            flowLayoutPanel3.Name = "flowLayoutPanel3";
+            flowLayoutPanel3.Size = new Size(685, 34);
+            flowLayoutPanel3.TabIndex = 5;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(3, 8);
+            label5.Margin = new Padding(3, 8, 15, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(115, 15);
+            label5.TabIndex = 0;
+            label5.Text = "SMTP_USER_EMAIL: ";
+            // 
+            // textBox3
+            // 
+            textBox3.Anchor = AnchorStyles.None;
+            textBox3.Location = new Point(136, 3);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(494, 23);
+            textBox3.TabIndex = 1;
+            // 
+            // flowLayoutPanel2
+            // 
+            flowLayoutPanel2.Controls.Add(label4);
+            flowLayoutPanel2.Controls.Add(textBox2);
+            flowLayoutPanel2.Dock = DockStyle.Fill;
+            flowLayoutPanel2.Location = new Point(0, 152);
+            flowLayoutPanel2.Margin = new Padding(0);
+            flowLayoutPanel2.Name = "flowLayoutPanel2";
+            flowLayoutPanel2.Size = new Size(685, 36);
+            flowLayoutPanel2.TabIndex = 4;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(3, 8);
+            label4.Margin = new Padding(3, 8, 52, 0);
+            label4.Name = "label4";
+            label4.Size = new Size(78, 15);
+            label4.TabIndex = 0;
+            label4.Text = "SMTP_PORT: ";
+            // 
+            // textBox2
+            // 
+            textBox2.Anchor = AnchorStyles.None;
+            textBox2.Location = new Point(136, 3);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(494, 23);
+            textBox2.TabIndex = 1;
             // 
             // label3
             // 
@@ -148,121 +269,35 @@
             textBox1.Size = new Size(494, 23);
             textBox1.TabIndex = 1;
             // 
-            // flowLayoutPanel2
+            // button2
             // 
-            flowLayoutPanel2.Controls.Add(label4);
-            flowLayoutPanel2.Controls.Add(textBox2);
-            flowLayoutPanel2.Dock = DockStyle.Fill;
-            flowLayoutPanel2.Location = new Point(0, 152);
-            flowLayoutPanel2.Margin = new Padding(0);
-            flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(685, 36);
-            flowLayoutPanel2.TabIndex = 4;
+            button2.Dock = DockStyle.Right;
+            button2.Location = new Point(121, 0);
+            button2.Name = "button2";
+            button2.Size = new Size(107, 35);
+            button2.TabIndex = 1;
+            button2.Text = "button2";
+            button2.UseVisualStyleBackColor = true;
             // 
-            // label4
+            // button1
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(3, 8);
-            label4.Margin = new Padding(3, 8, 52, 0);
-            label4.Name = "label4";
-            label4.Size = new Size(78, 15);
-            label4.TabIndex = 0;
-            label4.Text = "SMTP_PORT: ";
+            button1.Dock = DockStyle.Left;
+            button1.Location = new Point(0, 0);
+            button1.Name = "button1";
+            button1.Size = new Size(115, 35);
+            button1.TabIndex = 0;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
             // 
-            // textBox2
+            // panel1
             // 
-            textBox2.Anchor = AnchorStyles.None;
-            textBox2.Location = new Point(136, 3);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(494, 23);
-            textBox2.TabIndex = 1;
-            // 
-            // flowLayoutPanel3
-            // 
-            flowLayoutPanel3.Controls.Add(label5);
-            flowLayoutPanel3.Controls.Add(textBox3);
-            flowLayoutPanel3.Dock = DockStyle.Fill;
-            flowLayoutPanel3.Location = new Point(0, 188);
-            flowLayoutPanel3.Margin = new Padding(0);
-            flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new Size(685, 34);
-            flowLayoutPanel3.TabIndex = 5;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(3, 8);
-            label5.Margin = new Padding(3, 8, 15, 0);
-            label5.Name = "label5";
-            label5.Size = new Size(115, 15);
-            label5.TabIndex = 0;
-            label5.Text = "SMTP_USER_EMAIL: ";
-            // 
-            // textBox3
-            // 
-            textBox3.Anchor = AnchorStyles.None;
-            textBox3.Location = new Point(136, 3);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(494, 23);
-            textBox3.TabIndex = 1;
-            // 
-            // flowLayoutPanel4
-            // 
-            flowLayoutPanel4.Controls.Add(label6);
-            flowLayoutPanel4.Controls.Add(textBox4);
-            flowLayoutPanel4.Dock = DockStyle.Fill;
-            flowLayoutPanel4.Location = new Point(0, 222);
-            flowLayoutPanel4.Margin = new Padding(0);
-            flowLayoutPanel4.Name = "flowLayoutPanel4";
-            flowLayoutPanel4.Size = new Size(685, 34);
-            flowLayoutPanel4.TabIndex = 6;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(3, 8);
-            label6.Margin = new Padding(3, 8, 55, 0);
-            label6.Name = "label6";
-            label6.Size = new Size(75, 15);
-            label6.TabIndex = 0;
-            label6.Text = "SMTP_PASS: ";
-            // 
-            // textBox4
-            // 
-            textBox4.Anchor = AnchorStyles.None;
-            textBox4.Location = new Point(136, 3);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(494, 23);
-            textBox4.TabIndex = 1;
-            // 
-            // flowLayoutPanel5
-            // 
-            flowLayoutPanel5.Controls.Add(label7);
-            flowLayoutPanel5.Controls.Add(textBox5);
-            flowLayoutPanel5.Dock = DockStyle.Fill;
-            flowLayoutPanel5.Location = new Point(0, 256);
-            flowLayoutPanel5.Margin = new Padding(0);
-            flowLayoutPanel5.Name = "flowLayoutPanel5";
-            flowLayoutPanel5.Size = new Size(685, 34);
-            flowLayoutPanel5.TabIndex = 7;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(3, 8);
-            label7.Margin = new Padding(3, 8, 48, 0);
-            label7.Name = "label7";
-            label7.Size = new Size(82, 15);
-            label7.TabIndex = 0;
-            label7.Text = "SMTP_FROM: ";
-            // 
-            // textBox5
-            // 
-            textBox5.Anchor = AnchorStyles.None;
-            textBox5.Location = new Point(136, 3);
-            textBox5.Name = "textBox5";
-            textBox5.Size = new Size(494, 23);
-            textBox5.TabIndex = 1;
+            panel1.Anchor = AnchorStyles.None;
+            panel1.Controls.Add(button2);
+            panel1.Controls.Add(button1);
+            panel1.Location = new Point(228, 308);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(228, 35);
+            panel1.TabIndex = 13;
             // 
             // UC_SMTPEmailLocal
             // 
@@ -274,16 +309,17 @@
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel2.PerformLayout();
-            flowLayoutPanel1.ResumeLayout(false);
-            flowLayoutPanel1.PerformLayout();
-            flowLayoutPanel2.ResumeLayout(false);
-            flowLayoutPanel2.PerformLayout();
-            flowLayoutPanel3.ResumeLayout(false);
-            flowLayoutPanel3.PerformLayout();
-            flowLayoutPanel4.ResumeLayout(false);
-            flowLayoutPanel4.PerformLayout();
             flowLayoutPanel5.ResumeLayout(false);
             flowLayoutPanel5.PerformLayout();
+            flowLayoutPanel4.ResumeLayout(false);
+            flowLayoutPanel4.PerformLayout();
+            flowLayoutPanel3.ResumeLayout(false);
+            flowLayoutPanel3.PerformLayout();
+            flowLayoutPanel2.ResumeLayout(false);
+            flowLayoutPanel2.PerformLayout();
+            flowLayoutPanel1.ResumeLayout(false);
+            flowLayoutPanel1.PerformLayout();
+            panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -309,5 +345,8 @@
         private FlowLayoutPanel flowLayoutPanel1;
         private Label label1;
         private TextBox textBox1;
+        private Panel panel1;
+        private Button button2;
+        private Button button1;
     }
 }

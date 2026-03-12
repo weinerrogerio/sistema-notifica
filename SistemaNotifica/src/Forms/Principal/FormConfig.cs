@@ -35,17 +35,11 @@ namespace SistemaNotifica.src.Forms.Principal
         {
             UC_ConexaoBackend uc = new UC_ConexaoBackend();
             MostrarTela(uc);
-        }
-
-        private void btnConApiDb_Click(object sender, EventArgs e)
-        {
-            UC_ConexaoApiDb uc = new UC_ConexaoApiDb();
-            MostrarTela(uc);
-        }
+        }        
 
         private void btnExternalSenderService_Click(object sender, EventArgs e)
         {
-            UC_TrackingEmailService uc = new UC_TrackingEmailService();
+            UC_TrackingEmailService uc = new UC_TrackingEmailService(Program.ConfigService);
             MostrarTela(uc);
         }
 

@@ -34,7 +34,6 @@
             panelConteudo = new Panel();
             flowLayoutPanel1 = new FlowLayoutPanel();
             btnConBkend = new Button();
-            btnConApiDb = new Button();
             btnExternalSenderService = new Button();
             btnSmtpEmail = new Button();
             tableLayoutPanel1.SuspendLayout();
@@ -95,7 +94,6 @@
             // 
             flowLayoutPanel1.BorderStyle = BorderStyle.FixedSingle;
             flowLayoutPanel1.Controls.Add(btnConBkend);
-            flowLayoutPanel1.Controls.Add(btnConApiDb);
             flowLayoutPanel1.Controls.Add(btnExternalSenderService);
             flowLayoutPanel1.Controls.Add(btnSmtpEmail);
             flowLayoutPanel1.Dock = DockStyle.Left;
@@ -117,20 +115,9 @@
             btnConBkend.UseVisualStyleBackColor = true;
             btnConBkend.Click +=  btnConBkend_Click ;
             // 
-            // btnConApiDb
-            // 
-            btnConApiDb.Location = new Point(3, 39);
-            btnConApiDb.Margin = new Padding(3, 3, 3, 0);
-            btnConApiDb.Name = "btnConApiDb";
-            btnConApiDb.Size = new Size(178, 26);
-            btnConApiDb.TabIndex = 1;
-            btnConApiDb.Text = "Conexão API - DB";
-            btnConApiDb.UseVisualStyleBackColor = true;
-            btnConApiDb.Click +=  btnConApiDb_Click ;
-            // 
             // btnExternalSenderService
             // 
-            btnExternalSenderService.Location = new Point(3, 68);
+            btnExternalSenderService.Location = new Point(3, 39);
             btnExternalSenderService.Margin = new Padding(3, 3, 3, 0);
             btnExternalSenderService.Name = "btnExternalSenderService";
             btnExternalSenderService.Size = new Size(178, 26);
@@ -141,7 +128,7 @@
             // 
             // btnSmtpEmail
             // 
-            btnSmtpEmail.Location = new Point(3, 97);
+            btnSmtpEmail.Location = new Point(3, 68);
             btnSmtpEmail.Margin = new Padding(3, 3, 3, 0);
             btnSmtpEmail.Name = "btnSmtpEmail";
             btnSmtpEmail.Size = new Size(178, 26);
@@ -175,7 +162,6 @@
         private Panel panel1;
         private FlowLayoutPanel flowLayoutPanel1;
         private Button btnConBkend;
-        private Button btnConApiDb;
         private Button btnExternalSenderService;
         private Button btnSmtpEmail;
         private Panel panelConteudo;

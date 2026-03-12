@@ -112,9 +112,9 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(102, 13);
+            btnSave.Location = new Point(102, 3);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(88, 26);
+            btnSave.Size = new Size(88, 36);
             btnSave.TabIndex = 1;
             btnSave.Text = "SALVAR";
             btnSave.UseVisualStyleBackColor = true;
@@ -122,9 +122,9 @@
             // 
             // btnTest
             // 
-            btnTest.Location = new Point(3, 13);
+            btnTest.Location = new Point(3, 3);
             btnTest.Name = "btnTest";
-            btnTest.Size = new Size(93, 26);
+            btnTest.Size = new Size(93, 36);
             btnTest.TabIndex = 0;
             btnTest.Text = "TESTAR";
             btnTest.UseVisualStyleBackColor = true;

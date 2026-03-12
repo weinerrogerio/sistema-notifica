@@ -1,10 +1,12 @@
-﻿using System;
+﻿using SistemaNotifica.src.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace SistemaNotifica.src.Forms.Principal.Config
 {
@@ -13,10 +15,9 @@ namespace SistemaNotifica.src.Forms.Principal.Config
     {
         private static readonly string _filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
 
-        /// <summary>
-        /// Lê a URL base da API salva no appsettings.json.
-        /// Lança exceção se o arquivo não existir ou a URL estiver vazia/ausente.
-        /// </summary>
+        
+        // Lê a URL base da API salva no appsettings.json.
+        // Lança exceção se o arquivo não existir ou a URL estiver vazia/ausente.        
         public static string GetBaseApiUrl()
         {
             if ( !File.Exists(_filePath) )
@@ -42,9 +43,8 @@ namespace SistemaNotifica.src.Forms.Principal.Config
             }
         }
 
-        /// <summary>
-        /// Salva a URL base da API no appsettings.json.
-        /// </summary>
+        
+        // Salva a URL base da API no appsettings.json.        
         public static void SaveBaseApiUrl(string url)
         {
             if ( string.IsNullOrWhiteSpace(url) )
@@ -70,6 +70,8 @@ namespace SistemaNotifica.src.Forms.Principal.Config
             var options = new JsonSerializerOptions { WriteIndented = true };
             File.WriteAllText(_filePath, root.ToJsonString(options));
         }
+
+       
     }
 
 }
